@@ -1,0 +1,11 @@
+{
+  "name": "@jungvonmatt/contentful-ssg-export",
+  "version": "1.0.0",
+  "description": "Export contentful entries to files for static site generators (hugo/grow/...)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
