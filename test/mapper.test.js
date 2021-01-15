@@ -131,7 +131,11 @@ describe('Mapper - mapField', () => {
 
   test('Asset Link (Image)', async () => {
     const assets = await readFixture('assets.json');
-    const [asset] = assets;
+    const locales = await readFixture('locales.json');
+    const contentTypes = await readFixture('content_types.json');
+    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { contentTypes, locales }));
+
+    const [asset] = translatedAssets;
 
     const link = {
       sys: {
@@ -152,7 +156,7 @@ describe('Mapper - mapField', () => {
 
     const value = await mapField(link, {
       settings: { type: FIELD_TYPE_LINK },
-      assets,
+      assets: translatedAssets,
     });
 
     expect(value).toEqual(expected);
@@ -160,7 +164,11 @@ describe('Mapper - mapField', () => {
 
   test('Asset Link (Array)', async () => {
     const assets = await readFixture('assets.json');
-    const [asset] = assets;
+    const locales = await readFixture('locales.json');
+    const contentTypes = await readFixture('content_types.json');
+    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { contentTypes, locales }));
+
+    const [asset] = translatedAssets;
     const link = {
       sys: {
         type: FIELD_TYPE_LINK,
@@ -186,7 +194,7 @@ describe('Mapper - mapField', () => {
           linkType: LINK_TYPE_ASSET,
         },
       },
-      assets,
+      assets: translatedAssets,
     });
 
     expect(value).toEqual([expected, expected]);
@@ -247,8 +255,10 @@ describe('Mapper - mapEntry', () => {
     const { entries, assets, contentTypes, locales } = await getContent();
     const [entry] = entries;
 
+    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { contentTypes, locales }));
+
     const localized = await localizeEntry(entry, 'en-GB', { contentTypes, locales });
-    const result = await mapEntry(localized, { entries, assets, contentTypes });
+    const result = await mapEntry(localized, { entries, assets: translatedAssets, contentTypes });
 
     expect(result).toEqual({
       id: '34O95Y8gLXd3jPozdy7gmd',
