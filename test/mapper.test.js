@@ -272,7 +272,7 @@ describe('Mapper - mapEntry', () => {
         '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><p></p>',
       integer: 2,
       decimal: 12,
-      dateTime: '2021-01-14T11:00:00.000Z',
+      dateTime: new Date('2021-01-14T12:00').toISOString(),
       date: '2021-01-19',
       location: { lon: 13.422140718124993, lat: 52.47504074424066 },
       media: {
