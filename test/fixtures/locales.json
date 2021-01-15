@@ -1,0 +1,35 @@
+[
+  {
+    "code": "en-US",
+    "name": "English (United States)",
+    "default": true,
+    "fallbackCode": null,
+    "sys": {
+      "id": "2mRFx55zvSRSkT7oD3GTOx",
+      "type": "Locale",
+      "version": 1
+    }
+  },
+  {
+    "code": "en-GB",
+    "name": "English (United Kingdom)",
+    "default": false,
+    "fallbackCode": "en-US",
+    "sys": {
+      "id": "6xIqgrkRBDIcVXVCQdpMxp",
+      "type": "Locale",
+      "version": 1
+    }
+  },
+  {
+    "code": "de",
+    "name": "German",
+    "default": false,
+    "fallbackCode": null,
+    "sys": {
+      "id": "6SpD6Ioh4z0tjcss2qDtGE",
+      "type": "Locale",
+      "version": 1
+    }
+  }
+]

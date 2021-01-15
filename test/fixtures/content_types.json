@@ -1,0 +1,181 @@
+[
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "fieldTest",
+      "type": "ContentType",
+      "createdAt": "2021-01-14T13:12:47.484Z",
+      "updatedAt": "2021-01-14T13:14:32.031Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "revision": 2
+    },
+    "displayField": "shortText",
+    "name": "Field Test",
+    "description": "",
+    "fields": [
+      {
+        "id": "shortText",
+        "name": "Short text",
+        "type": "Symbol",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "shortTextList",
+        "name": "Short text (list)",
+        "type": "Array",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false,
+        "items": {
+          "type": "Symbol",
+          "validations": []
+        }
+      },
+      {
+        "id": "longText",
+        "name": "Long text",
+        "type": "Text",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "richText",
+        "name": "Rich text",
+        "type": "RichText",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "integer",
+        "name": "Integer",
+        "type": "Integer",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "decimal",
+        "name": "Decimal",
+        "type": "Number",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "dateTime",
+        "name": "Date & time",
+        "type": "Date",
+        "localized": false,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "date",
+        "name": "Date",
+        "type": "Date",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "location",
+        "name": "Location",
+        "type": "Location",
+        "localized": false,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "media",
+        "name": "Media",
+        "type": "Link",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false,
+        "linkType": "Asset"
+      },
+      {
+        "id": "mediaList",
+        "name": "Media (list)",
+        "type": "Array",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false,
+        "items": {
+          "type": "Link",
+          "validations": [],
+          "linkType": "Asset"
+        }
+      },
+      {
+        "id": "boolean",
+        "name": "Boolean",
+        "type": "Boolean",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "jsonObject",
+        "name": "JSON object",
+        "type": "Object",
+        "localized": false,
+        "required": false,
+        "disabled": false,
+        "omitted": false
+      },
+      {
+        "id": "reference",
+        "name": "Reference",
+        "type": "Link",
+        "localized": true,
+        "required": false,
+        "disabled": false,
+        "omitted": false,
+        "linkType": "Entry"
+      },
+      {
+        "id": "referenceList",
+        "name": "Reference (list)",
+        "type": "Array",
+        "localized": false,
+        "required": false,
+        "disabled": false,
+        "omitted": false,
+        "items": {
+          "type": "Link",
+          "validations": [],
+          "linkType": "Entry"
+        }
+      }
+    ]
+  }
+]

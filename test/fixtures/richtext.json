@@ -1,0 +1,135 @@
+{
+  "data": {},
+  "content": [
+    {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "value": "Rich text (EN)",
+          "nodeType": "text"
+        }
+      ],
+      "nodeType": "paragraph"
+    },
+    {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "marks": [],
+          "value": "",
+          "nodeType": "text"
+        },
+        {
+          "data": {
+            "target": {
+              "sys": {
+                "id": "WLITBNhFp0VzHqOwKJAwR",
+                "type": "Link",
+                "linkType": "Entry"
+              }
+            }
+          },
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "Entry Link",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "entry-hyperlink"
+        },
+        {
+          "data": {},
+          "marks": [],
+          "value": "",
+          "nodeType": "text"
+        }
+      ],
+      "nodeType": "paragraph"
+    },
+    {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "marks": [],
+          "value": "",
+          "nodeType": "text"
+        },
+        {
+          "data": {
+            "target": {
+              "sys": {
+                "id": "3t1t8PDynjpXbAzv6zOVQq",
+                "type": "Link",
+                "linkType": "Asset"
+              }
+            }
+          },
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "Asset Link",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "asset-hyperlink"
+        },
+        {
+          "data": {},
+          "marks": [],
+          "value": "",
+          "nodeType": "text"
+        }
+      ],
+      "nodeType": "paragraph"
+    },
+    {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "marks": [],
+          "value": "",
+          "nodeType": "text"
+        }
+      ],
+      "nodeType": "paragraph"
+    },
+    {
+      "data": {
+        "target": {
+          "sys": {
+            "id": "3t1t8PDynjpXbAzv6zOVQq",
+            "type": "Link",
+            "linkType": "Asset"
+          }
+        }
+      },
+      "content": [],
+      "nodeType": "embedded-asset-block"
+    },
+    {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "marks": [],
+          "value": "",
+          "nodeType": "text"
+        }
+      ],
+      "nodeType": "paragraph"
+    }
+  ],
+  "nodeType": "document"
+}

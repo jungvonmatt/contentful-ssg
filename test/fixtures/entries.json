@@ -1,0 +1,783 @@
+[
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "34O95Y8gLXd3jPozdy7gmd",
+      "type": "Entry",
+      "createdAt": "2021-01-14T13:17:17.232Z",
+      "updatedAt": "2021-01-14T13:35:12.671Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "revision": 4,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "fieldTest"
+        }
+      }
+    },
+    "fields": {
+      "shortText": {
+        "de": "Short Text (DE)",
+        "en-US": "Short Text (EN)"
+      },
+      "shortTextList": {
+        "de": ["List 1 (de)", "List 2 (de)", "List 3 (de)"],
+        "en-GB": ["List 1 (gb)", "List 2 (gb)"],
+        "en-US": ["List 1", "List 2", "List 3"]
+      },
+      "longText": {
+        "de": "__Long text (de-DE)__\n",
+        "en-GB": "__Long text (en-GB)__\n",
+        "en-US": "__Long text (en-US)__\n"
+      },
+      "richText": {
+        "de": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (DE)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        },
+        "en-US": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (EN)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            },
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [],
+                  "value": "",
+                  "nodeType": "text"
+                },
+                {
+                  "data": {
+                    "target": {
+                      "sys": {
+                        "id": "WLITBNhFp0VzHqOwKJAwR",
+                        "type": "Link",
+                        "linkType": "Entry"
+                      }
+                    }
+                  },
+                  "content": [
+                    {
+                      "data": {},
+                      "marks": [],
+                      "value": "Entry Link",
+                      "nodeType": "text"
+                    }
+                  ],
+                  "nodeType": "entry-hyperlink"
+                },
+                {
+                  "data": {},
+                  "marks": [],
+                  "value": "",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            },
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [],
+                  "value": "",
+                  "nodeType": "text"
+                },
+                {
+                  "data": {
+                    "target": {
+                      "sys": {
+                        "id": "3t1t8PDynjpXbAzv6zOVQq",
+                        "type": "Link",
+                        "linkType": "Asset"
+                      }
+                    }
+                  },
+                  "content": [
+                    {
+                      "data": {},
+                      "marks": [],
+                      "value": "Asset Link",
+                      "nodeType": "text"
+                    }
+                  ],
+                  "nodeType": "asset-hyperlink"
+                },
+                {
+                  "data": {},
+                  "marks": [],
+                  "value": "",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            },
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [],
+                  "value": "",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            },
+            {
+              "data": {
+                "target": {
+                  "sys": {
+                    "id": "3t1t8PDynjpXbAzv6zOVQq",
+                    "type": "Link",
+                    "linkType": "Asset"
+                  }
+                }
+              },
+              "content": [],
+              "nodeType": "embedded-asset-block"
+            },
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [],
+                  "value": "",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        }
+      },
+      "integer": {
+        "de": 3,
+        "en-GB": 2,
+        "en-US": 1
+      },
+      "decimal": {
+        "de": 14,
+        "en-GB": 12,
+        "en-US": 10
+      },
+      "dateTime": {
+        "en-US": "2021-01-14T12:00"
+      },
+      "date": {
+        "en-US": "2021-01-19"
+      },
+      "location": {
+        "en-US": {
+          "lon": 13.422140718124993,
+          "lat": 52.47504074424066
+        }
+      },
+      "media": {
+        "en-US": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "3t1t8PDynjpXbAzv6zOVQq"
+          }
+        }
+      },
+      "mediaList": {
+        "en-US": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "3t1t8PDynjpXbAzv6zOVQq"
+            }
+          }
+        ]
+      },
+      "boolean": {
+        "en-US": false
+      },
+      "jsonObject": {
+        "en-US": {
+          "JSON": "OBJECT"
+        }
+      },
+      "reference": {
+        "en-GB": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "56O29iIIcee0ZcgIuwlHSv"
+          }
+        },
+        "en-US": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "WLITBNhFp0VzHqOwKJAwR"
+          }
+        }
+      },
+      "referenceList": {
+        "en-US": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "2WLqjLlMJUbc0vCf9UMfjA"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "56O29iIIcee0ZcgIuwlHSv"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "WLITBNhFp0VzHqOwKJAwR",
+      "type": "Entry",
+      "createdAt": "2021-01-14T13:22:30.042Z",
+      "updatedAt": "2021-01-14T13:22:30.042Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "revision": 1,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "fieldTest"
+        }
+      }
+    },
+    "fields": {
+      "shortText": {
+        "de": "Short Text (DE) (1)",
+        "en-US": "Short Text (EN) (1)"
+      },
+      "shortTextList": {
+        "de": ["List 1 (de)", "List 2 (de)", "List 3 (de)"],
+        "en-GB": ["List 1 (gb)", "List 2 (gb)"],
+        "en-US": ["List 1", "List 2", "List 3"]
+      },
+      "longText": {
+        "de": "__Long text (de-DE)__\n",
+        "en-GB": "__Long text (en-GB)__\n",
+        "en-US": "__Long text (en-US)__\n"
+      },
+      "richText": {
+        "de": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (DE)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        },
+        "en-GB": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        },
+        "en-US": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (EN)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        }
+      },
+      "integer": {
+        "de": 3,
+        "en-GB": 2,
+        "en-US": 1
+      },
+      "decimal": {
+        "de": 14,
+        "en-GB": 12,
+        "en-US": 10
+      },
+      "dateTime": {
+        "en-US": "2021-01-14T12:00"
+      },
+      "date": {
+        "en-US": "2021-01-19"
+      },
+      "location": {
+        "en-US": {
+          "lon": 13.422140718124993,
+          "lat": 52.47504074424066
+        }
+      },
+      "media": {
+        "en-US": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "3t1t8PDynjpXbAzv6zOVQq"
+          }
+        }
+      },
+      "mediaList": {
+        "en-US": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "3t1t8PDynjpXbAzv6zOVQq"
+            }
+          }
+        ]
+      },
+      "boolean": {
+        "en-US": false
+      },
+      "jsonObject": {
+        "en-US": {
+          "JSON": "OBJECT"
+        }
+      }
+    }
+  },
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "56O29iIIcee0ZcgIuwlHSv",
+      "type": "Entry",
+      "createdAt": "2021-01-14T13:22:29.422Z",
+      "updatedAt": "2021-01-14T13:22:29.422Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "revision": 1,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "fieldTest"
+        }
+      }
+    },
+    "fields": {
+      "shortText": {
+        "de": "Short Text (DE) (1)",
+        "en-US": "Short Text (EN) (1)"
+      },
+      "shortTextList": {
+        "de": ["List 1 (de)", "List 2 (de)", "List 3 (de)"],
+        "en-GB": ["List 1 (gb)", "List 2 (gb)"],
+        "en-US": ["List 1", "List 2", "List 3"]
+      },
+      "longText": {
+        "de": "__Long text (de-DE)__\n",
+        "en-GB": "__Long text (en-GB)__\n",
+        "en-US": "__Long text (en-US)__\n"
+      },
+      "richText": {
+        "de": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (DE)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        },
+        "en-GB": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        },
+        "en-US": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (EN)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        }
+      },
+      "integer": {
+        "de": 3,
+        "en-GB": 2,
+        "en-US": 1
+      },
+      "decimal": {
+        "de": 14,
+        "en-GB": 12,
+        "en-US": 10
+      },
+      "dateTime": {
+        "en-US": "2021-01-14T12:00"
+      },
+      "date": {
+        "en-US": "2021-01-19"
+      },
+      "location": {
+        "en-US": {
+          "lon": 13.422140718124993,
+          "lat": 52.47504074424066
+        }
+      },
+      "media": {
+        "en-US": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "3t1t8PDynjpXbAzv6zOVQq"
+          }
+        }
+      },
+      "mediaList": {
+        "en-US": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "3t1t8PDynjpXbAzv6zOVQq"
+            }
+          }
+        ]
+      },
+      "boolean": {
+        "en-US": false
+      },
+      "jsonObject": {
+        "en-US": {
+          "JSON": "OBJECT"
+        }
+      }
+    }
+  },
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "2WLqjLlMJUbc0vCf9UMfjA",
+      "type": "Entry",
+      "createdAt": "2021-01-14T13:22:29.409Z",
+      "updatedAt": "2021-01-14T13:22:29.409Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "revision": 1,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "fieldTest"
+        }
+      }
+    },
+    "fields": {
+      "shortText": {
+        "de": "Short Text (DE) (2)",
+        "en-US": "Short Text (EN) (2)"
+      },
+      "shortTextList": {
+        "de": ["List 1 (de)", "List 2 (de)", "List 3 (de)"],
+        "en-GB": ["List 1 (gb)", "List 2 (gb)"],
+        "en-US": ["List 1", "List 2", "List 3"]
+      },
+      "longText": {
+        "de": "__Long text (de-DE)__\n",
+        "en-GB": "__Long text (en-GB)__\n",
+        "en-US": "__Long text (en-US)__\n"
+      },
+      "richText": {
+        "de": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (DE)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        },
+        "en-GB": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        },
+        "en-US": {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "content": [
+                {
+                  "data": {},
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "value": "Rich text (EN)",
+                  "nodeType": "text"
+                }
+              ],
+              "nodeType": "paragraph"
+            }
+          ],
+          "nodeType": "document"
+        }
+      },
+      "integer": {
+        "de": 3,
+        "en-GB": 2,
+        "en-US": 1
+      },
+      "decimal": {
+        "de": 14,
+        "en-GB": 12,
+        "en-US": 10
+      },
+      "dateTime": {
+        "en-US": "2021-01-14T12:00"
+      },
+      "date": {
+        "en-US": "2021-01-19"
+      },
+      "location": {
+        "en-US": {
+          "lon": 13.422140718124993,
+          "lat": 52.47504074424066
+        }
+      },
+      "media": {
+        "en-US": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "3t1t8PDynjpXbAzv6zOVQq"
+          }
+        }
+      },
+      "mediaList": {
+        "en-US": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "3t1t8PDynjpXbAzv6zOVQq"
+            }
+          }
+        ]
+      },
+      "boolean": {
+        "en-US": false
+      },
+      "jsonObject": {
+        "en-US": {
+          "JSON": "OBJECT"
+        }
+      }
+    }
+  }
+]
