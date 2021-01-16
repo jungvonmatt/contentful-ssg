@@ -66,28 +66,6 @@ describe('Mapper - mapField', () => {
 
     expect(value).toEqual(expected);
   });
-  test('RichText (custom renderer)', async () => {
-    const content = await readFixture('richtext.json');
-    const expected =
-      '<entry-link>WLITBNhFp0VzHqOwKJAwR</entry-link><asset-link>3t1t8PDynjpXbAzv6zOVQq</asset-link><asset>3t1t8PDynjpXbAzv6zOVQq</asset>';
-
-    const value = await mapField(content, {
-      settings: { type: FIELD_TYPE_RICHTEXT },
-      richTextRenderer: {
-        renderMark: {
-          [MARKS.BOLD]: (text) => '',
-        },
-        renderNode: {
-          [BLOCKS.PARAGRAPH]: (node, next) => next(node.content),
-          [BLOCKS.EMBEDDED_ASSET]: (node) => `<asset>${node.data.target.sys.id}</asset>`,
-          [INLINES.ENTRY_HYPERLINK]: (node) => `<entry-link>${node.data.target.sys.id}</entry-link>`,
-          [INLINES.ASSET_HYPERLINK]: (node) => `<asset-link>${node.data.target.sys.id}</asset-link>`,
-        },
-      },
-    });
-
-    expect(value).toEqual(expected);
-  });
 
   test('DateTime', async () => {
     const value = await mapField('2021-01-14T12:00', {
@@ -303,5 +281,81 @@ describe('Mapper - mapEntry', () => {
         { id: '56O29iIIcee0ZcgIuwlHSv', contentType: 'fieldTest' },
       ],
     });
+  });
+});
+
+describe('Mapper hooks', () => {
+  test('mapEntryLink', async () => {
+    const entries = await readFixture('entries.json');
+    const [entry] = entries;
+
+    const link = {
+      sys: {
+        type: FIELD_TYPE_LINK,
+        linkType: LINK_TYPE_ENTRY,
+        id: getContentId(entry),
+      },
+    };
+
+    const value = await mapField(link, {
+      settings: { type: FIELD_TYPE_LINK },
+      entries: entries,
+      mapEntryLink: (entry) => ({ id: getContentId(entry), custom: true }),
+    });
+
+    expect(value).toEqual({ id: getContentId(entry), custom: true });
+  });
+
+  test('mapAssetLink', async () => {
+    const assets = await readFixture('assets.json');
+    const [asset] = assets;
+    const link = {
+      sys: {
+        type: FIELD_TYPE_LINK,
+        linkType: LINK_TYPE_ASSET,
+        id: getContentId(asset),
+      },
+    };
+
+    const value = await mapField(link, {
+      settings: { type: FIELD_TYPE_LINK },
+      assets: assets,
+      mapAssetLink: (asset) => ({ id: getContentId(asset), custom: true }),
+    });
+
+    expect(value).toEqual({ id: getContentId(asset), custom: true });
+  });
+
+  test('richTextRenderer (config)', async () => {
+    const content = await readFixture('richtext.json');
+    const expected =
+      '<entry-link>WLITBNhFp0VzHqOwKJAwR</entry-link><asset-link>3t1t8PDynjpXbAzv6zOVQq</asset-link><asset>3t1t8PDynjpXbAzv6zOVQq</asset>';
+
+    const value = await mapField(content, {
+      settings: { type: FIELD_TYPE_RICHTEXT },
+      richTextRenderer: {
+        renderMark: {
+          [MARKS.BOLD]: () => '',
+        },
+        renderNode: {
+          [BLOCKS.PARAGRAPH]: (node, next) => next(node.content),
+          [BLOCKS.EMBEDDED_ASSET]: (node) => `<asset>${node.data.target.sys.id}</asset>`,
+          [INLINES.ENTRY_HYPERLINK]: (node) => `<entry-link>${node.data.target.sys.id}</entry-link>`,
+          [INLINES.ASSET_HYPERLINK]: (node) => `<asset-link>${node.data.target.sys.id}</asset-link>`,
+        },
+      },
+    });
+
+    expect(value).toEqual(expected);
+  });
+
+  test('richTextRenderer (function)', async () => {
+    const content = await readFixture('richtext.json');
+    const value = await mapField(content, {
+      settings: { type: FIELD_TYPE_RICHTEXT },
+      richTextRenderer: () => '<h1>CUSTOM</h1>',
+    });
+
+    expect(value).toEqual('<h1>CUSTOM</h1>');
   });
 });
