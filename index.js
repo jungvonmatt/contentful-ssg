@@ -47,8 +47,7 @@ program
   .action(
     actionRunner(async (cmd) => {
       const config = await getConfig(parseArgs(cmd));
-      const tokens = await getApiKeys(config);
-      const verified = await askAll({ ...config, ...tokens });
+      const verified = await askAll(config);
 
       const filePath = path.join(process.cwd(), 'contentful-ssg.config.js');
       const prettierOptions = await prettier.resolveConfig(filePath);

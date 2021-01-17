@@ -88,5 +88,17 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  }
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme"
 }
