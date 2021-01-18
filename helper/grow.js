@@ -17,3 +17,12 @@ const transform = (config) => async (content, { contentType }) => {
     })
   );
 };
+
+const mapFilename = async (data, { locale, contentType, entry, format }) => {
+  const [, code = locale.code] = /^([^_-]+)/.exec(locale.code) || [];
+  const localeAddon = locale.default ? '' : `@${code.toLowerCase()}`;
+  return `${id}${localeAddon}.${format}`;
+};
+
+module.exports.mapFilename = mapFilename;
+module.exports.transform = transform;
