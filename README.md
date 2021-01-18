@@ -1,4 +1,4 @@
-[![Build Status][ci-image]][ci-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] 
 # JvM Contentful export for static site generators
 Export contentful entries to filesystem (md/yaml) for static site generators (hugo/grow/...)
 
@@ -57,7 +57,8 @@ welcome contributions to improve the project further. If you're uncertain whethe
 free to open up an issue and we can discuss it.
 
 
-
+[npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-ssg
+[npm-image]: https://img.shields.io/npm/v/@jungvonmatt/contentful-ssg.svg
 [ci-url]: https://github.com/jungvonmatt/contentful-ssg/actions?workflow=Tests
 [ci-image]: https://github.com/jungvonmatt/contentful-ssg/workflows/Tests/badge.svg
 [depstat-url]: https://david-dm.org/jungvonmatt/contentful-ssg
