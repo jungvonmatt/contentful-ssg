@@ -1,4 +1,4 @@
-[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] 
+[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] [![Coverage][coveralls-image]][coveralls-url] 
 # JvM Contentful export for static site generators
 Export contentful entries to filesystem (md/yaml) for static site generators (hugo/grow/...)
 
@@ -65,3 +65,6 @@ free to open up an issue and we can discuss it.
 [depstat-image]: https://img.shields.io/david/jungvonmatt/contentful-ssg.svg
 [devdepstat-url]: https://david-dm.org/jungvonmatt/contentful-ssg?type=dev
 [devdepstat-image]: https://img.shields.io/david/dev/jungvonmatt/contentful-ssg.svg
+[coveralls-url]: https://coveralls.io/github/jungvonmatt/contentful-ssg?branch=main
+[coveralls-image]: https://coveralls.io/repos/github/jungvonmatt/contentful-ssg/badge.svg?branch=main
+
