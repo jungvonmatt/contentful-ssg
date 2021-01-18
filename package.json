@@ -9,7 +9,8 @@
   },
   "files": [
     "index.js",
-    "lib"
+    "lib",
+    "helper"
   ],
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
