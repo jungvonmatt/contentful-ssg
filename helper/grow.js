@@ -1,15 +1,16 @@
 const BUILD_INS = ['category', 'date', 'dates', 'hidden', 'slug', 'title'];
 
 const transform = (config) => async (content, { contentType }) => {
-  const { pageTypes = [] } = config || {};
+  const { pageTypes = [], dateField = 'updated_at' } = config || {};
+
   return Object.fromEntries(
     Object.entries(content).map(([key, value]) => {
       if (BUILD_INS.includes(key) && pageTypes.includes(contentType)) {
         return [`$${key}`, value];
       }
 
-      if (key === 'published_on') {
-        return ['$date', value];
+      if (key === dateField) {
+        return ['$date', new Date(value).toISOString()];
       }
 
       return [key, value];
