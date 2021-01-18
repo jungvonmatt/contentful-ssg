@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-ssg",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Export contentful entries to files for static site generators (hugo/grow/...)",
   "main": "index.js",
   "bin": {
