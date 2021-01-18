@@ -36,7 +36,7 @@ Initializes migrations and stores the config values in the `contentful-ssg.confi
 | environmentId      | `String`             | `'master'`     | Contentful Environment id |
 | format             | `String`             | `'yaml'`       | File format (currently yaml is the only supported format) |
 | directory          | `String`\|`Function` | `'./content'`  | Directory where the content files are stored.<br>Pass `function({ locale, contentType, entry, format }){...}` to customize the directory per entry  |
-| transform          | `Function`           | `undefined`    | Pass `function(content, entry){...}` to modify the stored object |
+| transform          | `Function`           | `undefined`    | Pass `function(content, { entry, contentType, locale }){...}` to modify the stored object |
 | mapAssetLink       | `Function`           | `undefined`    | Pass `function(asset){...}` to customize how asset links are stored |
 | mapEntryLink       | `Function`           | `undefined`    | Pass `function(entry){...}` to customize how entry links are stored |
 | richTextRenderer   | `Object`\|`Function` | `{}`           | We use the contentful [`rich-text-html-renderer`](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer) to render the html.<br/>You can pass a [configuration object](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer#usage) or you can pass `function(document){...}` to use your own richtext renderer |
