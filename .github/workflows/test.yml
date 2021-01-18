@@ -39,3 +39,9 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Run Coveralls
+        uses: coverallsapp/github-action@master
+        if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.node, '14')
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
