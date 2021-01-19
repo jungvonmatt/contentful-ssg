@@ -5,11 +5,9 @@
 const fs = require('fs-extra');
 const path = require('path');
 const prettier = require('prettier');
-const pkgUp = require('pkg-up');
 const chalk = require('chalk');
 const { getConfig, askAll, askMissing } = require('./lib/config');
 const { log, confirm, omitKeys } = require('./lib/utils');
-const { getApiKeys } = require('./lib/contentful');
 const { dump } = require('./lib/dump');
 const pkg = require('./package.json');
 
@@ -18,13 +16,14 @@ program.version(pkg.version);
 require('dotenv').config();
 
 const parseArgs = (cmd) => {
-  const directory = cmd.path || cmd.parent.path;
   return {
-    environment: cmd.env || cmd.parent.env,
-    directory: directory ? path.resolve(directory) : undefined,
-    sourceEnvironment: cmd.sourceEnv || cmd.parent.sourceEnv,
-    destEnvironment: cmd.destEnv || cmd.parent.destEnv,
-    verbose: cmd.verbose || cmd.parent.verbose,
+    environment: cmd.env,
+    directory: cmd.path ? path.resolve(cmd.path) : undefined,
+    sourceEnvironment: cmd.sourceEnv,
+    destEnvironment: cmd.destEnv,
+    verbose: cmd.verbose,
+    preview: cmd.preview,
+    preset: cmd.preset,
   };
 };
 
@@ -44,9 +43,10 @@ const actionRunner = (fn, log = true) => {
 program
   .command('init')
   .description('Initialize contentful-ssg')
+  .option('--preset [preset]', `Use preset. Currently only 'grow' is available as preset`)
   .action(
     actionRunner(async (cmd) => {
-      const config = await getConfig(parseArgs(cmd));
+      const config = await getConfig(parseArgs(cmd || {}));
       const verified = await askAll(config);
 
       const filePath = path.join(process.cwd(), 'contentful-ssg.config.js');
@@ -77,9 +77,10 @@ program
 program
   .command('fetch')
   .description('Fetch content objects')
+  .option('--preview', 'Fetch with preview mode')
   .action(
     actionRunner(async (cmd) => {
-      const config = await getConfig(parseArgs(cmd));
+      const config = await getConfig(parseArgs(cmd || {}));
       const verified = await askMissing(config);
 
       await dump(verified);
