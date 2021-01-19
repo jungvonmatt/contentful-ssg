@@ -242,7 +242,7 @@ describe('Mapper - mapEntry', () => {
       id: '34O95Y8gLXd3jPozdy7gmd',
       createdAt: '2021-01-14T13:17:17.232Z',
       updatedAt: '2021-01-14T13:35:12.671Z',
-      publishedAt: undefined,
+      contentType: 'fieldTest',
       shortText: 'Short Text (EN)',
       shortTextList: ['List 1 (gb)', 'List 2 (gb)'],
       longText: '__Long text (en-GB)__\n',
