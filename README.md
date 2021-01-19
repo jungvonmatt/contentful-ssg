@@ -56,6 +56,45 @@ Fetch all content entries and store them as yaml in the configured directory
 npx cssg fetch
 ```
 
+## Example configuration
+
+```js
+const path = require('path');
+
+module.exports = {
+  spaceId: '...',
+  environmentId: '...',
+  accessToken: '...',
+  previewAccessToken: '...',
+  directory: 'content',
+  preset: 'grow',
+  mapDirectory: function (base, { contentType }) {
+    switch (contentType.substr(0, 2)) {
+      case 't-':
+        return path.join(base, contentType);
+      case 'o-':
+        return path.join(base, 'partials/organisms', contentType);
+      case 'm-':
+        return path.join(base, 'partials/molecules', contentType);
+      case 'a-':
+        return path.join(base, 'partials/atoms', contentType);
+      default:
+        return path.join(base, 'partials', contentType);
+    }
+  },
+  typeConfig: {
+    't-home': {
+      view: '/views/t-home.html',
+      path: '/{locale}/',
+    },
+    't-article': {
+      view: '/views/t-article.html',
+      path: '/{locale}/{category}/{slug}/',
+    },
+  },
+};
+```
+
 ## Can I contribute?
 
 Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-migrations/graphs/contributors) and
