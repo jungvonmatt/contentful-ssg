@@ -178,6 +178,23 @@ describe('Mapper - mapField', () => {
     expect(value).toEqual([expected, expected]);
   });
 
+  test('Asset Link (invalid)', async () => {
+    const link = {
+      sys: {
+        type: FIELD_TYPE_LINK,
+        linkType: LINK_TYPE_ENTRY,
+        id: 'asdasd',
+      },
+    };
+
+    const value = await mapField(link, {
+      settings: { type: FIELD_TYPE_LINK },
+      assets: [],
+    });
+
+    expect(value).toEqual(undefined);
+  });
+
   test('Entry Link', async () => {
     const entries = await readFixture('entries.json');
     const [entry] = entries;
@@ -198,6 +215,26 @@ describe('Mapper - mapField', () => {
     });
 
     expect(value).toEqual(expected);
+  });
+
+  test('Entry Link (invalid)', async () => {
+    const entries = await readFixture('entries.json');
+    const [entry] = entries;
+
+    const link = {
+      sys: {
+        type: FIELD_TYPE_LINK,
+        linkType: LINK_TYPE_ENTRY,
+        id: getContentId(entry),
+      },
+    };
+
+    const value = await mapField(link, {
+      settings: { type: FIELD_TYPE_LINK },
+      entries: [],
+    });
+
+    expect(value).toEqual(undefined);
   });
 
   test('Entry Link (Array)', async () => {
