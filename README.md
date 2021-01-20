@@ -38,11 +38,11 @@ Initializes migrations and stores the config values in the `contentful-ssg.confi
 | spaceId            | `String`             | `undefined`   | Contentful Space id                                                                                                                                                                                                                                                                                                                                                                 |
 | environmentId      | `String`             | `'master'`    | Contentful Environment id                                                                                                                                                                                                                                                                                                                                                           |
 | format             | `String`             | `'yaml'`      | File format (currently yaml is the only supported format)                                                                                                                                                                                                                                                                                                                           |
-| directory          | `String`             | `'./content'` | Directory where the content files are stored.                                                                                                                                                                                                                                                                                                                                       |
+| directory          | `String`             | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                   |
 | typeConfig         | `Object`             | `undefined'`  | Pass a map with e.g. grow's blueprint config ({<contenttypeid>: {$path: '...', $view: '...'}})                                                                                                                                                                                                                                                                                      |
 | preset             | `String`             | `undefined'`  | Pass `grow` to enable generator specific addons                                                                                                                                                                                                                                                                                                                                     |
 | transform          | `Function`           | `undefined`   | Pass `function(content, { entry, contentType, locale }){...}` to modify the stored object                                                                                                                                                                                                                                                                                           |
-| mapDirectory       | `Function`           | `undefined`   | Pass `function(directory, { locale, contentType })` to customize the directory per content-type                                                                                                                                                                                                                                                                                     |
+| mapDirectory       | `Function`           | `undefined`   | Pass `function(contentType, { locale })` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                                |
 | mapFilename        | `Function`           | `undefined`   | Pass `function(data, { locale, contentType, entry, format })` to customize the filename per entry                                                                                                                                                                                                                                                                                   |
 | mapAssetLink       | `Function`           | `undefined`   | Pass `function(asset){...}` to customize how asset links are stored                                                                                                                                                                                                                                                                                                                 |
 | mapEntryLink       | `Function`           | `undefined`   | Pass `function(entry){...}` to customize how entry links are stored                                                                                                                                                                                                                                                                                                                 |
@@ -68,18 +68,18 @@ module.exports = {
   previewAccessToken: '...',
   directory: 'content',
   preset: 'grow',
-  mapDirectory: function (base, { contentType }) {
+  mapDirectory: (contentType) => {
     switch (contentType.substr(0, 2)) {
       case 't-':
-        return path.join(base, contentType);
+        return contentType;
       case 'o-':
-        return path.join(base, 'partials/organisms', contentType);
+        return path.join('partials/organisms', contentType);
       case 'm-':
-        return path.join(base, 'partials/molecules', contentType);
+        return path.join('partials/molecules', contentType);
       case 'a-':
-        return path.join(base, 'partials/atoms', contentType);
+        return path.join('partials/atoms', contentType);
       default:
-        return path.join(base, 'partials', contentType);
+        return path.join('partials', contentType);
     }
   },
   typeConfig: {
