@@ -17,6 +17,8 @@ const {
   LINK_TYPE_ENTRY,
   getContentId,
   getContentTypeId,
+  convertToMap,
+  getFieldSettings,
 } = require('../lib/contentful');
 
 const { mapField, mapEntry } = require('../lib/transform/mapper');
@@ -111,7 +113,8 @@ describe('Mapper - mapField', () => {
     const assets = await readFixture('assets.json');
     const locales = await readFixture('locales.json');
     const contentTypes = await readFixture('content_types.json');
-    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { contentTypes, locales }));
+    const fieldSettings = getFieldSettings(contentTypes);
+    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { fieldSettings, locales }));
 
     const [asset] = translatedAssets;
 
@@ -134,7 +137,7 @@ describe('Mapper - mapField', () => {
 
     const value = await mapField(link, {
       settings: { type: FIELD_TYPE_LINK },
-      assets: translatedAssets,
+      assets: convertToMap(translatedAssets),
     });
 
     expect(value).toEqual(expected);
@@ -144,7 +147,8 @@ describe('Mapper - mapField', () => {
     const assets = await readFixture('assets.json');
     const locales = await readFixture('locales.json');
     const contentTypes = await readFixture('content_types.json');
-    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { contentTypes, locales }));
+    const fieldSettings = getFieldSettings(contentTypes);
+    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { fieldSettings, locales }));
 
     const [asset] = translatedAssets;
     const link = {
@@ -172,7 +176,9 @@ describe('Mapper - mapField', () => {
           linkType: LINK_TYPE_ASSET,
         },
       },
-      assets: translatedAssets,
+      assets: convertToMap(translatedAssets),
+      entries: new Map(),
+      fieldSettings,
     });
 
     expect(value).toEqual([expected, expected]);
@@ -189,7 +195,8 @@ describe('Mapper - mapField', () => {
 
     const value = await mapField(link, {
       settings: { type: FIELD_TYPE_LINK },
-      assets: [],
+      assets: new Map(),
+      entries: new Map(),
     });
 
     expect(value).toEqual(undefined);
@@ -211,7 +218,8 @@ describe('Mapper - mapField', () => {
 
     const value = await mapField(link, {
       settings: { type: FIELD_TYPE_LINK },
-      entries,
+      entries: convertToMap(entries),
+      assets: new Map(),
     });
 
     expect(value).toEqual(expected);
@@ -231,7 +239,8 @@ describe('Mapper - mapField', () => {
 
     const value = await mapField(link, {
       settings: { type: FIELD_TYPE_LINK },
-      entries: [],
+      entries: new Map(),
+      assets: new Map(),
     });
 
     expect(value).toEqual(undefined);
@@ -239,6 +248,7 @@ describe('Mapper - mapField', () => {
 
   test('Entry Link (Array)', async () => {
     const entries = await readFixture('entries.json');
+    const contentTypes = await readFixture('content_types.json');
     const [entry] = entries;
     const link = {
       sys: {
@@ -258,7 +268,8 @@ describe('Mapper - mapField', () => {
           linkType: LINK_TYPE_ENTRY,
         },
       },
-      entries,
+      entries: convertToMap(entries),
+      fieldSettings: getFieldSettings(contentTypes),
     });
 
     expect(value).toEqual([data, data]);
@@ -269,11 +280,18 @@ describe('Mapper - mapEntry', () => {
   test('Maps entry', async () => {
     const { entries, assets, contentTypes, locales } = await getContent();
     const [entry] = entries;
+    const fieldSettings = getFieldSettings(contentTypes);
 
-    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { contentTypes, locales }));
+    const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { locales, fieldSettings }));
 
-    const localized = await localizeEntry(entry, 'en-GB', { contentTypes, locales });
-    const result = await mapEntry(localized, { entries, assets: translatedAssets, contentTypes });
+    const localized = await localizeEntry(entry, 'en-GB', { fieldSettings, locales });
+    const result = await mapEntry(localized, {
+      entries,
+      assets: convertToMap(translatedAssets),
+      entries: convertToMap(entries),
+      contentTypes,
+      fieldSettings,
+    });
 
     expect(result).toEqual({
       id: '34O95Y8gLXd3jPozdy7gmd',
@@ -336,7 +354,7 @@ describe('Mapper hooks', () => {
 
     const value = await mapField(link, {
       settings: { type: FIELD_TYPE_LINK },
-      entries: entries,
+      entries: convertToMap(entries),
       mapEntryLink: (entry) => ({ id: getContentId(entry), custom: true }),
     });
 
@@ -356,7 +374,7 @@ describe('Mapper hooks', () => {
 
     const value = await mapField(link, {
       settings: { type: FIELD_TYPE_LINK },
-      assets: assets,
+      assets: convertToMap(assets),
       mapAssetLink: (asset) => ({ id: getContentId(asset), custom: true }),
     });
 

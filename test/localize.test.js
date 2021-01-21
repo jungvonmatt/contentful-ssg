@@ -1,6 +1,6 @@
 /* eslint-env jest */
 const { getContent } = require('./utils');
-const { getContentId } = require('../lib/contentful');
+const { getContentId, getFieldSettings } = require('../lib/contentful');
 
 const { localizeEntry, localizeField, getLocaleList } = require('../lib/transform/localize');
 
@@ -40,15 +40,16 @@ describe('Localize', () => {
 
   test('Localize entry', async () => {
     const { entries, assets, contentTypes, locales } = await getContent();
+    const fieldSettings = getFieldSettings(contentTypes);
     const entry = entries.find((entry) => getContentId(entry) === '34O95Y8gLXd3jPozdy7gmd');
 
-    const { fields: fieldsDe } = localizeEntry(entry, 'de', { contentTypes, locales });
+    const { fields: fieldsDe } = localizeEntry(entry, 'de', { fieldSettings, locales });
     expect(fieldsDe.shortText).toEqual('Short Text (DE)');
     expect(fieldsDe.longText).toEqual('__Long text (de-DE)__\n');
     expect(fieldsDe.integer).toEqual(3);
     expect(fieldsDe.decimal).toEqual(14);
 
-    const { fields: fieldsEn } = localizeEntry(entry, 'en-GB', { contentTypes, locales });
+    const { fields: fieldsEn } = localizeEntry(entry, 'en-GB', { fieldSettings, locales });
     expect(fieldsEn.shortText).toEqual('Short Text (EN)');
     expect(fieldsEn.longText).toEqual('__Long text (en-GB)__\n');
     expect(fieldsEn.integer).toEqual(2);
@@ -57,9 +58,10 @@ describe('Localize', () => {
 
   test('Localize asset', async () => {
     const { entries, assets, contentTypes, locales } = await getContent();
+    const fieldSettings = getFieldSettings(contentTypes);
     const asset = assets.find((asset) => getContentId(asset) === '3t1t8PDynjpXbAzv6zOVQq');
 
-    const { fields } = localizeEntry(asset, 'en-US', { contentTypes, locales });
+    const { fields } = localizeEntry(asset, 'en-US', { fieldSettings, locales });
 
     expect(fields).toEqual({
       title: 'FuBK',
