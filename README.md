@@ -95,6 +95,8 @@ module.exports = {
 };
 ```
 
+![Demo](https://github.com/jungvonmatt/contentful-ssg/blob/main/demo.gif?raw=true)
+
 ## Can I contribute?
 
 Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-migrations/graphs/contributors) and
