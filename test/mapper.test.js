@@ -1,5 +1,6 @@
 /* eslint-env jest */
 const { BLOCKS, INLINES, MARKS } = require('@contentful/rich-text-types');
+
 const { readFixture, getContent } = require('./utils');
 const {
   FIELD_TYPE_SYMBOL,
