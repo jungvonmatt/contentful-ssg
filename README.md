@@ -26,7 +26,7 @@ npx cssg help [command]
 npx cssg init
 ```
 
-Initializes migrations and stores the config values in the `contentful-ssg.config.js` file.
+Initializes contentful-ssg and stores the config values in the `contentful-ssg.config.js` file.
 
 <!-- prettier-ignore -->
 #### Configuration values
@@ -39,8 +39,8 @@ Initializes migrations and stores the config values in the `contentful-ssg.confi
 | environmentId      | `String`             | `'master'`    | Contentful Environment id                                                                                                                                                                                                                                                                                                                                                           |
 | format             | `String`             | `'yaml'`      | File format (currently yaml is the only supported format)                                                                                                                                                                                                                                                                                                                           |
 | directory          | `String`             | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                   |
-| typeConfig         | `Object`             | `undefined'`  | Pass a map with e.g. grow's blueprint config ({<contenttypeid>: {$path: '...', $view: '...'}})                                                                                                                                                                                                                                                                                      |
-| preset             | `String`             | `undefined'`  | Pass `grow` to enable generator specific addons                                                                                                                                                                                                                                                                                                                                     |
+| typeConfig         | `Object`             | `undefined`   | Pass a map with e.g. grow's blueprint config ({<contenttypeid>: {$path: '...', $view: '...'}})                                                                                                                                                                                                                                                                                      |
+| preset             | `String`             | `undefined`   | Pass `grow` to enable generator specific addons                                                                                                                                                                                                                                                                                                                                     |
 | transform          | `Function`           | `undefined`   | Pass `function(content, { entry, contentType, locale, helper, ... }){...}` to modify the stored object                                                                                                                                                                                                                                                                              |
 | mapDirectory       | `Function`           | `undefined`   | Pass `function(contentType, { locale, helper })` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                        |
 | mapFilename        | `Function`           | `undefined`   | Pass `function(data, { locale, contentType, entry, format, helper })` to customize the filename per entry                                                                                                                                                                                                                                                                           |
@@ -124,7 +124,7 @@ module.exports = {
 
 ## Can I contribute?
 
-Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-migrations/graphs/contributors) and
+Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-ssg/graphs/contributors) and
 welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
 free to open up an issue and we can discuss it.
 
