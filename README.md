@@ -26,7 +26,7 @@ npx cssg help [command]
 npx cssg init
 ```
 
-Initializes migrations and stores the config values in the `contentful-ssg.config.js` file.
+Initializes contentful-ssg and stores the config values in the `contentful-ssg.config.js` file.
 
 <!-- prettier-ignore -->
 #### Configuration values
@@ -37,10 +37,10 @@ Initializes migrations and stores the config values in the `contentful-ssg.confi
 | previewAccessToken | `String`             | `undefined`   | Content Preview API - access token                                                                                                                                                                                                                                                                                                                                                  |
 | spaceId            | `String`             | `undefined`   | Contentful Space id                                                                                                                                                                                                                                                                                                                                                                 |
 | environmentId      | `String`             | `'master'`    | Contentful Environment id                                                                                                                                                                                                                                                                                                                                                           |
-| format             | `String`             | `'yaml'`      | File format (currently yaml is the only supported format)                                                                                                                                                                                                                                                                                                                           |
+| format             | `String`             | `'yaml'`      | File format ( `yaml`, `md`)                                                                                                                                                                                                                                                                                                                                                         |
 | directory          | `String`             | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                   |
-| typeConfig         | `Object`             | `undefined'`  | Pass a map with e.g. grow's blueprint config ({<contenttypeid>: {$path: '...', $view: '...'}})                                                                                                                                                                                                                                                                                      |
-| preset             | `String`             | `undefined'`  | Pass `grow` to enable generator specific addons                                                                                                                                                                                                                                                                                                                                     |
+| typeConfig         | `Object`             | `undefined`   | Pass a map with e.g. grow's blueprint config ({<contenttypeid>: {$path: '...', $view: '...'}})                                                                                                                                                                                                                                                                                      |
+| preset             | `String`             | `undefined`   | Pass `grow` to enable generator specific addons                                                                                                                                                                                                                                                                                                                                     |
 | transform          | `Function`           | `undefined`   | Pass `function(content, { entry, contentType, locale, helper, ... }){...}` to modify the stored object                                                                                                                                                                                                                                                                              |
 | mapDirectory       | `Function`           | `undefined`   | Pass `function(contentType, { locale, helper })` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                        |
 | mapFilename        | `Function`           | `undefined`   | Pass `function(data, { locale, contentType, entry, format, helper })` to customize the filename per entry                                                                                                                                                                                                                                                                           |
@@ -83,6 +83,8 @@ npx cssg fetch
 
 ## Example configuration
 
+### Grow
+
 ```js
 const path = require('path');
 
@@ -120,11 +122,57 @@ module.exports = {
 };
 ```
 
+### Hugo
+
+```js
+const path = require('path');
+
+module.exports = {
+  spaceId: '...',
+  environmentId: '...',
+  accessToken: '...',
+  previewAccessToken: '...',
+  directory: 'content',
+  format: 'md',
+  mapDirectory: function(contentType, { locale, helper }) {
+    if (contentType === 't-home') {
+      return '/';
+    } else if (contentType.substr(0, 2) === 't-') {
+      return 'pages';
+    } else {
+      return path.join('headlessBundles', contentType);
+    }
+  },
+  mapFilename: function(data, { locale, contentType, entry, format, helper }) {
+    if (contentType === 't-home') {
+      return path.join('_index.' + locale.code + '.' + format);
+    } else {
+      return path.join(entry.sys.id + '/index.' + locale.code + '.' + format);
+    }
+  },
+  transform: (content, options) => {
+    const { helper } = options;
+    const slugs = helper.collectValues('fields.slug', {
+      linkField: 'fields.parentPage',
+    });
+    if (content.contentType === 't-home') {
+      return { ...content };
+    } else if (content.contentType.substr(0, 2) === 't-') {
+      return { ...content, url: slugs.join('/') };
+    } else {
+      return { ...content, headless: true };
+    }
+  },
+};
+```
+
+## Demo
+
 ![Demo](https://github.com/jungvonmatt/contentful-ssg/blob/main/demo.gif?raw=true)
 
 ## Can I contribute?
 
-Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-migrations/graphs/contributors) and
+Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-ssg/graphs/contributors) and
 welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
 free to open up an issue and we can discuss it.
 
