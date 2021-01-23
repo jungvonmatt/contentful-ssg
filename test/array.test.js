@@ -1,3 +1,4 @@
+/* eslint-env jest */
 const { mapAsync, reduceAsync, filterAsync, forEachAsync } = require('../lib/array');
 
 const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // eslint-disable-line no-promise-executor-return
@@ -30,28 +31,6 @@ test('async map (default)', async () => {
 test('async map (empty)', async () => {
   const result = await mapAsync();
   expect(result).toEqual([]);
-});
-
-test('async reduce', async () => {
-  const afunc = async (res, value, index) => {
-    await waitRandom();
-    return [...res, value * index];
-  };
-
-  const func = (res, value, index) => [...res, value * index];
-  const array = [1, 2, 3, 4, 5, 6, 7, 8];
-  const expected = array.reduce(func, []);
-
-  const result1 = await reduceAsync(array, func, []);
-  const result2 = await reduceAsync(array, afunc, []);
-
-  expect(result1).toEqual(expected);
-  expect(result2).toEqual(expected);
-});
-
-test('async reduce (empty)', async () => {
-  const result = await reduceAsync();
-  expect(result).toEqual(undefined);
 });
 
 test('async filter', async () => {
