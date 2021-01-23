@@ -41,12 +41,37 @@ Initializes migrations and stores the config values in the `contentful-ssg.confi
 | directory          | `String`             | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                   |
 | typeConfig         | `Object`             | `undefined'`  | Pass a map with e.g. grow's blueprint config ({<contenttypeid>: {$path: '...', $view: '...'}})                                                                                                                                                                                                                                                                                      |
 | preset             | `String`             | `undefined'`  | Pass `grow` to enable generator specific addons                                                                                                                                                                                                                                                                                                                                     |
-| transform          | `Function`           | `undefined`   | Pass `function(content, { entry, contentType, locale }){...}` to modify the stored object                                                                                                                                                                                                                                                                                           |
-| mapDirectory       | `Function`           | `undefined`   | Pass `function(contentType, { locale })` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                                |
-| mapFilename        | `Function`           | `undefined`   | Pass `function(data, { locale, contentType, entry, format })` to customize the filename per entry                                                                                                                                                                                                                                                                                   |
+| transform          | `Function`           | `undefined`   | Pass `function(content, { entry, contentType, locale, helper, ... }){...}` to modify the stored object                                                                                                                                                                                                                                                                              |
+| mapDirectory       | `Function`           | `undefined`   | Pass `function(contentType, { locale, helper })` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                        |
+| mapFilename        | `Function`           | `undefined`   | Pass `function(data, { locale, contentType, entry, format, helper })` to customize the filename per entry                                                                                                                                                                                                                                                                           |
 | mapAssetLink       | `Function`           | `undefined`   | Pass `function(asset){...}` to customize how asset links are stored                                                                                                                                                                                                                                                                                                                 |
 | mapEntryLink       | `Function`           | `undefined`   | Pass `function(entry){...}` to customize how entry links are stored                                                                                                                                                                                                                                                                                                                 |
 | richTextRenderer   | `Object`\|`Function` | `{}`          | We use the contentful [`rich-text-html-renderer`](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer) to render the html.<br/> You can pass a [configuration object](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer#usage)<br/> or you can pass `function(document){...}` to use your own richtext renderer |
+
+#### Helper functions
+
+###### collectValues
+
+Get values from linked pages to e.g. build an url out of parent slugs.
+
+```js
+{
+  transform: (content, options) => {
+    const { helper } = options;
+    const slugs = helper.collectValues('fields.slug', {
+      linkField: 'fields.parentPage',
+    });
+
+    return { ...content, url: '/' + slugs.join('/') };
+  };
+}
+```
+
+_contentful-ssg.config.js_
+
+###### collectParentValues
+
+The same as collectValues just without the value from the current entry
 
 ### fetch
 
