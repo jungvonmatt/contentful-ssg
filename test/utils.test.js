@@ -1,4 +1,3 @@
-const { TestScheduler } = require('jest');
 /* eslint-env jest */
 const { groupBy, getContentTypeDirectory, snakeCaseKeys, removeEmpty, omitKeys, collect } = require('../lib/utils');
 
@@ -66,5 +65,19 @@ describe('Utils', () => {
     const expected = { a_test: [{ test_one: 1, t: 2 }], a: 'b' };
 
     expect(snakeCaseKeys(value)).toEqual(expected);
+  });
+
+  test('getContentTypeDirectory', async () => {
+    const config = {
+      directory: 'directory',
+      locale: { code: 'en' },
+      contentType: 'contentType',
+    };
+
+    const val1 = await getContentTypeDirectory(config);
+    const val2 = await getContentTypeDirectory({ ...config, mapDirectory: (ct, { locale }) => `${locale.code}-${ct}` });
+
+    expect(val1).toBe('directory/contentType');
+    expect(val2).toBe('directory/en-contentType');
   });
 });
