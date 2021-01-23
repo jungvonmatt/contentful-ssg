@@ -60,4 +60,11 @@ describe('Utils', () => {
       ],
     });
   });
+
+  test('snakeCaseKeys', () => {
+    const value = { aTest: [{ testOne: 1, t: 2 }], A: 'b' };
+    const expected = { a_test: [{ test_one: 1, t: 2 }], a: 'b' };
+
+    expect(snakeCaseKeys(value)).toEqual(expected);
+  });
 });
