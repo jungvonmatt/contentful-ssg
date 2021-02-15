@@ -134,6 +134,7 @@ describe('Mapper - mapField', () => {
       description: asset.fields.description,
       width: asset.fields.file.details.image.width,
       height: asset.fields.file.details.image.height,
+      fileSize: asset.fields.file.details.size,
     };
 
     const value = await mapField(link, {
@@ -167,6 +168,7 @@ describe('Mapper - mapField', () => {
       description: asset.fields.description,
       width: asset.fields.file.details.image.width,
       height: asset.fields.file.details.image.height,
+      fileSize: asset.fields.file.details.size,
     };
 
     const value = await mapField([link, link], {
@@ -317,6 +319,7 @@ describe('Mapper - mapEntry', () => {
         description: 'Dummy image',
         width: 768,
         height: 576,
+        fileSize: 120093,
       },
       mediaList: [
         {
@@ -327,6 +330,7 @@ describe('Mapper - mapEntry', () => {
           description: 'Dummy image',
           width: 768,
           height: 576,
+          fileSize: 120093,
         },
       ],
       boolean: false,
