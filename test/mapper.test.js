@@ -418,4 +418,61 @@ describe('Mapper hooks', () => {
 
     expect(value).toEqual('<h1>CUSTOM</h1>');
   });
+
+  test('disabled richTextRenderer', async () => {
+    const entries = await readFixture('entries.json');
+    const assets = await readFixture('assets.json');
+    const content = await readFixture('richtext.json');
+    const value = await mapField(content, {
+      settings: { type: FIELD_TYPE_RICHTEXT },
+      richTextRenderer: false,
+      entries: convertToMap(entries),
+      assets: convertToMap(assets),
+    });
+
+    expect(value).toEqual({
+      data: {},
+      content: [
+        {
+          data: {},
+          content: [{ data: {}, marks: ['bold'], value: 'Rich text (EN)', nodeType: 'text' }],
+          nodeType: 'paragraph',
+        },
+        {
+          data: {},
+          content: [
+            { data: {}, marks: [], value: '', nodeType: 'text' },
+            {
+              data: { id: 'WLITBNhFp0VzHqOwKJAwR', contentType: 'fieldTest' },
+              content: [{ data: {}, marks: [], value: 'Entry Link', nodeType: 'text' }],
+              nodeType: 'entry-hyperlink',
+            },
+            { data: {}, marks: [], value: '', nodeType: 'text' },
+          ],
+          nodeType: 'paragraph',
+        },
+        {
+          data: {},
+          content: [
+            { data: {}, marks: [], value: '', nodeType: 'text' },
+            {
+              data: { mimeType: '', url: '', title: { 'en-US': 'FuBK' }, description: { 'en-US': 'Dummy image' } },
+              content: [{ data: {}, marks: [], value: 'Asset Link', nodeType: 'text' }],
+              nodeType: 'asset-hyperlink',
+            },
+            { data: {}, marks: [], value: '', nodeType: 'text' },
+          ],
+          nodeType: 'paragraph',
+        },
+        { data: {}, content: [{ data: {}, marks: [], value: '', nodeType: 'text' }], nodeType: 'paragraph' },
+        {
+          data: { mimeType: '', url: '', title: { 'en-US': 'FuBK' }, description: { 'en-US': 'Dummy image' } },
+          content: [],
+          nodeType: 'embedded-asset-block',
+        },
+        { data: {}, content: [{ data: {}, marks: [], value: '', nodeType: 'text' }], nodeType: 'paragraph' },
+      ],
+      nodeType: 'document',
+    });
+  });
 });
