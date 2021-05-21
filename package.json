@@ -42,6 +42,7 @@
     "listr": "^0.14.3",
     "listr-update-renderer": "^0.5.0",
     "merge-options": "^3.0.4",
+    "micromatch": "^4.0.4",
     "pkg-up": "^3.1.0",
     "snake-case": "^3.0.4"
   },
