@@ -1,25 +1,17 @@
-const { TestScheduler } = require('jest');
-/* eslint-env jest */
-const { getContent } = require('./utils');
-const {
-  getClient,
-  getSpaces,
-  getSpace,
-  getEnvironments,
-  getEnvironment,
+import {
+  convertToMap,
   getContentId,
   getContentTypeId,
   getEnvironmentId,
-  isAssetLink,
-  isEntryLink,
-  isAsset,
-  isEntry,
-  isLink,
   getFieldSettings,
-  getApiKey,
-  getPreviewApiKey,
-  convertToMap,
-} = require('../lib/contentful');
+  isAsset,
+  isAssetLink,
+  isEntry,
+  isEntryLink,
+  isLink,
+} from '../lib/contentful';
+/* eslint-env jest */
+import { getContent } from './utils';
 
 describe('Contentful', () => {
   test('isAssetLink', async () => {
@@ -104,6 +96,6 @@ describe('Contentful', () => {
     const ids = ['34O95Y8gLXd3jPozdy7gmd', 'WLITBNhFp0VzHqOwKJAwR', '56O29iIIcee0ZcgIuwlHSv', '2WLqjLlMJUbc0vCf9UMfjA'];
 
     expect(entryMap.size).toBe(ids.length);
-    ids.forEach((id) => expect(entryMap.has(id)).toBe(true));
+    for (const id of ids) expect(entryMap.has(id)).toBe(true);
   });
 });

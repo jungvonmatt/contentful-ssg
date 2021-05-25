@@ -2,7 +2,8 @@
   "name": "@jungvonmatt/contentful-ssg",
   "version": "0.14.0",
   "description": "Export contentful entries to files for static site generators (hugo/grow/...)",
-  "main": "index.js",
+  "type": "module",
+  "exports": "./index.js",
   "bin": {
     "contentful-ssg": "index.js",
     "cssg": "index.js"
@@ -13,30 +14,33 @@
   ],
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
-    "jest": "jest --coverage",
+    "jest": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test": "npm run lint && npm run jest",
     "prepare": "husky install"
   },
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": ">=14"
+    "node": "^14.13.1 || >=16.0.0"
   },
   "dependencies": {
     "@contentful/rich-text-html-renderer": "^14.1.2",
     "@contentful/rich-text-types": "^14.1.2",
+    "@proload/core": "^0.1.4",
+    "@proload/plugin-json": "^0.1.0",
+    "@proload/plugin-rc": "^0.1.0",
+    "@proload/plugin-typescript": "^0.1.0",
     "chalk": "^4.1.1",
     "commander": "^7.2.0",
     "contentful": "^8.3.5",
-    "contentful-management": "^7.18.2",
-    "cosmiconfig": "^7.0.0",
+    "contentful-management": "^7.22.2",
     "dlv": "^1.1.3",
-    "dotenv": "^9.0.1",
+    "dotenv": "^10.0.0",
     "find-up": "^5.0.0",
     "fs-extra": "^10.0.0",
     "globby": "^11.0.3",
     "ignore": "^5.1.8",
-    "inquirer": "^8.0.0",
+    "inquirer": "^8.1.0",
     "js-yaml": "^4.1.0",
     "js-yaml-js-types": "^1.0.0",
     "listr": "^0.14.3",
@@ -48,13 +52,14 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.26.0",
+    "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-unicorn": "^32.0.1",
     "husky": "^6.0.0",
     "jest": "^26.6.3",
     "lint-staged": "^11.0.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.3.0"
   },
   "publishConfig": {
     "access": "public"
@@ -65,16 +70,22 @@
   },
   "eslintConfig": {
     "plugins": [
-      "prettier"
+      "prettier",
+      "unicorn"
     ],
     "rules": {
-      "prettier/prettier": "error"
+      "prettier/prettier": "error",
+      "unicorn/no-array-reduce": 0,
+      "unicorn/prefer-node-protocol": 0
     },
     "extends": [
-      "prettier"
+      "prettier",
+      "plugin:unicorn/recommended"
     ],
     "parser": "babel-eslint",
     "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module",
       "allowImportExportEverywhere": true,
       "ecmaFeatures": {
         "ecmaVersion": 2017,
@@ -82,9 +93,11 @@
       }
     },
     "env": {
-      "node": true
+      "node": true,
+      "es6": true
     }
   },
+  "jest": {},
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write --ignore-path .gitignore",

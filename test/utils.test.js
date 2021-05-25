@@ -1,5 +1,5 @@
 /* eslint-env jest */
-const { groupBy, getContentTypeDirectory, snakeCaseKeys, removeEmpty, omitKeys, collect } = require('../lib/utils');
+import { collect, getContentTypeDirectory, groupBy, omitKeys, removeEmpty, snakeCaseKeys } from '../lib/utils';
 
 describe('Utils', () => {
   test('collect', () => {
@@ -74,10 +74,13 @@ describe('Utils', () => {
       contentType: 'contentType',
     };
 
-    const val1 = await getContentTypeDirectory(config);
-    const val2 = await getContentTypeDirectory({ ...config, mapDirectory: (ct, { locale }) => `${locale.code}-${ct}` });
+    const value1 = await getContentTypeDirectory(config);
+    const value2 = await getContentTypeDirectory({
+      ...config,
+      mapDirectory: (ct, { locale }) => `${locale.code}-${ct}`,
+    });
 
-    expect(val1).toBe('directory/contentType');
-    expect(val2).toBe('directory/en-contentType');
+    expect(value1).toBe('directory/contentType');
+    expect(value2).toBe('directory/en-contentType');
   });
 });

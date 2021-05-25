@@ -1,5 +1,5 @@
-const { mapGrowLink, mapBuildInFields } = require('../lib/presets/grow');
-const { getContent } = require('./utils');
+import { mapGrowLink } from '../lib/presets/grow';
+import { getContent } from './utils';
 
 describe('Preset: grow', () => {
   test('mapGrowLink (doc)', async () => {
