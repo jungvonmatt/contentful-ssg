@@ -1,8 +1,7 @@
 /* eslint-env jest */
-const { getContent } = require('./utils');
-const { getContentId, getFieldSettings } = require('../lib/contentful');
-
-const { localizeEntry, localizeField, getLocaleList } = require('../lib/transform/localize');
+import { getContentId, getFieldSettings } from '../lib/contentful';
+import { getLocaleList, localizeEntry, localizeField } from '../lib/transform/localize';
+import { getContent } from './utils';
 
 describe('Localize', () => {
   test('getLocaleList', async () => {
@@ -67,10 +66,9 @@ describe('Localize', () => {
       title: 'FuBK',
       description: 'Dummy image',
       file: {
-        url:
-          '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+        url: '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
         details: {
-          size: 120093,
+          size: 120_093,
           image: {
             width: 768,
             height: 576,

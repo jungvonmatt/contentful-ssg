@@ -2,20 +2,22 @@
 
 /* eslint-disable no-console */
 /* eslint-env node */
-const fs = require('fs-extra');
-const path = require('path');
-const prettier = require('prettier');
-const chalk = require('chalk');
-const { getConfig, askAll, askMissing } = require('./lib/config');
-const { log, confirm, omitKeys } = require('./lib/utils');
-const { dump } = require('./lib/dump');
-const pkg = require('./package.json');
+import chalk from 'chalk';
+import program from 'commander';
+import dotenv from 'dotenv';
+import fs from 'fs-extra';
+import path from 'path';
+import prettier from 'prettier';
+import { askAll, askMissing, getConfig } from './lib/config.js';
+import { dump } from './lib/dump.js';
+import { confirm, log, omitKeys } from './lib/utils.js';
 
-const program = require('commander');
-program.version(pkg.version);
-require('dotenv').config();
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
-const parseArgs = (cmd) => {
+dotenv.config();
+program.version(packageJson.version);
+
+const parseArguments = (cmd) => {
   return {
     environment: cmd.env,
     directory: cmd.path ? path.resolve(cmd.path) : undefined,
@@ -31,13 +33,13 @@ const errorHandler = (error, silence) => {
   if (!silence) {
     const { errors } = error;
     log.error(error);
-    (errors || []).forEach((error) => log.error(error));
+    for (const error of errors || []) log.error(error);
   }
   process.exit(1);
 };
 
-const actionRunner = (fn, log = true) => {
-  return (...args) => fn(...args).catch((error) => errorHandler(error, !log));
+const actionRunner = (function_, log = true) => {
+  return (...arguments_) => function_(...arguments_).catch((error) => errorHandler(error, !log));
 };
 
 program
@@ -46,7 +48,7 @@ program
   .option('--preset [preset]', `Use preset. Currently only 'grow' is available as preset`)
   .action(
     actionRunner(async (cmd) => {
-      const config = await getConfig(parseArgs(cmd || {}));
+      const config = await getConfig(parseArguments(cmd || {}));
       const verified = await askAll(config);
 
       const filePath = path.join(process.cwd(), 'contentful-ssg.config.js');
@@ -61,11 +63,9 @@ program
       });
 
       let writeFile = true;
-      if (fs.existsSync(filePath)) {
-        writeFile = await confirm(`Config file already exists. Overwrite?\n\n${chalk.reset(content)}`);
-      } else {
-        writeFile = await confirm(`Please verify your settings:\n\n${chalk.reset(content)}`);
-      }
+      writeFile = await (fs.existsSync(filePath)
+        ? confirm(`Config file already exists. Overwrite?\n\n${chalk.reset(content)}`)
+        : confirm(`Please verify your settings:\n\n${chalk.reset(content)}`));
 
       if (writeFile) {
         await fs.outputFile(filePath, content);
@@ -80,7 +80,7 @@ program
   .option('--preview', 'Fetch with preview mode')
   .action(
     actionRunner(async (cmd) => {
-      const config = await getConfig(parseArgs(cmd || {}));
+      const config = await getConfig(parseArguments(cmd || {}));
       const verified = await askMissing(config);
 
       await dump(verified);

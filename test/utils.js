@@ -1,10 +1,12 @@
-const path = require('path');
-const fs = require('fs-extra');
-const { FIELD_TYPE_LINK, LINK_TYPE_ENTRY, LINK_TYPE_ASSET } = require('../lib/contentful');
+import fs from 'fs-extra';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { FIELD_TYPE_LINK, LINK_TYPE_ASSET, LINK_TYPE_ENTRY } from '../lib/contentful';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const readFixture = (file) => fs.readJSON(path.join(__dirname, 'fixtures', file));
+export const readFixture = (file) => fs.readJSON(path.join(__dirname, 'fixtures', file));
 
-const getContent = async () => {
+export const getContent = async () => {
   const assets = await readFixture('assets.json');
   const entries = await readFixture('entries.json');
   const locales = await readFixture('locales.json');
@@ -30,6 +32,3 @@ const getContent = async () => {
 
   return { entries, assets, contentTypes, locales, assetLink, entryLink, entry, asset };
 };
-
-module.exports.getContent = getContent;
-module.exports.readFixture = readFixture;

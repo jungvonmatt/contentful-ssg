@@ -1,5 +1,6 @@
+/* eslint-disable unicorn/consistent-function-scoping */
 /* eslint-env jest */
-const { mapAsync, reduceAsync, filterAsync, forEachAsync } = require('../lib/array');
+import { filterAsync, forEachAsync, mapAsync } from '../lib/array';
 
 const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // eslint-disable-line no-promise-executor-return
 const waitRandom = () => waitFor(Math.floor(Math.random() * Math.floor(50)));
@@ -10,11 +11,11 @@ test('async map', async () => {
     return value * value;
   };
 
-  const func = (value) => value * value;
+  const function_ = (value) => value * value;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
-  const expected = array.map(func);
+  const expected = array.map((value) => function_(value));
 
-  const result1 = await mapAsync(array, (v) => func(v));
+  const result1 = await mapAsync(array, (v) => function_(v));
   const result2 = await mapAsync(array, (v) => afunc(v));
 
   expect(result1).toEqual(expected);
@@ -39,11 +40,11 @@ test('async filter', async () => {
     return value % 2;
   };
 
-  const func = (value) => value % 2;
+  const function_ = (value) => value % 2;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
-  const expected = array.filter(func);
+  const expected = array.filter((value) => function_(value));
 
-  const result1 = await filterAsync(array, func);
+  const result1 = await filterAsync(array, function_);
   const result2 = await filterAsync(array, afunc);
 
   expect(result1).toEqual(expected);
@@ -51,6 +52,7 @@ test('async filter', async () => {
 });
 
 test('async filter (default)', async () => {
+  // eslint-disable-next-line unicorn/no-null
   const array = [1, 0, 3, false, 5, undefined, 7, null];
 
   const result = await filterAsync(array);
@@ -67,7 +69,7 @@ test('async forEach', async () => {
   const expected = [];
   const result1 = [];
   const result2 = [];
-  array.forEach((v) => expected.push(v));
+  for (const v of array) expected.push(v);
 
   await forEachAsync(array, (v) => result1.push(v));
   await forEachAsync(array, async (v) => {

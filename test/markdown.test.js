@@ -1,4 +1,4 @@
-const markdown = require('../lib/converter/markdown');
+import { convert } from '../lib/converter/markdown';
 
 describe('Markdown', () => {
   test('Markdown frontmatter', () => {
@@ -14,7 +14,7 @@ unsupported: '!g.unsupported /content/page/about.yaml'
 ---
 `;
 
-    const value = markdown.convert({
+    const value = convert({
       csv: '!g.csv /pod/path/to.csv',
       doc: '!g.doc /content/page/about.yaml',
       json: '!g.json /pod/path/to.json',
@@ -35,7 +35,7 @@ yaml: !g.yaml /pod/path/to.yaml?key.sub_key
 ---
 `;
 
-    const value = markdown.convert({
+    const value = convert({
       json: '!g.json /pod/path/to.json?key.sub_key',
       yaml: '!g.yaml /pod/path/to.yaml?key.sub_key',
     });

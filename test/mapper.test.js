@@ -1,29 +1,27 @@
 /* eslint-env jest */
-const { BLOCKS, INLINES, MARKS } = require('@contentful/rich-text-types');
-
-const { readFixture, getContent } = require('./utils');
-const {
-  FIELD_TYPE_SYMBOL,
-  FIELD_TYPE_BOOLEAN,
-  FIELD_TYPE_NUMBER,
-  FIELD_TYPE_INTEGER,
+import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
+import {
+  convertToMap,
   FIELD_TYPE_ARRAY,
-  FIELD_TYPE_OBJECT,
-  FIELD_TYPE_TEXT,
-  FIELD_TYPE_RICHTEXT,
+  FIELD_TYPE_BOOLEAN,
   FIELD_TYPE_DATE,
-  FIELD_TYPE_LOCATION,
+  FIELD_TYPE_INTEGER,
   FIELD_TYPE_LINK,
-  LINK_TYPE_ASSET,
-  LINK_TYPE_ENTRY,
+  FIELD_TYPE_LOCATION,
+  FIELD_TYPE_NUMBER,
+  FIELD_TYPE_OBJECT,
+  FIELD_TYPE_RICHTEXT,
+  FIELD_TYPE_SYMBOL,
+  FIELD_TYPE_TEXT,
   getContentId,
   getContentTypeId,
-  convertToMap,
   getFieldSettings,
-} = require('../lib/contentful');
-
-const { mapField, mapEntry } = require('../lib/transform/mapper');
-const { localizeEntry } = require('../lib/transform/localize');
+  LINK_TYPE_ASSET,
+  LINK_TYPE_ENTRY,
+} from '../lib/contentful';
+import { localizeEntry } from '../lib/transform/localize';
+import { mapEntry, mapField } from '../lib/transform/mapper';
+import { getContent, readFixture } from './utils';
 
 describe('Mapper - mapField', () => {
   test('Symbol', async () => {
@@ -86,8 +84,8 @@ describe('Mapper - mapField', () => {
 
   test('Location', async () => {
     const location = {
-      lon: 13.422140718124993,
-      lat: 52.47504074424066,
+      lon: 13.422_140_718_124_993,
+      lat: 52.475_040_744_240_66,
     };
     const value = await mapField(location, {
       settings: { type: FIELD_TYPE_LOCATION },
@@ -310,27 +308,25 @@ describe('Mapper - mapEntry', () => {
       decimal: 12,
       dateTime: new Date('2021-01-14T12:00').toISOString(),
       date: '2021-01-19',
-      location: { lon: 13.422140718124993, lat: 52.47504074424066 },
+      location: { lon: 13.422_140_718_124_993, lat: 52.475_040_744_240_66 },
       media: {
         mimeType: 'image/svg+xml',
-        url:
-          '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+        url: '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
         title: 'FuBK',
         description: 'Dummy image',
         width: 768,
         height: 576,
-        fileSize: 120093,
+        fileSize: 120_093,
       },
       mediaList: [
         {
           mimeType: 'image/svg+xml',
-          url:
-            '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+          url: '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
           title: 'FuBK',
           description: 'Dummy image',
           width: 768,
           height: 576,
-          fileSize: 120093,
+          fileSize: 120_093,
         },
       ],
       boolean: false,
