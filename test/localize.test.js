@@ -67,7 +67,8 @@ describe('Localize', () => {
       title: 'FuBK',
       description: 'Dummy image',
       file: {
-        url: '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+        url:
+          '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
         details: {
           size: 120093,
           image: {

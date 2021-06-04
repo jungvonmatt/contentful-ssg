@@ -313,7 +313,8 @@ describe('Mapper - mapEntry', () => {
       location: { lon: 13.422140718124993, lat: 52.47504074424066 },
       media: {
         mimeType: 'image/svg+xml',
-        url: '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+        url:
+          '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
         title: 'FuBK',
         description: 'Dummy image',
         width: 768,
@@ -323,7 +324,8 @@ describe('Mapper - mapEntry', () => {
       mediaList: [
         {
           mimeType: 'image/svg+xml',
-          url: '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+          url:
+            '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
           title: 'FuBK',
           description: 'Dummy image',
           width: 768,
