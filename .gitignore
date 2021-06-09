@@ -36,3 +36,8 @@ jspm_packages/
 # configuration files for testing
 contentful-ssg.config.js
 content/
+
+# editor / IDE files
+.idea
+.vs
+.vscode
