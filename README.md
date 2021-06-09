@@ -4,6 +4,9 @@
 
 Export contentful entries to filesystem (md/yaml) for static site generators (hugo/grow/...)
 
+Automatically removes all files from the configured output directory that are not part of the exported entries.
+When a `.gitignore` file is found only ignored files are removed.
+
 ## Getting started
 
 ### Install
