@@ -280,7 +280,7 @@ describe('Mapper - mapField', () => {
 });
 
 describe('Mapper - mapEntry', () => {
-  test('Maps entry', async () => {
+  const createLocalizedEntryAndOptions = async () => {
     const { entries, assets, contentTypes, locales } = await getContent();
     const [entry] = entries;
     const fieldSettings = getFieldSettings(contentTypes);
@@ -288,13 +288,20 @@ describe('Mapper - mapEntry', () => {
     const translatedAssets = await assets.map((asset) => localizeEntry(asset, 'en-GB', { locales, fieldSettings }));
 
     const localized = await localizeEntry(entry, 'en-GB', { fieldSettings, locales });
-    const result = await mapEntry(localized, {
+    const options = {
       entries,
       assets: convertToMap(translatedAssets),
       entries: convertToMap(entries),
       contentTypes,
       fieldSettings,
-    });
+    };
+
+    return [localized, options];
+  };
+
+  test('Maps entry', async () => {
+    const [localized, options] = await createLocalizedEntryAndOptions();
+    const result = await mapEntry(localized, options);
 
     expect(result).toEqual({
       id: '34O95Y8gLXd3jPozdy7gmd',
@@ -341,6 +348,43 @@ describe('Mapper - mapEntry', () => {
         { id: '56O29iIIcee0ZcgIuwlHSv', contentType: 'fieldTest' },
       ],
     });
+  });
+
+  test('Skip entry with mandatory field missing', async () => {
+    const [localized, options] = await createLocalizedEntryAndOptions();
+
+    // make shortText mandatory and remove it
+    options.fieldSettings.fieldTest.shortText.required = true;
+    localized.fields.shortText = undefined;
+
+    const result = await mapEntry(localized, options);
+
+    expect(result).toBeUndefined();
+  });
+
+  test('Skip entry with custom validate function', async () => {
+    const [localized, options] = await createLocalizedEntryAndOptions();
+
+    // we want to have a mandatory field in the validate args
+    options.fieldSettings.fieldTest.shortText.required = true;
+
+    let validateEntry;
+    let validateOptions;
+    const validate = (entryArg, optionsArg) => {
+      validateEntry = entryArg;
+      validateOptions = optionsArg;
+      return false;
+    };
+
+    const result = await mapEntry(localized, {
+      validate,
+      ...options,
+    });
+
+    expect(result).toBeUndefined();
+    expect(validateEntry.id).toEqual('34O95Y8gLXd3jPozdy7gmd');
+    expect(validateOptions.requiredFields).toEqual(['shortText']);
+    expect(validateOptions.requiredFieldMissing).toEqual(false);
   });
 });
 
