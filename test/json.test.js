@@ -1,4 +1,4 @@
-const { stringifyJson, parseJson } = require('../lib/converter/json');
+const { stringify, parse } = require('../lib/converter/json');
 
 describe('JSON', () => {
   test('parse & stringify', () => {
@@ -17,8 +17,8 @@ describe('JSON', () => {
       },
     };
 
-    const string = stringifyJson(src);
-    const obj = parseJson(string);
+    const string = stringify(src);
+    const obj = parse(string);
 
     expect(obj).toMatchObject(src);
   });

@@ -1,4 +1,4 @@
-const { stringifyYaml, parseYaml } = require('../lib/converter/yaml');
+const { stringify, parse } = require('../lib/converter/yaml');
 
 describe('YAML', () => {
   test('grow schema', () => {
@@ -12,7 +12,7 @@ yaml: !g.yaml /pod/path/to.yaml
 unsupported: '!g.unsupported /content/page/about.yaml'
 `;
 
-    const value = stringifyYaml({
+    const value = stringify({
       csv: '!g.csv /pod/path/to.csv',
       doc: '!g.doc /content/page/about.yaml',
       json: '!g.json /pod/path/to.json',
@@ -31,7 +31,7 @@ unsupported: '!g.unsupported /content/page/about.yaml'
 yaml: !g.yaml /pod/path/to.yaml?key.sub_key
 `;
 
-    const value = stringifyYaml({
+    const value = stringify({
       json: '!g.json /pod/path/to.json?key.sub_key',
       yaml: '!g.yaml /pod/path/to.yaml?key.sub_key',
     });
@@ -43,8 +43,8 @@ yaml: !g.yaml /pod/path/to.yaml?key.sub_key
     const expected = `json: !g.json /pod/path/to.json?key.sub_key
 yaml: !g.yaml /pod/path/to.yaml?key.sub_key
 `;
-    const data = parseYaml(expected);
-    const value = stringifyYaml(data);
+    const data = parse(expected);
+    const value = stringify(data);
 
     expect(value).toEqual(expected);
   });

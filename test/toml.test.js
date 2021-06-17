@@ -1,5 +1,4 @@
-const { stringifyToml, parseToml } = require('../lib/converter/toml');
-const TOML = require('@iarna/toml');
+const { stringify, parse } = require('../lib/converter/toml');
 
 describe('TOML', () => {
   test('grow schema', () => {
@@ -13,7 +12,7 @@ yaml = "!g.yaml /pod/path/to.yaml"
 unsupported = "!g.unsupported /content/page/about.yaml"
 `;
 
-    const value = stringifyToml({
+    const value = stringify({
       csv: '!g.csv /pod/path/to.csv',
       doc: '!g.doc /content/page/about.yaml',
       json: '!g.json /pod/path/to.json',
@@ -63,13 +62,13 @@ languageName = "Français"
 title = "En Français"
 weight = 1
 `;
-    const obj = parseToml(expected);
+    const obj = parse(expected);
     expect(obj).toMatchObject(source);
 
-    const value = stringifyToml(source);
+    const value = stringify(source);
     expect(value).toEqual(expected);
 
-    const value2 = stringifyToml(parseToml(expected));
+    const value2 = stringify(parse(expected));
     expect(value2).toEqual(expected);
   });
 });
