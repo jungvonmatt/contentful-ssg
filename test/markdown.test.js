@@ -1,4 +1,5 @@
-const markdown = require('../lib/converter/markdown');
+const { stringifyMarkdown, parseMarkdown } = require('../lib/converter/markdown');
+const { parse, stringify, MARKDOWN } = require('../lib/converter');
 
 describe('Markdown', () => {
   test('Markdown frontmatter', () => {
@@ -14,7 +15,7 @@ unsupported: '!g.unsupported /content/page/about.yaml'
 ---
 `;
 
-    const value = markdown.convert({
+    const value = stringifyMarkdown({
       csv: '!g.csv /pod/path/to.csv',
       doc: '!g.doc /content/page/about.yaml',
       json: '!g.json /pod/path/to.json',
@@ -35,10 +36,23 @@ yaml: !g.yaml /pod/path/to.yaml?key.sub_key
 ---
 `;
 
-    const value = markdown.convert({
+    const value = stringifyMarkdown({
       json: '!g.json /pod/path/to.json?key.sub_key',
       yaml: '!g.yaml /pod/path/to.yaml?key.sub_key',
     });
+
+    expect(value).toEqual(expected);
+  });
+
+  test('parse & stringify', () => {
+    const expected = `---
+json: !g.json /pod/path/to.json?key.sub_key
+yaml: !g.yaml /pod/path/to.yaml?key.sub_key
+---
+CONTENT
+`;
+    const { data, content } = parseMarkdown(expected);
+    const value = stringifyMarkdown(data, content);
 
     expect(value).toEqual(expected);
   });
