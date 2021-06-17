@@ -25,6 +25,7 @@
   "dependencies": {
     "@contentful/rich-text-html-renderer": "^14.1.2",
     "@contentful/rich-text-types": "^14.1.2",
+    "@iarna/toml": "^2.2.5",
     "chalk": "^4.1.1",
     "commander": "^7.2.0",
     "contentful": "^8.3.5",
@@ -35,6 +36,7 @@
     "find-up": "^5.0.0",
     "fs-extra": "^10.0.0",
     "globby": "^11.0.3",
+    "gray-matter": "^4.0.3",
     "ignore": "^5.1.8",
     "inquirer": "^8.0.0",
     "js-yaml": "^4.1.0",
