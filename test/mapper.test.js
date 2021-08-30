@@ -22,7 +22,7 @@ const {
   getFieldSettings,
 } = require('../lib/contentful');
 
-const { mapField, mapEntry } = require('../lib/transform/mapper');
+const { mapField, mapEntry, mapMetaFields } = require('../lib/transform/mapper');
 const { localizeEntry } = require('../lib/transform/localize');
 
 describe('Mapper - mapField', () => {
@@ -351,30 +351,20 @@ describe('Mapper - mapEntry', () => {
   });
 
   test('Map meta fields', async () => {
-    const [localized, options] = await createLocalizedEntryAndOptions();
-
-    const customMetaFields = () => {
-      const { sys } = localized;
-      const { id, createdAt, updatedAt } = sys || {};
-      const { contentType } = options;
+    const customMetaFields = (entry, options) => {
+      const metaFields = mapMetaFields(entry, options);
 
       return {
-        sys: {
-          id,
-          contentType,
-          createdAt,
-          updatedAt,
-        },
+        customKey: metaFields,
       };
     };
 
-    options.contentType = getContentTypeId(localized);
+    const [localized, options] = await createLocalizedEntryAndOptions();
     options.mapMetaFields = customMetaFields;
 
     const result = await mapEntry(localized, options);
-
     expect(result).toEqual({
-      sys: {
+      customKey: {
         id: '34O95Y8gLXd3jPozdy7gmd',
         contentType: 'fieldTest',
         createdAt: '2021-01-14T13:17:17.232Z',
