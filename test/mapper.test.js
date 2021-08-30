@@ -350,6 +350,78 @@ describe('Mapper - mapEntry', () => {
     });
   });
 
+  test('Map meta fields', async () => {
+    const [localized, options] = await createLocalizedEntryAndOptions();
+
+    const customMetaFields = () => {
+      const { sys } = localized;
+      const { id, createdAt, updatedAt } = sys || {};
+      const { contentType } = options;
+
+      return {
+        sys: {
+          id,
+          contentType,
+          createdAt,
+          updatedAt,
+        },
+      };
+    };
+
+    options.contentType = getContentTypeId(localized);
+    options.mapMetaFields = customMetaFields;
+
+    const result = await mapEntry(localized, options);
+
+    expect(result).toEqual({
+      sys: {
+        id: '34O95Y8gLXd3jPozdy7gmd',
+        contentType: 'fieldTest',
+        createdAt: '2021-01-14T13:17:17.232Z',
+        updatedAt: '2021-01-14T13:35:12.671Z',
+      },
+      shortText: 'Short Text (EN)',
+      shortTextList: ['List 1 (gb)', 'List 2 (gb)'],
+      longText: '__Long text (en-GB)__\n',
+      richText:
+        '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><p></p>',
+      integer: 2,
+      decimal: 12,
+      dateTime: new Date('2021-01-14T12:00').toISOString(),
+      date: '2021-01-19',
+      location: { lon: 13.422140718124993, lat: 52.47504074424066 },
+      media: {
+        mimeType: 'image/svg+xml',
+        url:
+          '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+        title: 'FuBK',
+        description: 'Dummy image',
+        width: 768,
+        height: 576,
+        fileSize: 120093,
+      },
+      mediaList: [
+        {
+          mimeType: 'image/svg+xml',
+          url:
+            '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+          title: 'FuBK',
+          description: 'Dummy image',
+          width: 768,
+          height: 576,
+          fileSize: 120093,
+        },
+      ],
+      boolean: false,
+      jsonObject: { JSON: 'OBJECT' },
+      reference: { id: '56O29iIIcee0ZcgIuwlHSv', contentType: 'fieldTest' },
+      referenceList: [
+        { id: '2WLqjLlMJUbc0vCf9UMfjA', contentType: 'fieldTest' },
+        { id: '56O29iIIcee0ZcgIuwlHSv', contentType: 'fieldTest' },
+      ],
+    });
+  });
+
   test('Skip entry with mandatory field missing', async () => {
     const [localized, options] = await createLocalizedEntryAndOptions();
 
