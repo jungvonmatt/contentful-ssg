@@ -8,16 +8,16 @@ import type {
   RichTextData,
   Node,
 } from '../types.js';
-import type { EntryFields } from 'contentful';
-import type { Options } from '@contentful/rich-text-html-renderer';
+import type {EntryFields} from 'contentful';
+import type {Options} from '@contentful/rich-text-html-renderer';
 import type {
   Document,
   Mark,
   TopLevelBlock,
   Node as RichTextNode,
 } from '@contentful/rich-text-types';
-import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
-import { removeEmpty } from '../helper/object.js';
+import {documentToHtmlString} from '@contentful/rich-text-html-renderer';
+import {removeEmpty} from '../helper/object.js';
 
 import {
   FIELD_TYPE_RICHTEXT,
@@ -31,16 +31,16 @@ import {
   isAsset,
   isEntry,
 } from '../helper/contentful.js';
-import type { KeyValueMap } from 'contentful-management/types';
+import type {KeyValueMap} from 'contentful-management/types';
 
 /**
  * Convert contentful entry to export format (link)
  * @param {Object} entry Contentful asset
  */
 export const mapEntryLink = (transformContext: TransformContext) => {
-  const { id, contentTypeId } = transformContext;
+  const {id, contentTypeId} = transformContext;
   if (id && contentTypeId) {
-    return { id, contentType: contentTypeId };
+    return {id, contentType: contentTypeId};
   }
 
   return {};
@@ -51,7 +51,7 @@ export const mapEntryLink = (transformContext: TransformContext) => {
  * @param {Object} entry Contentful asset
  */
 export const mapAssetLink = (transformContext: TransformContext): MapAssetLink => {
-  const { asset } = transformContext;
+  const {asset} = transformContext;
   const fields: MapAssetLink = {
     mimeType: asset?.fields?.file?.contentType ?? '',
     url: asset?.fields?.file?.url ?? '',
@@ -93,9 +93,9 @@ export const mapDateField = (fieldContent: string) => {
 export const mapReferenceField = async (
   fieldContent: EntryFields.Link<unknown> | Node,
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) => {
-  const { hooks } = runtimeContext;
+  const {hooks} = runtimeContext;
 
   if (isAssetLink(fieldContent)) {
     const asset = transformContext.assetMap.get(getContentId(fieldContent));
@@ -110,7 +110,7 @@ export const mapReferenceField = async (
         id: getContentId(asset),
         contentTypeId: getContentTypeId(asset),
       },
-      mapAssetLink
+      mapAssetLink,
     );
   }
 
@@ -122,7 +122,7 @@ export const mapReferenceField = async (
         id: getContentId(fieldContent),
         contentTypeId: getContentTypeId(fieldContent),
       },
-      mapAssetLink
+      mapAssetLink,
     );
   }
 
@@ -139,7 +139,7 @@ export const mapReferenceField = async (
         contentTypeId: getContentTypeId(entry),
         entry,
       },
-      mapEntryLink
+      mapEntryLink,
     );
   }
 
@@ -151,7 +151,7 @@ export const mapReferenceField = async (
         contentTypeId: getContentTypeId(fieldContent),
         entry: fieldContent as Entry,
       },
-      mapEntryLink
+      mapEntryLink,
     );
   }
 };
@@ -159,9 +159,9 @@ export const mapReferenceField = async (
 export const mapRichTextDataNode = (
   node: RichTextData,
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) => {
-  const { target } = node || {};
+  const {target} = node || {};
   if (target) {
     return mapReferenceField(target as EntryFields.Link<unknown>, transformContext, runtimeContext);
   }
@@ -172,18 +172,18 @@ export const mapRichTextDataNode = (
 export const mapRichTextContentNode = async (
   nodes: TopLevelBlock[],
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) =>
   Promise.all(
-    (nodes || []).map(async (node) => mapRichTextNodes(node, transformContext, runtimeContext))
+    (nodes || []).map(async node => mapRichTextNodes(node, transformContext, runtimeContext)),
   );
 
-export const mapRichTextMarks = (nodes: Mark[] = []) => (nodes || []).map((node) => node.type);
+export const mapRichTextMarks = (nodes: Mark[] = []) => (nodes || []).map(node => node.type);
 
 export const mapRichTextNodes = async (
   node: RichTextNode,
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) => {
   const fieldContent: Record<string, any> = {};
   if (typeof node === 'undefined') {
@@ -197,7 +197,7 @@ export const mapRichTextNodes = async (
         fieldContent[field] = await mapRichTextDataNode(
           subNode as RichTextData,
           transformContext,
-          runtimeContext
+          runtimeContext,
         );
         break;
       }
@@ -207,7 +207,7 @@ export const mapRichTextNodes = async (
         fieldContent[field] = await mapRichTextContentNode(
           subNode as TopLevelBlock[],
           transformContext,
-          runtimeContext
+          runtimeContext,
         );
         break;
       }
@@ -237,9 +237,9 @@ export const mapRichTextField = (
   fieldContent: Document,
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
-  const { richTextRenderer = {} } = config || {};
+  const {richTextRenderer = {}} = config || {};
 
   if (typeof richTextRenderer === 'function') {
     return richTextRenderer(fieldContent, transformContext, runtimeContext);
@@ -261,10 +261,10 @@ export const mapRichTextField = (
 export const mapField = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ): Promise<unknown> => {
-  const { fieldSettings, fieldContent } = transformContext;
-  const { type, items } = fieldSettings || {};
+  const {fieldSettings, fieldContent} = transformContext;
+  const {type, items} = fieldSettings || {};
 
   switch (type) {
     case FIELD_TYPE_DATE:
@@ -273,23 +273,23 @@ export const mapField = async (
       return mapReferenceField(
         fieldContent as EntryFields.Link<unknown> | Asset | Entry,
         transformContext,
-        runtimeContext
+        runtimeContext,
       );
     case FIELD_TYPE_RICHTEXT:
       return mapRichTextField(fieldContent as Document, transformContext, runtimeContext, config);
     case FIELD_TYPE_ARRAY:
       return Promise.all(
-        ((fieldContent || []) as EntryFields.Array).map(async (content) =>
+        ((fieldContent || []) as EntryFields.Array).map(async content =>
           mapField(
             {
               ...transformContext,
-              fieldSettings: { ...fieldSettings, ...items },
+              fieldSettings: {...fieldSettings, ...items},
               fieldContent: content,
             },
             runtimeContext,
-            config
-          )
-        )
+            config,
+          ),
+        ),
       );
 
     default:
@@ -304,12 +304,12 @@ export const mapField = async (
  * @returns {Object} Mapped meta fields
  */
 export const mapMetaFields = (transformContext: TransformContext) => {
-  const { entry, contentTypeId } = transformContext;
-  const { sys } = entry;
-  const { id, createdAt, updatedAt } = sys || {};
+  const {entry, contentTypeId} = transformContext;
+  const {sys} = entry;
+  const {id, createdAt, updatedAt} = sys || {};
 
   return {
-    sys: { id, contentType: contentTypeId, createdAt, updatedAt },
+    sys: {id, contentType: contentTypeId, createdAt, updatedAt},
   };
 };
 
@@ -322,11 +322,11 @@ export const mapMetaFields = (transformContext: TransformContext) => {
 export const mapEntry = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
-  const { fieldSettings } = runtimeContext.data;
-  const { entry, contentTypeId } = transformContext;
-  const { [contentTypeId]: settings } = fieldSettings;
+  const {fieldSettings} = runtimeContext.data;
+  const {entry, contentTypeId} = transformContext;
+  const {[contentTypeId]: settings} = fieldSettings;
 
   const sys = await runtimeContext.hooks.mapMetaFields(transformContext, mapMetaFields);
 
@@ -341,31 +341,31 @@ export const mapEntry = async (
           fieldSettings: settings[fieldId],
         },
         runtimeContext,
-        config
+        config,
       );
 
       return [fieldId, value];
-    })
+    }),
   );
 
   // Filter undefined values & convert back to object
   const fields = removeEmpty<KeyValueMap>(
-    Object.fromEntries(data.filter(([, value]) => typeof value !== 'undefined'))
+    Object.fromEntries(data.filter(([, value]) => typeof value !== 'undefined')),
   );
 
-  const result = { ...sys, ...fields };
+  const result = {...sys, ...fields};
 
   const requiredFields = Object.entries(settings)
     .filter(([, value]) => value.required)
     .map(([key]) => key);
   // Check if all required fields are available in keys
-  const requiredFieldMissing = !requiredFields.every((key) => Object.keys(fields).includes(key));
+  const requiredFieldMissing = !requiredFields.every(key => Object.keys(fields).includes(key));
 
   let valid = !requiredFieldMissing;
   if (typeof config.validate === 'function') {
     valid = await config.validate(
-      { ...transformContext, requiredFields, content: result },
-      runtimeContext
+      {...transformContext, requiredFields, content: result},
+      runtimeContext,
     );
   }
 
@@ -377,9 +377,8 @@ export const mapEntry = async (
 export const transform = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
   const initialValue = await mapEntry(transformContext, runtimeContext, config);
-
   return runtimeContext.hooks.transform(transformContext, initialValue);
 };

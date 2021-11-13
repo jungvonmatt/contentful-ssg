@@ -21,6 +21,7 @@ dotenvExpand(env);
 const parseArgs = cmd => ({
   environment: cmd.env as string,
   preview: Boolean(cmd.preview),
+  verbose: Boolean(cmd.verbose),
 });
 
 type CommandError = Error & {
@@ -77,12 +78,15 @@ program
 program
   .command('fetch')
   .description('Fetch content objects')
-  .option('--preview', 'Fetch with preview mode')
+  .option('-p, --preview', 'Fetch with preview mode')
+  .option('-v, --verbose', 'Verbose output')
   .action(
     actionRunner(async cmd => {
       const config = await getConfig(parseArgs(cmd || {}));
       const verified = await askMissing(config);
 
+      console.log(verified);
+      process.exit(0);
       return dump(verified);
     }),
   );

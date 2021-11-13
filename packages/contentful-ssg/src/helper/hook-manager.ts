@@ -7,37 +7,38 @@ import type {
   TransformContext,
   TransformHook,
 } from '../types.js';
-import { reduceAsync } from './array.js';
+import {reduceAsync} from './array.js';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const resolveValue = (something: any, ...args: any[]): unknown =>
-  typeof something === 'function' ? something(...args) : something;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  (typeof something === 'function' ? something(...args) : something) as unknown;
 
 const hookUpRuntime = (
   name: keyof Pick<Hooks, 'before' | 'after'>,
   options: Config,
-  defaultValue?: any
+  defaultValue?: any,
 ): RuntimeHook => {
-  const { [name]: configHook } = options;
+  const {[name]: configHook} = options;
 
   const hooks = (options.plugins || [])
-    .filter((plugin) => Boolean(plugin[name]))
-    .map((plugin) => plugin[name]);
+    .filter(plugin => Boolean(plugin[name]))
+    .map(plugin => plugin[name]);
 
   return async (runtimeContext: RuntimeContext): Promise<Partial<RuntimeContext>> => {
     if (hooks.length === 0 && !defaultValue) {
       return;
     }
+
     const initialValue = (await resolveValue(
       defaultValue,
-      runtimeContext
+      runtimeContext,
     )) as Partial<RuntimeContext>;
 
     const value = (await reduceAsync(
       hooks || [],
       async (prev: Partial<RuntimeContext>, hook: RuntimeHook) =>
-        hook({ ...runtimeContext, ...prev }),
-      initialValue || {}
+        hook({...runtimeContext, ...prev}),
+      initialValue || {},
     )) as RuntimeContext;
 
     if (typeof configHook === 'function') {
@@ -51,17 +52,17 @@ const hookUpRuntime = (
 const hookUpTransform = <Type = unknown>(
   name: keyof Omit<Hooks, 'before' | 'after'>,
   options: Config,
-  defaultValue?: any
+  defaultValue?: any,
 ): TransformHook<Type> => {
-  const { [name]: configHook } = options;
+  const {[name]: configHook} = options;
 
   const hooks = (options.plugins || [])
-    .filter((plugin) => Boolean(plugin[name]))
-    .map((plugin) => plugin[name]);
+    .filter(plugin => Boolean(plugin[name]))
+    .map(plugin => plugin[name]) as Array<TransformHook<Type>>;
 
   return async (
     transformContext: TransformContext,
-    runtimeContext: RuntimeContext
+    runtimeContext: RuntimeContext,
   ): Promise<Type> => {
     if (hooks.length === 0 && !defaultValue) {
       return;
@@ -70,7 +71,7 @@ const hookUpTransform = <Type = unknown>(
     const initialValue = (await resolveValue(
       defaultValue,
       transformContext,
-      runtimeContext
+      runtimeContext,
     )) as Type;
 
     const value = await reduceAsync(
@@ -82,7 +83,7 @@ const hookUpTransform = <Type = unknown>(
 
         return hook(transformContext, runtimeContext, prev);
       },
-      initialValue
+      initialValue,
     );
 
     if (name === 'transform') {
@@ -106,8 +107,8 @@ export class HookManager {
   }
 
   has(key: keyof Hooks): boolean {
-    const { [key]: hook } = this.config;
-    const pluginHooks = (this.config.plugins || []).some((plugin) => Boolean(plugin[key]));
+    const {[key]: hook} = this.config;
+    const pluginHooks = (this.config.plugins || []).some(plugin => Boolean(plugin[key]));
 
     return Boolean(hook) && pluginHooks;
   }
@@ -115,14 +116,14 @@ export class HookManager {
   async before(defauleValue?: KeyValueMap) {
     const method = hookUpRuntime('before', this.config, defauleValue);
     const result = await method(this.runtimeContext);
-    this.runtimeContext = { ...this.runtimeContext, ...(result || {}) };
+    this.runtimeContext = {...this.runtimeContext, ...(result || {})};
     return this.runtimeContext;
   }
 
   async after(defauleValue?: KeyValueMap) {
     const method = hookUpRuntime('after', this.config, defauleValue);
     const result = await method(this.runtimeContext);
-    this.runtimeContext = { ...this.runtimeContext, ...(result || {}) };
+    this.runtimeContext = {...this.runtimeContext, ...(result || {})};
     return this.runtimeContext;
   }
 

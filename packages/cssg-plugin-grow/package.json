@@ -1,0 +1,20 @@
+{
+  "name": "@jungvonmatt/cssg-plugin-grow",
+  "version": "1.0.0",
+  "description": "Contentful-ssg plugin for grow",
+  "main": "dist/index.js",
+  "devDependencies": {},
+  "scripts": {
+    "lint": "eslint --color --ignore-path ../../.gitignore"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "author": "Ben Zörb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme"
+}

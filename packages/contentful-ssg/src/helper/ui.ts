@@ -5,7 +5,6 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import {getApiKey, getEnvironments, getPreviewApiKey, getSpaces} from './contentful.js';
 
-
 /**
  * Log info
  * @param {String} str Info text

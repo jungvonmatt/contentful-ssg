@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/await-thenable */
+
 function series<T, U>(
   reducer: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U | Promise<U>,
   initialValue?: U,

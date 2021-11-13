@@ -88,45 +88,51 @@ export const dump = async (config: Config): Promise<void> => {
         task: async ctx => {
           const {locales = []} = ctx.data;
 
-          return new Listr(
-            locales.map(locale => ({
-              title: `${locale.code}`,
-              task: async () => {
-                const data = ctx.localized.get(locale.code);
-                const {entries = []} = data || {};
+          const tasks = locales.map(locale => ({
+            title: `${locale.code}`,
+            task: async () => {
+              const data = ctx.localized.get(locale.code);
+              const {entries = []} = data || {};
 
-                const promises = entries.map(async entry => {
-                  const id = getContentId(entry);
-                  const contentTypeId = getContentTypeId(entry);
-                  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                  const helper = {
-                    collectValues: collectValues({entries, entry}),
-                    collectParentValues: collectParentValues({entries, entry}),
-                  } as TransformHelper;
+              const promises = entries.map(async entry => {
+                const id = getContentId(entry);
+                const contentTypeId = getContentTypeId(entry);
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                const utils = {
+                  collectValues: collectValues({entries, entry}),
+                  collectParentValues: collectParentValues({entries, entry}),
+                } as TransformHelper;
 
-                  const transformContext: TransformContext = {
-                    id, contentTypeId, entry, locale, helper, ...data,
-                  };
+                const transformContext: TransformContext = {
+                  id,
+                  contentTypeId,
+                  entry,
+                  locale,
+                  utils,
+                  ...data,
+                };
 
-                  try {
-                    const content = await transform(transformContext, ctx, config);
-                    await write({...transformContext, content}, ctx, config);
-                  } catch (error: unknown) {
-                    if (typeof error === 'string') {
-                      ctx.stats.addError(transformContext, error);
-                    } else if (error instanceof Error) {
-                      ctx.stats.addError(transformContext, error.message);
-                    } else {
-                      ctx.stats.addError(transformContext, 'unknown');
-                    }
+                try {
+                  const content = await transform(transformContext, ctx, config);
+
+                  if (typeof content === 'undefined') {
+                    ctx.stats.addSkipped(transformContext, `Invalid entry (content-type: ${contentTypeId}, id: ${id})`);
+                    return;
                   }
-                });
 
-                return Promise.all(promises);
-              },
-            })),
-            {concurrent: true},
-          );
+                  await write({...transformContext, content}, ctx, config);
+                  ctx.stats.addSuccess(transformContext);
+                } catch (error: unknown) {
+                  if (typeof error === 'string' || error instanceof Error) {
+                    ctx.stats.addError(transformContext, error);
+                  }
+                }
+              });
+
+              return Promise.all(promises);
+            },
+          }));
+          return new Listr(tasks, {concurrent: true});
         },
       },
       {
@@ -153,7 +159,6 @@ export const dump = async (config: Config): Promise<void> => {
   );
 
   const ctx = await tasks.run();
-  ctx.stats.print();
+  await ctx.stats.print();
   console.log('\n---------------------------------------------');
 };
-

@@ -71,7 +71,7 @@ export const snakeCaseKeys = <T>(iterable: T): T => {
  * @param {String} key Object key to group by
  * @returns {Object} Grouped Object
  */
-export const groupBy = <T extends Record<string, unknown>, K extends keyof T>(array: T[], key: K) => array.reduce((acc, value) => {
+export const groupBy = <T extends Record<string, unknown>>(array: T[], key: keyof T): Record<string, T[]> => array.reduce((acc, value) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const k = dlv(value, key as string);
   // Group initialization

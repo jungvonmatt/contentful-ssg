@@ -1,15 +1,20 @@
-/* eslint-disable complexity */
-import type {ContentfulConfig, PluginInfo, Hooks, Config, InitialConfig, KeyValueMap} from '../types.js';
-import { createRequire } from 'module';
-import {isAbsolute, resolve} from 'path';
-import {cosmiconfig} from 'cosmiconfig';
-import TypeScriptLoader from '@endemolshinegroup/cosmiconfig-typescript-loader';
+
+import {register} from '@swc-node/register/register';
+import {cosmiconfig, Loader} from 'cosmiconfig';
 import mergeOptionsModule from 'merge-options';
+import {createRequire} from 'module';
+import {isAbsolute, resolve} from 'path';
+import type {Config, ContentfulConfig, Hooks, InitialConfig, KeyValueMap, PluginInfo} from '../types.js';
 import {removeEmpty} from './object.js';
 
-//
+const require = createRequire(import.meta.url);
 
-// load.use([json, typescript, rc]);
+const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
+  register({format: 'esm', extensions: ['.ts', '.tsx', '.mts']});
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
+  const configModule = require(filePath);
+  return (configModule.default || configModule);
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mergeOptions = mergeOptionsModule.bind({ignoreUndefined: true});
@@ -17,7 +22,6 @@ const mergeOptions = mergeOptionsModule.bind({ignoreUndefined: true});
 const resolvePlugin = async (plugin: string | PluginInfo): Promise<Hooks> => {
   const pluginName = typeof plugin === 'string' ? plugin : plugin.resolve;
   const pluginOptions = typeof plugin === 'string' ? {} : plugin.options || {};
-  const require = createRequire(import.meta.url);
   const resolvedPath = require.resolve(pluginName);
 
   const module = await import(resolvedPath) as Hooks | ((...args: unknown[]) => Hooks);
@@ -25,7 +29,7 @@ const resolvePlugin = async (plugin: string | PluginInfo): Promise<Hooks> => {
   return typeof module === 'function' ? module(pluginOptions || {}) : module || {};
 };
 
-const loadConfig = async (moduleName:string): Promise<KeyValueMap> => {
+const loadConfig = async (moduleName: string): Promise<KeyValueMap> => {
   const explorer = cosmiconfig(moduleName, {
     searchPlaces: [
       'package.json',
@@ -33,20 +37,19 @@ const loadConfig = async (moduleName:string): Promise<KeyValueMap> => {
       `.${moduleName}rc.json`,
       `.${moduleName}rc.yaml`,
       `.${moduleName}rc.yml`,
-      `.${moduleName}rc.ts`,
       `.${moduleName}rc.js`,
       `${moduleName}.config.ts`,
       `${moduleName}.config.js`,
     ],
     loaders: {
-      '.ts': TypeScriptLoader,
+      '.ts': typescriptLoader,
     },
   });
 
   const result = await explorer.search();
 
-  return result?.config ?? {};
-}
+  return (result?.config ?? {}) as KeyValueMap;
+};
 
 /**
  * Get configuration
@@ -61,11 +64,11 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
   };
 
   const environmentOptions: ContentfulConfig = removeEmpty({
-    spaceId: process.env.CONTENTFUL_SPACE_ID || '',
-    environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID || '',
-    managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN || '',
-    previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN || '',
-    accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN || '',
+    spaceId: process.env.CONTENTFUL_SPACE_ID!,
+    environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
+    managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
+    previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
+    accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
   });
   let contentfulCliOptions: Partial<ContentfulConfig> = {};
 
@@ -73,11 +76,12 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
     // Get configuration from contentful rc file (created by the contentful cli command)
     const contentfulConfig = await loadConfig('contentful');
     const {managementToken, activeSpaceId, activeEnvironmentId, host} = contentfulConfig;
+
     contentfulCliOptions = removeEmpty({
-      spaceId: activeSpaceId,
-      managementToken,
-      environmentId: activeEnvironmentId,
-      host,
+      spaceId: activeSpaceId as string,
+      managementToken: managementToken as string,
+      environmentId: activeEnvironmentId as string,
+      host: host as string,
     });
   } catch (error: unknown) {
     if (typeof error === 'string') {
@@ -92,7 +96,7 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
   let configFileOptions: Partial<InitialConfig> = {};
   try {
     // Get configuration from contentful-ssg rc file
-    const configFileOptions = await loadConfig('contentful-ssg');
+    configFileOptions = await loadConfig('contentful-ssg');
     if (configFileOptions.directory && !isAbsolute(configFileOptions.directory)) {
       configFileOptions.directory = resolve(process.cwd(), configFileOptions.directory);
     }

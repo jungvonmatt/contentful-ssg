@@ -1,9 +1,15 @@
-
 import type {Options as RichtextOptions} from '@contentful/rich-text-html-renderer';
 import type {Document} from '@contentful/rich-text-types';
 // Import {KeyValueMap} from 'contentful-management/types';
 
-import type {EntryFields, Locale as ContentfulLocale, Asset as ContentfulAsset, Field, Entry as ContentfulEntry, ContentType as ContentfulContentType} from 'contentful';
+import type {
+  EntryFields,
+  Locale as ContentfulLocale,
+  Asset as ContentfulAsset,
+  Field,
+  Entry as ContentfulEntry,
+  ContentType as ContentfulContentType,
+} from 'contentful';
 import type {ListrTaskObject} from 'listr';
 import type {FileManager} from './helper/file-manager.js';
 import type {Stats} from './helper/stats.js';
@@ -35,9 +41,18 @@ export type Entry = Omit<ContentfulEntry<KeyValueMap>, 'update'>;
 
 export type Node = Entry | Asset;
 
-export type RuntimeHook = (runtimeContext: RuntimeContext) => Promise<Partial<RuntimeContext>> | Partial<RuntimeContext>;
-export type TransformHook<T> = (transformContext: TransformContext, runtimeContext?: RuntimeContext, prev?: T) => Promise<T> | T;
-export type ValidateHook = (transformContext: TransformContext, runtimeContext?: RuntimeContext) => Promise<boolean> | boolean;
+export type RuntimeHook = (
+  runtimeContext: RuntimeContext
+) => Promise<Partial<RuntimeContext>> | Partial<RuntimeContext>;
+export type TransformHook<T> = (
+  transformContext: TransformContext,
+  runtimeContext?: RuntimeContext,
+  prev?: T
+) => Promise<T> | T;
+export type ValidateHook = (
+  transformContext: TransformContext,
+  runtimeContext?: RuntimeContext
+) => Promise<boolean> | boolean;
 
 export type FormatObject = KeyValueMap<string[]>;
 
@@ -52,11 +67,20 @@ export interface Hooks {
   mapEntryLink?: TransformHook<KeyValueMap>;
 }
 
-export type Config = Partial<ContentfulConfig> & Hooks & {
+export type Config = Partial<ContentfulConfig> &
+Hooks & {
   directory: string;
-  plugins: Hooks[];
+  verbose?: boolean;
+  plugins?: Hooks[];
   preset?: string;
-  richTextRenderer?: boolean | RichtextOptions | ((document: Document, transformContext: TransformContext, runtimeContext: RuntimeContext,) => unknown);
+  richTextRenderer?:
+  | boolean
+  | RichtextOptions
+  | ((
+    document: Document,
+    transformContext: TransformContext,
+    runtimeContext: RuntimeContext
+  ) => unknown);
   format?: string | FormatObject | TransformHook<string>;
   validate?: ValidateHook;
 };
@@ -89,7 +113,22 @@ export interface LocalizedContent {
 
 export type StatsKey = string;
 
+export interface Converter {
+  parse: <T = KeyValueMap>(string: string) => T;
+  stringify: <T = KeyValueMap>(obj: T) => string;
+}
+
+export interface MarkdownConverter {
+  parse: <T = KeyValueMap>(string: string) => T;
+  stringify: <T = KeyValueMap>(obj: T, additional?: string) => string;
+}
+
+type Entries<T> = Array<{
+  [K in keyof T]: [K, T[K]];
+}[keyof T]>;
+
 export interface RuntimeContext {
+  [x: string]: any;
   config: Config;
   defauleLocale: string;
   data: ContentfulData;
@@ -97,16 +136,39 @@ export interface RuntimeContext {
   fileManager: FileManager;
   stats: Stats;
   hooks: HookManager;
-  [x: string]: any;
+  helper: {
+    array: {
+      mapAsync: <T, U>(iterable: T[], callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>) => Promise<U[]>;
+      forEachAsync: <T>(iterable: T[], callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>) => Promise<void>;
+      filterAsync: <T>(iterable: T[], callback: (value: T, index?: number, array?: T[]) => boolean | Promise<boolean>) => Promise<T[]>;
+      reduceAsync: <T, U>(iterable: T[], callback: (previousValue: U, currentValue: T, currentIndex?: number, array?: T[]) => U | Promise<U>, initialValue?: U) => Promise<U>;
+    };
+    object: {
+      isObject: (something: any) => boolean;
+      getEntries: <T>(obj: T) => Entries<T>;
+      fromEntries: <T = Array<[string, unknown]>>(entries: Entries<T>) => T;
+      omitKeys: <T, K extends keyof T>(obj: T, ...keys: K[]) => T;
+      removeEmpty: <T>(iterable: T) => T;
+      snakeCaseKeys: <T>(iterable: T) => T;
+      groupBy: <T extends Record<string, unknown>, K extends keyof T>(array: T[], key: K) => Record<string, unknown>;
+    };
+  };
+  converter: {
+    yaml: Converter;
+    json: Converter;
+    markdown: Converter;
+    toml: Converter;
+  };
 }
 
 export type Task = ListrTaskObject<RuntimeContext>;
 
-export interface StatsEntry {
+export interface StatsEntry extends KeyValueMap {
   id: string;
-  contentType: string;
+  contentTypeId: string;
   locale: string;
   message?: string;
+  error?: Error;
 }
 
 export interface TransformHelper {
@@ -115,6 +177,7 @@ export interface TransformHelper {
 }
 
 export type TransformContext = LocalizedContent & {
+  [x: string]: any;
   id: string;
   content?: KeyValueMap;
   entry: Entry;
@@ -125,8 +188,7 @@ export type TransformContext = LocalizedContent & {
   fieldContent?: unknown;
   fieldSettings?: Field;
   requiredFields?: string[];
-  helper: TransformHelper;
-  [x: string]: any;
+  utils: TransformHelper;
 };
 
 export interface Ignore {

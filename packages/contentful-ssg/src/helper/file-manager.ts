@@ -4,7 +4,7 @@ import type {Config, Ignore} from '../types';
 import {dirname, resolve, relative} from 'path';
 import ignore from 'ignore';
 import {readFile, readdir} from 'fs/promises';
-import { remove, outputFile} from 'fs-extra';
+import {remove, outputFile} from 'fs-extra';
 export class FileManager {
   ignoreBase: string = process.cwd();
   ignore?: Ignore;
@@ -20,13 +20,12 @@ export class FileManager {
   }
 
   async initialize() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const {findUp} = await import('find-up');
     const {globby} = await import('globby');
     const gitignore = await findUp('.gitignore');
 
     if (gitignore) {
-      this.ignoreBase = dirname(gitignore as string);
+      this.ignoreBase = dirname(gitignore);
 
       const ignorePatterns = await readFile(gitignore);
 
@@ -40,7 +39,6 @@ export class FileManager {
 
   async writeFile(file: string, data: any, options?: WriteFileOptions | BufferEncoding | string): Promise<void> {
     await outputFile(file, data, options);
-
     if (this.files.has(resolve(file))) {
       this.files.delete(resolve(file));
     }

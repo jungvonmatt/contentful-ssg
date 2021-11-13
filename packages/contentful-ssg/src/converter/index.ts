@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import {KeyValueMap} from '../types.js';
 import {stringify as stringifyJson, parse as parseJson} from './json.js';
 import {stringify as stringifyMarkdown, parse as parseMarkdown} from './markdown.js';
 import {stringify as stringifyToml, parse as parseToml} from './toml.js';
@@ -15,11 +16,11 @@ export const TYPE_TOML = 'toml';
  * @param {String} format Destination format
  * @returns {String}
  */
-export const stringify = (obj, format = 'yaml') => {
+export const stringify = <T = KeyValueMap>(obj: T, format = 'yaml') => {
   switch (format) {
     case 'yml':
     case TYPE_YAML:
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
       return stringifyYaml(obj);
     case 'md':
     case TYPE_MARKDOWN:
@@ -43,16 +44,14 @@ export const parse = (str: string, format = 'yaml') => {
   switch (format) {
     case 'yml':
     case TYPE_YAML:
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return parseYaml(str);
     case 'md':
     case TYPE_MARKDOWN: {
       const {data} = parseMarkdown(str);
-      return data;
+      return data as KeyValueMap;
     }
 
     case TYPE_JSON:
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return parseJson(str);
     case TYPE_TOML:
       return parseToml(str);

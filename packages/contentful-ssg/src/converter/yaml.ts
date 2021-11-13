@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import yaml from 'js-yaml';
+import {KeyValueMap} from '../types';
 
 const getPredicate = (type: string) => data => typeof data === 'string' && data.startsWith(`${type} `);
 const getRepresent = (type: string) => data => typeof data === 'string' ? data.replace(`${type} `, '') : JSON.stringify(data);
@@ -13,7 +12,7 @@ const growYamlConstructors = ['!g.csv', '!g.doc', '!g.json', '!g.static', '!g.st
 
 const growYamlTypes = growYamlConstructors.map(
   (type: string) =>
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
     new yaml.Type(type, {
       kind: 'scalar',
       predicate: getPredicate(type),
@@ -27,7 +26,7 @@ const growYamlTypes = growYamlConstructors.map(
  * @param {Object} obj Source object
  * @returns {String} Yaml representation of source object
  */
-export const stringify = obj => {
+export const stringify = <T = KeyValueMap>(obj: T): string => {
   const GROW_SCHEMA = yaml.DEFAULT_SCHEMA.extend(growYamlTypes);
   return yaml.dump(obj, {schema: GROW_SCHEMA});
 };
@@ -37,7 +36,7 @@ export const stringify = obj => {
  * @param {String} string yaml string
  * @returns {Object} parsed object
  */
-export const parse = obj => {
+export const parse = <T = KeyValueMap>(obj: string): T => {
   const GROW_SCHEMA = yaml.DEFAULT_SCHEMA.extend(growYamlTypes);
-  return yaml.load(obj, {schema: GROW_SCHEMA});
+  return yaml.load(obj, {schema: GROW_SCHEMA}) as T;
 };
