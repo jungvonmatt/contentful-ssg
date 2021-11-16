@@ -2,10 +2,14 @@
   "name": "@jungvonmatt/cssg-plugin-grow",
   "version": "1.0.0",
   "description": "Contentful-ssg plugin for grow",
+  "type": "module",
   "main": "dist/index.js",
-  "devDependencies": {},
   "scripts": {
-    "lint": "eslint --color --ignore-path ../../.gitignore"
+    "clean": "rimraf ./dist",
+    "lint": "eslint --color src --fix --ext .ts",
+    "precompile": "npm run clean",
+    "compile": "tsc --build",
+    "watch": "tsc --build --watch"
   },
   "repository": {
     "type": "git",
@@ -16,5 +20,46 @@
   "bugs": {
     "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
   },
-  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme"
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "directories": {
+    "test": "test"
+  },
+  "peerDependencies": {
+    "@jungvonmatt/contentful-ssg": "^1.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.3.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.0-beta"
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "es2020",
+      "composite": true
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "xo",
+      "xo-typescript/space"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "project": [
+        "./tsconfig.json"
+      ]
+    },
+    "ignorePatterns": [
+      "src/**/*.test.ts",
+      "src/**/*.fixme.ts",
+      "src/__test__/*"
+    ],
+    "env": {
+      "node": true,
+      "jest": true
+    }
+  }
 }

@@ -1,0 +1,24 @@
+{
+  "exclude": ["**/*.test.ts", "**/*.stub.ts", "node_modules", "dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["dom", "dom.iterable", "es2020", "esnext"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "strict": false,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "importHelpers": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "noEmit": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": false,
+    "isolatedModules": true,
+    "paths": {
+      "@jungvonmatt/*": ["./packages/*"]
+    }
+  }
+}

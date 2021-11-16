@@ -110,7 +110,7 @@ export class HookManager {
     const {[key]: hook} = this.config;
     const pluginHooks = (this.config.plugins || []).some(plugin => Boolean(plugin[key]));
 
-    return Boolean(hook) && pluginHooks;
+    return Boolean(hook) || pluginHooks;
   }
 
   async before(defauleValue?: KeyValueMap) {

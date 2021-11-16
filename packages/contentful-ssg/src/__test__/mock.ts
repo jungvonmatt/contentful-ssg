@@ -1,18 +1,17 @@
-import type {Config, RuntimeContext, TransformContext} from '../types.js';
-import path from 'path';
-import {fileURLToPath} from 'url';
 import fs from 'fs-extra';
+import path from 'path';
 import {
   FIELD_TYPE_LINK,
-  LINK_TYPE_ENTRY,
-  LINK_TYPE_ASSET,
   getFieldSettings,
+  LINK_TYPE_ASSET,
+  LINK_TYPE_ENTRY,
 } from '../helper/contentful.js';
-import {HookManager} from '../helper/hook-manager.js';
+import { HookManager } from '../helper/hook-manager.js';
+import type { Config, RuntimeContext, TransformContext } from '../types.js';
 
 const cache = new Map();
 
-export const readFixture = async file => {
+export const readFixture = async (file) => {
   if (!cache.has(file)) {
     const content = await fs.readJSON(path.join(__dirname, 'fixtures', file));
     cache.set(file, content);
@@ -21,7 +20,7 @@ export const readFixture = async file => {
   return cache.get(file);
 };
 
-export const readFixtureSync = file => {
+export const readFixtureSync = (file) => {
   if (!cache.has(file)) {
     const content = fs.readJSONSync(path.join(__dirname, 'fixtures', file));
     cache.set(file, content);
@@ -54,13 +53,14 @@ export const getContent = async () => {
     },
   };
 
-  return {entries, assets, contentTypes, locales, assetLink, entryLink, entry, asset};
+  return { entries, assets, contentTypes, locales, assetLink, entryLink, entry, asset };
 };
 
-export const getConfig = (fixture: Partial<Config> = {}): Config => ({
-  plugins: [],
-  ...fixture,
-} as Config);
+export const getConfig = (fixture: Partial<Config> = {}): Config =>
+  ({
+    plugins: [],
+    ...fixture,
+  } as Config);
 
 export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): RuntimeContext => {
   const assets = readFixtureSync('assets.json');
@@ -69,7 +69,7 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
   const contentTypes = readFixtureSync('content_types.json');
 
   const fieldSettings = getFieldSettings(contentTypes);
-  const {code: defauleLocale} = locales.find(locale => locale.default) || locales[0];
+  const { code: defauleLocale } = locales.find((locale) => locale.default) || locales[0];
 
   const result = {
     config: getConfig(),
@@ -87,8 +87,14 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
 
   const hooks = new HookManager(result as RuntimeContext, getConfig());
 
-  return {...result, hooks} as RuntimeContext;
+  return { ...result, hooks } as RuntimeContext;
 };
 
 export const getTransformContext = (fixture: Partial<TransformContext> = {}): TransformContext =>
-  ({assets: [], entries: [], assetMap: new Map(), entryMap: new Map(), ...fixture} as TransformContext);
+  ({
+    assets: [],
+    entries: [],
+    assetMap: new Map(),
+    entryMap: new Map(),
+    ...fixture,
+  } as TransformContext);

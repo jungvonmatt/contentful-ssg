@@ -1,32 +1,35 @@
 /* eslint-env jest */
-import type { Field } from 'contentful';
-import type { Config, ContentfulData, Hooks, KeyValueMap, LocalizedContent, RuntimeContext, TransformContext, TransformHook } from '../types.js';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
-
-import { readFixture, getContent ,getConfig,getRuntimeContext, getTransformContext} from '../__test__/mock.js';
+import type { Field } from 'contentful';
 import {
-  FIELD_TYPE_SYMBOL,
-  FIELD_TYPE_BOOLEAN,
-  FIELD_TYPE_NUMBER,
-  FIELD_TYPE_INTEGER,
+  convertToMap,
   FIELD_TYPE_ARRAY,
-  FIELD_TYPE_OBJECT,
-  FIELD_TYPE_TEXT,
-  FIELD_TYPE_RICHTEXT,
+  FIELD_TYPE_BOOLEAN,
   FIELD_TYPE_DATE,
-  FIELD_TYPE_LOCATION,
+  FIELD_TYPE_INTEGER,
   FIELD_TYPE_LINK,
-  LINK_TYPE_ASSET,
-  LINK_TYPE_ENTRY,
+  FIELD_TYPE_LOCATION,
+  FIELD_TYPE_NUMBER,
+  FIELD_TYPE_OBJECT,
+  FIELD_TYPE_RICHTEXT,
+  FIELD_TYPE_SYMBOL,
+  FIELD_TYPE_TEXT,
   getContentId,
   getContentTypeId,
-  convertToMap,
   getFieldSettings,
+  LINK_TYPE_ASSET,
+  LINK_TYPE_ENTRY,
 } from '../helper/contentful';
-
-import { mapField, mapEntry, mapMetaFields } from './transform';
-import { localizeEntry } from './localize';
 import { HookManager } from '../helper/hook-manager.js';
+import type { Config, RuntimeContext, TransformContext } from '../types.js';
+import {
+  getConfig,
+  getRuntimeContext,
+  getTransformContext,
+  readFixture,
+} from '../__test__/mock.js';
+import { localizeEntry } from './localize';
+import { mapEntry, mapField, mapMetaFields } from './transform';
 
 describe('Mapper - mapField', () => {
   const runtimeContext = getRuntimeContext();
@@ -209,8 +212,7 @@ describe('Mapper - mapField', () => {
       getTransformContext({
         fieldContent: link,
         fieldSettings: { type: FIELD_TYPE_LINK } as Field,
-        assetMap: convertToMap(translatedAssets)
-
+        assetMap: convertToMap(translatedAssets),
       }),
       runtimeContext,
       config
@@ -255,10 +257,10 @@ describe('Mapper - mapField', () => {
           items: {
             type: FIELD_TYPE_LINK,
             linkType: LINK_TYPE_ASSET,
-          }
+          },
         } as Field,
         assetMap: convertToMap(translatedAssets),
-        entryMap: new Map()
+        entryMap: new Map(),
       }),
       runtimeContext,
       config
@@ -283,7 +285,7 @@ describe('Mapper - mapField', () => {
           type: FIELD_TYPE_LINK,
         } as Field,
         assetMap: new Map(),
-        entryMap: new Map()
+        entryMap: new Map(),
       }),
       runtimeContext,
       config
@@ -313,7 +315,7 @@ describe('Mapper - mapField', () => {
           type: FIELD_TYPE_LINK,
         } as Field,
         assetMap: new Map(),
-        entryMap: convertToMap(entries)
+        entryMap: convertToMap(entries),
       }),
       runtimeContext,
       config
@@ -392,14 +394,14 @@ describe('Mapper - mapEntry', () => {
   const assets = runtimeContext.data.assets.map((asset) =>
     localizeEntry(asset, 'en-GB', {
       locales: runtimeContext.data.locales,
-      fieldSettings:runtimeContext.data.fieldSettings
+      fieldSettings: runtimeContext.data.fieldSettings,
     })
   );
 
   const entries = runtimeContext.data.entries.map((entry) =>
     localizeEntry(entry, 'en-GB', {
       locales: runtimeContext.data.locales,
-      fieldSettings:runtimeContext.data.fieldSettings
+      fieldSettings: runtimeContext.data.fieldSettings,
     })
   );
   const [entry] = entries;
@@ -407,11 +409,11 @@ describe('Mapper - mapEntry', () => {
     entry,
     id: getContentId(entry),
     contentTypeId: getContentTypeId(entry),
-    locale: runtimeContext.data.locales.find(locale => locale.code === 'en-GB'),
+    locale: runtimeContext.data.locales.find((locale) => locale.code === 'en-GB'),
     assets,
     entries,
     assetMap: convertToMap(assets),
-    entryMap: convertToMap(entries)
+    entryMap: convertToMap(entries),
   });
 
   test('Maps entry', async () => {
@@ -474,7 +476,11 @@ describe('Mapper - mapEntry', () => {
       };
     };
 
-    const result = await mapEntry(transformContext, {...runtimeContext, hooks: new HookManager(runtimeContext, config)}, config);
+    const result = await mapEntry(
+      transformContext,
+      { ...runtimeContext, hooks: new HookManager(runtimeContext, config) },
+      config
+    );
 
     expect(result).toEqual({
       customKey: {
@@ -525,8 +531,8 @@ describe('Mapper - mapEntry', () => {
   });
 
   test('Skip entry with mandatory field missing', async () => {
-    const modifiedTransformContext = {...transformContext};
-    const modifiedRuntimeContext = {...runtimeContext};
+    const modifiedTransformContext = { ...transformContext };
+    const modifiedRuntimeContext = { ...runtimeContext };
     // make shortText mandatory and remove it
     modifiedRuntimeContext.data.fieldSettings.fieldTest.shortText.required = true;
     modifiedTransformContext.entry.fields.shortText = undefined;
@@ -537,14 +543,14 @@ describe('Mapper - mapEntry', () => {
   });
 
   test('Skip entry with custom validate function', async () => {
-    const modifiedTransformContext = {...transformContext};
-    const modifiedRuntimeContext = {...runtimeContext};
+    const modifiedTransformContext = { ...transformContext };
+    const modifiedRuntimeContext = { ...runtimeContext };
 
     // we want to have a mandatory field in the validate args
     modifiedRuntimeContext.data.fieldSettings.fieldTest.shortText.required = false;
     modifiedRuntimeContext.data.fieldSettings.fieldTest.longText.required = true;
 
-    let validateContext:TransformContext;
+    let validateContext: TransformContext;
 
     config.validate = (context) => {
       validateContext = context;
@@ -552,7 +558,9 @@ describe('Mapper - mapEntry', () => {
     };
 
     const result = await mapEntry(modifiedTransformContext, modifiedRuntimeContext, config);
-    const requiredFieldMissing = !validateContext.requiredFields.every((key) => Object.keys(validateContext.content).includes(key));
+    const requiredFieldMissing = !validateContext.requiredFields.every((key) =>
+      Object.keys(validateContext.content).includes(key)
+    );
 
     expect(result).toBeUndefined();
     expect(validateContext.entry.sys.id).toEqual('34O95Y8gLXd3jPozdy7gmd');
@@ -565,9 +573,9 @@ describe('Mapper hooks', () => {
   const runtimeContext = getRuntimeContext();
   const config = getConfig();
 
-  const getHookedRuntime = (configMock: Partial<Config> = {}):RuntimeContext => ({
+  const getHookedRuntime = (configMock: Partial<Config> = {}): RuntimeContext => ({
     ...runtimeContext,
-    hooks: new HookManager(runtimeContext, {...config, ...configMock})
+    hooks: new HookManager(runtimeContext, { ...config, ...configMock }),
   });
 
   test('mapEntryLink', async () => {
@@ -586,10 +594,10 @@ describe('Mapper hooks', () => {
       getTransformContext({
         fieldContent: link,
         fieldSettings: { type: FIELD_TYPE_LINK } as Field,
-        entryMap: convertToMap(entries)
+        entryMap: convertToMap(entries),
       }),
       getHookedRuntime({
-        mapEntryLink: (transformContext) => ({ id: transformContext.id, custom: true })
+        mapEntryLink: (transformContext) => ({ id: transformContext.id, custom: true }),
       }),
       config
     );
@@ -615,7 +623,7 @@ describe('Mapper hooks', () => {
         assetMap: convertToMap(assets),
       }),
       getHookedRuntime({
-        mapAssetLink: (transformContext) => ({ id: transformContext.id, custom: true })
+        mapAssetLink: (transformContext) => ({ id: transformContext.id, custom: true }),
       }),
       config
     );
@@ -664,7 +672,7 @@ describe('Mapper hooks', () => {
         fieldSettings: { type: FIELD_TYPE_RICHTEXT } as Field,
       }),
       runtimeContext,
-      {...config, richTextRenderer: () => '<h1>CUSTOM</h1>'}
+      { ...config, richTextRenderer: () => '<h1>CUSTOM</h1>' }
     );
 
     expect(value).toEqual('<h1>CUSTOM</h1>');
@@ -683,7 +691,7 @@ describe('Mapper hooks', () => {
         assetMap: convertToMap(assets),
       }),
       runtimeContext,
-      {...config, richTextRenderer: false}
+      { ...config, richTextRenderer: false }
     );
 
     expect(value).toEqual({

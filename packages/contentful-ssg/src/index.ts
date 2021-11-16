@@ -85,8 +85,6 @@ program
       const config = await getConfig(parseArgs(cmd || {}));
       const verified = await askMissing(config);
 
-      console.log(verified);
-      process.exit(0);
       return dump(verified);
     }),
   );

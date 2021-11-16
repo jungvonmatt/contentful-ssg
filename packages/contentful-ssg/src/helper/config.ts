@@ -1,10 +1,9 @@
-
 import {register} from '@swc-node/register/register';
 import {cosmiconfig, Loader} from 'cosmiconfig';
 import mergeOptionsModule from 'merge-options';
 import {createRequire} from 'module';
 import {isAbsolute, resolve} from 'path';
-import type {Config, ContentfulConfig, Hooks, InitialConfig, KeyValueMap, PluginInfo} from '../types.js';
+import type {Config, ContentfulConfig, Hooks, InitialConfig, KeyValueMap, PluginInfo, PluginModule} from '../types.js';
 import {removeEmpty} from './object.js';
 
 const require = createRequire(import.meta.url);
@@ -24,9 +23,13 @@ const resolvePlugin = async (plugin: string | PluginInfo): Promise<Hooks> => {
   const pluginOptions = typeof plugin === 'string' ? {} : plugin.options || {};
   const resolvedPath = require.resolve(pluginName);
 
-  const module = await import(resolvedPath) as Hooks | ((...args: unknown[]) => Hooks);
+  const pluginModule = await import(resolvedPath) as PluginModule;
 
-  return typeof module === 'function' ? module(pluginOptions || {}) : module || {};
+  if (typeof pluginModule.default === 'function') {
+    return pluginModule.default(pluginOptions || {});
+  }
+
+  return (pluginModule.default || {});
 };
 
 const loadConfig = async (moduleName: string): Promise<KeyValueMap> => {
@@ -113,7 +116,6 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const result = mergeOptions(defaultOptions, contentfulCliOptions, environmentOptions, configFileOptions, args || {}) as InitialConfig;
   const plugins = await Promise.all((result.plugins || []).map(async plugin => resolvePlugin(plugin as string | PluginInfo)));
-
   return {...result, plugins};
 };
 

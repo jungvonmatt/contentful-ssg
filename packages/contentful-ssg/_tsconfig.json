@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "lib": ["dom", "dom.iterable", "es2020", "esnext"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "sourceMap": false,
+    "declaration": true,
+    "allowJs": true,
+    "importHelpers": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
+}
