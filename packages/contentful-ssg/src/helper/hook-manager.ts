@@ -37,12 +37,12 @@ const hookUpRuntime = (
     const value = (await reduceAsync(
       hooks || [],
       async (prev: Partial<RuntimeContext>, hook: RuntimeHook) =>
-        hook({...runtimeContext, ...prev}),
+        hook({...runtimeContext, ...(prev || {})}),
       initialValue || {},
     )) as RuntimeContext;
 
     if (typeof configHook === 'function') {
-      return configHook(value);
+      return configHook({...runtimeContext, ...(value || {})});
     }
 
     return value;

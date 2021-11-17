@@ -1,38 +1,68 @@
-import {register} from '@swc-node/register/register';
-import {cosmiconfig, Loader} from 'cosmiconfig';
+import path from 'path';
+import { register } from '@swc-node/register/register';
+import { cosmiconfig, Loader } from 'cosmiconfig';
 import mergeOptionsModule from 'merge-options';
-import {createRequire} from 'module';
-import {isAbsolute, resolve} from 'path';
-import type {Config, ContentfulConfig, Hooks, InitialConfig, KeyValueMap, PluginInfo, PluginModule} from '../types.js';
-import {removeEmpty} from './object.js';
+import { createRequire } from 'module';
+import slash from 'slash';
+import { isAbsolute, resolve } from 'path';
+import type {
+  Config,
+  ContentfulConfig,
+  Hooks,
+  InitialConfig,
+  KeyValueMap,
+  PluginInfo,
+  PluginModule,
+} from '../types.js';
+import { removeEmpty } from './object.js';
+import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
+import chalk from 'chalk';
 
 const require = createRequire(import.meta.url);
 
 const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
-  register({format: 'esm', extensions: ['.ts', '.tsx', '.mts']});
+  register({ format: 'esm', extensions: ['.ts', '.tsx', '.mts'] });
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
   const configModule = require(filePath);
-  return (configModule.default || configModule);
+  return configModule.default || configModule;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const mergeOptions = mergeOptionsModule.bind({ignoreUndefined: true});
+const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
 
-const resolvePlugin = async (plugin: string | PluginInfo): Promise<Hooks> => {
+const resolvePlugin = async (plugin: string | PluginInfo, config: Partial<Config>): Promise<Hooks> => {
   const pluginName = typeof plugin === 'string' ? plugin : plugin.resolve;
   const pluginOptions = typeof plugin === 'string' ? {} : plugin.options || {};
-  const resolvedPath = require.resolve(pluginName);
+  const {rootDir, verbose} = config;
 
-  const pluginModule = await import(resolvedPath) as PluginModule;
+  try {
+    const requireSource = rootDir !== null ? createRequire(`${rootDir}/:internal:`) : require;
 
-  if (typeof pluginModule.default === 'function') {
-    return pluginModule.default(pluginOptions || {});
+    // If the path is absolute, resolve the directory of the internal plugin,
+    // otherwise resolve the directory containing the package.json
+    const resolvedPath = slash(requireSource.resolve(pluginName));
+    const pluginModule = (await import(resolvedPath)) as PluginModule;
+
+    if (typeof pluginModule.default === 'function') {
+      return pluginModule.default(pluginOptions || {});
+    }
+
+    return pluginModule.default || {};
+  } catch (error: unknown) {
+    if (verbose) {
+      console.error(chalk.red(`Plugin "${pluginName} threw the following error:`))
+      console.error(error);
+    } else {
+      console.error(chalk.red(
+        `There was a problem loading plugin "${pluginName}". Perhaps you need to install its package?\nUse --verbose to see actual error.`
+      ));
+    }
+
+    throw new Error(`unreachable`);
   }
-
-  return (pluginModule.default || {});
 };
 
-const loadConfig = async (moduleName: string): Promise<KeyValueMap> => {
+const loadConfig = (moduleName: string): Promise<CosmiconfigResult> => {
   const explorer = cosmiconfig(moduleName, {
     searchPlaces: [
       'package.json',
@@ -49,9 +79,7 @@ const loadConfig = async (moduleName: string): Promise<KeyValueMap> => {
     },
   });
 
-  const result = await explorer.search();
-
-  return (result?.config ?? {}) as KeyValueMap;
+  return explorer.search();
 };
 
 /**
@@ -78,14 +106,16 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
   try {
     // Get configuration from contentful rc file (created by the contentful cli command)
     const contentfulConfig = await loadConfig('contentful');
-    const {managementToken, activeSpaceId, activeEnvironmentId, host} = contentfulConfig;
+    if (!contentfulConfig.isEmpty) {
+      const { managementToken, activeSpaceId, activeEnvironmentId, host } = contentfulConfig.config;
 
-    contentfulCliOptions = removeEmpty({
-      spaceId: activeSpaceId as string,
-      managementToken: managementToken as string,
-      environmentId: activeEnvironmentId as string,
-      host: host as string,
-    });
+      contentfulCliOptions = removeEmpty({
+        spaceId: activeSpaceId as string,
+        managementToken: managementToken as string,
+        environmentId: activeEnvironmentId as string,
+        host: host as string,
+      });
+    }
   } catch (error: unknown) {
     if (typeof error === 'string') {
       console.log('Error (Contentful):', error);
@@ -97,11 +127,16 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
   }
 
   let configFileOptions: Partial<InitialConfig> = {};
+  args.rootDir = process.cwd();
   try {
     // Get configuration from contentful-ssg rc file
-    configFileOptions = await loadConfig('contentful-ssg');
-    if (configFileOptions.directory && !isAbsolute(configFileOptions.directory)) {
-      configFileOptions.directory = resolve(process.cwd(), configFileOptions.directory);
+    const configFile =  await loadConfig('contentful-ssg');
+    if (!configFile.isEmpty) {
+      configFileOptions = configFile.config;
+      args.rootDir = path.dirname(configFile.filepath);
+      if (configFileOptions.directory && !isAbsolute(configFileOptions.directory)) {
+        configFileOptions.directory = resolve(args.rootDir, configFileOptions.directory);
+      }
     }
   } catch (error: unknown) {
     if (typeof error === 'string') {
@@ -114,8 +149,15 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const result = mergeOptions(defaultOptions, contentfulCliOptions, environmentOptions, configFileOptions, args || {}) as InitialConfig;
-  const plugins = await Promise.all((result.plugins || []).map(async plugin => resolvePlugin(plugin as string | PluginInfo)));
-  return {...result, plugins};
+  const result = mergeOptions(
+    defaultOptions,
+    contentfulCliOptions,
+    environmentOptions,
+    configFileOptions,
+    args || {}
+  ) as InitialConfig;
+  const plugins = await Promise.all(
+    (result.plugins || []).map(async (plugin) => resolvePlugin(plugin as string | PluginInfo, result))
+  );
+  return { ...result, plugins };
 };
-

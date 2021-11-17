@@ -98,6 +98,7 @@
     "micromatch": "^4.0.4",
     "prettier": "^2.4.1",
     "read-pkg-up": "^9.0.0",
+    "slash": "^4.0.0",
     "snake-case": "^3.0.4",
     "tempy": "^2.0.0",
     "type-fest": "^2.5.3"
@@ -134,7 +135,6 @@
       "module": "es2020"
     }
   },
-
   "eslintConfig": {
     "root": true,
     "extends": [

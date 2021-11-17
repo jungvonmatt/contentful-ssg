@@ -69,6 +69,7 @@ export interface Hooks {
 
 export type Config = Partial<ContentfulConfig> &
 Hooks & {
+  rootDir?: string;
   directory: string;
   verbose?: boolean;
   plugins?: Hooks[];
