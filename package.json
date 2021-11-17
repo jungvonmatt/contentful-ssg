@@ -10,7 +10,7 @@
     "url": "https://github.com/jungvonmatt/contentful-ssg"
   },
   "engines": {
-    "node": "^14.13.1 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "clean": "lerna run clean",
