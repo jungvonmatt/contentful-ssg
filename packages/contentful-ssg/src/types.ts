@@ -95,9 +95,10 @@ export interface PluginInfo {
   resolve: string;
 }
 
-export interface PluginModule {
-  default: PluginSource;
-}
+export type PluginModule = {
+  default?: PluginSource;
+} & Partial<Hooks>
+
 export type PluginSource = Hooks | ((options?: KeyValueMap) => Hooks);
 
 export type FieldSettings = KeyValueMap<KeyValueMap<Field>>;

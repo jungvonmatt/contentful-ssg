@@ -14,7 +14,7 @@ import type {
   PluginInfo,
   PluginModule,
 } from '../types.js';
-import { removeEmpty } from './object.js';
+import { isObject, removeEmpty } from './object.js';
 import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
 import chalk from 'chalk';
 
@@ -42,12 +42,19 @@ const resolvePlugin = async (plugin: string | PluginInfo, config: Partial<Config
     // otherwise resolve the directory containing the package.json
     const resolvedPath = slash(requireSource.resolve(pluginName));
     const pluginModule = (await import(resolvedPath)) as PluginModule;
+    let pluginDefaultHooks = {};
 
+    // Resolve default export (could be function or an object)
     if (typeof pluginModule.default === 'function') {
-      return pluginModule.default(pluginOptions || {});
+      pluginDefaultHooks = await pluginModule.default(pluginOptions || {});
+    } else if (isObject(pluginModule.default)) {
+      pluginDefaultHooks = pluginModule.default;
     }
 
-    return pluginModule.default || {};
+    // Add named exports
+    const pluginHooks = {...(pluginDefaultHooks || {}), ...(pluginModule || {})} as Hooks;
+
+    return pluginHooks;
   } catch (error: unknown) {
     if (verbose) {
       console.error(chalk.red(`Plugin "${pluginName} threw the following error:`))
