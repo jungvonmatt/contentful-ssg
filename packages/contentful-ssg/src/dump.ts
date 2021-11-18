@@ -72,16 +72,16 @@ export const dump = async (config: Config): Promise<void> => {
         task: async ctx => fetch(ctx, config),
       },
       {
+        title: 'Localize data',
+        task: async ctx => localize(ctx),
+      },
+      {
         title: 'Before Hook',
         skip: ctx => !ctx.hooks.has('before'),
         task: async ctx => {
           const result = await ctx.hooks.before();
           ctx = {...ctx, ...(result || {})};
         },
-      },
-      {
-        title: 'Localize data',
-        task: async ctx => localize(ctx),
       },
       {
         title: 'Writing files',
