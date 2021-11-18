@@ -144,6 +144,7 @@ export interface RuntimeContext {
   stats: Stats;
   hooks: HookManager;
   helper: {
+    [x: string]: any;
     array: {
       mapAsync: <T, U>(iterable: T[], callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>) => Promise<U[]>;
       forEachAsync: <T>(iterable: T[], callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>) => Promise<void>;
