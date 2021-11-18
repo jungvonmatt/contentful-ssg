@@ -69,7 +69,7 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
   const contentTypes = readFixtureSync('content_types.json');
 
   const fieldSettings = getFieldSettings(contentTypes);
-  const { code: defauleLocale } = locales.find((locale) => locale.default) || locales[0];
+  const { code: defaultLocale } = locales.find((locale) => locale.default) || locales[0];
 
   const result = {
     config: getConfig(),
@@ -81,7 +81,7 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
       locales,
       fieldSettings,
     },
-    defauleLocale,
+    defaultLocale,
     ...fixture,
   };
 

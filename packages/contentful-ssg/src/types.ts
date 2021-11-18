@@ -137,7 +137,7 @@ type Entries<T> = Array<{
 export interface RuntimeContext {
   [x: string]: any;
   config: Config;
-  defauleLocale: string;
+  defaultLocale: string;
   data: ContentfulData;
   localized: Map<string, LocalizedContent>;
   fileManager: FileManager;

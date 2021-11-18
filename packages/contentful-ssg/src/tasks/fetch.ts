@@ -6,9 +6,9 @@ export const fetch = async (context: RuntimeContext, config: Config) => {
   const {locales, contentTypes} = content;
 
   const fieldSettings = getFieldSettings(contentTypes);
-  const {code: defauleLocale} = locales.find(locale => locale.default);
+  const {code: defaultLocale} = locales.find(locale => locale.default);
 
-  context.defauleLocale = defauleLocale;
+  context.defaultLocale = defaultLocale;
 
   context.data = {
     ...content,
