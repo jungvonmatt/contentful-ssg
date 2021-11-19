@@ -98,6 +98,7 @@ export const dump = async (config: Config): Promise<void> => {
               const promises = entries.map(async entry => {
                 const id = getContentId(entry);
                 const contentTypeId = getContentTypeId(entry);
+
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 const utils = {
                   collectValues: collectValues({...data, entry}),
@@ -105,12 +106,12 @@ export const dump = async (config: Config): Promise<void> => {
                 } as TransformHelper;
 
                 const transformContext: TransformContext = {
+                  ...data,
                   id,
                   contentTypeId,
                   entry,
                   locale,
                   utils,
-                  ...data,
                 };
 
                 try {

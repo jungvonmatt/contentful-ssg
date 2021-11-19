@@ -116,10 +116,11 @@ export const mapReferenceField = async (
   }
 
   if (isAsset(fieldContent)) {
+    const asset = transformContext.assetMap.get(getContentId(fieldContent));
     return hooks.mapAssetLink(
       {
         ...transformContext,
-        asset: fieldContent as Asset,
+        asset,
         id: getContentId(fieldContent),
         contentTypeId: getContentTypeId(fieldContent),
       },
@@ -145,12 +146,13 @@ export const mapReferenceField = async (
   }
 
   if (isEntry(fieldContent)) {
+    const entry = transformContext.entryMap.get(getContentId(fieldContent));
     return hooks.mapEntryLink(
       {
         ...transformContext,
         id: getContentId(fieldContent),
         contentTypeId: getContentTypeId(fieldContent),
-        entry: fieldContent as Entry,
+        entry,
       },
       mapEntryLink,
     );

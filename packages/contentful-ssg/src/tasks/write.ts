@@ -1,8 +1,16 @@
 import type {TransformContext, RuntimeContext, Config} from '../types.js';
-import {join} from 'path';
+import {join, extname} from 'path';
 import mm from 'micromatch';
-import {stringify, TYPE_YAML} from '../converter/index.js';
+import {stringify, TYPE_YAML, TYPE_JSON, TYPE_MARKDOWN, TYPE_TOML} from '../converter/index.js';
 const {contains} = mm;
+
+const formatMapping = {
+  '.md': TYPE_MARKDOWN,
+  '.json': TYPE_JSON,
+  '.yaml': TYPE_YAML,
+  '.yml': TYPE_YAML,
+  '.toml': TYPE_TOML,
+};
 
 export const write = async (transformContext: TransformContext, runtimeContext: RuntimeContext, config: Config) => {
   const {id, locale, contentTypeId, content: data} = transformContext;
@@ -23,8 +31,8 @@ export const write = async (transformContext: TransformContext, runtimeContext: 
 
   const filename = await runtimeContext.hooks.mapFilename(transformContext, `${id}${localeAddon}.${format}`);
   const filepath = join(directory, filename);
-
-  const content = stringify(data, format);
+  const ext = extname(filepath);
+  const content = stringify(data, formatMapping?.[ext] ?? format);
 
   await runtimeContext.fileManager.writeFile(filepath, content);
 };

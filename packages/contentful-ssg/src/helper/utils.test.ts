@@ -29,6 +29,15 @@ describe('Utils', () => {
     expect(slugs).toEqual(['e', 'd', 'c', 'b', 'a']);
   });
 
+  test('collectValues (empty)', () => {
+    const entry = entryMap.get('1');
+    const slugs = collectValues({ ...transformContext, entry })('fields.slug');
+    const parent = collectParentValues({ ...transformContext, entry })('fields.slug');
+
+    expect(slugs).toEqual(['a']);
+    expect(parent).toEqual([]);
+  });
+
   test('collectValues with different link field', () => {
     const entry = entryMap.get('5');
     const slugsReverse = collectValues({ ...transformContext, entry })('fields.slug', {

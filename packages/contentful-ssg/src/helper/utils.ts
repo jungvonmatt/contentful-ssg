@@ -3,7 +3,6 @@ import dlv from 'dlv';
 
 export const collectValues = (transformContext: Pick<TransformContext, 'entry' | 'entryMap'>) => (key, options?: CollectOptions): any[] => {
   const {entry: defaultEntry, entryMap: defaultEntryMap} = transformContext;
-
   const {getNextId, linkField, entry = defaultEntry, entryMap = defaultEntryMap} = options || {};
 
   const params = {

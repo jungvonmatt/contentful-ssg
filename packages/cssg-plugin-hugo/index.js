@@ -13,17 +13,14 @@ export const TYPE_PAGE = 'page';
 export const TYPE_DATA = 'data';
 export const TYPE_HEADLESS = 'headless';
 
-
 const defaultOptions = {
   settingsType: 'd-settings',
   i18nType: 'd-i18n',
-  defaultContentLanguageInSubdir: false,
-  configTemplate: 'config/_default/_config.toml',
+  languageConfig: true,
   typeConfig:  {
     [TYPE_PAGE]: ['page'],
     [TYPE_DATA]: ['d-*'],
   },
-
   fieldIds: {
     slug: 'slug',
     parent: 'parent_page'
@@ -50,6 +47,7 @@ export default (args) => {
   const getEntryType = (transformContext) => {
     const {contentTypeId} = transformContext;
     const [type = TYPE_HEADLESS] = Object.entries(options?.typeConfig ?? {}).find(([,pattern]) => mm.isMatch(contentTypeId, pattern)) || [];
+
     return type;
   }
 
@@ -58,7 +56,7 @@ export default (args) => {
   return {
     // Before hook
     async before(runtimeContext) {
-      const {helper,converter, data, localized, defaultLocale} = runtimeContext;
+      const {helper,converter, data, localized} = runtimeContext;
       const locales = data?.locales ?? [];
 
       // initialize getSettings
@@ -66,50 +64,37 @@ export default (args) => {
       helper.getSettings = getSettings;
 
       // Write config toml according to locale settings in contentful
-      if (options.configTemplate) {
+      if (options.languageConfig) {
         const rootDir = runtimeContext?.config?.rootDir ?? process.cwd();
-        const src = path.resolve(rootDir,options.configTemplate);
-        const dst = path.join(rootDir, 'config/_default/config.toml');
-        if (defaultLocale && existsSync(src)) {
-          const config = converter.toml.parse(await readFile(src));
-          const languageConfig = {
-            languageCode: defaultLocale.code,
-            defaultContentLanguage: defaultLocale.code,
-            // Enbale to use locale subdir for default language
-            defaultContentLanguageInSubdir: Boolean(options?.defaultContentLanguageInSubdir ?? false),
-            languages: Object.fromEntries(
-              locales.map((locale) => {
-                const { code, name: languageName } = locale;
-                // Currently Hugo language internals lowercase language codes,
-                // which can cause conflicts with settings like defaultContentLanguage
-                // which are not lowercased
-                // https://github.com/gohugoio/hugo/issues/7344
-                const languageCode = code.toLowerCase();
-                const [languageNameShort] = languageCode.split('-');
-                return [
-                  code,
-                  {
-                    contentDir: `content/${languageCode}`,
-                    languageCode,
-                    languageName,
-                    languageNameShort,
-                    weight: locale.default ? 1 : 2,
-                  },
-                ];
-              })
-            ),
-          };
-          await writeFile(
-            dst,
-            converter.toml.stringify({
-              ...config,
-              ...languageConfig,
-            })
-          );
-        }
+        const dst = path.join(rootDir, 'config/_default/languages.toml');
+        const languageConfig = Object.fromEntries(
+          locales.map((locale) => {
+            const { code, name: languageName } = locale;
+            // Currently Hugo language internals lowercase language codes,
+            // which can cause conflicts with settings like defaultContentLanguage
+            // which are not lowercased
+            // https://github.com/gohugoio/hugo/issues/7344
+            const languageCode = code.toLowerCase();
+            const [languageNameShort] = languageCode.split('-');
+            return [
+              code,
+              {
+                contentDir: `content/${languageCode}`,
+                languageCode,
+                languageName,
+                languageNameShort,
+                weight: locale.default ? 1 : 2,
+              },
+            ];
+          })
+        );
+        await writeFile(
+          dst,
+          converter.toml.stringify(languageConfig)
+        );
       }
 
-      // Find section pages
+      // Find section pages and add them to the runtimeconfig
       const enhancedLocalized = new Map(Array.from(localized.entries()).map(([localeCode, contentfulData]) => {
         const {entries} = contentfulData;
         const sectionIds = entries.reduce((nodes, entry) => {
@@ -128,6 +113,28 @@ export default (args) => {
       return result;
     },
 
+    /**
+     * Add path markdown files for entry links
+     * @param transformContext
+     * @param runtimeContext
+     * @returns
+     */
+    async mapEntryLink(
+      transformContext,
+      runtimeContext,
+      prev
+    ) {
+      const directory = await runtimeContext.hooks.mapDirectory(transformContext);
+      const filename = await runtimeContext.hooks.mapFilename(transformContext);
+
+      return {...prev, path: path.join(directory,filename)};
+    },
+
+    /**
+     * Map directories
+     * @param transformContext
+     * @returns
+     */
     async mapDirectory(transformContext) {
       const {contentTypeId, locale} = transformContext;
       const type = getEntryType(transformContext);
@@ -143,6 +150,13 @@ export default (args) => {
       return path.join('headless', contentTypeId);
     },
 
+    /**
+     * Map filenames data files to data, headless bundles to headless folder and pages in a
+     * directory structure which matches the sitemap
+     * @param transformContext
+     * @param runtimeContext
+     * @returns
+     */
     async mapFilename(transformContext, runtimeContext) {
       const {id, locale,  entry, contentTypeId, utils} = transformContext;
       const {helper, localized} = runtimeContext;
@@ -165,21 +179,21 @@ export default (args) => {
         return path.join(locale.code, contentTypeId, `${id}.json`);
       }
 
-
       if (type === TYPE_PAGE && sectionIds.has(id)) {
         const slugs = utils.collectValues(`fields.${options.fieldIds.slug}`, {
           linkField: `fields.${options.fieldIds.parent}`,
+          entry,
         });
-
-        return path.join(...slugs, `_index.md`)
+        return path.join(...(slugs || []), `_index.md`)
       }
 
       if (type === TYPE_PAGE) {
         const slugs = utils.collectParentValues(`fields.${options.fieldIds.slug}`, {
           linkField: `fields.${options.fieldIds.parent}`,
+          entry
         });
 
-        return path.join(...slugs, `${entry?.fields?.[options.fieldIds.slug] ?? 'unknown'}.md`)
+        return path.join(...(slugs || []), `${entry?.fields?.[options.fieldIds.slug] ?? 'unknown'}.md`)
       }
 
       return path.join(id, `index.${locale.code}.md`);
@@ -203,6 +217,8 @@ export default (args) => {
           dictionaryPath,
           toml.stringify({ ...oldContent, [key]: translations }, undefined, '  ')
         );
+
+        // dont't write i-18n objects to the content folder
         return undefined;
       }
 
