@@ -1,0 +1,29 @@
+{
+  "name": "@jungvonmatt/cssg-plugin-hugo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "keywords": [],
+  "author": "Ben Zörb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "dependencies": {
+    "@jungvonmatt/contentful-ssg": "^1.0.0",
+    "merge-options": "^3.0.4",
+    "micromatch": "^4.0.4"
+  }
+}

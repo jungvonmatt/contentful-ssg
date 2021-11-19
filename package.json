@@ -17,10 +17,11 @@
     "postinstall": "lerna bootstrap --hoist --progress --no-ci",
     "prepublishOnly": "npm i && npm run build && npm run lint && npm run test",
     "release": "lerna version --no-private --conventional-commits --create-release github --yes && lerna publish from-git --yes",
+    "compile": "lerna run compile",
     "start": "lerna run start",
     "lint": "lerna run lint",
     "test": "jest",
-    "test:ci": "npm run compile -ws && npm run test:prod",
+    "test:ci": "npm run compile && npm run test:prod",
     "test:prod": "npm run lint && npm run test -- --coverage --no-cache",
     "test:watch": "jest --watch"
   },

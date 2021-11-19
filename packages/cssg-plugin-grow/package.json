@@ -24,7 +24,7 @@
   "directories": {
     "test": "test"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@jungvonmatt/contentful-ssg": "^1.0.0"
   },
   "devDependencies": {
