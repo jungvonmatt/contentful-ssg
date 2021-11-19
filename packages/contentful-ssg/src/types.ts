@@ -112,6 +112,7 @@ export interface ContentfulData {
 }
 
 export interface LocalizedContent {
+  [x: string]: any;
   assets: Asset[];
   entries: Entry[];
   assetMap: Map<string, Asset>;
@@ -228,6 +229,7 @@ export interface RichTextData {
 export interface CollectOptions {
   reverse?: boolean;
   entry?: Entry;
+  entryMap?: Map<string, Entry>;
   linkField?: string;
   getId?: (entry: Entry) => string;
   getNextId?: (entry: Entry) => string;

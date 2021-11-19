@@ -15,6 +15,7 @@ import {localize} from './tasks/localize.js';
 import {transform} from './tasks/transform.js';
 import {write} from './tasks/write.js';
 import {collectParentValues, collectValues} from './helper/utils.js';
+import { ValidationError } from './helper/error.js';
 
 /**
  * This is a very simple listr renderer which does not swallow log output from
@@ -99,8 +100,8 @@ export const dump = async (config: Config): Promise<void> => {
                 const contentTypeId = getContentTypeId(entry);
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 const utils = {
-                  collectValues: collectValues({entries, entry}),
-                  collectParentValues: collectParentValues({entries, entry}),
+                  collectValues: collectValues({...data, entry}),
+                  collectParentValues: collectParentValues({...data, entry}),
                 } as TransformHelper;
 
                 const transformContext: TransformContext = {
@@ -116,14 +117,15 @@ export const dump = async (config: Config): Promise<void> => {
                   const content = await transform(transformContext, ctx, config);
 
                   if (typeof content === 'undefined') {
-                    ctx.stats.addSkipped(transformContext, `Invalid entry (content-type: ${contentTypeId}, id: ${id})`);
                     return;
                   }
 
                   await write({...transformContext, content}, ctx, config);
                   ctx.stats.addSuccess(transformContext);
                 } catch (error: unknown) {
-                  if (typeof error === 'string' || error instanceof Error) {
+                  if (error instanceof ValidationError) {
+                    ctx.stats.addSkipped(transformContext, error);
+                  } else if (typeof error === 'string' || error instanceof Error) {
                     ctx.stats.addError(transformContext, error);
                   }
                 }

@@ -16,7 +16,11 @@ export class FileManager {
   }
 
   get count() {
-    return [...this.files].length;
+    return [...this.unignoredFiles].length;
+  }
+
+  get unignoredFiles() {
+    return [...this.files].filter(file => !this.ignore || this.ignore.ignores(relative(this.ignoreBase, file)));
   }
 
   async initialize() {
@@ -34,6 +38,7 @@ export class FileManager {
 
     // Create set of existing files
     const existing = await globby(`${this.config.directory}/**/*.*`);
+
     this.files = new Set(existing.map(file => resolve(file)));
   }
 
@@ -61,11 +66,7 @@ export class FileManager {
   }
 
   async cleanup() {
-    const promises = [...this.files].map(async file => {
-      if (!this.ignore || this.ignore.ignores(relative(this.ignoreBase, file))) {
-        return this.deleteFile(file);
-      }
-    });
+    const promises = [...this.unignoredFiles].map(async file => this.deleteFile(file));
 
     return Promise.allSettled(promises);
   }

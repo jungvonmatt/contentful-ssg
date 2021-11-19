@@ -32,6 +32,7 @@ import {
   isEntry,
 } from '../helper/contentful.js';
 import type {KeyValueMap} from 'contentful-management/types';
+import { ValidationError } from '../helper/error.js';
 
 /**
  * Convert contentful entry to export format (link)
@@ -324,8 +325,10 @@ export const mapEntry = async (
   runtimeContext: RuntimeContext,
   config: Config,
 ) => {
+  const spaceId = runtimeContext.config.spaceId;
+  const environmentId = runtimeContext.config.environmentId;
   const {fieldSettings} = runtimeContext.data;
-  const {entry, contentTypeId} = transformContext;
+  const {entry, contentTypeId, id, locale} = transformContext;
   const {[contentTypeId]: settings} = fieldSettings;
 
   const sys = await runtimeContext.hooks.mapMetaFields(transformContext, mapMetaFields);
@@ -359,12 +362,12 @@ export const mapEntry = async (
     .filter(([, value]) => value.required)
     .map(([key]) => key);
   // Check if all required fields are available in keys
-  const requiredFieldMissing = !requiredFields.every(key => Object.keys(fields).includes(key));
+  const missingFields = requiredFields.filter(key => !Object.keys(fields).includes(key));
 
-  let valid = !requiredFieldMissing;
+  let valid = missingFields.length === 0;
   if (typeof config.validate === 'function') {
     valid = await config.validate(
-      {...transformContext, requiredFields, content: result},
+      {...transformContext, requiredFields, missingFields, content: result},
       runtimeContext,
     );
   }
@@ -372,6 +375,15 @@ export const mapEntry = async (
   if (valid) {
     return result;
   }
+
+  throw new ValidationError({
+    spaceId,
+    environmentId,
+    entryId:id,
+    contentTypeId,
+    missingFields,
+    locale
+  });
 };
 
 export const transform = async (

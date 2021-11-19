@@ -42,10 +42,11 @@ const hookUpRuntime = (
     )) as RuntimeContext;
 
     if (typeof configHook === 'function') {
-      return configHook({...runtimeContext, ...(value || {})});
+      const hookResult = await configHook({...runtimeContext, ...(value || {})});
+      return {...runtimeContext, ...(value || {}), ...(hookResult || {})};
     }
 
-    return value;
+    return {...runtimeContext, ...(value || {})};
   };
 };
 

@@ -537,9 +537,9 @@ describe('Mapper - mapEntry', () => {
     modifiedRuntimeContext.data.fieldSettings.fieldTest.shortText.required = true;
     modifiedTransformContext.entry.fields.shortText = undefined;
 
-    const result = await mapEntry(modifiedTransformContext, modifiedRuntimeContext, config);
-
-    expect(result).toBeUndefined();
+    await expect(async () => {
+      await mapEntry(modifiedTransformContext, modifiedRuntimeContext, config);
+    }).rejects.toThrowError(/ValidationError/);
   });
 
   test('Skip entry with custom validate function', async () => {
@@ -557,12 +557,14 @@ describe('Mapper - mapEntry', () => {
       return false;
     };
 
-    const result = await mapEntry(modifiedTransformContext, modifiedRuntimeContext, config);
+    await expect(async () => {
+      await mapEntry(modifiedTransformContext, modifiedRuntimeContext, config);
+    }).rejects.toThrowError(/ValidationError/);
+
     const requiredFieldMissing = !validateContext.requiredFields.every((key) =>
       Object.keys(validateContext.content).includes(key)
     );
 
-    expect(result).toBeUndefined();
     expect(validateContext.entry.sys.id).toEqual('34O95Y8gLXd3jPozdy7gmd');
     expect(validateContext.requiredFields).toEqual(['longText']);
     expect(requiredFieldMissing).toEqual(false);

@@ -1,27 +1,27 @@
 import { Entry, TransformContext } from '../types.js';
 import { collect, collectParentValues, collectValues } from './utils.js';
 
-const data = [
-  { sys: { id: 1 }, fields: { slug: 'a' } },
-  { sys: { id: 2 }, fields: { slug: 'b', parent: 1 } },
-  { sys: { id: 3 }, fields: { slug: 'c', parent: 2 } },
-  { sys: { id: 4 }, fields: { slug: 'd', parent: 3 } },
-  { sys: { id: 5 }, fields: { slug: 'e', parent: 4 } },
-] as unknown as Entry[];
+const data = new Map([
+  ['1', { sys: { id: '1' }, fields: { slug: 'a' } }],
+  ['2', { sys: { id: '2' }, fields: { slug: 'b', parent: '1' } }],
+  ['3', { sys: { id: '3' }, fields: { slug: 'c', parent: '2' } }],
+  ['4', { sys: { id: '4' }, fields: { slug: 'd', parent: '3' } }],
+  ['5', { sys: { id: '5' }, fields: { slug: 'e', parent: '4' } }],
+]) as unknown as Map<string, Entry>;
 
-const entries = [
-  { sys: { id: 1 }, fields: { slug: 'a' } },
-  { sys: { id: 2 }, fields: { slug: 'b', parent: { sys: { id: 1 } }, link: { sys: { id: 1 } } } },
-  { sys: { id: 3 }, fields: { slug: 'c', parent: { sys: { id: 2 } }, link: { sys: { id: 1 } } } },
-  { sys: { id: 4 }, fields: { slug: 'd', parent: { sys: { id: 3 } }, link: { sys: { id: 3 } } } },
-  { sys: { id: 5 }, fields: { slug: 'e', parent: { sys: { id: 4 } }, link: { sys: { id: 3 } } } },
-] as unknown as Entry[];
+const entryMap = new Map([
+  ['1', { sys: { id: '1' }, fields: { slug: 'a' } }],
+  ['2', { sys: { id: '2' }, fields: { slug: 'b', parent: { sys: { id: '1' } }, link: { sys: { id: '1' } } } }],
+  ['3', { sys: { id: '3' }, fields: { slug: 'c', parent: { sys: { id: '2' } }, link: { sys: { id: '1' } } } }],
+  ['4', { sys: { id: '4' }, fields: { slug: 'd', parent: { sys: { id: '3' } }, link: { sys: { id: '3' } } } }],
+  ['5', { sys: { id: '5' }, fields: { slug: 'e', parent: { sys: { id: '4' } }, link: { sys: { id: '3' } } } }],
+]) as unknown as Map<string, Entry>;
 
-const transformContext = { entries } as TransformContext;
+const transformContext = { entryMap } as unknown as TransformContext;
 
 describe('Utils', () => {
   test('collectValues', () => {
-    const entry = entries[4];
+    const entry = entryMap.get('5');
     const slugsReverse = collectValues({ ...transformContext, entry })('fields.slug');
     const slugs = collectValues({ ...transformContext, entry })('fields.slug', { reverse: false });
 
@@ -30,7 +30,7 @@ describe('Utils', () => {
   });
 
   test('collectValues with different link field', () => {
-    const entry = entries[4];
+    const entry = entryMap.get('5');
     const slugsReverse = collectValues({ ...transformContext, entry })('fields.slug', {
       linkField: 'fields.link',
     });
@@ -44,7 +44,7 @@ describe('Utils', () => {
   });
 
   test('collectParentValues', () => {
-    const entry = entries[4];
+    const entry = entryMap.get('5');
     const slugsReverse = collectParentValues({ ...transformContext, entry })('fields.slug');
     const slugs = collectParentValues({ ...transformContext, entry })('fields.slug', {
       reverse: false,
@@ -61,11 +61,11 @@ describe('Utils', () => {
       getValue: (item) => item.fields.slug,
     };
 
-    const a = collect(data[4], data, {
+    const a = collect(data.get('5'), data, {
       ...getter,
       reverse: true,
     });
-    const b = collect(data[4], data, {
+    const b = collect(data.get('5'), data, {
       ...getter,
       reverse: false,
     });

@@ -3,6 +3,7 @@ import {getEntries, groupBy} from './object.js';
 import {writeFile} from 'fs/promises';
 import chalk from 'chalk';
 import {join} from 'path';
+import { ValidationError } from './error.js';
 
 export class Stats {
   config: Config;
@@ -35,8 +36,8 @@ export class Stats {
     }
   }
 
-  addSkipped(context: TransformContext, message = '') {
-    this.skipped.push({message, ...this.toEntry(context)});
+  addSkipped(context: TransformContext, error: ValidationError) {
+    this.skipped.push({error, ...this.toEntry(context)});
   }
 
   async print() {
@@ -55,30 +56,36 @@ export class Stats {
       });
 
     const timestamp = Date.now();
-    const filenameSkipped = `skipped-${timestamp}.log`;
+    const filenameSkipped = `validation-errors-${timestamp}.log`;
     const filenameErrors = `errors-${timestamp}.log`;
 
     console.log(`\n  Saved ${chalk.green(this.success.length)} entries`);
     console.log(
       `  ${chalk.cyan(this.skipped.length)} entries skipped due to validation issues.`,
-      this.config.verbose && this.skipped.length ? `See ${filenameSkipped} for details.` : '',
+      this.config.verbose && this.skipped.length ? `See ${filenameSkipped} for details.` : this.skipped.length ? 'Use --verbose to see actual errors.': '',
     );
     console.log(
       `  ${chalk.red(this.errors.length)} errors.`,
-      this.config.verbose && this.errors.length ? `See ${filenameErrors} for details.` : '',
+      this.config.verbose && this.errors.length ? `See ${filenameErrors} for details.` : this.errors.length ? 'Use --verbose to see actual errors.':  '',
     );
 
     if (this.config.verbose && this.skipped.length) {
       await writeFile(
         join(process.cwd(), filenameSkipped),
-        JSON.stringify(this.skipped, null, '   '),
+        JSON.stringify(this.skipped.map(item => ({
+          ...item,
+          error: JSON.parse(JSON.stringify(item.error,  Object.getOwnPropertyNames(item.error)))
+        })), null, '   '),
       );
     }
 
     if (this.config.verbose && this.errors.length) {
       await writeFile(
         join(process.cwd(), filenameErrors),
-        JSON.stringify(this.errors, null, '   '),
+        JSON.stringify(this.errors.map(item => ({
+          ...item,
+          error: JSON.parse(JSON.stringify(item.error,  Object.getOwnPropertyNames(item.error)))
+        })), null, '   '),
       );
     }
   }
