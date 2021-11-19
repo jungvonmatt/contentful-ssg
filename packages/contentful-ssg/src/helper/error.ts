@@ -1,11 +1,11 @@
-import { Locale } from "../types";
+import {Locale} from '../types';
 
 interface ErrorEntry {
-  spaceId:string;
-  environmentId:string;
-  entryId:string;
+  spaceId: string;
+  environmentId: string;
+  entryId: string;
   contentTypeId: string;
-  locale:Locale;
+  locale: Locale;
   missingFields: string[];
 }
 
@@ -15,7 +15,7 @@ export class ValidationError extends Error {
   entryId: string;
   contentTypeId: string;
   locale: string;
-  constructor(entry:ErrorEntry) {
+  constructor(entry: ErrorEntry) {
     const message = `ValidationError: Invalid entry ${entry.entryId} for locale ${entry.locale.name}`;
     super(message);
     this.link = `https://app.contentful.com/spaces/${entry.spaceId}/environments/${entry.environmentId}/entries/${entry.entryId}`;
@@ -23,8 +23,6 @@ export class ValidationError extends Error {
     this.contentTypeId = entry.contentTypeId;
     this.locale = entry.locale.code;
     this.missingFields = entry.missingFields;
-    this.name = "ValidationError";
+    this.name = 'ValidationError';
   }
-
-
 }

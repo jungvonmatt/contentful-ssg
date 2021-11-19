@@ -97,9 +97,9 @@ export interface PluginInfo {
 
 export type PluginModule = {
   default?: PluginSource;
-} & Partial<Hooks>
+} & Partial<Hooks>;
 
-export type PluginSource = Hooks | ((options?: KeyValueMap) => Hooks);
+export type PluginSource = Hooks | ((options?: KeyValueMap) => Promise<Hooks> | Hooks);
 
 export type FieldSettings = KeyValueMap<KeyValueMap<Field>>;
 

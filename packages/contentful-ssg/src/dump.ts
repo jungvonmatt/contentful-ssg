@@ -15,7 +15,7 @@ import {localize} from './tasks/localize.js';
 import {transform} from './tasks/transform.js';
 import {write} from './tasks/write.js';
 import {collectParentValues, collectValues} from './helper/utils.js';
-import { ValidationError } from './helper/error.js';
+import {ValidationError} from './helper/error.js';
 
 /**
  * This is a very simple listr renderer which does not swallow log output from

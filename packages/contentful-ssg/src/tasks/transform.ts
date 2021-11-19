@@ -32,7 +32,7 @@ import {
   isEntry,
 } from '../helper/contentful.js';
 import type {KeyValueMap} from 'contentful-management/types';
-import { ValidationError } from '../helper/error.js';
+import {ValidationError} from '../helper/error.js';
 
 /**
  * Convert contentful entry to export format (link)
@@ -325,8 +325,8 @@ export const mapEntry = async (
   runtimeContext: RuntimeContext,
   config: Config,
 ) => {
-  const spaceId = runtimeContext.config.spaceId;
-  const environmentId = runtimeContext.config.environmentId;
+  const {spaceId} = runtimeContext.config;
+  const {environmentId} = runtimeContext.config;
   const {fieldSettings} = runtimeContext.data;
   const {entry, contentTypeId, id, locale} = transformContext;
   const {[contentTypeId]: settings} = fieldSettings;
@@ -379,10 +379,10 @@ export const mapEntry = async (
   throw new ValidationError({
     spaceId,
     environmentId,
-    entryId:id,
+    entryId: id,
     contentTypeId,
     missingFields,
-    locale
+    locale,
   });
 };
 
