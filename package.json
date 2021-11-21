@@ -1,5 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-ssg-project",
+  "version": "1.0.0",
   "private": true,
   "description": "A monorepo for all NPM packages related to contentful-ssg",
   "author": "Jung von Matt TECH GmbH",
