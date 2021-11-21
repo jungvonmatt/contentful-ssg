@@ -8,17 +8,16 @@ Highly customizable pluggable Contentful exporter for static site generators.
 
 ### Official
 
-- [`contentful-ssg`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/contentful-ssgn)
-  - Core CLI library
+- [`contentful-ssg`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/contentful-ssgn)\
+  Core CLI library
 
 #### Plugins
 
-- [`cssg-plugin-grow`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-grow`)
+- [`cssg-plugin-grow`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-grow`)\
+  Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
 
-  - Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
-
-- [`cssg-plugin-hugo`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-hugo`)
-  - Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
+- [`cssg-plugin-hugo`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-hugo`)\
+  Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
 
 ## Get involved
 
