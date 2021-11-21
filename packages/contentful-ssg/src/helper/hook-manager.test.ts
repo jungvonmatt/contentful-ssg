@@ -35,7 +35,7 @@ describe('Hook Manager', () => {
       {
         before: hook(5),
         after: hook(10),
-        plugins: [
+        resolvedPlugins: [
           { before: hook(1), after: hook(6) },
           { before: hook(2), after: hook(7) },
           { before: hook(3), after: hook(8) },
@@ -62,7 +62,7 @@ describe('Hook Manager', () => {
       {
         before: hook(5),
         after: hook(9),
-        plugins: [
+        resolvedPlugins: [
           { before: hook(1), after: hook(6) },
           { before: hook(2), after: hook(7) },
           { before: hook(3) },
@@ -90,7 +90,7 @@ describe('Hook Manager', () => {
     const hooks = getInstance(
       {
         transform: asyncHook('config'),
-        plugins: [
+        resolvedPlugins: [
           { transform: syncHook('plugin1') },
           { transform: asyncHook('plugin2') },
           { transform: syncHook('plugin3') },
@@ -121,7 +121,7 @@ describe('Hook Manager', () => {
         mapMetaFields: (tc,rc,prev) => ({...prev, wrapped: true}),
         mapAssetLink: (tc,rc,prev) => ({...prev, wrapped: true}),
         mapEntryLink: (tc,rc,prev) => ({...prev, wrapped: true}),
-        plugins: [
+        resolvedPlugins: [
           { mapDirectory: (tc,rc,prev) => `${prev || ''}plugin-1-directory: ${tc.value}` },
           { mapFilename: (tc,rc,prev) => `${prev || ''}plugin-2-filename: ${tc.value}`  },
           { mapMetaFields: (tc,rc,prev) => ({...prev, mapMetaFields: `plugin-3: ${tc.value}`}) },

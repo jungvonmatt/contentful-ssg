@@ -3,7 +3,6 @@ import chalk from 'chalk';
 import {cosmiconfig, Loader} from 'cosmiconfig';
 import type {CosmiconfigResult} from 'cosmiconfig/dist/types';
 import mergeOptionsModule from 'merge-options';
-import {createRequire} from 'module';
 import {dirname, isAbsolute, resolve} from 'path';
 import slash from 'slash';
 import type {
@@ -11,17 +10,17 @@ import type {
   ContentfulConfig,
   ContentfulRcConfig,
   Hooks,
-  InitialConfig,
   PluginInfo,
   PluginModule,
 } from '../types.js';
+import {createRequire} from './create-require.js';
 import {isObject, removeEmpty} from './object.js';
 
-const require = createRequire(import.meta.url);
 
 const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
   register({format: 'esm', extensions: ['.ts', '.tsx', '.mts']});
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
+  const require = createRequire();
   const configModule = require(filePath);
   return configModule.default || configModule;
 };
@@ -38,7 +37,7 @@ const resolvePlugin = async (
   const {rootDir, verbose} = config;
 
   try {
-    const requireSource = rootDir === null ? require : createRequire(`${rootDir}/:internal:`);
+    const requireSource = rootDir === null ? createRequire() : createRequire(`${rootDir}/:internal:`);
 
     // If the path is absolute, resolve the directory of the internal plugin,
     // otherwise resolve the directory containing the package.json
@@ -93,25 +92,28 @@ const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
   return explorer.search();
 };
 
+export const getEnvironmentConfig = (): ContentfulConfig => removeEmpty({
+  spaceId: process.env.CONTENTFUL_SPACE_ID!,
+  environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
+  managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
+  previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
+  accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
+});
+
 /**
  * Get configuration
  * @param {Object} args
  */
-export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> => {
-  const defaultOptions: InitialConfig = {
+export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
+  const defaultOptions: Config = {
     environmentId: 'master',
     host: 'api.contentful.com',
     directory: resolve(process.cwd(), 'content'),
     plugins: [],
+    resolvedPlugins: [],
   };
 
-  const environmentOptions: ContentfulConfig = removeEmpty({
-    spaceId: process.env.CONTENTFUL_SPACE_ID!,
-    environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
-    managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
-    previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
-    accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
-  });
+  const environmentOptions = getEnvironmentConfig();
   let contentfulCliOptions: Partial<ContentfulConfig> = {};
 
   try {
@@ -137,13 +139,13 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
     }
   }
 
-  let configFileOptions: Partial<InitialConfig> = {};
+  let configFileOptions: Partial<Config> = {};
   args.rootDir = process.cwd();
   try {
     // Get configuration from contentful-ssg rc file
     const configFile = await loadConfig('contentful-ssg');
     if (!configFile.isEmpty) {
-      configFileOptions = configFile.config as Partial<InitialConfig>;
+      configFileOptions = configFile.config as Partial<Config>;
       args.rootDir = dirname(configFile.filepath);
       if (configFileOptions.directory && !isAbsolute(configFileOptions.directory)) {
         configFileOptions.directory = resolve(args.rootDir, configFileOptions.directory);
@@ -166,11 +168,11 @@ export const getConfig = async (args?: Partial<InitialConfig>): Promise<Config> 
     environmentOptions,
     configFileOptions,
     args || {},
-  ) as InitialConfig;
-  const plugins = await Promise.all(
+  ) as Config;
+  const resolvedPlugins = await Promise.all(
     (result.plugins || []).map(async plugin =>
-      resolvePlugin(plugin as string | PluginInfo, result),
+      resolvePlugin(plugin, result),
     ),
   );
-  return {...result, plugins};
+  return {...result, resolvedPlugins};
 };

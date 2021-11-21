@@ -1,4 +1,4 @@
-import type {Options as RichtextOptions} from '@contentful/rich-text-html-renderer';
+import type {Options} from '@contentful/rich-text-html-renderer';
 import type {Document} from '@contentful/rich-text-types';
 // Import {KeyValueMap} from 'contentful-management/types';
 
@@ -17,6 +17,7 @@ import type {HookManager} from './helper/hook-manager.js';
 
 export type KeyValueMap<T = any> = Record<string, T>;
 
+export type ContentfulRichtextOptions = Options;
 export interface ContentfulConfig {
   spaceId: string;
   environmentId: string;
@@ -72,11 +73,12 @@ Hooks & {
   rootDir?: string;
   directory: string;
   verbose?: boolean;
-  plugins?: Hooks[];
+  plugins?: Array<PluginInfo | string>;
+  resolvedPlugins?: Hooks[];
   preset?: string;
   richTextRenderer?:
   | boolean
-  | RichtextOptions
+  | ContentfulRichtextOptions
   | ((
     document: Document,
     transformContext: TransformContext,
@@ -84,10 +86,6 @@ Hooks & {
   ) => unknown);
   format?: string | FormatObject | TransformHook<string>;
   validate?: ValidateHook;
-};
-
-export type InitialConfig = Config & {
-  plugins?: PluginInfo[] | string[];
 };
 
 export interface PluginInfo {

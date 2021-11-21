@@ -1,92 +1,161 @@
-#!/usr/bin/env node
-
-/* eslint-env node */
-import path from 'path';
+import type {Config, RuntimeContext, Task, TransformContext, TransformHelper} from './types.js';
+import Listr from 'listr';
 import chalk from 'chalk';
-import {existsSync} from 'fs';
-import {outputFile} from 'fs-extra';
-import prettier from 'prettier';
-import {Command} from 'commander';
-import dotenv from 'dotenv';
-import dotenvExpand from 'dotenv-expand';
-import {logError, confirm, askAll, askMissing} from './helper/ui.js';
-import {omitKeys} from './helper/object.js';
+import {getContentTypeId, getContentId} from './helper/contentful.js';
+import {setup} from './tasks/setup.js';
+import {fetch} from './tasks/fetch.js';
+import {localize} from './tasks/localize.js';
+import {transform} from './tasks/transform.js';
+import {write} from './tasks/write.js';
+import {collectParentValues, collectValues} from './helper/utils.js';
+import {ValidationError} from './helper/error.js';
 
-import {getConfig} from './helper/config.js';
-import {dump} from './dump.js';
-
-const env = dotenv.config();
-dotenvExpand(env);
-
-const parseArgs = cmd => ({
-  environment: cmd.env as string,
-  preview: Boolean(cmd.preview),
-  verbose: Boolean(cmd.verbose),
-});
-
-type CommandError = Error & {
-  errors?: Error[];
-};
-const errorHandler = (error: CommandError, silence: boolean) => {
-  if (!silence) {
-    const {errors} = error;
-    logError(error);
-    (errors || []).forEach(error => {
-      logError(error);
-    });
+/**
+ * This is a very simple listr renderer which does not swallow log output from
+ * the configured helper functions.
+ */
+class CustomListrRenderer {
+  readonly _tasks: Task[];
+  constructor(tasks: Task[]) {
+    this._tasks = tasks;
   }
 
-  process.exit(1);
-};
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  static get nonTTY() {
+    return false;
+  }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-const actionRunner = (fn, log = true) => (...args) => fn(...args).catch(error => errorHandler(error, !log));
-const program = new Command();
-program
-  .command('init')
-  .description('Initialize contentful-ssg')
-  .action(
-    actionRunner(async cmd => {
-      const config = await getConfig(parseArgs(cmd || {}));
-      const verified = await askAll(config);
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  static subscribeTasks(tasks: Task[], indent = '') {
+    for (const task of tasks) {
+      task.subscribe(event => {
+        if (event.type === 'STATE' && task.isPending()) {
+          console.log(`${indent}  ${chalk.yellow('\u279E')} ${task.title}`);
+        }
 
-      const filePath = path.join(process.cwd(), 'contentful-ssg.config.js');
-      const prettierOptions = await prettier.resolveConfig(filePath);
-      if (verified.directory?.startsWith('/')) {
-        verified.directory = path.relative(process.cwd(), verified.directory);
-      }
-
-      const content = prettier.format(`module.exports = ${JSON.stringify(omitKeys(verified, 'managementToken'))}`, {
-        parser: 'babel',
-        ...prettierOptions,
+        if (event.type === 'SUBTASKS' && task.subtasks.length > 0) {
+          CustomListrRenderer.subscribeTasks(task.subtasks as unknown as Task[], indent + '  ');
+        }
       });
+    }
+  }
 
-      let writeFile = true;
-      if (existsSync(filePath)) {
-        writeFile = await confirm(`Config file already exists. Overwrite?\n\n${chalk.reset(content)}`);
-      } else {
-        writeFile = await confirm(`Please verify your settings:\n\n${chalk.reset(content)}`);
-      }
+  render() {
+    CustomListrRenderer.subscribeTasks(this._tasks);
+  }
 
-      if (writeFile) {
-        await outputFile(filePath, content);
-        console.log(`\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`);
-      }
-    }),
+  end(err) {
+    if (!err) {
+      console.log(`  ${chalk.green('✔')} all tasks done!`);
+    }
+  }
+}
+
+/**
+ * Dump contentful objects to files
+ * @param {Object} config
+ */
+export const dump = async (config: Config): Promise<void> => {
+  const tasks = new Listr<RuntimeContext>(
+    [
+      {
+        title: 'Setup',
+        task: async ctx => setup(ctx, config),
+      },
+      {
+        title: 'Pulling data from contentful',
+        task: async ctx => fetch(ctx, config),
+      },
+      {
+        title: 'Localize data',
+        task: async ctx => localize(ctx),
+      },
+      {
+        title: 'Before Hook',
+        skip: ctx => !ctx.hooks.has('before'),
+        task: async ctx => {
+          const result = await ctx.hooks.before();
+          ctx = {...ctx, ...(result || {})};
+        },
+      },
+      {
+        title: 'Writing files',
+        task: async ctx => {
+          const {locales = []} = ctx.data;
+
+          const tasks = locales.map(locale => ({
+            title: `${locale.code}`,
+            task: async () => {
+              const data = ctx.localized.get(locale.code);
+              const {entries = []} = data || {};
+
+              const promises = entries.map(async entry => {
+                const id = getContentId(entry);
+                const contentTypeId = getContentTypeId(entry);
+
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                const utils = {
+                  collectValues: collectValues({...data, entry}),
+                  collectParentValues: collectParentValues({...data, entry}),
+                } as TransformHelper;
+
+                const transformContext: TransformContext = {
+                  ...data,
+                  id,
+                  contentTypeId,
+                  entry,
+                  locale,
+                  utils,
+                };
+
+                try {
+                  const content = await transform(transformContext, ctx, config);
+
+                  if (typeof content === 'undefined') {
+                    return;
+                  }
+
+                  await write({...transformContext, content}, ctx, config);
+                  ctx.stats.addSuccess(transformContext);
+                } catch (error: unknown) {
+                  if (error instanceof ValidationError) {
+                    ctx.stats.addSkipped(transformContext, error);
+                  } else if (typeof error === 'string' || error instanceof Error) {
+                    ctx.stats.addError(transformContext, error);
+                  }
+                }
+              });
+
+              return Promise.all(promises);
+            },
+          }));
+          return new Listr(tasks, {concurrent: true});
+        },
+      },
+      {
+        title: 'After Hook',
+        skip: ctx => !ctx.hooks.has('after'),
+        task: async ctx => {
+          const result = await ctx.hooks.after();
+          ctx = {...ctx, ...(result || {})};
+        },
+      },
+
+      {
+        title: 'Cleanup',
+        skip: ctx => ctx.fileManager.count === 0,
+        task: async ctx => {
+          console.log(`Cleaning ${ctx.fileManager.count} files...`);
+          await ctx.fileManager.cleanup();
+
+          console.log('done');
+        },
+      },
+    ],
+    {renderer: CustomListrRenderer},
   );
 
-program
-  .command('fetch')
-  .description('Fetch content objects')
-  .option('-p, --preview', 'Fetch with preview mode')
-  .option('-v, --verbose', 'Verbose output')
-  .action(
-    actionRunner(async cmd => {
-      const config = await getConfig(parseArgs(cmd || {}));
-      const verified = await askMissing(config);
-
-      return dump(verified);
-    }),
-  );
-
-program.parse(process.argv);
+  const ctx = await tasks.run();
+  await ctx.stats.print();
+  console.log('\n---------------------------------------------');
+};

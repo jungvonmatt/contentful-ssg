@@ -20,7 +20,7 @@ const hookUpRuntime = (
 ): RuntimeHook => {
   const {[name]: configHook} = options;
 
-  const hooks = (options.plugins || [])
+  const hooks = (options.resolvedPlugins || [])
     .filter(plugin => Boolean(plugin[name]))
     .map(plugin => plugin[name]);
 
@@ -57,7 +57,7 @@ const hookUpTransform = <Type = unknown>(
 ): TransformHook<Type> => {
   const {[name]: configHook} = options;
 
-  const hooks = (options.plugins || [])
+  const hooks = (options.resolvedPlugins || [])
     .filter(plugin => Boolean(plugin[name]))
     .map(plugin => plugin[name]) as Array<TransformHook<Type>>;
 
