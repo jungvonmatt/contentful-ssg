@@ -78,6 +78,7 @@ const getClient = (options: ContentfulConfig): ContentfulClientApi => {
  */
 const getManagementClient = (options: ContentfulConfig): ContentfulManagementApi => {
   const {managementToken} = options || {};
+
   if (managementClient) {
     return managementClient;
   }
@@ -144,7 +145,7 @@ export const getEnvironment = async (options: ContentfulConfig) => {
     return space.getEnvironment(environmentId);
   }
 
-  if (!environmentIds.includes(environmentId)) {
+  if (environmentId && !environmentIds.includes(environmentId)) {
     throw new Error(`Environment "${environmentId}" is not available in space ${spaceId}"`);
   }
 

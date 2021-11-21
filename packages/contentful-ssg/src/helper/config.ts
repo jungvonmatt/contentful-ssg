@@ -16,11 +16,11 @@ import type {
 import {createRequire} from './create-require.js';
 import {isObject, removeEmpty} from './object.js';
 
-
 const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
   register({format: 'esm', extensions: ['.ts', '.tsx', '.mts']});
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
+
   const require = createRequire();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
   const configModule = require(filePath);
   return configModule.default || configModule;
 };

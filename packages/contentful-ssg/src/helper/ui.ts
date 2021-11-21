@@ -1,6 +1,6 @@
 import type {QuestionCollection} from 'inquirer';
 import type {ContentfulConfig, Config} from '../types.js';
-import path from 'path';
+import {resolve} from 'path';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import {getApiKey, getEnvironments, getPreviewApiKey, getSpaces} from './contentful.js';
@@ -109,7 +109,7 @@ const getPromts = (data: Partial<Config>): Questions => [
 export const askAll = async (data: Partial<Config> = {}): Promise<Config> => {
   console.log('Please verify the following options');
   const answers = await inquirer.prompt(getPromts(data));
-  answers.directory = path.resolve(process.cwd(), answers.directory || data.directory);
+  answers.directory = resolve(process.cwd(), answers.directory || data.directory);
 
   return {...data, ...answers};
 };
