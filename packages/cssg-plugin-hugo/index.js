@@ -14,17 +14,16 @@ export const TYPE_DATA = 'data';
 export const TYPE_HEADLESS = 'headless';
 
 const defaultOptions = {
-  settingsType: 'd-settings',
-  i18nType: 'd-i18n',
+  typeIdSettings: 'd-settings',
+  typeIdI18n: 'd-i18n',
   languageConfig: true,
+  fieldIdHome: 'home',
+  fieldIdSlug: 'slug',
+  fieldIdParent: 'parent_page',
   typeConfig:  {
     [TYPE_PAGE]: ['page'],
     [TYPE_DATA]: ['d-*'],
   },
-  fieldIds: {
-    slug: 'slug',
-    parent: 'parent_page'
-  }
 }
 
 export default (args) => {
@@ -32,10 +31,10 @@ export default (args) => {
 
   const getSettingsHelper = (runtimeContext) => {
     let settings = {};
-    if (options.settingsType) {
+    if (options.typeIdSettings) {
       settings = Object.fromEntries(Array.from((runtimeContext?.localized ?? new Map()).entries()).map(([locale, contentfulData]) => {
         const entryMap = contentfulData?.entryMap ?? new Map();
-        const settingsEntries = (Array.from(entryMap.values())).filter(entry => (entry?.sys?.contentType?.sys?.id ?? 'unknown') === options.settingsType);
+        const settingsEntries = (Array.from(entryMap.values())).filter(entry => (entry?.sys?.contentType?.sys?.id ?? 'unknown') === options.typeIdSettings);
         const settingsFields = settingsEntries.map(entry => entry?.fields ?? {});
         return [locale, mergeOptions(...settingsFields)];
       }));
@@ -98,7 +97,7 @@ export default (args) => {
       const enhancedLocalized = new Map(Array.from(localized.entries()).map(([localeCode, contentfulData]) => {
         const {entries} = contentfulData;
         const sectionIds = entries.reduce((nodes, entry) => {
-          const id = entry?.fields?.[options.fieldIds.parent]?.sys?.id;
+          const id = entry?.fields?.[options.fieldIdParent]?.sys?.id;
           if (id) {
             nodes.add(id);
           }
@@ -164,14 +163,14 @@ export default (args) => {
 
       const type = getEntryType(transformContext);
 
-      const home = helper.getSettings('home', locale.code);
+      const home = helper.getSettings(options.fieldIdHome, locale.code);
       const homeId = home?.sys?.id;
 
      if (homeId && entry?.sys?.id === homeId) {
         return `/_index.md`;
      }
 
-      if (contentTypeId === options.settingsType) {
+      if (contentTypeId === options.typeIdSettings) {
         return path.join(locale.code, `settings.json`);
       }
 
@@ -180,20 +179,20 @@ export default (args) => {
       }
 
       if (type === TYPE_PAGE && sectionIds.has(id)) {
-        const slugs = utils.collectValues(`fields.${options.fieldIds.slug}`, {
-          linkField: `fields.${options.fieldIds.parent}`,
+        const slugs = utils.collectValues(`fields.${options.fieldIdSlug}`, {
+          linkField: `fields.${options.fieldIdParent}`,
           entry,
         });
         return path.join(...(slugs || []), `_index.md`)
       }
 
       if (type === TYPE_PAGE) {
-        const slugs = utils.collectParentValues(`fields.${options.fieldIds.slug}`, {
-          linkField: `fields.${options.fieldIds.parent}`,
+        const slugs = utils.collectParentValues(`fields.${options.fieldIdSlug}`, {
+          linkField: `fields.${options.fieldIdParent}`,
           entry
         });
 
-        return path.join(...(slugs || []), `${entry?.fields?.[options.fieldIds.slug] ?? 'unknown'}.md`)
+        return path.join(...(slugs || []), `${entry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`)
       }
 
       return path.join(id, `index.${locale.code}.md`);
@@ -207,7 +206,7 @@ export default (args) => {
 
       // Automatically store dictionary entries in i18n/[locale].json
       // See https://gohugo.io/content-management/multilingual/#query-basic-translation
-      if (contentTypeId === 'd-i18n') {
+      if (options.typeIdI18n && contentTypeId === options.typeIdI18n) {
         const { key, other, one } = content;
         const translations = one ? { one, other } : { other };
 
