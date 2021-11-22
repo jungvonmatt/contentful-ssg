@@ -182,14 +182,7 @@ See [`cssg-plugin-grow`](https://github.com/jungvonmatt/contentful-ssg/tree/main
 ### Hugo
 
 See [`cssg-plugin-hugo`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-hugo`)
-```
 
-
-## Can I contribute?
-
-Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-ssg/graphs/contributors) and
-welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
-free to open up an issue and we can discuss it.
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-ssg
 [npm-image]: https://img.shields.io/npm/v/@jungvonmatt/contentful-ssg.svg

@@ -4,6 +4,10 @@
 
 ## How can I contribute?
 
+Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/contentful-ssg/graphs/contributors) and
+welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
+free to open up an issue and we can discuss it.
+
 ### Improve documentation
 
 As a user of contentful-ssg you're the perfect candidate to help us improve our documentation. Typo corrections, error fixes, better explanations, more examples, etc. Open issues for things that could be improved. Anything. Even improvements to this document.
