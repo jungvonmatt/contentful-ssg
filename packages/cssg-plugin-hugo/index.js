@@ -29,6 +29,8 @@ const defaultOptions = {
 export default (args) => {
   const options = {...defaultOptions, ...(args || {})}
 
+
+
   const getSettingsHelper = (runtimeContext) => {
     let settings = {};
     if (options.typeIdSettings) {
@@ -61,7 +63,6 @@ export default (args) => {
       // initialize getSettings
       const getSettings = getSettingsHelper(runtimeContext);
       helper.getSettings = getSettings;
-
       // Write config toml according to locale settings in contentful
       if (options.languageConfig) {
         const rootDir = runtimeContext?.config?.rootDir ?? process.cwd();
@@ -107,9 +108,7 @@ export default (args) => {
         return [localeCode, {...contentfulData, sectionIds}];
       }));
 
-      const result = {...runtimeContext, helper, localized: enhancedLocalized};
-
-      return result;
+      return {...runtimeContext, helper, localized: enhancedLocalized};
     },
 
     /**

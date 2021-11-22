@@ -64,7 +64,7 @@
     "lint": "eslint --color src --fix --ext .ts",
     "precompile": "npm run clean",
     "compile": "tsc --build",
-    "postcompile": "chmod +x ./dist/index.js",
+    "postcompile": "chmod +x ./dist/cli.js",
     "watch": "tsc --build --watch"
   },
   "files": [
@@ -133,26 +133,6 @@
   "ts-node": {
     "compilerOptions": {
       "module": "es2020"
-    }
-  },
-  "eslintConfig": {
-    "extends": [
-      "xo",
-      "xo-typescript/space"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": [
-        "tsconfig.json"
-      ]
-    },
-    "ignorePatterns": [
-      "src/**/*.test.ts",
-      "src/__test__/*"
-    ],
-    "env": {
-      "node": true,
-      "jest": true
     }
   }
 }

@@ -1,7 +1,7 @@
 export default {
   collectCoverage: false,
   // skip helper/create-require.ts as istanbul coverage could not handle imo
-  collectCoverageFrom: ['packages/contentful-ssg/**','!packages/contentful-ssg/src/helper/create-require.ts','!**/node_modules/**', '!**/__test__/**', '!**/dist/**'],
+  collectCoverageFrom: ['packages/contentful-ssg/**','!packages/contentful-ssg/src/lib/create-require.ts','!**/node_modules/**', '!**/__test__/**', '!**/dist/**'],
   roots: ['packages/'],
   testPathIgnorePatterns: ['/dist/'],
   transform: {

@@ -39,27 +39,5 @@
       "module": "es2020",
       "composite": true
     }
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "xo",
-      "xo-typescript/space"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": [
-        "./tsconfig.json"
-      ]
-    },
-    "ignorePatterns": [
-      "src/**/*.test.ts",
-      "src/**/*.fixme.ts",
-      "src/__test__/*"
-    ],
-    "env": {
-      "node": true,
-      "jest": true
-    }
   }
 }

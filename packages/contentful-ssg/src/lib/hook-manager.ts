@@ -109,8 +109,7 @@ export class HookManager {
 
   has(key: keyof Hooks): boolean {
     const {[key]: hook} = this.config;
-    const pluginHooks = (this.config.plugins || []).some(plugin => Boolean(plugin[key]));
-
+    const pluginHooks = (this.config.resolvedPlugins || []).some(plugin => Boolean(plugin[key]));
     return Boolean(hook) || pluginHooks;
   }
 
