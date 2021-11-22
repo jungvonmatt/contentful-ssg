@@ -31,28 +31,38 @@ npx cssg init
 
 Initializes contentful-ssg and stores the config values in the `contentful-ssg.config.js` file.
 
+Contentful SSG ships with built in typescript support. Add `--typescript` to generate a typescript configuration file.
+
+```bash
+npx cssg init --typescript
+```
+
 <!-- prettier-ignore -->
 #### Configuration values
 
-| Name               | Type                           | Default       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ------------------ | ------------------------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| accessToken        | `String`                       | `undefined`   | Content Delivery API - access token                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| previewAccessToken | `String`                       | `undefined`   | Content Preview API - access token                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| spaceId            | `String`                       | `undefined`   | Contentful Space id                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| environmentId      | `String`                       | `'master'`    | Contentful Environment id                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| format             | `String`\|`Function`\|`Object` | `'yaml'`      | File format ( `yaml`, `toml`, `md`, `json`) You can add a function returning the format or you can add a mapping object like `{yaml: [glob pattern]}` ([pattern](https://github.com/micromatch/micromatch) should match the directory)                                                                                                                                                                                                                       |
-| directory          | `String`                       | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Name               | Type                            | Default       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------ | ------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| accessToken        | `String`                        | `undefined`   | Content Delivery API - access token                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| previewAccessToken | `String`                        | `undefined`   | Content Preview API - access token                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| spaceId            | `String`                        | `undefined`   | Contentful Space id                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| environmentId      | `String`                        | `'master'`    | Contentful Environment id                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| format             | `String`\|`Function`\|`Object`  | `'yaml'`      | File format ( `yaml`, `toml`, `md`, `json`) You can add a function returning the format or you can add a mapping object like `{yaml: [glob pattern]}` ([pattern](https://github.com/micromatch/micromatch) should match the directory)                                                                                                                                                                                                                                     |
+| directory          | `String`                        | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| validate           | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext){...}` to validate an entry. Return a 'falsy' value to skip the entry completely. Without a validate function entries with a missing required field are skipped.                                                                                                                                                                                                     |
+| transform          | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to modify the stored object. Return `undefined` to skip the entry completely. (no file will be written)                                                                                                                                                                                                                                                                                         |
+| mapDirectory       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                                                                                                               |
+| mapFilename        | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize the filename per entry                                                                                                                                                                                                                                                                                                                                                                  |
+| mapAssetLink       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize how asset links are stored                                                                                                                                                                                                                                                                                                                                                                                                        |
+| mapEntryLink       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize how entry links are stored                                                                                                                                                                                                                                                                                                                                                                                                        |
+| mapMetaFields      | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize the meta fields per entry                                                                                                                                                                                                                                                                                                                                                           |
+| richTextRenderer   | `Boolean`\|`Object`\|`Function` | `{}`          | We use the contentful [`rich-text-html-renderer`](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer) to render the html.<br/> You can pass a [configuration object](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer#usage)<br/> or you can pass `function(document){...}` to use your own richtext renderer or you can turn it off by passing `false` to get a mirrored version of the JSON output |
+| before             | `Function`                      | `undefined`   | Runs `function(runtimeContext){...}` before processing the content right after pulling data from contentful                                                                                                                                                                                                                                                                                                                                                                       |
+| after              | `Function`                      | `undefined`   | Runs `function(runtimeContext){...}` after processing the content right before the cleanup                                                                                                                                                                                                                                                                                                                                                                                        |
 
-| validate           | `Function`                     | `undefined`   | Pass `function(content, { requiredFields, requiredFieldMissing, entry, contentType, locale, ... }){...}` to validate an entry. Return a 'falsy' value to skip the entry completely. Without a validate function entries where a required field is missing are skipped.                                                                                                                                                                                       |
-| transform          | `Function`                     | `undefined`   | Pass `function(content, { entry, contentType, locale, helper, ... }){...}` to modify the stored object. Return `undefined` to skip the entry completely. (no file will be written)                                                                                                                                                                                                                                                                           |
-| mapDirectory       | `Function`                     | `undefined`   | Pass `function(contentType, { locale, helper })` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                                                                                                 |
-| mapFilename        | `Function`                     | `undefined`   | Pass `function(data, { locale, contentType, entry, format, helper })` to customize the filename per entry                                                                                                                                                                                                                                                                                                                                                    |
-| mapAssetLink       | `Function`                     | `undefined`   | Pass `function(asset){...}` to customize how asset links are stored                                                                                                                                                                                                                                                                                                                                                                                          |
-| mapEntryLink       | `Function`                     | `undefined`   | Pass `function(entry){...}` to customize how entry links are stored                                                                                                                                                                                                                                                                                                                                                                                          |
-| mapMetaFields      | `Function`                     | `undefined`   | Pass `function(entry, {contentType, spaceId, locale, helper, ... }){...}` to customize the meta fields per entry                                                                                                                                                                                                                                                                                                                                             |
-| richTextRenderer   | `Object`\|`Function`           | `Boolean`     | `{}` We use the contentful [`rich-text-html-renderer`](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer) to render the html.<br/> You can pass a [configuration object](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer#usage)<br/> or you can pass `function(document){...}` to use your own richtext renderer or you can turn it off to get a mirrored version of the JSON output |
-| before             | `Function`                     | `undefined`   | Runs `function(context){...}` before processing the content right after pulling data from contentful                                                                                                                                                                                                                                                                                                                                                         |
-| after              | `Function`                     | `undefined`   | Runs `function(context){...}` after processing the content right before the cleanup                                                                                                                                                                                                                                                                                                                                                                          |
+
+
+#### Typedoc
+See the types documnentation for more insights on the hook parameters: [typedoc](https://github.com/jungvonmatt/contentful-ssg/blob/main/packages/contentful-ssg/docs/index.html)
 
 #### Helper functions
 
@@ -62,9 +72,9 @@ Get values from linked pages to e.g. build an url out of parent slugs.
 
 ```js
 {
-  transform: (content, options) => {
-    const { helper } = options;
-    const slugs = helper.collectValues('fields.slug', {
+  transform: (context) => {
+    const { utils } = context;
+    const slugs = utils.collectValues('fields.slug', {
       linkField: 'fields.parentPage',
     });
 
@@ -91,90 +101,14 @@ npx cssg fetch
 
 ### Grow
 
-```js
-const path = require('path');
+See [`cssg-plugin-grow`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-grow`)
 
-module.exports = {
-  spaceId: '...',
-  environmentId: '...',
-  accessToken: '...',
-  previewAccessToken: '...',
-  directory: 'content',
-  preset: 'grow',
-  mapDirectory: (contentType) => {
-    switch (contentType.substr(0, 2)) {
-      case 't-':
-        return contentType;
-      case 'o-':
-        return path.join('partials/organisms', contentType);
-      case 'm-':
-        return path.join('partials/molecules', contentType);
-      case 'a-':
-        return path.join('partials/atoms', contentType);
-      default:
-        return path.join('partials', contentType);
-    }
-  },
-  typeConfig: {
-    't-home': {
-      view: '/views/t-home.html',
-      path: '/{locale}/',
-    },
-    't-article': {
-      view: '/views/t-article.html',
-      path: '/{locale}/{category}/{slug}/',
-    },
-  },
-};
-```
 
 ### Hugo
 
-```js
-const path = require('path');
-
-module.exports = {
-  spaceId: '...',
-  environmentId: '...',
-  accessToken: '...',
-  previewAccessToken: '...',
-  directory: 'content',
-  format: 'md',
-  mapDirectory: function (contentType, { locale, helper }) {
-    if (contentType === 't-home') {
-      return '/';
-    } else if (contentType.substr(0, 2) === 't-') {
-      return 'pages';
-    } else {
-      return path.join('headlessBundles', contentType);
-    }
-  },
-  mapFilename: function (data, { locale, contentType, entry, format, helper }) {
-    if (contentType === 't-home') {
-      return path.join('_index.' + locale.code + '.' + format);
-    } else {
-      return path.join(entry.sys.id + '/index.' + locale.code + '.' + format);
-    }
-  },
-  transform: (content, options) => {
-    const { helper } = options;
-    const slugs = helper.collectValues('fields.slug', {
-      linkField: 'fields.parentPage',
-    });
-    if (content.contentType === 't-home') {
-      return { ...content };
-    } else if (content.contentType.substr(0, 2) === 't-') {
-      return { ...content, url: slugs.join('/') };
-    } else {
-      return { ...content, headless: true };
-    }
-  },
-};
+See [`cssg-plugin-hugo`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-hugo`)
 ```
 
-## Demo
-
-![Demo](https://github.com/jungvonmatt/contentful-ssg/blob/main/demo.gif?raw=true)
 
 ## Can I contribute?
 

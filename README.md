@@ -2,13 +2,15 @@
 
 # JvM Contentful export for static site generators
 
-Highly customizable pluggable Contentful exporter for static site generators.
+Fast and highly and customizable Contentful exporter for static site generators.
+
+![gif](https://github.com/jungvonmatt/contentful-ssg/blob/main/demo.gif?raw=true)
 
 ## Packages
 
 ### Official
 
-- [`contentful-ssg`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/contentful-ssgn)\
+- [`contentful-ssg`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/contentful-ssg)\
   Core CLI library
 
 #### Plugins
