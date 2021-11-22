@@ -1,6 +1,5 @@
 import type {Options} from '@contentful/rich-text-html-renderer';
 import type {Document} from '@contentful/rich-text-types';
-// Import {KeyValueMap} from 'contentful-management/types';
 
 import type {
   EntryFields,
@@ -10,10 +9,11 @@ import type {
   Entry as ContentfulEntry,
   ContentType as ContentfulContentType,
 } from 'contentful';
+
 import type {ListrTaskObject} from 'listr';
-import type {FileManager} from './helper/file-manager.js';
-import type {Stats} from './helper/stats.js';
-import type {HookManager} from './helper/hook-manager.js';
+import type {FileManager} from './lib/file-manager.js';
+import type {Stats} from './lib/stats.js';
+import type {HookManager} from './lib/hook-manager.js';
 
 export type KeyValueMap<T = any> = Record<string, T>;
 

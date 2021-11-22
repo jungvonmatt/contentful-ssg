@@ -1,5 +1,5 @@
 import type {RuntimeContext, Config, ContentfulConfig} from '../types.js';
-import {getContent, getFieldSettings} from '../helper/contentful.js';
+import {getContent, getFieldSettings} from '../lib/contentful.js';
 
 export const fetch = async (context: RuntimeContext, config: Config) => {
   const content = await getContent(config as ContentfulConfig);

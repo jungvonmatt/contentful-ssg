@@ -1,6 +1,4 @@
 import {RuntimeContext, TransformContext, Hooks, KeyValueMap, PluginSource} from '@jungvonmatt/contentful-ssg';
-// Import {stringify} from '@jungvonmatt/contentful-ssg/converter/yaml';
-// import {snakeCaseKeys} from '@jungvonmatt/contentful-ssg/helper/object';
 import {join, relative} from 'path';
 
 export interface TypeConfigEntry {

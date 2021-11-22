@@ -1,9 +1,9 @@
 import type {Config, RuntimeContext} from '../types.js';
-import {FileManager} from '../helper/file-manager.js';
-import {Stats} from '../helper/stats.js';
-import {HookManager} from '../helper/hook-manager.js';
-import * as array from '../helper/array.js';
-import * as object from '../helper/object.js';
+import {FileManager} from '../lib/file-manager.js';
+import {Stats} from '../lib/stats.js';
+import {HookManager} from '../lib/hook-manager.js';
+import * as array from '../lib/array.js';
+import * as object from '../lib/object.js';
 import * as json from '../converter/json.js';
 import * as markdown from '../converter/markdown.js';
 import * as toml from '../converter/toml.js';

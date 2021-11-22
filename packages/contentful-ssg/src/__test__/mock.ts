@@ -5,8 +5,8 @@ import {
   getFieldSettings,
   LINK_TYPE_ASSET,
   LINK_TYPE_ENTRY,
-} from '../helper/contentful.js';
-import { HookManager } from '../helper/hook-manager.js';
+} from '../lib/contentful.js';
+import { HookManager } from '../lib/hook-manager.js';
 import type { Config, RuntimeContext, TransformContext } from '../types.js';
 
 const cache = new Map();

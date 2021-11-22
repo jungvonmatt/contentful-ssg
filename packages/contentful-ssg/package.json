@@ -7,11 +7,11 @@
   "typings": "./dist/types.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./helper/object": "./dist/helper/object.js",
-    "./helper/array": "./dist/helper/array.js",
-    "./helper/contentful": "./dist/helper/contentful.js",
-    "./helper/hook-manager": "./dist/helper/hook-manager.js",
-    "./helper/file-manager": "./dist/helper/file-manager.js",
+    "./lib/object": "./dist/lib/object.js",
+    "./lib/array": "./dist/lib/array.js",
+    "./lib/contentful": "./dist/lib/contentful.js",
+    "./lib/hook-manager": "./dist/lib/hook-manager.js",
+    "./lib/file-manager": "./dist/lib/file-manager.js",
     "./converter/json": "./dist/converter/json.js",
     "./converter/yaml": "./dist/converter/yaml.js",
     "./converter/toml": "./dist/converter/toml.js",
@@ -23,20 +23,20 @@
       ".": [
         "./dist/types.d.ts"
       ],
-      "helper/object": [
-        "./dist/helper/object.d.ts"
+      "lib/object": [
+        "./dist/lib/object.d.ts"
       ],
-      "helper/array": [
-        "./dist/helper/array.d.ts"
+      "lib/array": [
+        "./dist/lib/array.d.ts"
       ],
-      "helper/contentful": [
-        "./dist/helper/contentful.d.ts"
+      "lib/contentful": [
+        "./dist/lib/contentful.d.ts"
       ],
-      "helper/hook-manager": [
-        "./dist/helper/hook-manager.d.ts"
+      "lib/hook-manager": [
+        "./dist/lib/hook-manager.d.ts"
       ],
-      "helper/file-manager": [
-        "./dist/helper/file-manager.d.ts"
+      "lib/file-manager": [
+        "./dist/lib/file-manager.d.ts"
       ],
       "converter/json": [
         "./dist/converter/json.d.ts"

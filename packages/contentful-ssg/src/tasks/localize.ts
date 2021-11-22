@@ -1,7 +1,7 @@
 import type {RuntimeContext, ContentfulData, Node, Locale, Asset, Entry} from '../types.js';
 import Listr from 'listr';
-import {mapAsync} from '../helper/array.js';
-import {convertToMap, getContentTypeId} from '../helper/contentful.js';
+import {mapAsync} from '../lib/array.js';
+import {convertToMap, getContentTypeId} from '../lib/contentful.js';
 
 /**
  * Get an ordered list of locales to use for translation based on fallback locales

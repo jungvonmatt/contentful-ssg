@@ -3,7 +3,7 @@
 import { Config, RuntimeContext } from '../types';
 import {fetch} from './fetch';
 
-jest.mock('../helper/contentful.js', () => {
+jest.mock('../lib/contentful.js', () => {
   return {
     getContent: jest.fn().mockResolvedValue({locales: [{default:true, code:'en'}], contentTypes: [], somethingelse: false}),
     getFieldSettings: jest.fn().mockReturnValue({fields: 'TEST'}),

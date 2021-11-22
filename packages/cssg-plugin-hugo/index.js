@@ -1,7 +1,7 @@
 
 import mergeOptionsModule from 'merge-options';
 
-import {snakeCaseKeys} from '@jungvonmatt/contentful-ssg/helper/object';
+import {snakeCaseKeys} from '@jungvonmatt/contentful-ssg/lib/object';
 import mm from 'micromatch';
 import {existsSync} from 'fs';
 import {writeFile, readFile} from 'fs/promises';

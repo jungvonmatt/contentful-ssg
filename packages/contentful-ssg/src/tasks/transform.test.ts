@@ -19,8 +19,8 @@ import {
   getFieldSettings,
   LINK_TYPE_ASSET,
   LINK_TYPE_ENTRY,
-} from '../helper/contentful';
-import { HookManager } from '../helper/hook-manager.js';
+} from '../lib/contentful';
+import { HookManager } from '../lib/hook-manager.js';
 import type { Config, RuntimeContext, TransformContext } from '../types.js';
 import {
   getConfig,

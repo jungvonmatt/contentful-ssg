@@ -1,14 +1,14 @@
 import type {Config, RuntimeContext, Task, TransformContext, TransformHelper} from './types.js';
 import Listr from 'listr';
 import chalk from 'chalk';
-import {getContentTypeId, getContentId} from './helper/contentful.js';
+import {getContentTypeId, getContentId} from './lib/contentful.js';
 import {setup} from './tasks/setup.js';
 import {fetch} from './tasks/fetch.js';
 import {localize} from './tasks/localize.js';
 import {transform} from './tasks/transform.js';
 import {write} from './tasks/write.js';
-import {collectParentValues, collectValues} from './helper/utils.js';
-import {ValidationError} from './helper/error.js';
+import {collectParentValues, collectValues} from './lib/utils.js';
+import {ValidationError} from './lib/error.js';
 
 /**
  * This is a very simple listr renderer which does not swallow log output from

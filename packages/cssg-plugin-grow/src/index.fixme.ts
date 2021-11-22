@@ -7,7 +7,7 @@ import {
   getTransformContext,
   getRuntimeContext,
 } from '@jungvonmatt/contentful-ssg/test/mock';
-import {HookManager} from '@jungvonmatt/contentful-ssg/helper/hook-manager';
+import {HookManager} from '@jungvonmatt/contentful-ssg/lib/hook-manager';
 import {Hooks, Config, RuntimeContext} from '@jungvonmatt/contentful-ssg';
 
 const directory = process.cwd();

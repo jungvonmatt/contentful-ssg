@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import type { Locale } from '../types.js';
 import { getContent } from '../__test__/mock.js';
-import { getContentId, getFieldSettings } from '../helper/contentful.js';
+import { getContentId, getFieldSettings } from '../lib/contentful.js';
 
 import { localizeEntry, localizeField, getLocaleList } from './localize.js';
 

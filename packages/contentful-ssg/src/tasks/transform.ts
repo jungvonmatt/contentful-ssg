@@ -17,7 +17,7 @@ import type {
   Node as RichTextNode,
 } from '@contentful/rich-text-types';
 import {documentToHtmlString} from '@contentful/rich-text-html-renderer';
-import {removeEmpty} from '../helper/object.js';
+import {removeEmpty} from '../lib/object.js';
 
 import {
   FIELD_TYPE_RICHTEXT,
@@ -30,9 +30,9 @@ import {
   isEntryLink,
   isAsset,
   isEntry,
-} from '../helper/contentful.js';
+} from '../lib/contentful.js';
 import type {KeyValueMap} from 'contentful-management/types';
-import {ValidationError} from '../helper/error.js';
+import {ValidationError} from '../lib/error.js';
 
 /**
  * Convert contentful entry to export format (link)

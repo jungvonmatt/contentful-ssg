@@ -9,10 +9,10 @@ import prettier from 'prettier';
 import {Command} from 'commander';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import {logError, confirm, askAll, askMissing} from './helper/ui.js';
-import {omitKeys} from './helper/object.js';
+import {logError, confirm, askAll, askMissing} from './lib/ui.js';
+import {omitKeys} from './lib/object.js';
 
-import {getConfig, getEnvironmentConfig} from './helper/config.js';
+import {getConfig, getEnvironmentConfig} from './lib/config.js';
 import {run} from './index.js';
 import {ContentfulConfig} from './types.js';
 
