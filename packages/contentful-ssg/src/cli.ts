@@ -13,7 +13,7 @@ import {logError, confirm, askAll, askMissing} from './helper/ui.js';
 import {omitKeys} from './helper/object.js';
 
 import {getConfig, getEnvironmentConfig} from './helper/config.js';
-import {dump} from './index.js';
+import {run} from './index.js';
 import {ContentfulConfig} from './types.js';
 
 const env = dotenv.config();
@@ -111,7 +111,7 @@ program
       const config = await getConfig(parseArgs(cmd || {}));
       const verified = await askMissing(config);
 
-      return dump(verified);
+      return run(verified);
     }),
   );
 

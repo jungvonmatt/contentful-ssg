@@ -68,7 +68,7 @@ const resolvePlugin = async (
       );
     }
 
-    throw new Error('unreachable');
+    process.exit(1);
   }
 };
 

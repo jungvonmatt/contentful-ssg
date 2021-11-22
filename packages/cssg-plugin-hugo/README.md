@@ -2,11 +2,11 @@
 
 Provides support for the [hugo](https://gohugo.io/) static site generator.
 
-This plugin adds provides some opinionated settings/features when using the for the use of the hugo static site generator.
+This plugin provides some usefull but opinionated settings/features for the use with the hugo static site generator.
 
 **Multilingual Mode**
 
-This plugin automatically generates a `/config/_default/languages.toml` file for you based on youtr locale configuration in contentful.
+This plugin automatically generates a `/config/_default/languages.toml` file for you based on your locale configuration in contentful.
 Your content is organized using different content directories for each of the languages. See https://gohugo.io/content-management/multilingual/#translation-by-content-directory
 
 **Translation of Strings**
@@ -130,7 +130,7 @@ plugins: [
 | fieldIdSlug    | `string`  | `'slug'`                          | The id of the slug field in page content types.                                                                                                                                                                                                                                                                                                 |
 | fieldIdParent  | `string`  | `'parent_page'`                   | The id of the parent page reference field in page content types.                                                                                                                                                                                                                                                                                |
 | languageConfig | `boolean` | `true`                            | Auto-generate the hugo language config based on your locale configuration in contentful.                                                                                                                                                                                                                                                        |
-| typeConfig     | `object`  | `{ page: ['page'], data: ['d-*']} | Pass a map with entry types (`data`, `map`) pointing to one or more glob patterns matching the content type ids.\ Data types will be stored inside the `/data/` directory. \ pages types will be stored inside `/content/<locale>/`.\ All content types that do not match are considered headless and will be stored inside `/content/headless` |
+| typeConfig     | `object`  | `{ page: ['page'], data: ['d-*']}` | Pass a map with entry types (`data`, `map`) pointing to one or more glob patterns matching the content type ids.\ Data types will be stored inside the `/data/` directory. \ pages types will be stored inside `/content/<locale>/`.\ All content types that do not match are considered headless and will be stored inside `/content/headless` |
 
 Example:
 

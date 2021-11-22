@@ -55,7 +55,7 @@ class CustomListrRenderer {
  * Dump contentful objects to files
  * @param {Object} config
  */
-export const dump = async (config: Config): Promise<void> => {
+export const run = async (config: Config): Promise<void> => {
   const tasks = new Listr<RuntimeContext>(
     [
       {

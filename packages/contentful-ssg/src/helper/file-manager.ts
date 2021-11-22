@@ -1,10 +1,10 @@
 import type {WriteFileOptions} from 'fs-extra';
 import type {Config, Ignore} from '../types';
-
 import {dirname, resolve, relative} from 'path';
 import ignore from 'ignore';
 import {readFile, readdir} from 'fs/promises';
 import {remove, outputFile} from 'fs-extra';
+
 export class FileManager {
   ignoreBase: string = process.cwd();
   ignore?: Ignore;
