@@ -60,10 +60,6 @@ npx cssg init --typescript
 | after              | `Function`                      | `undefined`   | Runs `function(runtimeContext){...}` after processing the content right before the cleanup                                                                                                                                                                                                                                                                                                                                                                                        |
 
 
-
-#### Typedoc
-See the types documnentation for more insights on the hook parameters: [typedoc](https://github.com/jungvonmatt/contentful-ssg/blob/main/packages/contentful-ssg/docs/index.html)
-
 #### Helper functions
 
 ###### collectValues
