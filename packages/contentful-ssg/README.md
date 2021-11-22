@@ -12,7 +12,7 @@ When a `.gitignore` file is found only ignored files are removed.
 ### Install
 
 ```bash
-npm i @jungvonmatt/contentful-ssg
+npm install --save-dev @jungvonmatt/contentful-ssg
 ```
 
 ## Commands
@@ -48,16 +48,95 @@ npx cssg init --typescript
 | environmentId      | `String`                        | `'master'`    | Contentful Environment id                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | format             | `String`\|`Function`\|`Object`  | `'yaml'`      | File format ( `yaml`, `toml`, `md`, `json`) You can add a function returning the format or you can add a mapping object like `{yaml: [glob pattern]}` ([pattern](https://github.com/micromatch/micromatch) should match the directory)                                                                                                                                                                                                                                     |
 | directory          | `String`                        | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| validate           | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext){...}` to validate an entry. Return a 'falsy' value to skip the entry completely. Without a validate function entries with a missing required field are skipped.                                                                                                                                                                                                     |
-| transform          | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to modify the stored object. Return `undefined` to skip the entry completely. (no file will be written)                                                                                                                                                                                                                                                                                         |
-| mapDirectory       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                                                                                                               |
-| mapFilename        | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize the filename per entry                                                                                                                                                                                                                                                                                                                                                                  |
-| mapAssetLink       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize how asset links are stored                                                                                                                                                                                                                                                                                                                                                                                                        |
-| mapEntryLink       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize how entry links are stored                                                                                                                                                                                                                                                                                                                                                                                                        |
-| mapMetaFields      | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, prev){...}` to customize the meta fields per entry                                                                                                                                                                                                                                                                                                                                                           |
+| validate           | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext){...}` to validate an entry. Return `false` to skip the entry completely. Without a validate function entries with a missing required field are skipped.                                                                                                                                                                                                     |
+| transform          | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext){...}` to modify the stored object. Return `undefined` to skip the entry completely. (no file will be written)                                                                                                                                                                                                                                                                                         |
+| mapDirectory       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, defaultValue){...}` to customize the directory per content-type relative to the base directory.                                                                                                                                                                                                                                                                                                                                               |
+| mapFilename        | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, defaultValue){...}` to customize the filename per entry                                                                                                                                                                                                                                                                                                                                                                  |
+| mapAssetLink       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, defaultValue){...}` to customize how asset links are stored                                                                                                                                                                                                                                                                                                                                                                                                        |
+| mapEntryLink       | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, defaultValue){...}` to customize how entry links are stored                                                                                                                                                                                                                                                                                                                                                                                                        |
+| mapMetaFields      | `Function`                      | `undefined`   | Pass `function(transformContext, runtimeContext, defaultValue){...}` to customize the meta fields per entry                                                                                                                                                                                                                                                                                                                                                           |
 | richTextRenderer   | `Boolean`\|`Object`\|`Function` | `{}`          | We use the contentful [`rich-text-html-renderer`](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer) to render the html.<br/> You can pass a [configuration object](https://github.com/contentful/rich-text/tree/master/packages/rich-text-html-renderer#usage)<br/> or you can pass `function(document){...}` to use your own richtext renderer or you can turn it off by passing `false` to get a mirrored version of the JSON output |
 | before             | `Function`                      | `undefined`   | Runs `function(runtimeContext){...}` before processing the content right after pulling data from contentful                                                                                                                                                                                                                                                                                                                                                                       |
 | after              | `Function`                      | `undefined`   | Runs `function(runtimeContext){...}` after processing the content right before the cleanup                                                                                                                                                                                                                                                                                                                                                                                        |
+
+
+#### Runtime Hooks
+**before**
+```js
+(runtimeContext) => {
+  // Do things before processing the localized contentful entries
+  // The return value should be an object which is merged with the runtime context.
+  return { key: 'test' };
+}
+```
+
+**after**
+```js
+(runtimeContext) => {
+  // Do things after processing the localized contentful entries before cleanup
+  // We have access to values added to the context in the before hook
+  console.log(runtimeContext.key) // -> 'test'
+}
+```
+
+#### Transform Hooks
+**transform**
+```js
+(transformContext, runtimeContext) => {
+  const {content} = transformContext;
+  // modify content and
+  // return object
+  return content;
+}
+```
+
+**mapFilename**
+```js
+(transformContext, runtimeContext, defaultValue) => {
+  // customize the filename on entry level
+  // return string
+  return defaultValue;
+}
+```
+
+**mapDirectory**
+```js
+(transformContext, runtimeContext, defaultValue) => {
+  // customize the directory on entry level
+  // return string
+  return defaultValue;
+}
+```
+
+**mapAssetLink**
+```js
+(transformContext, runtimeContext, defaultValue) => {
+  const {asset} = transformContext;
+  // customize the asset representation in front matter
+  // return object
+  return { ...defaultValue, ... };
+}
+```
+
+**mapEntryLink**
+```js
+(transformContext, runtimeContext, defaultValue) => {
+  const {entry} = transformContext;
+  // customize how the entry is added to your front matter
+  // return object
+  return { ...defaultValue, ... };
+}
+```
+
+**mapMetaFields**
+```js
+(transformContext, runtimeContext, defaultValue) => {
+  const {entry} = transformContext;
+  // customize how the sys meta data is added to your front matter
+  // return object
+  return { ...defaultValue, ... };
+}
+```
 
 
 #### Helper functions
