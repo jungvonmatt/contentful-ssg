@@ -60,7 +60,7 @@ npx cssg init --typescript
 | after              | `Function`                      | `undefined`   | Runs `function(runtimeContext){...}` after processing the content right before the cleanup                                                                                                                                                                                                                                                                                                                                                                                        |
 
 
-#### Runtime Hooks
+### Runtime Hooks
 **before**
 ```js
 (runtimeContext) => {
@@ -79,7 +79,7 @@ npx cssg init --typescript
 }
 ```
 
-#### Transform Hooks
+### Transform Hooks
 **transform**
 ```js
 (transformContext, runtimeContext) => {
