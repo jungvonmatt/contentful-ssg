@@ -158,8 +158,6 @@ Get values from linked pages to e.g. build an url out of parent slugs.
 }
 ```
 
-_contentful-ssg.config.js_
-
 ###### collectParentValues
 
 The same as collectValues just without the value from the current entry
