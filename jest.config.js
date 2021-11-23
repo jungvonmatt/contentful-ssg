@@ -1,7 +1,15 @@
 export default {
   collectCoverage: false,
-  // skip helper/create-require.ts as istanbul coverage could not handle imo
-  collectCoverageFrom: ['packages/contentful-ssg/**','!packages/contentful-ssg/src/lib/create-require.ts','!**/node_modules/**', '!**/__test__/**', '!**/dist/**'],
+  collectCoverageFrom: [
+    'packages/contentful-ssg/**',
+    '!packages/contentful-ssg/src/cli.ts',
+    '!packages/contentful-ssg/src/lib/config.ts',
+    // skip helper/create-require.ts as istanbul coverage could not handle imo
+    '!packages/contentful-ssg/src/lib/create-require.ts',
+    '!**/node_modules/**',
+    '!**/__test__/**',
+    '!**/dist/**',
+  ],
   roots: ['packages/'],
   testPathIgnorePatterns: ['/dist/'],
   transform: {
@@ -25,6 +33,6 @@ export default {
 
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
-    "^@jungvonmatt\/(.*)$": "<rootDir>/packages/$1"
+    '^@jungvonmatt/(.*)$': '<rootDir>/packages/$1',
   },
 };
