@@ -1,6 +1,6 @@
 import {Locale} from '../types';
 
-interface ErrorEntry {
+export interface ErrorEntry {
   spaceId: string;
   environmentId: string;
   entryId: string;
