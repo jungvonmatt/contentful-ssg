@@ -16,10 +16,10 @@ export class FileManager {
   }
 
   get count() {
-    return [...this.unignoredFiles].length;
+    return [...this.ignoredFiles].length;
   }
 
-  get unignoredFiles() {
+  get ignoredFiles() {
     return [...this.files].filter(file => !this.ignore || this.ignore.ignores(relative(this.ignoreBase, file)));
   }
 
@@ -66,7 +66,7 @@ export class FileManager {
   }
 
   async cleanup() {
-    const promises = [...this.unignoredFiles].map(async file => this.deleteFile(file));
+    const promises = [...this.ignoredFiles].map(async file => this.deleteFile(file));
 
     return Promise.allSettled(promises);
   }
