@@ -85,7 +85,7 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
     ...fixture,
   };
 
-  const hooks = new HookManager(result as RuntimeContext, getConfig());
+  const hooks = new HookManager(result as RuntimeContext, result.config);
 
   return { ...result, hooks } as RuntimeContext;
 };
