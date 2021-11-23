@@ -6,6 +6,7 @@ import {
   LINK_TYPE_ASSET,
   LINK_TYPE_ENTRY,
 } from '../lib/contentful.js';
+import { FileManager } from '../lib/file-manager.js';
 import { HookManager } from '../lib/hook-manager.js';
 import type { Config, RuntimeContext, TransformContext } from '../types.js';
 
@@ -58,9 +59,10 @@ export const getContent = async () => {
 
 export const getConfig = (fixture: Partial<Config> = {}): Config =>
   ({
+    directory: 'test',
     plugins: [],
     ...fixture,
-  } as Config);
+  });
 
 export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): RuntimeContext => {
   const assets = readFixtureSync('assets.json');
@@ -86,8 +88,13 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
   };
 
   const hooks = new HookManager(result as RuntimeContext, result.config);
+  const fileManager = new FileManager({directory: '/testbase'});
+  fileManager.cleanup = jest.fn();
+  fileManager.initialize = jest.fn();
+  fileManager.deleteFile = jest.fn();
+  fileManager.writeFile = jest.fn();
 
-  return { ...result, hooks } as RuntimeContext;
+  return { ...result, hooks, fileManager } as RuntimeContext;
 };
 
 export const getTransformContext = (fixture: Partial<TransformContext> = {}): TransformContext =>

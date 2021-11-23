@@ -1,5 +1,5 @@
 import { transform } from './transform.js';
-import { getRuntimeContext, getTransformContext, getConfig } from '../__test__/mock';
+import { getRuntimeContext, getTransformContext, getConfig } from '../__test__/mock.js';
 
 jest.mock('../mapper/map-entry.js', () => ({
   mapEntry: jest.fn().mockResolvedValue({ mocked: true }),
