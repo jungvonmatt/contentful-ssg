@@ -22,7 +22,7 @@ jest.mock('./lib/file-manager.js', () => ({
       writeFile: jest.fn(),
       deleteFile: jest.fn(),
       cleanup: jest.fn(),
-      count: 0,
+      count: 1,
     };
   },
 }));
