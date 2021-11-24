@@ -25,7 +25,7 @@ const hookUpRuntime = (
     .map(plugin => plugin[name]);
 
   return async (runtimeContext: RuntimeContext): Promise<Partial<RuntimeContext>> => {
-    if (hooks.length === 0 && !defaultValue) {
+    if (hooks.length === 0 && !defaultValue && !configHook) {
       return;
     }
 
@@ -65,7 +65,7 @@ const hookUpTransform = <Type = unknown>(
     transformContext: TransformContext,
     runtimeContext: RuntimeContext,
   ): Promise<Type> => {
-    if (hooks.length === 0 && !defaultValue) {
+    if (hooks.length === 0 && !defaultValue && !configHook) {
       return;
     }
 
@@ -110,11 +110,13 @@ export class HookManager {
   has(key: keyof Hooks): boolean {
     const {[key]: hook} = this.config;
     const pluginHooks = (this.config.resolvedPlugins || []).some(plugin => Boolean(plugin[key]));
+
     return Boolean(hook) || pluginHooks;
   }
 
   async before(defauleValue?: KeyValueMap) {
     const method = hookUpRuntime('before', this.config, defauleValue);
+
     const result = await method(this.runtimeContext);
     this.runtimeContext = {...this.runtimeContext, ...(result || {})};
     return this.runtimeContext;

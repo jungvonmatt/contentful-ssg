@@ -44,7 +44,7 @@ export type Node = Entry | Asset;
 
 export type RuntimeHook = (
   runtimeContext: RuntimeContext
-) => Promise<Partial<RuntimeContext>> | Partial<RuntimeContext>;
+) => Promise<Partial<RuntimeContext>> | Partial<RuntimeContext> | void;
 export type TransformHook<T> = (
   transformContext: TransformContext,
   runtimeContext?: RuntimeContext,
