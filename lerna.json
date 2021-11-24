@@ -1,0 +1,23 @@
+{
+  "version": "0.17.3",
+  "packages": [
+    "packages/*"
+  ],
+  "command": {
+    "bootstrap": {
+      "hoist": true
+    },
+    "version": {
+      "allowBranch": "main",
+      "conventionalCommits": true,
+      "message": "chore(release): updated release notes and package versions [ci skip]",
+      "ignoreChanges": [
+        "*.md",
+        "**/*.spec.*",
+        "**/*.stories.*",
+        "**/__fixtures__/**",
+        "**/__tests__/**"
+      ]
+    }
+  }
+}

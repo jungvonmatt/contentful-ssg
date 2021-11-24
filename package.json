@@ -1,115 +1,55 @@
 {
-  "name": "@jungvonmatt/contentful-ssg",
-  "version": "0.17.3",
-  "description": "Export contentful entries to files for static site generators (hugo/grow/...)",
-  "main": "index.js",
-  "bin": {
-    "contentful-ssg": "index.js",
-    "cssg": "index.js"
+  "name": "@jungvonmatt/contentful-ssg-project",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A monorepo for all NPM packages related to contentful-ssg",
+  "author": "Jung von Matt TECH GmbH",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jungvonmatt/contentful-ssg"
   },
-  "files": [
-    "index.js",
-    "lib"
-  ],
-  "scripts": {
-    "lint": "eslint --ignore-path .gitignore .",
-    "jest": "jest --coverage",
-    "test": "npm run lint && npm run jest",
-    "prepare": "husky install"
-  },
-  "author": "",
-  "license": "ISC",
   "engines": {
-    "node": ">=14"
+    "node": ">=16.0.0"
   },
-  "dependencies": {
-    "@contentful/rich-text-html-renderer": "^14.1.2",
-    "@contentful/rich-text-types": "^14.1.2",
-    "@iarna/toml": "^2.2.5",
-    "chalk": "^4.1.1",
-    "commander": "^7.2.0",
-    "contentful": "^8.3.5",
-    "contentful-management": "^7.18.2",
-    "cosmiconfig": "^7.0.0",
-    "dlv": "^1.1.3",
-    "dotenv": "^9.0.1",
-    "find-up": "^5.0.0",
-    "fs-extra": "^10.0.0",
-    "globby": "^11.0.3",
-    "gray-matter": "^4.0.3",
-    "ignore": "^5.1.8",
-    "inquirer": "^8.0.0",
-    "js-yaml": "^4.1.0",
-    "js-yaml-js-types": "^1.0.0",
-    "listr": "^0.14.3",
-    "merge-options": "^3.0.4",
-    "micromatch": "^4.0.4",
-    "pkg-up": "^3.1.0",
-    "snake-case": "^3.0.4"
+  "scripts": {
+    "clean": "lerna run clean",
+    "postinstall": "lerna bootstrap --hoist --progress --no-ci",
+    "prepublishOnly": "npm i && npm run build && npm run lint && npm run test",
+    "release": "lerna version --no-private --conventional-commits --create-release github --yes && lerna publish from-git --yes",
+    "compile": "lerna run compile",
+    "start": "lerna run start",
+    "lint": "lerna run lint",
+    "test": "jest",
+    "test:ci": "npm run compile && npm run test:prod",
+    "test:prod": "npm run lint && npm run test -- --coverage --no-cache",
+    "test:watch": "jest --watch"
   },
-  "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.26.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "husky": "^6.0.0",
-    "jest": "^26.6.3",
-    "lint-staged": "^11.0.0",
-    "prettier": "^2.2.1"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "printWidth": 120
-  },
-  "eslintConfig": {
-    "plugins": [
-      "prettier"
-    ],
-    "rules": {
-      "prettier/prettier": "error"
-    },
-    "extends": [
-      "prettier"
-    ],
-    "parser": "babel-eslint",
-    "parserOptions": {
-      "allowImportExportEverywhere": true,
-      "ecmaFeatures": {
-        "ecmaVersion": 2017,
-        "impliedStrict": true
-      }
-    },
-    "env": {
-      "node": true
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write --ignore-path .gitignore",
-      "eslint --fix --ignore-path .gitignore"
-    ],
-    "*.md": [
-      "prettier --write"
-    ]
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
-  "directories": {
-    "lib": "lib",
-    "test": "test"
+  "lint-staged": {
+    "packages/**/{src,test}/**/*.ts": [
+      "prettier --write",
+      "git add"
+    ]
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
-  },
-  "bugs": {
-    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
-  },
-  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme"
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "jest": "^27.3.0",
+    "lerna": "^4.0.0",
+    "lint-staged": "^12.1.2",
+    "prettier": "^2.4.1",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  }
 }

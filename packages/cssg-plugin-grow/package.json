@@ -1,0 +1,43 @@
+{
+  "name": "@jungvonmatt/cssg-plugin-grow",
+  "version": "1.0.0",
+  "description": "Contentful-ssg plugin for grow",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "lint": "eslint --color src --fix --ext .ts",
+    "precompile": "npm run clean",
+    "compile": "tsc --build",
+    "watch": "tsc --build --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "author": "Ben Zörb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@jungvonmatt/contentful-ssg": "^1.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.3.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "es2020",
+      "composite": true
+    }
+  }
+}
