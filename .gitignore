@@ -39,9 +39,6 @@ dist
 contentful-ssg.config.js
 content/
 
-# Test configs
-packages/contentful-ssg/test-configs
-
 # editor / IDE files
 .idea
 .vs

@@ -1,4 +1,4 @@
-[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] [![Coverage][coveralls-image]][coveralls-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![Coverage][coveralls-image]][coveralls-url]
 
 # JvM Contentful export for static site generators
 
@@ -175,21 +175,17 @@ npx cssg fetch
 
 ### Grow
 
-See [`cssg-plugin-grow`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-grow`)
+See [`cssg-plugin-grow`](../cssg-plugin-grow)
 
 
 ### Hugo
 
-See [`cssg-plugin-hugo`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-hugo`)
+See [`cssg-plugin-hugo`](../cssg-plugin-hugo)
 
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-ssg
 [npm-image]: https://img.shields.io/npm/v/@jungvonmatt/contentful-ssg.svg
 [ci-url]: https://github.com/jungvonmatt/contentful-ssg/actions?workflow=Tests
 [ci-image]: https://github.com/jungvonmatt/contentful-ssg/workflows/Tests/badge.svg
-[depstat-url]: https://david-dm.org/jungvonmatt/contentful-ssg
-[depstat-image]: https://img.shields.io/david/jungvonmatt/contentful-ssg.svg
-[devdepstat-url]: https://david-dm.org/jungvonmatt/contentful-ssg?type=dev
-[devdepstat-image]: https://img.shields.io/david/dev/jungvonmatt/contentful-ssg.svg
 [coveralls-url]: https://coveralls.io/github/jungvonmatt/contentful-ssg?branch=main
 [coveralls-image]: https://coveralls.io/repos/github/jungvonmatt/contentful-ssg/badge.svg?branch=main

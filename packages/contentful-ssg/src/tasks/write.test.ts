@@ -1,5 +1,5 @@
 import { write } from './write.js';
-import {stringify} from '../converter/toml.js';
+import { stringify } from '../converter/toml.js';
 import { getRuntimeContext, getTransformContext, getConfig } from '../__test__/mock.js';
 import { Locale } from '../types.js';
 

@@ -1,8 +1,7 @@
 import chalk from 'chalk';
 import { run } from './index.js';
 import { write } from './tasks/write.js';
-import { FileManager } from './lib/file-manager.js';
-// jest.mock('./tasks/write.js', () => ({ write: jest.fn().mockResolvedValue(true) }));
+
 jest.mock('./lib/contentful.js', () => {
   const originalModule = jest.requireActual('./lib/contentful.js');
   return {
@@ -49,9 +48,11 @@ describe('Run', () => {
         return { ...(context?.content ?? {}), test: [...(context?.content?.test ?? []), 'config'] };
       },
       resolvedPlugins: [
-        { before: (context) => {
-          fileManager = context.fileManager;
-        } },
+        {
+          before: (context) => {
+            fileManager = context.fileManager;
+          },
+        },
         {
           transform: (context) => {
             return {
@@ -84,6 +85,5 @@ describe('Run', () => {
     expect(output).toMatch(`Saved ${chalk.green(12)} entries`);
     expect(output).toMatch(`${chalk.cyan(0)} entries skipped due to validation issues`);
     expect(output).toMatch(`${chalk.red(0)} errors`);
-
   });
 });

@@ -1,5 +1,6 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
+import type { QueryOptions, CollectionProp } from 'contentful-management/types';
 
 import type {
   EntryFields,
@@ -24,6 +25,7 @@ export type Entry = Omit<ContentfulEntry<KeyValueMap>, 'update'>;
 export type Node = Entry | Asset;
 
 export type ContentfulRichtextOptions = Options;
+export type FormatObject = KeyValueMap<string[]>;
 export type RichTextConfig =
   | boolean
   | ContentfulRichtextOptions
@@ -32,8 +34,6 @@ export type RichTextConfig =
       transformContext: TransformContext,
       runtimeContext: RuntimeContext
     ) => unknown);
-
-export type FormatObject = KeyValueMap<string[]>;
 
 export interface ContentfulConfig {
   spaceId: string;
@@ -194,14 +194,6 @@ export interface RuntimeContext {
 
 export type Task = ListrTaskObject<RuntimeContext>;
 
-export interface StatsEntry extends KeyValueMap {
-  id: string;
-  contentTypeId: string;
-  locale: string;
-  message?: string;
-  error?: Error;
-}
-
 export interface TransformHelper {
   collectValues: <T>(key, options?: CollectOptions) => T[];
   collectParentValues: <T>(key, options?: CollectOptions) => T[];
@@ -224,12 +216,17 @@ export type TransformContext = LocalizedContent & {
 
 export interface Ignore {
   add(pattern: string | Ignore | string[] | Ignore[]): Ignore;
-
   filter(paths: string[]): string[];
-
   createFilter(): (path: string) => boolean;
-
   ignores(pathname: string): boolean;
+}
+
+export interface StatsEntry extends KeyValueMap {
+  id: string;
+  contentTypeId: string;
+  locale: string;
+  message?: string;
+  error?: Error;
 }
 
 export interface MapAssetLink {
@@ -256,4 +253,19 @@ export interface CollectOptions {
   getId?: (entry: Entry) => string;
   getNextId?: (entry: Entry) => string;
   getValue?: (entry: Entry) => any;
+}
+
+export interface PagedGetOptions<T> {
+  method: string;
+  skip?: number;
+  aggregatedResponse?: CollectionProp<T>;
+  query?: QueryOptions;
+}
+export interface ErrorEntry {
+  spaceId: string;
+  environmentId: string;
+  entryId: string;
+  contentTypeId: string;
+  locale: Locale;
+  missingFields: string[];
 }

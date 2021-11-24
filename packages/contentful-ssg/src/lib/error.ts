@@ -1,13 +1,4 @@
-import { Locale } from '../types';
-
-export interface ErrorEntry {
-  spaceId: string;
-  environmentId: string;
-  entryId: string;
-  contentTypeId: string;
-  locale: Locale;
-  missingFields: string[];
-}
+import { ErrorEntry } from '../types';
 
 export class ValidationError extends Error {
   missingFields: string[];

@@ -17,7 +17,7 @@ describe('transform', () => {
         },
       ],
     });
-    const runtimeContext = getRuntimeContext({config});
+    const runtimeContext = getRuntimeContext({ config });
     const transformContext = getTransformContext();
     const value = await transform(transformContext, runtimeContext, config);
 

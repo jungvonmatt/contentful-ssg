@@ -10,6 +10,7 @@ import type {
   Asset,
   ContentType,
   Locale,
+  PagedGetOptions,
 } from '../types.js';
 import contentful from 'contentful';
 import contentfulManagement from 'contentful-management';
@@ -194,12 +195,6 @@ export const getPreviewApiKey = async (options: ContentfulConfig) => {
   return previewAccessToken;
 };
 
-interface PagedGetOptions<T> {
-  method: string;
-  skip?: number;
-  aggregatedResponse?: CollectionProp<T>;
-  query?: QueryOptions;
-}
 /**
  * Gets all the existing entities based on pagination parameters.
  * The first call will have no aggregated response. Subsequent calls will

@@ -20,7 +20,7 @@ import {
   getEnvironments,
   getApiKey,
   getPreviewApiKey,
-  MAX_ALLOWED_LIMIT
+  MAX_ALLOWED_LIMIT,
 } from './contentful.js';
 
 const configMock = {
@@ -37,10 +37,11 @@ jest.mock('contentful', () => {
       getLocales: jest.fn().mockResolvedValue({ items: Array(2) }),
       getContentTypes: jest.fn().mockResolvedValue({ items: Array(3) }),
       getAssets: jest.fn().mockResolvedValue({ items: Array(4) }),
-      getEntries: jest.fn()
-        .mockResolvedValueOnce({items: Array(1000), total:2004})
-        .mockResolvedValueOnce({items: Array(1000), total:2004})
-        .mockResolvedValue({ items: Array(4), total:2004 }),
+      getEntries: jest
+        .fn()
+        .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
+        .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
+        .mockResolvedValue({ items: Array(4), total: 2004 }),
     }),
   };
 });
@@ -133,7 +134,7 @@ describe('Contentful', () => {
   });
 
   test('getContent', async () => {
-    const {entries, assets, contentTypes, locales} = await getContent(configMock);
+    const { entries, assets, contentTypes, locales } = await getContent(configMock);
     expect(Array.isArray(entries)).toBe(true);
     expect(Array.isArray(assets)).toBe(true);
     expect(Array.isArray(contentTypes)).toBe(true);

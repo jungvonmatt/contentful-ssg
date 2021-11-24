@@ -57,12 +57,11 @@ export const getContent = async () => {
   return { entries, assets, contentTypes, locales, assetLink, entryLink, entry, asset };
 };
 
-export const getConfig = (fixture: Partial<Config> = {}): Config =>
-  ({
-    directory: 'test',
-    plugins: [],
-    ...fixture,
-  });
+export const getConfig = (fixture: Partial<Config> = {}): Config => ({
+  directory: 'test',
+  plugins: [],
+  ...fixture,
+});
 
 export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): RuntimeContext => {
   const assets = readFixtureSync('assets.json');
@@ -88,7 +87,7 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
   };
 
   const hooks = new HookManager(result as RuntimeContext, result.config);
-  const fileManager = new FileManager({directory: '/testbase'});
+  const fileManager = new FileManager({ directory: '/testbase' });
   fileManager.cleanup = jest.fn();
   fileManager.initialize = jest.fn();
   fileManager.deleteFile = jest.fn();

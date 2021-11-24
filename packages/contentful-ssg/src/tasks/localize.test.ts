@@ -5,7 +5,7 @@ import { getContentId, getFieldSettings } from '../lib/contentful.js';
 
 import { localizeEntry, localizeField, getLocaleList } from './localize.js';
 
-const getLocale = (code, fallback):Locale => ({
+const getLocale = (code, fallback): Locale => ({
   name: `Locale: ${code}`,
   code: `${code}`,
   fallbackCode: `${fallback}`,
@@ -13,17 +13,13 @@ const getLocale = (code, fallback):Locale => ({
   sys: {
     id: `locale-${code}`,
     type: 'Locale',
-    version: 1
-  }
-})
+    version: 1,
+  },
+});
 
 describe('Localize', () => {
   test('getLocaleList', async () => {
-    const locales = [
-      getLocale(1,2),
-      getLocale(2,3),
-      getLocale(3,4),
-    ];
+    const locales = [getLocale(1, 2), getLocale(2, 3), getLocale(3, 4)];
 
     expect(getLocaleList('1', locales).join('-')).toEqual('1-2-3');
     expect(getLocaleList('2', locales).join('-')).toEqual('2-3');
@@ -71,8 +67,7 @@ describe('Localize', () => {
       title: 'FuBK',
       description: 'Dummy image',
       file: {
-        url:
-          '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
+        url: '//images.ctfassets.net/gpdredy5px7h/3t1t8PDynjpXbAzv6zOVQq/7f4143c74191766d87f86d0035d91d28/FuBK_testcard_vectorized.svg',
         details: {
           size: 120093,
           image: {

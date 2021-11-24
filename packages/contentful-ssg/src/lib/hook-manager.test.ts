@@ -19,8 +19,8 @@ describe('Hook Manager', () => {
     // and so the second one also alters the result of the first one
     const runtimeUndefined = await hooks.before();
     expect(runtimeUndefined).toEqual(hooks.runtimeContext);
-    const runtimeDefault = await hooks.before({test:true});
-    expect(runtimeDefault).toEqual({...hooks.runtimeContext, test:true});
+    const runtimeDefault = await hooks.before({ test: true });
+    expect(runtimeDefault).toEqual({ ...hooks.runtimeContext, test: true });
 
     const transformUndefined = await hooks.mapDirectory(getTransformContext());
     expect(transformUndefined).toBeUndefined();
@@ -116,18 +116,23 @@ describe('Hook Manager', () => {
   test('Runs hooks', async () => {
     const hooks = getInstance(
       {
-        mapDirectory: (tc,rc,prev) => `wrapped-${prev}`,
-        mapFilename: (tc,rc,prev) => `wrapped-${prev}`,
-        mapMetaFields: (tc,rc,prev) => ({...prev, wrapped: true}),
-        mapAssetLink: (tc,rc,prev) => ({...prev, wrapped: true}),
-        mapEntryLink: (tc,rc,prev) => ({...prev, wrapped: true}),
+        mapDirectory: (tc, rc, prev) => `wrapped-${prev}`,
+        mapFilename: (tc, rc, prev) => `wrapped-${prev}`,
+        mapMetaFields: (tc, rc, prev) => ({ ...prev, wrapped: true }),
+        mapAssetLink: (tc, rc, prev) => ({ ...prev, wrapped: true }),
+        mapEntryLink: (tc, rc, prev) => ({ ...prev, wrapped: true }),
         resolvedPlugins: [
-          { mapDirectory: (tc,rc,prev) => `${prev || ''}plugin-1-directory: ${tc.value}` },
-          { mapFilename: (tc,rc,prev) => `${prev || ''}plugin-2-filename: ${tc.value}`  },
-          { mapMetaFields: (tc,rc,prev) => ({...prev, mapMetaFields: `plugin-3: ${tc.value}`}) },
-          { mapAssetLink: (tc,rc,prev) => ({...prev, mapAssetLink: `plugin-4: ${tc.value}`}) },
-          { mapEntryLink: (tc,rc,prev) => ({...prev, mapEntryLink: `plugin-5: ${tc.value}`}) },
-          { mapDirectory: (tc,rc,prev) => prev.replace(tc.value, `plugin-6-directory: ${tc.value}`)},
+          { mapDirectory: (tc, rc, prev) => `${prev || ''}plugin-1-directory: ${tc.value}` },
+          { mapFilename: (tc, rc, prev) => `${prev || ''}plugin-2-filename: ${tc.value}` },
+          {
+            mapMetaFields: (tc, rc, prev) => ({ ...prev, mapMetaFields: `plugin-3: ${tc.value}` }),
+          },
+          { mapAssetLink: (tc, rc, prev) => ({ ...prev, mapAssetLink: `plugin-4: ${tc.value}` }) },
+          { mapEntryLink: (tc, rc, prev) => ({ ...prev, mapEntryLink: `plugin-5: ${tc.value}` }) },
+          {
+            mapDirectory: (tc, rc, prev) =>
+              prev.replace(tc.value, `plugin-6-directory: ${tc.value}`),
+          },
         ],
       },
       {}
@@ -136,16 +141,29 @@ describe('Hook Manager', () => {
     transformContext.value = 'tc-value';
 
     const mapDirectory = await hooks.mapDirectory(transformContext);
-    const mapFilename = await hooks.mapFilename(transformContext,'default-');
-    const mapMetaFields = await hooks.mapMetaFields(transformContext, () => ({initial: true}));
-    const mapAssetLink = await hooks.mapAssetLink(transformContext, {initial: true});
-    const mapEntryLink = await hooks.mapEntryLink(transformContext, async () => Promise.resolve({initial: true}));
+    const mapFilename = await hooks.mapFilename(transformContext, 'default-');
+    const mapMetaFields = await hooks.mapMetaFields(transformContext, () => ({ initial: true }));
+    const mapAssetLink = await hooks.mapAssetLink(transformContext, { initial: true });
+    const mapEntryLink = await hooks.mapEntryLink(transformContext, async () =>
+      Promise.resolve({ initial: true })
+    );
 
     expect(mapDirectory).toEqual('wrapped-plugin-1-directory: plugin-6-directory: tc-value');
     expect(mapFilename).toEqual('wrapped-default-plugin-2-filename: tc-value');
-    expect(mapMetaFields).toEqual({ initial: true, mapMetaFields: 'plugin-3: tc-value', wrapped: true });
-    expect(mapAssetLink).toEqual({ initial: true, mapAssetLink: 'plugin-4: tc-value', wrapped: true });
-    expect(mapEntryLink).toEqual({ initial: true, mapEntryLink: 'plugin-5: tc-value', wrapped: true });
-
+    expect(mapMetaFields).toEqual({
+      initial: true,
+      mapMetaFields: 'plugin-3: tc-value',
+      wrapped: true,
+    });
+    expect(mapAssetLink).toEqual({
+      initial: true,
+      mapAssetLink: 'plugin-4: tc-value',
+      wrapped: true,
+    });
+    expect(mapEntryLink).toEqual({
+      initial: true,
+      mapEntryLink: 'plugin-5: tc-value',
+      wrapped: true,
+    });
   });
 });

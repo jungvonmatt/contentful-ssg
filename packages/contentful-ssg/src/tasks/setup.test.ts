@@ -1,9 +1,9 @@
 import { RuntimeContext } from '../types.js';
 import { setup } from './setup.js';
 
-jest.mock('globby', () => ({globby: jest.fn().mockResolvedValue([])}));
+jest.mock('globby', () => ({ globby: jest.fn().mockResolvedValue([]) }));
 jest.mock('ignore', () => jest.fn().mockReturnValue(false));
-jest.mock('find-up', () => ({findUp: jest.fn().mockResolvedValue(false)}));
+jest.mock('find-up', () => ({ findUp: jest.fn().mockResolvedValue(false) }));
 jest.mock('fs-extra', () => ({
   outputFile: jest.fn(),
   remove: jest.fn(),

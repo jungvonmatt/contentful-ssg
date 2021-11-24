@@ -22,7 +22,12 @@ import {
 import { HookManager } from '../lib/hook-manager.js';
 import { localizeEntry } from '../tasks/localize.js';
 import { Config, RuntimeContext } from '../types.js';
-import { getRuntimeContext, getConfig, getTransformContext, readFixture } from '../__test__/mock.js';
+import {
+  getRuntimeContext,
+  getConfig,
+  getTransformContext,
+  readFixture,
+} from '../__test__/mock.js';
 import { mapField } from './map-field.js';
 
 describe('Mapper - mapField', () => {

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { writeFile } from 'fs/promises';
-import { Locale, TransformContext } from '../types.js';
-import { ErrorEntry, ValidationError } from './error.js';
+import { ErrorEntry, Locale, TransformContext } from '../types.js';
+import { ValidationError } from './error.js';
 import { Stats } from './stats.js';
 
 jest.mock('fs/promises', () => ({

@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import {logInfo, logError, confirm} from './ui';
+import { logInfo, logError, confirm } from './ui';
 
 jest.mock('inquirer', () => ({
-  prompt: jest.fn(async (args) => args)
+  prompt: jest.fn(async (args) => args),
 }));
 
 describe('Utils', () => {
@@ -20,7 +20,7 @@ describe('Utils', () => {
     console.log = jest.fn();
     console.error = jest.fn();
     const error = new Error('Test');
-    error.stack = 'teststack'
+    error.stack = 'teststack';
     logError(error);
 
     // The first argument of the first call to the function was 'hello'
@@ -28,12 +28,11 @@ describe('Utils', () => {
     expect(console.log).toHaveBeenCalledWith(error.stack);
   });
 
-
   test('confirm (false)', async () => {
     const message = 'test';
     await confirm(message);
 
-   // console.log(test);
+    // console.log(test);
     expect(inquirer.prompt).toHaveBeenCalledWith([
       {
         type: 'confirm',
