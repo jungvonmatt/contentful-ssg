@@ -1,7 +1,7 @@
 import type {Config, RuntimeContext} from '../types.js';
 import {FileManager} from '../lib/file-manager.js';
-import {Stats} from '../lib/stats.js';
 import {HookManager} from '../lib/hook-manager.js';
+import {Stats} from '../lib/stats.js';
 import * as array from '../lib/array.js';
 import * as object from '../lib/object.js';
 import * as json from '../converter/json.js';

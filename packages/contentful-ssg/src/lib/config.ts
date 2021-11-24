@@ -169,10 +169,11 @@ export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
     configFileOptions,
     args || {},
   ) as Config;
-  const resolvedPlugins = await Promise.all(
+
+  const resolvedPlugins = [...result.resolvedPlugins, ...(await Promise.all(
     (result.plugins || []).map(async plugin =>
       resolvePlugin(plugin, result),
     ),
-  );
+  ))];
   return {...result, resolvedPlugins};
 };
