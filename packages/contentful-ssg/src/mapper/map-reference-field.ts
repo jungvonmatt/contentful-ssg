@@ -1,4 +1,4 @@
-import type {EntryFields} from 'contentful';
+import type { EntryFields } from 'contentful';
 import {
   getContentId,
   getContentTypeId,
@@ -7,16 +7,16 @@ import {
   isEntry,
   isEntryLink,
 } from '../lib/contentful.js';
-import type {MapAssetLink, Node, RuntimeContext, TransformContext} from '../types.js';
+import type { MapAssetLink, Node, RuntimeContext, TransformContext } from '../types.js';
 
 /**
  * Convert contentful entry to export format (link)
  * @param {Object} entry Contentful asset
  */
 export const mapEntryLink = (transformContext: TransformContext) => {
-  const {id, contentTypeId} = transformContext;
+  const { id, contentTypeId } = transformContext;
   if (id && contentTypeId) {
-    return {id, contentType: contentTypeId};
+    return { id, contentType: contentTypeId };
   }
 
   return {};
@@ -27,7 +27,7 @@ export const mapEntryLink = (transformContext: TransformContext) => {
  * @param {Object} entry Contentful asset
  */
 export const mapAssetLink = (transformContext: TransformContext): MapAssetLink => {
-  const {asset} = transformContext;
+  const { asset } = transformContext;
   const fields: MapAssetLink = {
     mimeType: asset?.fields?.file?.contentType ?? '',
     url: asset?.fields?.file?.url ?? '',
@@ -56,9 +56,9 @@ export const mapAssetLink = (transformContext: TransformContext): MapAssetLink =
 export const mapReferenceField = async (
   fieldContent: EntryFields.Link<unknown> | Node,
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext,
+  runtimeContext: RuntimeContext
 ) => {
-  const {hooks} = runtimeContext;
+  const { hooks } = runtimeContext;
 
   if (isAssetLink(fieldContent)) {
     const asset = transformContext.assetMap.get(getContentId(fieldContent));
@@ -73,7 +73,7 @@ export const mapReferenceField = async (
         id: getContentId(asset),
         contentTypeId: getContentTypeId(asset),
       },
-      mapAssetLink,
+      mapAssetLink
     );
   }
 
@@ -86,7 +86,7 @@ export const mapReferenceField = async (
         id: getContentId(fieldContent),
         contentTypeId: getContentTypeId(fieldContent),
       },
-      mapAssetLink,
+      mapAssetLink
     );
   }
 
@@ -103,7 +103,7 @@ export const mapReferenceField = async (
         contentTypeId: getContentTypeId(entry),
         entry,
       },
-      mapEntryLink,
+      mapEntryLink
     );
   }
 
@@ -116,7 +116,7 @@ export const mapReferenceField = async (
         contentTypeId: getContentTypeId(fieldContent),
         entry,
       },
-      mapEntryLink,
+      mapEntryLink
     );
   }
 };

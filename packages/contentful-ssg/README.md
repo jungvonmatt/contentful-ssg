@@ -63,6 +63,7 @@ npx cssg init --typescript
 ### Runtime Hooks
 **before**
 ```js
+import
 (runtimeContext) => {
   // Do things before processing the localized contentful entries
   // The return value should be an object which is merged with the runtime context.

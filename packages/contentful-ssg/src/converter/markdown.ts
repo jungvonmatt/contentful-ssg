@@ -1,6 +1,6 @@
 import matter from 'gray-matter';
-import {KeyValueMap} from '../types.js';
-import {stringify as stringifyYaml, parse as parseYaml} from './yaml.js';
+import { KeyValueMap } from '../types.js';
+import { stringify as stringifyYaml, parse as parseYaml } from './yaml.js';
 
 /**
  * Convert object to markdown
@@ -23,7 +23,7 @@ export const stringify = <T = KeyValueMap>(obj: T, content = ''): string => {
 export const parse = <T = KeyValueMap>(string: string): T => {
   const data = matter(string, {
     engines: {
-      yaml: string => parseYaml(string),
+      yaml: (string) => parseYaml(string),
     },
   });
   return data as unknown as T;

@@ -1,9 +1,9 @@
-import type {WriteFileOptions} from 'fs-extra';
-import type {Config, Ignore} from '../types';
-import {dirname, resolve, relative} from 'path';
+import type { WriteFileOptions } from 'fs-extra';
+import type { Config, Ignore } from '../types';
+import { dirname, resolve, relative } from 'path';
 import ignore from 'ignore';
-import {readFile, readdir} from 'fs/promises';
-import {remove, outputFile} from 'fs-extra';
+import { readFile, readdir } from 'fs/promises';
+import { remove, outputFile } from 'fs-extra';
 
 export class FileManager {
   ignoreBase: string = process.cwd();
@@ -20,12 +20,14 @@ export class FileManager {
   }
 
   get ignoredFiles() {
-    return [...this.files].filter(file => !this.ignore || this.ignore.ignores(relative(this.ignoreBase, file)));
+    return [...this.files].filter(
+      (file) => !this.ignore || this.ignore.ignores(relative(this.ignoreBase, file))
+    );
   }
 
   async initialize() {
-    const {findUp} = await import('find-up');
-    const {globby} = await import('globby');
+    const { findUp } = await import('find-up');
+    const { globby } = await import('globby');
     const gitignore = await findUp('.gitignore');
 
     if (gitignore) {
@@ -39,10 +41,14 @@ export class FileManager {
     // Create set of existing files
     const existing = await globby(`${this.config.directory}/**/*.*`);
 
-    this.files = new Set(existing.map(file => resolve(file)));
+    this.files = new Set(existing.map((file) => resolve(file)));
   }
 
-  async writeFile(file: string, data: any, options?: WriteFileOptions | BufferEncoding | string): Promise<void> {
+  async writeFile(
+    file: string,
+    data: any,
+    options?: WriteFileOptions | BufferEncoding | string
+  ): Promise<void> {
     await outputFile(file, data, options);
     if (this.files.has(resolve(file))) {
       this.files.delete(resolve(file));
@@ -66,7 +72,7 @@ export class FileManager {
   }
 
   async cleanup() {
-    const promises = [...this.ignoredFiles].map(async file => this.deleteFile(file));
+    const promises = [...this.ignoredFiles].map(async (file) => this.deleteFile(file));
 
     return Promise.allSettled(promises);
   }

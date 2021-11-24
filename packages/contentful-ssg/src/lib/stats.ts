@@ -1,9 +1,9 @@
-import type {Config, KeyValueMap, StatsEntry, TransformContext} from '../types.js';
-import {getEntries, groupBy} from './object.js';
-import {writeFile} from 'fs/promises';
+import type { Config, KeyValueMap, StatsEntry, TransformContext } from '../types.js';
+import { getEntries, groupBy } from './object.js';
+import { writeFile } from 'fs/promises';
 import chalk from 'chalk';
-import {join} from 'path';
-import {ValidationError} from './error.js';
+import { join } from 'path';
+import { ValidationError } from './error.js';
 
 export class Stats {
   config: Config;
@@ -25,19 +25,19 @@ export class Stats {
   }
 
   addSuccess(context: TransformContext, message = '') {
-    this.success.push({message, ...this.toEntry(context)});
+    this.success.push({ message, ...this.toEntry(context) });
   }
 
   addError(context: TransformContext, error: string | Error): void {
     if (typeof error === 'string') {
-      this.errors.push({error: new Error(error), ...this.toEntry(context)});
+      this.errors.push({ error: new Error(error), ...this.toEntry(context) });
     } else {
-      this.errors.push({error, ...this.toEntry(context)});
+      this.errors.push({ error, ...this.toEntry(context) });
     }
   }
 
   addSkipped(context: TransformContext, error: ValidationError) {
-    this.skipped.push({error, ...this.toEntry(context)});
+    this.skipped.push({ error, ...this.toEntry(context) });
   }
 
   async print() {
@@ -62,30 +62,50 @@ export class Stats {
     console.log(`\n  Saved ${chalk.green(this.success.length)} entries`);
     console.log(
       `  ${chalk.cyan(this.skipped.length)} entries skipped due to validation issues.`,
-      this.config.verbose && this.skipped.length ? `See ${filenameSkipped} for details.` : this.skipped.length ? 'Use --verbose to see actual errors.' : '',
+      this.config.verbose && this.skipped.length
+        ? `See ${filenameSkipped} for details.`
+        : this.skipped.length
+        ? 'Use --verbose to see actual errors.'
+        : ''
     );
     console.log(
       `  ${chalk.red(this.errors.length)} errors.`,
-      this.config.verbose && this.errors.length ? `See ${filenameErrors} for details.` : this.errors.length ? 'Use --verbose to see actual errors.' : '',
+      this.config.verbose && this.errors.length
+        ? `See ${filenameErrors} for details.`
+        : this.errors.length
+        ? 'Use --verbose to see actual errors.'
+        : ''
     );
 
     if (this.config.verbose && this.skipped.length) {
       await writeFile(
         join(process.cwd(), filenameSkipped),
-        JSON.stringify(this.skipped.map(item => ({
-          ...item,
-          error: JSON.parse(JSON.stringify(item.error, Object.getOwnPropertyNames(item.error))) as KeyValueMap,
-        })), null, '   '),
+        JSON.stringify(
+          this.skipped.map((item) => ({
+            ...item,
+            error: JSON.parse(
+              JSON.stringify(item.error, Object.getOwnPropertyNames(item.error))
+            ) as KeyValueMap,
+          })),
+          null,
+          '   '
+        )
       );
     }
 
     if (this.config.verbose && this.errors.length) {
       await writeFile(
         join(process.cwd(), filenameErrors),
-        JSON.stringify(this.errors.map(item => ({
-          ...item,
-          error: JSON.parse(JSON.stringify(item.error, Object.getOwnPropertyNames(item.error))) as KeyValueMap,
-        })), null, '   '),
+        JSON.stringify(
+          this.errors.map((item) => ({
+            ...item,
+            error: JSON.parse(
+              JSON.stringify(item.error, Object.getOwnPropertyNames(item.error))
+            ) as KeyValueMap,
+          })),
+          null,
+          '   '
+        )
       );
     }
   }

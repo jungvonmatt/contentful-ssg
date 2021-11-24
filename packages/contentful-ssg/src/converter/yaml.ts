@@ -1,24 +1,33 @@
-
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import yaml from 'js-yaml';
-import {KeyValueMap} from '../types';
+import { KeyValueMap } from '../types';
 
-const getPredicate = (type: string) => data => typeof data === 'string' && data.startsWith(`${type} `);
-const getRepresent = (type: string) => data => typeof data === 'string' ? data.replace(`${type} `, '') : JSON.stringify(data);
-const getConstruct = (type: string) => data => typeof data === 'string' ? `${type} ${data}` : `${type} ${typeof data}`;
+const getPredicate = (type: string) => (data) =>
+  typeof data === 'string' && data.startsWith(`${type} `);
+const getRepresent = (type: string) => (data) =>
+  typeof data === 'string' ? data.replace(`${type} `, '') : JSON.stringify(data);
+const getConstruct = (type: string) => (data) =>
+  typeof data === 'string' ? `${type} ${data}` : `${type} ${typeof data}`;
 
-const growYamlConstructors = ['!g.csv', '!g.doc', '!g.json', '!g.static', '!g.string', '!g.url', '!g.yaml'];
+const growYamlConstructors = [
+  '!g.csv',
+  '!g.doc',
+  '!g.json',
+  '!g.static',
+  '!g.string',
+  '!g.url',
+  '!g.yaml',
+];
 
 const growYamlTypes = growYamlConstructors.map(
   (type: string) =>
-
     new yaml.Type(type, {
       kind: 'scalar',
       predicate: getPredicate(type),
       represent: getRepresent(type),
       construct: getConstruct(type),
-    }),
+    })
 );
 
 /**
@@ -28,7 +37,7 @@ const growYamlTypes = growYamlConstructors.map(
  */
 export const stringify = <T = KeyValueMap>(obj: T): string => {
   const GROW_SCHEMA = yaml.DEFAULT_SCHEMA.extend(growYamlTypes);
-  return yaml.dump(obj, {schema: GROW_SCHEMA});
+  return yaml.dump(obj, { schema: GROW_SCHEMA });
 };
 
 /**
@@ -38,5 +47,5 @@ export const stringify = <T = KeyValueMap>(obj: T): string => {
  */
 export const parse = <T = KeyValueMap>(obj: string): T => {
   const GROW_SCHEMA = yaml.DEFAULT_SCHEMA.extend(growYamlTypes);
-  return yaml.load(obj, {schema: GROW_SCHEMA}) as T;
+  return yaml.load(obj, { schema: GROW_SCHEMA }) as T;
 };

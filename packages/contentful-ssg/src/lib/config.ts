@@ -1,9 +1,9 @@
-import {register} from '@swc-node/register/register';
+import { register } from '@swc-node/register/register';
 import chalk from 'chalk';
-import {cosmiconfig, Loader} from 'cosmiconfig';
-import type {CosmiconfigResult} from 'cosmiconfig/dist/types';
+import { cosmiconfig, Loader } from 'cosmiconfig';
+import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
 import mergeOptionsModule from 'merge-options';
-import {dirname, isAbsolute, resolve} from 'path';
+import { dirname, isAbsolute, resolve } from 'path';
 import slash from 'slash';
 import type {
   Config,
@@ -13,11 +13,11 @@ import type {
   PluginInfo,
   PluginModule,
 } from '../types.js';
-import {createRequire} from './create-require.js';
-import {isObject, removeEmpty} from './object.js';
+import { createRequire } from './create-require.js';
+import { isObject, removeEmpty } from './object.js';
 
 const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
-  register({format: 'esm', extensions: ['.ts', '.tsx', '.mts']});
+  register({ format: 'esm', extensions: ['.ts', '.tsx', '.mts'] });
 
   const require = createRequire();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
@@ -26,18 +26,19 @@ const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const mergeOptions = mergeOptionsModule.bind({ignoreUndefined: true});
+const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
 
 const resolvePlugin = async (
   plugin: string | PluginInfo,
-  config: Partial<Config>,
+  config: Partial<Config>
 ): Promise<Hooks> => {
   const pluginName = typeof plugin === 'string' ? plugin : plugin.resolve;
   const pluginOptions = typeof plugin === 'string' ? {} : plugin.options || {};
-  const {rootDir, verbose} = config;
+  const { rootDir, verbose } = config;
 
   try {
-    const requireSource = rootDir === null ? createRequire() : createRequire(`${rootDir}/:internal:`);
+    const requireSource =
+      rootDir === null ? createRequire() : createRequire(`${rootDir}/:internal:`);
 
     // If the path is absolute, resolve the directory of the internal plugin,
     // otherwise resolve the directory containing the package.json
@@ -53,7 +54,7 @@ const resolvePlugin = async (
     }
 
     // Add named exports
-    const pluginHooks: Hooks = {...(pluginDefaultHooks || {}), ...(pluginModule || {})};
+    const pluginHooks: Hooks = { ...(pluginDefaultHooks || {}), ...(pluginModule || {}) };
 
     return pluginHooks;
   } catch (error: unknown) {
@@ -63,8 +64,8 @@ const resolvePlugin = async (
     } else {
       console.error(
         chalk.red(
-          `There was a problem loading plugin "${pluginName}". Perhaps you need to install its package?\nUse --verbose to see actual error.`,
-        ),
+          `There was a problem loading plugin "${pluginName}". Perhaps you need to install its package?\nUse --verbose to see actual error.`
+        )
       );
     }
 
@@ -92,13 +93,14 @@ const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
   return explorer.search();
 };
 
-export const getEnvironmentConfig = (): ContentfulConfig => removeEmpty({
-  spaceId: process.env.CONTENTFUL_SPACE_ID!,
-  environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
-  managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
-  previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
-  accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
-});
+export const getEnvironmentConfig = (): ContentfulConfig =>
+  removeEmpty({
+    spaceId: process.env.CONTENTFUL_SPACE_ID!,
+    environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
+    managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
+    previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
+    accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
+  });
 
 /**
  * Get configuration
@@ -120,7 +122,8 @@ export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
     // Get configuration from contentful rc file (created by the contentful cli command)
     const contentfulConfig = await loadConfig('contentful');
     if (!contentfulConfig.isEmpty) {
-      const {managementToken, activeSpaceId, activeEnvironmentId, host} = contentfulConfig.config as ContentfulRcConfig;
+      const { managementToken, activeSpaceId, activeEnvironmentId, host } =
+        contentfulConfig.config as ContentfulRcConfig;
 
       contentfulCliOptions = removeEmpty({
         spaceId: activeSpaceId,
@@ -167,13 +170,14 @@ export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
     contentfulCliOptions,
     environmentOptions,
     configFileOptions,
-    args || {},
+    args || {}
   ) as Config;
 
-  const resolvedPlugins = [...result.resolvedPlugins, ...(await Promise.all(
-    (result.plugins || []).map(async plugin =>
-      resolvePlugin(plugin, result),
-    ),
-  ))];
-  return {...result, resolvedPlugins};
+  const resolvedPlugins = [
+    ...result.resolvedPlugins,
+    ...(await Promise.all(
+      (result.plugins || []).map(async (plugin) => resolvePlugin(plugin, result))
+    )),
+  ];
+  return { ...result, resolvedPlugins };
 };

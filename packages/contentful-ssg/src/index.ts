@@ -1,14 +1,14 @@
-import type {Config, RuntimeContext, Task, TransformContext, TransformHelper} from './types.js';
+import type { Config, RuntimeContext, Task, TransformContext, TransformHelper } from './types.js';
 import Listr from 'listr';
 import chalk from 'chalk';
-import {getContentTypeId, getContentId} from './lib/contentful.js';
-import {setup} from './tasks/setup.js';
-import {fetch} from './tasks/fetch.js';
-import {localize} from './tasks/localize.js';
-import {transform} from './tasks/transform.js';
-import {write} from './tasks/write.js';
-import {collectParentValues, collectValues} from './lib/utils.js';
-import {ValidationError} from './lib/error.js';
+import { getContentTypeId, getContentId } from './lib/contentful.js';
+import { setup } from './tasks/setup.js';
+import { fetch } from './tasks/fetch.js';
+import { localize } from './tasks/localize.js';
+import { transform } from './tasks/transform.js';
+import { write } from './tasks/write.js';
+import { collectParentValues, collectValues } from './lib/utils.js';
+import { ValidationError } from './lib/error.js';
 
 /**
  * This is a very simple listr renderer which does not swallow log output from
@@ -28,7 +28,7 @@ class CustomListrRenderer {
   // eslint-disable-next-line @typescript-eslint/member-ordering
   static subscribeTasks(tasks: Task[], indent = '') {
     for (const task of tasks) {
-      task.subscribe(event => {
+      task.subscribe((event) => {
         if (event.type === 'STATE' && task.isPending()) {
           console.log(`${indent}  ${chalk.yellow('\u279E')} ${task.title}`);
         }
@@ -60,43 +60,43 @@ export const run = async (config: Config): Promise<void> => {
     [
       {
         title: 'Setup',
-        task: async ctx => setup(ctx, config),
+        task: async (ctx) => setup(ctx, config),
       },
       {
         title: 'Pulling data from contentful',
-        task: async ctx => fetch(ctx, config),
+        task: async (ctx) => fetch(ctx, config),
       },
       {
         title: 'Localize data',
-        task: async ctx => localize(ctx),
+        task: async (ctx) => localize(ctx),
       },
       {
         title: 'Before Hook',
-        skip: ctx => !ctx.hooks.has('before'),
-        task: async ctx => {
+        skip: (ctx) => !ctx.hooks.has('before'),
+        task: async (ctx) => {
           const result = await ctx.hooks.before();
-          ctx = {...ctx, ...(result || {})};
+          ctx = { ...ctx, ...(result || {}) };
         },
       },
       {
         title: 'Writing files',
-        task: async ctx => {
-          const {locales = []} = ctx.data;
+        task: async (ctx) => {
+          const { locales = [] } = ctx.data;
 
-          const tasks = locales.map(locale => ({
+          const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
             task: async () => {
               const data = ctx.localized.get(locale.code);
-              const {entries = []} = data || {};
+              const { entries = [] } = data || {};
 
-              const promises = entries.map(async entry => {
+              const promises = entries.map(async (entry) => {
                 const id = getContentId(entry);
                 const contentTypeId = getContentTypeId(entry);
 
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 const utils = {
-                  collectValues: collectValues({...data, entry}),
-                  collectParentValues: collectParentValues({...data, entry}),
+                  collectValues: collectValues({ ...data, entry }),
+                  collectParentValues: collectParentValues({ ...data, entry }),
                 } as TransformHelper;
 
                 const transformContext: TransformContext = {
@@ -115,7 +115,7 @@ export const run = async (config: Config): Promise<void> => {
                     return;
                   }
 
-                  await write({...transformContext, content}, ctx, config);
+                  await write({ ...transformContext, content }, ctx, config);
                   ctx.stats.addSuccess(transformContext);
                 } catch (error: unknown) {
                   if (error instanceof ValidationError) {
@@ -129,22 +129,22 @@ export const run = async (config: Config): Promise<void> => {
               return Promise.all(promises);
             },
           }));
-          return new Listr(tasks, {concurrent: true});
+          return new Listr(tasks, { concurrent: true });
         },
       },
       {
         title: 'After Hook',
-        skip: ctx => !ctx.hooks.has('after'),
-        task: async ctx => {
+        skip: (ctx) => !ctx.hooks.has('after'),
+        task: async (ctx) => {
           const result = await ctx.hooks.after();
-          ctx = {...ctx, ...(result || {})};
+          ctx = { ...ctx, ...(result || {}) };
         },
       },
 
       {
         title: 'Cleanup',
-        skip: ctx => ctx.fileManager.count === 0,
-        task: async ctx => {
+        skip: (ctx) => ctx.fileManager.count === 0,
+        task: async (ctx) => {
           console.log(`Cleaning ${ctx.fileManager.count} files...`);
           await ctx.fileManager.cleanup();
 
@@ -152,7 +152,7 @@ export const run = async (config: Config): Promise<void> => {
         },
       },
     ],
-    {renderer: CustomListrRenderer},
+    { renderer: CustomListrRenderer }
   );
 
   const ctx = await tasks.run();

@@ -1,5 +1,5 @@
-import type {Options} from '@contentful/rich-text-html-renderer';
-import type {Document} from '@contentful/rich-text-types';
+import type { Options } from '@contentful/rich-text-html-renderer';
+import type { Document } from '@contentful/rich-text-types';
 
 import type {
   EntryFields,
@@ -10,14 +10,31 @@ import type {
   ContentType as ContentfulContentType,
 } from 'contentful';
 
-import type {ListrTaskObject} from 'listr';
-import type {FileManager} from './lib/file-manager.js';
-import type {Stats} from './lib/stats.js';
-import type {HookManager} from './lib/hook-manager.js';
+import type { ListrTaskObject } from 'listr';
+import type { FileManager } from './lib/file-manager.js';
+import type { Stats } from './lib/stats.js';
+import type { HookManager } from './lib/hook-manager.js';
 
 export type KeyValueMap<T = any> = Record<string, T>;
 
+export type Locale = ContentfulLocale;
+export type ContentType = ContentfulContentType;
+export type Asset = ContentfulAsset;
+export type Entry = Omit<ContentfulEntry<KeyValueMap>, 'update'>;
+export type Node = Entry | Asset;
+
 export type ContentfulRichtextOptions = Options;
+export type RichTextConfig =
+  | boolean
+  | ContentfulRichtextOptions
+  | ((
+      document: Document,
+      transformContext: TransformContext,
+      runtimeContext: RuntimeContext
+    ) => unknown);
+
+export type FormatObject = KeyValueMap<string[]>;
+
 export interface ContentfulConfig {
   spaceId: string;
   environmentId: string;
@@ -35,13 +52,6 @@ export interface ContentfulRcConfig {
   host: string;
 }
 
-export type Locale = ContentfulLocale;
-export type ContentType = ContentfulContentType;
-export type Asset = ContentfulAsset;
-export type Entry = Omit<ContentfulEntry<KeyValueMap>, 'update'>;
-
-export type Node = Entry | Asset;
-
 export type RuntimeHook = (
   runtimeContext: RuntimeContext
 ) => Promise<Partial<RuntimeContext>> | Partial<RuntimeContext> | void;
@@ -55,8 +65,6 @@ export type ValidateHook = (
   runtimeContext?: RuntimeContext
 ) => Promise<boolean> | boolean;
 
-export type FormatObject = KeyValueMap<string[]>;
-
 export interface Hooks {
   before?: RuntimeHook;
   after?: RuntimeHook;
@@ -69,24 +77,17 @@ export interface Hooks {
 }
 
 export type Config = Partial<ContentfulConfig> &
-Hooks & {
-  rootDir?: string;
-  directory: string;
-  verbose?: boolean;
-  plugins?: Array<PluginInfo | string>;
-  resolvedPlugins?: Hooks[];
-  preset?: string;
-  richTextRenderer?:
-  | boolean
-  | ContentfulRichtextOptions
-  | ((
-    document: Document,
-    transformContext: TransformContext,
-    runtimeContext: RuntimeContext
-  ) => unknown);
-  format?: string | FormatObject | TransformHook<string>;
-  validate?: ValidateHook;
-};
+  Hooks & {
+    rootDir?: string;
+    directory: string;
+    verbose?: boolean;
+    plugins?: Array<PluginInfo | string>;
+    resolvedPlugins?: Hooks[];
+    preset?: string;
+    richTextRenderer?: RichTextConfig;
+    format?: string | FormatObject | TransformHook<string>;
+    validate?: ValidateHook;
+  };
 
 export interface PluginInfo {
   options: KeyValueMap;
@@ -129,9 +130,11 @@ export interface MarkdownConverter {
   stringify: <T = KeyValueMap>(obj: T, additional?: string) => string;
 }
 
-type Entries<T> = Array<{
-  [K in keyof T]: [K, T[K]];
-}[keyof T]>;
+type Entries<T> = Array<
+  {
+    [K in keyof T]: [K, T[K]];
+  }[keyof T]
+>;
 
 export interface RuntimeContext {
   [x: string]: any;
@@ -145,10 +148,28 @@ export interface RuntimeContext {
   helper: {
     [x: string]: any;
     array: {
-      mapAsync: <T, U>(iterable: T[], callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>) => Promise<U[]>;
-      forEachAsync: <T>(iterable: T[], callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>) => Promise<void>;
-      filterAsync: <T>(iterable: T[], callback: (value: T, index?: number, array?: T[]) => boolean | Promise<boolean>) => Promise<T[]>;
-      reduceAsync: <T, U>(iterable: T[], callback: (previousValue: U, currentValue: T, currentIndex?: number, array?: T[]) => U | Promise<U>, initialValue?: U) => Promise<U>;
+      mapAsync: <T, U>(
+        iterable: T[],
+        callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>
+      ) => Promise<U[]>;
+      forEachAsync: <T>(
+        iterable: T[],
+        callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>
+      ) => Promise<void>;
+      filterAsync: <T>(
+        iterable: T[],
+        callback: (value: T, index?: number, array?: T[]) => boolean | Promise<boolean>
+      ) => Promise<T[]>;
+      reduceAsync: <T, U>(
+        iterable: T[],
+        callback: (
+          previousValue: U,
+          currentValue: T,
+          currentIndex?: number,
+          array?: T[]
+        ) => U | Promise<U>,
+        initialValue?: U
+      ) => Promise<U>;
     };
     object: {
       isObject: (something: any) => boolean;
@@ -157,7 +178,10 @@ export interface RuntimeContext {
       omitKeys: <T, K extends keyof T>(obj: T, ...keys: K[]) => T;
       removeEmpty: <T>(iterable: T) => T;
       snakeCaseKeys: <T>(iterable: T) => T;
-      groupBy: <T extends Record<string, unknown>, K extends keyof T>(array: T[], key: K) => Record<string, unknown>;
+      groupBy: <T extends Record<string, unknown>, K extends keyof T>(
+        array: T[],
+        key: K
+      ) => Record<string, unknown>;
     };
   };
   converter: {

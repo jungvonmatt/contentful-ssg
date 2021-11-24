@@ -10,15 +10,15 @@ Fast and highly and customizable Contentful exporter for static site generators.
 
 ### Official
 
-- [`contentful-ssg`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/contentful-ssg)\
+- [`contentful-ssg`](packages/contentful-ssg)\
   Core CLI library
 
 #### Plugins
 
-- [`cssg-plugin-grow`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-grow`)\
+- [`cssg-plugin-grow`](packages/cssg-plugin-grow`)\
   Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
 
-- [`cssg-plugin-hugo`](https://github.com/jungvonmatt/contentful-ssg/tree/main/packages/cssg-plugin-hugo`)\
+- [`cssg-plugin-hugo`](packages/cssg-plugin-hugo`)\
   Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
 
 ## Get involved
@@ -26,12 +26,12 @@ Fast and highly and customizable Contentful exporter for static site generators.
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?maxAge=31557600)](http://makeapullrequest.com)
 
 We appreciate any help on our repositories. For more details about how to
-contribute, see our [CONTRIBUTING.md](https://github.com/jungvonmatt/contentful-ssg/blob/main/CONTRIBUTING.md)
+contribute, see our [CONTRIBUTING.md](CONTRIBUTING.md)
 document.
 
 ## You found a bug or want to propose a feature?
 
-- File an issue here on GitHub: [![File an issue](https://img.shields.io/badge/-Create%20Issue-6cc644.svg?logo=github&maxAge=31557600)](https://github.com/jungvonmatt/contentful-ssg//issues/new). Make sure to remove any credential from your code before sharing it.
+- File an issue here on GitHub: [![File an issue](https://img.shields.io/badge/-Create%20Issue-6cc644.svg?logo=github&maxAge=31557600)](https://github.com/jungvonmatt/contentful-ssg/issues/new). Make sure to remove any credential from your code before sharing it.
 
 ## License
 

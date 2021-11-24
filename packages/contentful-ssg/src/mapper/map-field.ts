@@ -1,15 +1,15 @@
-import type {Document} from '@contentful/rich-text-types';
-import type {EntryFields} from 'contentful';
+import type { Document } from '@contentful/rich-text-types';
+import type { EntryFields } from 'contentful';
 import {
   FIELD_TYPE_ARRAY,
   FIELD_TYPE_DATE,
   FIELD_TYPE_LINK,
   FIELD_TYPE_RICHTEXT,
 } from '../lib/contentful.js';
-import type {Asset, Config, Entry, RuntimeContext, TransformContext} from '../types.js';
-import {mapDateField} from './map-date-field.js';
-import {mapReferenceField} from './map-reference-field.js';
-import {mapRichTextField} from './map-rich-text-field.js';
+import type { Asset, Config, Entry, RuntimeContext, TransformContext } from '../types.js';
+import { mapDateField } from './map-date-field.js';
+import { mapReferenceField } from './map-reference-field.js';
+import { mapRichTextField } from './map-rich-text-field.js';
 
 /**
  * Map field content from contentful entry
@@ -20,10 +20,10 @@ import {mapRichTextField} from './map-rich-text-field.js';
 export const mapField = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config,
+  config: Config
 ): Promise<unknown> => {
-  const {fieldSettings, fieldContent} = transformContext;
-  const {type, items} = fieldSettings || {};
+  const { fieldSettings, fieldContent } = transformContext;
+  const { type, items } = fieldSettings || {};
 
   switch (type) {
     case FIELD_TYPE_DATE:
@@ -32,23 +32,23 @@ export const mapField = async (
       return mapReferenceField(
         fieldContent as EntryFields.Link<unknown> | Asset | Entry,
         transformContext,
-        runtimeContext,
+        runtimeContext
       );
     case FIELD_TYPE_RICHTEXT:
       return mapRichTextField(fieldContent as Document, transformContext, runtimeContext, config);
     case FIELD_TYPE_ARRAY:
       return Promise.all(
-        ((fieldContent || []) as EntryFields.Array).map(async content =>
+        ((fieldContent || []) as EntryFields.Array).map(async (content) =>
           mapField(
             {
               ...transformContext,
-              fieldSettings: {...fieldSettings, ...items},
+              fieldSettings: { ...fieldSettings, ...items },
               fieldContent: content,
             },
             runtimeContext,
-            config,
-          ),
-        ),
+            config
+          )
+        )
       );
 
     default:

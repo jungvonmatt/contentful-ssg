@@ -1,4 +1,4 @@
-import {KeyValueMap} from '../types';
+import { KeyValueMap } from '../types';
 
 /**
  * Convert object to json
@@ -14,4 +14,3 @@ export const stringify = <T = KeyValueMap>(obj: T): string => JSON.stringify(obj
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 export const parse = <T = KeyValueMap>(string: string): T => JSON.parse(string);
-

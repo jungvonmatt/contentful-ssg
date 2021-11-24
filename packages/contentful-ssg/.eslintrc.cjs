@@ -1,15 +1,16 @@
 module.exports = {
   root: true,
-  extends: ['xo', 'xo-typescript/space'],
+  plugins: ['prettier'],
+  extends: ['xo', 'xo-typescript/space', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: ['./tsconfig.json'],
     tsconfigRootDir: __dirname,
-    extraFileExtensions: [".cjs"]
+    extraFileExtensions: ['.cjs'],
   },
-  ignorePatterns: ['**/*.cjs','src/**/*.test.ts', 'src/__test__/*'],
+  ignorePatterns: ['**/*.cjs', 'src/**/*.test.ts', 'src/__test__/*'],
   env: {
     node: true,
     jest: true,
-  }
+  },
 };

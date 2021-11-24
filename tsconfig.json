@@ -4,6 +4,6 @@
       "baseUrl": "./"
   },
   "include": [
-      "./packages/*/**.ts"
+      "./packages/**/*.ts"
   ]
 }

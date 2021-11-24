@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {KeyValueMap} from '../types.js';
-import {stringify as stringifyJson, parse as parseJson} from './json.js';
-import {stringify as stringifyMarkdown, parse as parseMarkdown} from './markdown.js';
-import {stringify as stringifyToml, parse as parseToml} from './toml.js';
-import {stringify as stringifyYaml, parse as parseYaml} from './yaml.js';
+import { KeyValueMap } from '../types.js';
+import { stringify as stringifyJson, parse as parseJson } from './json.js';
+import { stringify as stringifyMarkdown, parse as parseMarkdown } from './markdown.js';
+import { stringify as stringifyToml, parse as parseToml } from './toml.js';
+import { stringify as stringifyYaml, parse as parseYaml } from './yaml.js';
 
 export const TYPE_JSON = 'json';
 export const TYPE_YAML = 'yaml';
@@ -20,7 +20,6 @@ export const stringify = <T = KeyValueMap>(obj: T, format = 'yaml') => {
   switch (format) {
     case 'yml':
     case TYPE_YAML:
-
       return stringifyYaml(obj);
     case 'md':
     case TYPE_MARKDOWN:
@@ -47,7 +46,7 @@ export const parse = (str: string, format = 'yaml') => {
       return parseYaml(str);
     case 'md':
     case TYPE_MARKDOWN: {
-      const {data} = parseMarkdown(str);
+      const { data } = parseMarkdown(str);
       return data as KeyValueMap;
     }
 
@@ -59,4 +58,3 @@ export const parse = (str: string, format = 'yaml') => {
       throw new Error(`Format "${format}" is not supported`);
   }
 };
-

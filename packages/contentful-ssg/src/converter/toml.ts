@@ -1,12 +1,13 @@
-import TOML, {JsonMap} from '@iarna/toml';
-import {KeyValueMap} from '../types';
+import TOML, { JsonMap } from '@iarna/toml';
+import { KeyValueMap } from '../types';
 
 /**
  * Convert object to toml
  * @param {Object} obj Source object
  * @returns {String} toml representation of source object
  */
-export const stringify = <T = KeyValueMap>(obj: T): string => TOML.stringify(obj as unknown as JsonMap);
+export const stringify = <T = KeyValueMap>(obj: T): string =>
+  TOML.stringify(obj as unknown as JsonMap);
 
 /**
  * Parse toml to object

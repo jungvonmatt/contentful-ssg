@@ -1,4 +1,4 @@
-import {TransformContext} from '../types.js';
+import { TransformContext } from '../types.js';
 
 /**
  * Map meta fields object
@@ -7,11 +7,11 @@ import {TransformContext} from '../types.js';
  * @returns {Object} Mapped meta fields
  */
 export const mapMetaFields = (transformContext: TransformContext) => {
-  const {entry, contentTypeId} = transformContext;
-  const {sys} = entry;
-  const {id, createdAt, updatedAt} = sys || {};
+  const { entry, contentTypeId } = transformContext;
+  const { sys } = entry;
+  const { id, createdAt, updatedAt } = sys || {};
 
   return {
-    sys: {id, contentType: contentTypeId, createdAt, updatedAt},
+    sys: { id, contentType: contentTypeId, createdAt, updatedAt },
   };
 };
