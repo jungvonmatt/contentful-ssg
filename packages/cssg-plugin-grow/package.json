@@ -8,6 +8,10 @@
     "src",
     "dist"
   ],
+
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint --color src --fix --ext .ts",

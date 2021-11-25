@@ -59,6 +59,9 @@
     "cssg": "./dist/cli.js",
     "contentful-ssg": "./dist/cli.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint --color src --fix --ext .ts",

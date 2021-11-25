@@ -14,6 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [],
   "author": "Ben Zörb",
   "license": "ISC",
