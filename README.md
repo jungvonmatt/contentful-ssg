@@ -1,5 +1,3 @@
-[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] [![Coverage][coveralls-image]][coveralls-url]
-
 # JvM Contentful export for static site generators
 
 Fast and highly and customizable Contentful exporter for static site generators.
