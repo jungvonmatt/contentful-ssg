@@ -16,10 +16,13 @@ Fast and highly and customizable Contentful exporter for static site generators.
 #### Plugins
 
 - [`cssg-plugin-grow`](packages/cssg-plugin-grow`)\
-  Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
+  Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator.
 
 - [`cssg-plugin-hugo`](packages/cssg-plugin-hugo`)\
-  Plugin to use `contentful-ssg` with the [`grow`](https://grow.io/) static site generator
+  Plugin to use `contentful-ssg` with the [`hugo`](https://gohugo.io/) static site generator.
+
+- [`cssg-plugin-assets`](packages/cssg-plugin-assets`)\
+  Plugin to generate asset data to be used in `<picture>` / `<img srcset="...">` utilizing the [contentful image api](https://www.contentful.com/developers/docs/references/images-api/) with support for downloading assets to bypass the contentful cdn on production sites.
 
 ## Get involved
 
