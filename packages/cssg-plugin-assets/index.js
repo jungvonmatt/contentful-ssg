@@ -301,14 +301,13 @@ export default (pluginOptions) => {
 
     if (mimeType.startsWith('image')) {
       const original = getImageData(asset, undefined, focusArea);
-      const ratios = Object.fromEntries(
+      const derivatives = Object.fromEntries(
         Object.entries(ratioConfig || {}).map(([name, ratio]) => [
           name,
           getImageData(asset, ratio, focusArea),
         ])
       );
-
-      return { ...defaultValue, original, ratios };
+      return { ...defaultValue, original, derivatives: { ...derivatives, original } };
     }
 
     return { ...defaultValue, src: download ? getLocalSrc(src, sys) : src };
