@@ -18,7 +18,7 @@
     "access": "public"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint --color index.js --fix"
   },
   "repository": {
     "type": "git",

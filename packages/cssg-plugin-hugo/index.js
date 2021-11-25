@@ -1,10 +1,9 @@
-
 import mergeOptionsModule from 'merge-options';
 
-import {snakeCaseKeys} from '@jungvonmatt/contentful-ssg/lib/object';
+import { snakeCaseKeys } from '@jungvonmatt/contentful-ssg/lib/object';
 import mm from 'micromatch';
-import {existsSync} from 'fs';
-import {writeFile, readFile} from 'fs/promises';
+import { existsSync } from 'fs';
+import { writeFile, readFile } from 'fs/promises';
 import path from 'path';
 
 const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
@@ -20,47 +19,52 @@ const defaultOptions = {
   fieldIdHome: 'home',
   fieldIdSlug: 'slug',
   fieldIdParent: 'parent_page',
-  typeConfig:  {
+  typeConfig: {
     [TYPE_PAGE]: ['page'],
     [TYPE_DATA]: ['d-*'],
   },
-}
+};
 
 export default (args) => {
-  const options = {...defaultOptions, ...(args || {})}
-
-
+  const options = { ...defaultOptions, ...(args || {}) };
 
   const getSettingsHelper = (runtimeContext) => {
     let settings = {};
     if (options.typeIdSettings) {
-      settings = Object.fromEntries(Array.from((runtimeContext?.localized ?? new Map()).entries()).map(([locale, contentfulData]) => {
-        const entryMap = contentfulData?.entryMap ?? new Map();
-        const settingsEntries = (Array.from(entryMap.values())).filter(entry => (entry?.sys?.contentType?.sys?.id ?? 'unknown') === options.typeIdSettings);
-        const settingsFields = settingsEntries.map(entry => entry?.fields ?? {});
-        return [locale, mergeOptions(...settingsFields)];
-      }));
+      settings = Object.fromEntries(
+        Array.from((runtimeContext?.localized ?? new Map()).entries()).map(
+          ([locale, contentfulData]) => {
+            const entryMap = contentfulData?.entryMap ?? new Map();
+            const settingsEntries = Array.from(entryMap.values()).filter(
+              (entry) => (entry?.sys?.contentType?.sys?.id ?? 'unknown') === options.typeIdSettings
+            );
+            const settingsFields = settingsEntries.map((entry) => entry?.fields ?? {});
+            return [locale, mergeOptions(...settingsFields)];
+          }
+        )
+      );
     }
 
-    return  (key, locale, defaultValue) => settings?.[locale]?.[key] ?? defaultValue;
-  }
+    return (key, locale, defaultValue) => settings?.[locale]?.[key] ?? defaultValue;
+  };
 
   const getEntryType = (transformContext) => {
-    const {contentTypeId} = transformContext;
-    const [type = TYPE_HEADLESS] = Object.entries(options?.typeConfig ?? {}).find(([,pattern]) => mm.isMatch(contentTypeId, pattern)) || [];
+    const { contentTypeId } = transformContext;
+    const [type = TYPE_HEADLESS] =
+      Object.entries(options?.typeConfig ?? {}).find(([, pattern]) =>
+        mm.isMatch(contentTypeId, pattern)
+      ) || [];
 
     return type;
-  }
-
-
+  };
 
   return {
     // Before hook
     async before(runtimeContext) {
-      const {helper,converter, data, localized} = runtimeContext;
+      const { helper, converter, data, localized } = runtimeContext;
       const locales = data?.locales ?? [];
 
-      // initialize getSettings
+      // Initialize getSettings
       const getSettings = getSettingsHelper(runtimeContext);
       helper.getSettings = getSettings;
       // Write config toml according to locale settings in contentful
@@ -88,27 +92,28 @@ export default (args) => {
             ];
           })
         );
-        await writeFile(
-          dst,
-          converter.toml.stringify(languageConfig)
-        );
+        await writeFile(dst, converter.toml.stringify(languageConfig));
       }
 
       // Find section pages and add them to the runtimeconfig
-      const enhancedLocalized = new Map(Array.from(localized.entries()).map(([localeCode, contentfulData]) => {
-        const {entries} = contentfulData;
-        const sectionIds = entries.reduce((nodes, entry) => {
-          const id = entry?.fields?.[options.fieldIdParent]?.sys?.id;
-          if (id) {
-            nodes.add(id);
-          }
+      const enhancedLocalized = new Map(
+        Array.from(localized.entries()).map(([localeCode, contentfulData]) => {
+          const { entries } = contentfulData;
+          const sectionIds = entries.reduce((nodes, entry) => {
+            const id = entry?.fields?.[options.fieldIdParent]?.sys?.id;
+            if (id) {
+              nodes.add(id);
+            }
 
-          return nodes;
-        }, new Set());
-        return [localeCode, {...contentfulData, sectionIds}];
-      }));
+            return nodes;
+          }, new Set());
+          return [localeCode, { ...contentfulData, sectionIds }];
+        })
+      );
 
-      return {...runtimeContext, helper, localized: enhancedLocalized};
+      const i18n = Object.fromEntries(locales.map((locale) => [locale.code, {}]));
+
+      return { ...runtimeContext, helper, localized: enhancedLocalized, i18n };
     },
 
     /**
@@ -117,15 +122,11 @@ export default (args) => {
      * @param runtimeContext
      * @returns
      */
-    async mapEntryLink(
-      transformContext,
-      runtimeContext,
-      prev
-    ) {
+    async mapEntryLink(transformContext, runtimeContext, prev) {
       const directory = await runtimeContext.hooks.mapDirectory(transformContext);
       const filename = await runtimeContext.hooks.mapFilename(transformContext);
 
-      return {...prev, path: path.join(directory,filename)};
+      return { ...prev, path: path.join(directory, filename) };
     },
 
     /**
@@ -134,7 +135,7 @@ export default (args) => {
      * @returns
      */
     async mapDirectory(transformContext) {
-      const {contentTypeId, locale} = transformContext;
+      const { contentTypeId, locale } = transformContext;
       const type = getEntryType(transformContext);
 
       if (type === TYPE_DATA) {
@@ -156,8 +157,8 @@ export default (args) => {
      * @returns
      */
     async mapFilename(transformContext, runtimeContext) {
-      const {id, locale,  entry, contentTypeId, utils} = transformContext;
-      const {helper, localized} = runtimeContext;
+      const { id, locale, entry, contentTypeId, utils } = transformContext;
+      const { helper, localized } = runtimeContext;
       const sectionIds = localized?.get(locale.code)?.sectionIds ?? new Set();
 
       const type = getEntryType(transformContext);
@@ -165,9 +166,9 @@ export default (args) => {
       const home = helper.getSettings(options.fieldIdHome, locale.code);
       const homeId = home?.sys?.id;
 
-     if (homeId && entry?.sys?.id === homeId) {
+      if (homeId && entry?.sys?.id === homeId) {
         return `/_index.md`;
-     }
+      }
 
       if (contentTypeId === options.typeIdSettings) {
         return path.join(locale.code, `settings.json`);
@@ -182,25 +183,27 @@ export default (args) => {
           linkField: `fields.${options.fieldIdParent}`,
           entry,
         });
-        return path.join(...(slugs || []), `_index.md`)
+        return path.join(...(slugs || []), `_index.md`);
       }
 
       if (type === TYPE_PAGE) {
         const slugs = utils.collectParentValues(`fields.${options.fieldIdSlug}`, {
           linkField: `fields.${options.fieldIdParent}`,
-          entry
+          entry,
         });
 
-        return path.join(...(slugs || []), `${entry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`)
+        return path.join(
+          ...(slugs || []),
+          `${entry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`
+        );
       }
 
       return path.join(id, `index.${locale.code}.md`);
     },
 
     async transform(transformContext, runtimeContext) {
-      const {content, id, contentTypeId, locale} = transformContext;
-      const contentDir = runtimeContext.config.directory;
-      const toml = runtimeContext.converter.toml;
+      const { content, id, contentTypeId, locale } = transformContext;
+
       const type = getEntryType(transformContext);
 
       // Automatically store dictionary entries in i18n/[locale].json
@@ -209,22 +212,19 @@ export default (args) => {
         const { key, other, one } = content;
         const translations = one ? { one, other } : { other };
 
-        const dictionaryPath = path.join(contentDir, `../i18n/${locale.code}.toml`);
-        const oldContent = existsSync(dictionaryPath) ? toml.parse(await readFile(dictionaryPath, 'utf8')) : {};
-        await writeFile(
-          dictionaryPath,
-          toml.stringify({ ...oldContent, [key]: translations }, undefined, '  ')
-        );
+        runtimeContext.i18n[locale.code][key] = translations;
 
-        // dont't write i-18n objects to the content folder
+        // Dont't write i-18n objects to the content folder
         return undefined;
       }
 
       if (type === TYPE_PAGE) {
-        return {...snakeCaseKeys({
-          ...content,
-
-        }), translationKey: id};
+        return {
+          ...snakeCaseKeys({
+            ...content,
+          }),
+          translationKey: id,
+        };
       }
 
       if (type === TYPE_HEADLESS) {
@@ -235,9 +235,23 @@ export default (args) => {
       }
 
       return snakeCaseKeys(content);
-    }
+    },
+
+    async after(runtimeContext) {
+      const contentDir = runtimeContext.config.directory;
+      const { toml } = runtimeContext.converter;
+      const i18n = runtimeContext?.i18n ?? {};
+
+      await Promise.all(
+        Object.entries(i18n).map(async ([localeCode, translations]) => {
+          const dictionaryPath = path.join(contentDir, `../i18n/${localeCode}.toml`);
+          const oldContent = existsSync(dictionaryPath)
+            ? toml.parse(await readFile(dictionaryPath, 'utf8'))
+            : {};
+
+          return writeFile(dictionaryPath, toml.stringify({ ...oldContent, ...translations }));
+        })
+      );
+    },
   };
 };
-
-
-
