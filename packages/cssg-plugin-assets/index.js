@@ -307,7 +307,7 @@ export default (pluginOptions) => {
           getImageData(asset, ratio, focusArea),
         ])
       );
-      return { ...defaultValue, original, derivatives: { ...derivatives, original } };
+      return { ...defaultValue, derivatives: { original, ...derivatives } };
     }
 
     return { ...defaultValue, src: download ? getLocalSrc(src, sys) : src };
