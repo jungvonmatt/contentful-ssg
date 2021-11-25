@@ -6,10 +6,8 @@ Fast and highly and customizable Contentful exporter for static site generators.
 
 ## Packages
 
-### Official
-
-- [`contentful-ssg`](packages/contentful-ssg)\
-  Core CLI library
+#### Core CLI 
+- [`contentful-ssg`](packages/contentful-ssg)
 
 #### Plugins
 
