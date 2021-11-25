@@ -4,6 +4,10 @@
   "description": "Contentful-ssg plugin for grow",
   "type": "module",
   "main": "dist/index.js",
+  "files": [
+    "src",
+    "dist"
+  ],
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint --color src --fix --ext .ts",
