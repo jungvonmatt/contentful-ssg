@@ -11,8 +11,9 @@ jest.mock('fs-extra', () => ({
   remove: jest.fn(),
 }));
 jest.mock('fs/promises', () => ({
+  lstat: jest.fn().mockResolvedValue({isDirectory: jest.fn().mockReturnValue(false).mockResolvedValueOnce(true).mockResolvedValueOnce(true)}),
   readFile: jest.fn().mockResolvedValue(''),
-  readdir: jest.fn().mockResolvedValue([]).mockResolvedValueOnce(['/test/b.md']),
+  readdir: jest.fn().mockResolvedValue([]).mockResolvedValueOnce(['/test']),
 }));
 
 describe('FileManager', () => {
@@ -60,14 +61,13 @@ describe('FileManager', () => {
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(true)
       .mockReturnValue(false);
+
     const result = await fileManager.cleanup();
+    expect(result).toEqual(true);
 
-    expect(Array.isArray(result)).toEqual(true);
-    expect(result.length).toEqual(2);
-
-    expect(remove).toHaveBeenCalledTimes(3);
     expect(remove).toHaveBeenNthCalledWith(1, '/test/a.md');
     expect(remove).toHaveBeenNthCalledWith(2, '/test/b.md');
-    expect(remove).toHaveBeenNthCalledWith(3, '/test');
+    expect(remove).toHaveBeenNthCalledWith(3, '/testbase/test');
+    expect(remove).toHaveBeenCalledTimes(3);
   });
 });

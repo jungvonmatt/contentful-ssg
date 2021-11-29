@@ -143,13 +143,7 @@ export const run = async (config: Config): Promise<void> => {
 
       {
         title: 'Cleanup',
-        skip: (ctx) => ctx.fileManager.count === 0,
-        task: async (ctx) => {
-          console.log(`Cleaning ${ctx.fileManager.count} files...`);
-          await ctx.fileManager.cleanup();
-
-          console.log('done');
-        },
+        task: async (ctx) => ctx.fileManager.cleanup(),
       },
     ],
     { renderer: CustomListrRenderer }

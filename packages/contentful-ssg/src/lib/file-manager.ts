@@ -1,8 +1,8 @@
 import type { WriteFileOptions } from 'fs-extra';
 import type { Config, Ignore } from '../types';
-import { dirname, resolve, relative } from 'path';
+import { dirname, resolve, relative, join } from 'path';
 import ignore from 'ignore';
-import { readFile, readdir } from 'fs/promises';
+import { readFile, readdir, lstat } from 'fs/promises';
 import { remove, outputFile } from 'fs-extra';
 
 export class FileManager {
@@ -56,24 +56,51 @@ export class FileManager {
   }
 
   async deleteFile(file: string) {
-    await remove(file);
-
     if (this.files.has(resolve(file))) {
       this.files.delete(resolve(file));
     }
 
-    const dir = dirname(file);
-    try {
-      const files = await readdir(dirname(file));
-      if ((files || []).length === 0) {
-        await remove(dir);
-      }
-    } catch {}
+    return remove(file);
+  }
+
+  /**
+   * Recursively removes empty directories from the given directory.
+   *
+   * If the directory itself is empty, it is also removed.
+   *
+   * Code taken from: https://gist.github.com/jakub-g/5903dc7e4028133704a4
+   *
+   * @param {string} directory Path to the directory to clean up
+   */
+  async removeEmptyDirectories(directory: string) {
+    // Lstat does not follow symlinks (in contrast to stat)
+    const fileStats = await lstat(directory);
+    if (!fileStats.isDirectory()) {
+      return;
+    }
+
+    let fileNames = await readdir(directory);
+    if (fileNames.length > 0) {
+      const recursiveRemovalPromises = fileNames.map(async (fileName) =>
+        this.removeEmptyDirectories(join(directory, fileName))
+      );
+      await Promise.all(recursiveRemovalPromises);
+
+      // Re-evaluate fileNames; after deleting subdirectory
+      // we may have parent directory empty now
+      fileNames = await readdir(directory);
+    }
+
+    if (fileNames.length === 0 && directory !== this.config.directory) {
+      await remove(directory);
+    }
   }
 
   async cleanup() {
     const promises = [...this.ignoredFiles].map(async (file) => this.deleteFile(file));
 
-    return Promise.allSettled(promises);
+    await Promise.allSettled(promises);
+    await this.removeEmptyDirectories(this.config.directory);
+    return true;
   }
 }
