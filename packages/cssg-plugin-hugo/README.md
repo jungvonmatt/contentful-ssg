@@ -25,7 +25,6 @@ The configured translations can then be used using the [`i18n`](https://gohugo.i
     <p>
 
 ```js
-
 module.exports = function (migration) {
   const dI18n = migration
     .createContentType('d-i18n')
@@ -74,6 +73,7 @@ module.exports = function (migration) {
   });
 };
 ```
+
 </p>
 </details>
 
@@ -101,7 +101,6 @@ All reference fields are extended by the path to the associated markdown file so
 {{ end }}
 ```
 
-
 ## Install
 
 `npm install @jungvonmatt/cssg-plugin-hugo`
@@ -122,15 +121,16 @@ plugins: [
 
 ## Options
 
-| Name           | Type      | Default                           | Description                                                                                                                                                                                                                                                                                                                                     |
-| -------------- | --------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| typeIdSettings | `string`  | `'d-settings'`                    | The id of the settings content type.                                                                                                                                                                                                                                                                                                            |
-| typeIdI18n     | `string`  | `'d-i18n'`                        | The id of the i18n content type for the translation of strings.                                                                                                                                                                                                                                                                                                                |
-| fieldIdHome    | `string`  | `'home'`                          | The id of reference field to the home page in the settings content type.                                                                                                                                                                                                                                                                        |
-| fieldIdSlug    | `string`  | `'slug'`                          | The id of the slug field in page content types.                                                                                                                                                                                                                                                                                                 |
-| fieldIdParent  | `string`  | `'parent_page'`                   | The id of the parent page reference field in page content types.                                                                                                                                                                                                                                                                                |
-| languageConfig | `boolean` | `true`                            | Auto-generate the hugo language config based on your locale configuration in contentful.                                                                                                                                                                                                                                                        |
-| typeConfig     | `object`  | `{ page: ['page'], data: ['d-*']}` | Pass a map with entry types (`data`, `map`) pointing to one or more glob patterns matching the content type ids.\ Data types will be stored inside the `/data/` directory. \ pages types will be stored inside `/content/<locale>/`.\ All content types that do not match are considered headless and will be stored inside `/content/headless` |
+| Name                | Type         | Default                       | Description                                                                                                                                                                                                                                                                                                                                              |
+| ------------------- | ------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| typeIdSettings      | `string`     | `'d-settings'`                | The id of the settings content type.                                                                                                                                                                                                                                                                                                                     |
+| typeIdI18n          | `string`     | `'d-i18n'`                    | The id of the i18n content type for the translation of strings.                                                                                                                                                                                                                                                                                          |
+| fieldIdHome         | `string`     | `'home'`                      | The id of reference field to the home page in the settings content type.                                                                                                                                                                                                                                                                                 |
+| fieldIdSlug         | `string`     | `'slug'`                      | The id of the slug field in page content types.                                                                                                                                                                                                                                                                                                          |
+| fieldIdParent       | `string`     | `'parent_page'`               | The id of the parent page reference field in page content types.                                                                                                                                                                                                                                                                                         |
+| languageConfig      | `boolean`    | `true`                        | Auto-generate the hugo language config based on your locale configuration in contentful.                                                                                                                                                                                                                                                                 |
+| translationStrategy | `'filename'` | `'directory'` \| `'filename'` | How to translate your content. See https://gohugo.io/content-management/multilingual/#translate-your-content                                                                                                                                                                                                                                             |
+| typeConfig          | `object`     | `{ page: ['page']}`           | Pass a map with entry types (`page`) pointing to one or more glob patterns matching the content type ids.\ Data types will be stored inside the `/data/` directory. \ pages types will be stored inside `/content/${pagesFolder}/`.\ All content types that do not match are considered headless and will be stored inside `/content/${headlessFolder}/` |
 
 Example:
 

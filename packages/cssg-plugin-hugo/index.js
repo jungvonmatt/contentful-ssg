@@ -8,20 +8,22 @@ import path from 'path';
 
 const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
 
-export const TYPE_PAGE = 'page';
+export const TYPE_CONTENT = 'content';
 export const TYPE_DATA = 'data';
-export const TYPE_HEADLESS = 'headless';
+
+export const STRATEGY_DIRECTORY = 'directory';
+export const STRATEGY_FILENAME = 'filename';
 
 const defaultOptions = {
   typeIdSettings: 'd-settings',
+  translationStrategy: STRATEGY_DIRECTORY,
   typeIdI18n: 'd-i18n',
   languageConfig: true,
   fieldIdHome: 'home',
   fieldIdSlug: 'slug',
   fieldIdParent: 'parent_page',
   typeConfig: {
-    [TYPE_PAGE]: ['page'],
-    [TYPE_DATA]: ['d-*'],
+    [TYPE_CONTENT]: ['page'],
   },
 };
 
@@ -50,7 +52,7 @@ export default (args) => {
 
   const getEntryType = (transformContext) => {
     const { contentTypeId } = transformContext;
-    const [type = TYPE_HEADLESS] =
+    const [type = TYPE_DATA] =
       Object.entries(options?.typeConfig ?? {}).find(([, pattern]) =>
         mm.isMatch(contentTypeId, pattern)
       ) || [];
@@ -80,15 +82,19 @@ export default (args) => {
             // https://github.com/gohugoio/hugo/issues/7344
             const languageCode = code.toLowerCase();
             const [languageNameShort] = languageCode.split('-');
+
+            const localeConfig = {
+              languageCode,
+              languageName,
+              languageNameShort,
+              weight: locale.default ? 1 : 2,
+            };
+
             return [
               code,
-              {
-                contentDir: `content/${languageCode}`,
-                languageCode,
-                languageName,
-                languageNameShort,
-                weight: locale.default ? 1 : 2,
-              },
+              options.translationStrategy === 'directory'
+                ? { contentDir: `content/${languageCode}`, ...localeConfig }
+                : localeConfig,
             ];
           })
         );
@@ -138,28 +144,33 @@ export default (args) => {
       const { contentTypeId, locale } = transformContext;
       const type = getEntryType(transformContext);
 
-      if (type === TYPE_DATA) {
-        return '../data';
+      if (type === TYPE_CONTENT) {
+        return options.translationStrategy === STRATEGY_FILENAME ? '' : locale.code;
       }
 
-      if (contentTypeId === TYPE_PAGE) {
-        return locale.code;
-      }
-
-      return path.join('headless', contentTypeId);
+      return options.translationStrategy === STRATEGY_FILENAME
+        ? path.join('../data', contentTypeId)
+        : path.join('../data', locale.code, contentTypeId);
     },
 
     /**
      * Map filenames data files to data, headless bundles to headless folder and pages in a
      * directory structure which matches the sitemap
      * @param transformContext
-     * @param runtimeContext
+     * @param {RuntimeContext} runtimeContext
      * @returns
      */
     async mapFilename(transformContext, runtimeContext) {
       const { id, locale, entry, contentTypeId, utils } = transformContext;
-      const { helper, localized } = runtimeContext;
+      const { helper, localized, defaultLocale } = runtimeContext;
       const sectionIds = localized?.get(locale.code)?.sectionIds ?? new Set();
+
+      const localeData =
+        options.translationStrategy === STRATEGY_FILENAME
+          ? localized.get(defaultLocale)
+          : localized.get(locale.code);
+      const collectEntryMap = localeData.entryMap;
+      const collectEntry = collectEntryMap.get(entry.sys.id);
 
       const type = getEntryType(transformContext);
 
@@ -167,38 +178,49 @@ export default (args) => {
       const homeId = home?.sys?.id;
 
       if (homeId && entry?.sys?.id === homeId) {
-        return `/_index.md`;
+        return options.translationStrategy === STRATEGY_FILENAME
+          ? `/_index.${locale.code}.md`
+          : `/_index.md`;
       }
 
       if (contentTypeId === options.typeIdSettings) {
-        return path.join(locale.code, `settings.json`);
+        return options.translationStrategy === STRATEGY_FILENAME
+          ? `../settings.${locale.code}.json`
+          : '../settings.json';
       }
 
-      if (type === TYPE_DATA) {
-        return path.join(locale.code, contentTypeId, `${id}.json`);
-      }
-
-      if (type === TYPE_PAGE && sectionIds.has(id)) {
+      if (type === TYPE_CONTENT && sectionIds.has(id)) {
         const slugs = utils.collectValues(`fields.${options.fieldIdSlug}`, {
           linkField: `fields.${options.fieldIdParent}`,
-          entry,
+          entry: collectEntry,
+          entryMap: collectEntryMap,
         });
-        return path.join(...(slugs || []), `_index.md`);
+        return options.translationStrategy === STRATEGY_FILENAME
+          ? path.join(...(slugs || []), `_index.${locale.code}.md`)
+          : path.join(...(slugs || []), `_index.md`);
       }
 
-      if (type === TYPE_PAGE) {
+      if (type === TYPE_CONTENT) {
         const slugs = utils.collectParentValues(`fields.${options.fieldIdSlug}`, {
           linkField: `fields.${options.fieldIdParent}`,
-          entry,
+          entry: collectEntry,
+          entryMap: collectEntryMap,
         });
 
-        return path.join(
-          ...(slugs || []),
-          `${entry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`
-        );
+        return options.translationStrategy === STRATEGY_FILENAME
+          ? path.join(
+              ...(slugs || []),
+              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.${locale.code}.md`
+            )
+          : path.join(
+              ...(slugs || []),
+              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`
+            );
       }
 
-      return path.join(id, `index.${locale.code}.md`);
+      return options.translationStrategy === STRATEGY_FILENAME
+        ? `${id}.${locale.code}.json`
+        : `${id}.json`;
     },
 
     async transform(transformContext, runtimeContext) {
@@ -218,20 +240,13 @@ export default (args) => {
         return undefined;
       }
 
-      if (type === TYPE_PAGE) {
+      if (type === TYPE_CONTENT) {
         return {
           ...snakeCaseKeys({
             ...content,
           }),
           translationKey: id,
         };
-      }
-
-      if (type === TYPE_HEADLESS) {
-        return snakeCaseKeys({
-          ...content,
-          headless: true,
-        });
       }
 
       return snakeCaseKeys(content);
