@@ -81,7 +81,7 @@ export type Config = Partial<ContentfulConfig> &
     rootDir?: string;
     directory: string;
     verbose?: boolean;
-    plugins?: Array<PluginInfo | string>;
+    plugins?: Array<[string, KeyValueMap] | PluginInfo | string>;
     resolvedPlugins?: Hooks[];
     preset?: string;
     richTextRenderer?: RichTextConfig;

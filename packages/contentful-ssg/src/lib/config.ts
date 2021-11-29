@@ -10,6 +10,7 @@ import type {
   ContentfulConfig,
   ContentfulRcConfig,
   Hooks,
+  KeyValueMap,
   PluginInfo,
   PluginModule,
 } from '../types.js';
@@ -29,11 +30,22 @@ const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
 const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
 
 const resolvePlugin = async (
-  plugin: string | PluginInfo,
+  plugin: string | [string, KeyValueMap] | PluginInfo,
   config: Partial<Config>
 ): Promise<Hooks> => {
-  const pluginName = typeof plugin === 'string' ? plugin : plugin.resolve;
-  const pluginOptions = typeof plugin === 'string' ? {} : plugin.options || {};
+  let pluginName: string;
+  let pluginOptions: KeyValueMap;
+  if (typeof plugin === 'string') {
+    pluginName = plugin;
+    pluginOptions = {};
+  } else if (Array.isArray(plugin)) {
+    pluginName = plugin[0];
+    pluginOptions = plugin[1] || {};
+  } else {
+    pluginName = plugin.resolve;
+    pluginOptions = plugin.options || {};
+  }
+
   const { rootDir, verbose } = config;
 
   try {
