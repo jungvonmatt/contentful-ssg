@@ -196,8 +196,8 @@ export default (args) => {
           entryMap: collectEntryMap,
         });
         return options.translationStrategy === STRATEGY_FILENAME
-          ? path.join(...(slugs || []), `_index.${locale.code}.md`)
-          : path.join(...(slugs || []), `_index.md`);
+          ? path.join(...(slugs || []).filter((v) => v), `_index.${locale.code}.md`)
+          : path.join(...(slugs || []).filter((v) => v), `_index.md`);
       }
 
       if (type === TYPE_CONTENT) {
@@ -209,11 +209,11 @@ export default (args) => {
 
         return options.translationStrategy === STRATEGY_FILENAME
           ? path.join(
-              ...(slugs || []),
+              ...(slugs || []).filter((v) => v),
               `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.${locale.code}.md`
             )
           : path.join(
-              ...(slugs || []),
+              ...(slugs || []).filter((v) => v),
               `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`
             );
       }
