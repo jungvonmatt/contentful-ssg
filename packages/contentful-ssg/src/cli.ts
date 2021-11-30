@@ -4,6 +4,7 @@
 import path from 'path';
 import chalk from 'chalk';
 import { existsSync } from 'fs';
+import { readFile } from 'fs/promises';
 import { outputFile } from 'fs-extra';
 import prettier from 'prettier';
 import { Command } from 'commander';
@@ -67,9 +68,34 @@ program
         verified.directory = path.relative(process.cwd(), verified.directory);
       }
 
-      const environmentKeys: Array<keyof ContentfulConfig> = (
-        Object.keys(environmentConfig) as Array<keyof ContentfulConfig>
-      ).filter((key) => environmentConfig[key] === verified[key]);
+      const environmentKeys: Array<keyof ContentfulConfig> = Object.keys(
+        environmentConfig
+      ) as Array<keyof ContentfulConfig>;
+
+      // Update .env file
+      if (environmentConfig && existsSync('.env')) {
+        const envSource = await readFile('.env', 'utf8');
+        const nextEnvSource = envSource
+          .replace(/(CONTENTFUL_SPACE_ID\s*=\s*['"]?)[^'"]*(['"]?)/, `$1${verified.spaceId}$2`)
+          .replace(
+            /(CONTENTFUL_ENVIRONMENT_ID\s*=\s*['"]?)[^'"]*(['"]?)/,
+            `$1${verified.environmentId}$2`
+          )
+          .replace(
+            /(CONTENTFUL_MANAGEMENT_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
+            `$1${verified.managementToken}$2`
+          )
+          .replace(
+            /(CONTENTFUL_PREVIEW_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
+            `$1${verified.previewAccessToken}$2`
+          )
+          .replace(
+            /(CONTENTFUL_DELIVERY_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
+            `$1${verified.accessToken}$2`
+          );
+
+        await outputFile('.env', nextEnvSource);
+      }
 
       const cleanedConfig = omitKeys(
         verified,

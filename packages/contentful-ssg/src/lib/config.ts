@@ -105,14 +105,17 @@ const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
   return explorer.search();
 };
 
-export const getEnvironmentConfig = (): ContentfulConfig =>
-  removeEmpty({
-    spaceId: process.env.CONTENTFUL_SPACE_ID!,
-    environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
-    managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
-    previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
-    accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
-  });
+export const getEnvironmentConfig = (strict = true): ContentfulConfig =>
+  removeEmpty(
+    {
+      spaceId: process.env.CONTENTFUL_SPACE_ID!,
+      environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
+      managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
+      previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
+      accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
+    },
+    strict
+  );
 
 /**
  * Get configuration
@@ -127,22 +130,25 @@ export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
     resolvedPlugins: [],
   };
 
-  const environmentOptions = getEnvironmentConfig();
+  const environmentOptions = getEnvironmentConfig(false);
   let contentfulCliOptions: Partial<ContentfulConfig> = {};
 
   try {
     // Get configuration from contentful rc file (created by the contentful cli command)
     const contentfulConfig = await loadConfig('contentful');
-    if (!contentfulConfig.isEmpty) {
+    if (contentfulConfig && !contentfulConfig.isEmpty) {
       const { managementToken, activeSpaceId, activeEnvironmentId, host } =
         contentfulConfig.config as ContentfulRcConfig;
 
-      contentfulCliOptions = removeEmpty({
-        spaceId: activeSpaceId,
-        managementToken,
-        environmentId: activeEnvironmentId,
-        host,
-      });
+      contentfulCliOptions = removeEmpty(
+        {
+          spaceId: activeSpaceId,
+          managementToken,
+          environmentId: activeEnvironmentId,
+          host,
+        },
+        false
+      );
     }
   } catch (error: unknown) {
     if (typeof error === 'string') {
@@ -159,7 +165,7 @@ export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
   try {
     // Get configuration from contentful-ssg rc file
     const configFile = await loadConfig('contentful-ssg');
-    if (!configFile.isEmpty) {
+    if (configFile && !configFile.isEmpty) {
       configFileOptions = configFile.config as Partial<Config>;
       args.rootDir = dirname(configFile.filepath);
       if (configFileOptions.directory && !isAbsolute(configFileOptions.directory)) {

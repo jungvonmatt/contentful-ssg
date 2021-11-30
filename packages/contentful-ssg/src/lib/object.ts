@@ -31,15 +31,26 @@ export const omitKeys = <T, K extends keyof T>(obj: T, ...keys: K[]): T => {
 };
 
 /**
+ * Filter values by key from object
+ * @param {*} obj
+ * @param {*} keys
+ */
+export const filterKeys = <T, K extends keyof T>(obj: T, ...keys: K[]): T => {
+  const entries: Entries<T> = getEntries(obj);
+  const filtered = entries.filter(([key]) => keys.includes(key as K));
+  return fromEntries(filtered);
+};
+
+/**
  * Recursive remove empty items (null,undefined) from object
  * @param iterable Source object
  * @returns Cleaned object
  */
-export const removeEmpty = <T>(iterable: T): T => {
+export const removeEmpty = <T>(iterable: T, strict = true): T => {
   if (Array.isArray(iterable)) {
     return (
       iterable
-        .filter((v) => v !== null && v !== undefined)
+        .filter((v) => v !== null && v !== undefined && (strict || Boolean(v)))
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         .map((v) => (v === Object(v) ? removeEmpty(v) : v)) as unknown as T
     );
@@ -47,7 +58,7 @@ export const removeEmpty = <T>(iterable: T): T => {
 
   return fromEntries(
     getEntries(iterable)
-      .filter(([, v]) => v !== null && v !== undefined)
+      .filter(([, v]) => v !== null && v !== undefined && (strict || Boolean(v)))
       .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
   );
 };

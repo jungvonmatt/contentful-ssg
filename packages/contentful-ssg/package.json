@@ -9,6 +9,7 @@
     ".": "./dist/index.js",
     "./lib/object": "./dist/lib/object.js",
     "./lib/array": "./dist/lib/array.js",
+    "./lib/utils": "./dist/lib/utils.js",
     "./lib/contentful": "./dist/lib/contentful.js",
     "./lib/hook-manager": "./dist/lib/hook-manager.js",
     "./lib/file-manager": "./dist/lib/file-manager.js",
@@ -22,6 +23,9 @@
     "*": {
       ".": [
         "./dist/types.d.ts"
+      ],
+      "lib/utils": [
+        "./dist/lib/utils.d.ts"
       ],
       "lib/object": [
         "./dist/lib/object.d.ts"

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { isObject, omitKeys, removeEmpty, snakeCaseKeys, groupBy } from './object';
+import { isObject, omitKeys, filterKeys, removeEmpty, snakeCaseKeys, groupBy } from './object';
 
 test('isObject', async () => {
   const arr = [];
@@ -17,6 +17,11 @@ test('omitKeys', () => {
   expect(value).toEqual({ b: 2 });
 });
 
+test('filterKeys', () => {
+  const value = filterKeys({ a: 1, b: 2, c: 3 }, 'a', 'c');
+  expect(value).toEqual({ a: 1, c: 3 });
+});
+
 test('removeEmpty', () => {
   const value = removeEmpty({
     a: { c: undefined },
@@ -24,6 +29,16 @@ test('removeEmpty', () => {
     c: [1, { x: 1, y: undefined, z: [undefined, 7] }, 3, undefined, 5],
   });
   expect(value).toEqual({ a: {}, c: [1, { x: 1, z: [7] }, 3, 5] });
+});
+
+
+test('removeEmpty non-strict', () => {
+  const value = removeEmpty({
+    a: "",
+    b: 0,
+    c: 1,
+  }, false);
+  expect(value).toEqual({ c: 1 });
 });
 
 test('groupBy', () => {
