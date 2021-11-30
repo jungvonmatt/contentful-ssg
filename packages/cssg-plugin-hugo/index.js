@@ -3,7 +3,8 @@ import mergeOptionsModule from 'merge-options';
 import { snakeCaseKeys } from '@jungvonmatt/contentful-ssg/lib/object';
 import mm from 'micromatch';
 import { existsSync } from 'fs';
-import { writeFile, readFile } from 'fs/promises';
+import { outputFile } from 'fs-extra';
+import { readFile } from 'fs/promises';
 import path from 'path';
 
 const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
@@ -98,7 +99,7 @@ export default (args) => {
             ];
           })
         );
-        await writeFile(dst, converter.toml.stringify(languageConfig));
+        await outputFile(dst, converter.toml.stringify(languageConfig));
       }
 
       // Find section pages and add them to the runtimeconfig
@@ -264,7 +265,7 @@ export default (args) => {
             ? toml.parse(await readFile(dictionaryPath, 'utf8'))
             : {};
 
-          return writeFile(dictionaryPath, toml.stringify({ ...oldContent, ...translations }));
+          return outputFile(dictionaryPath, toml.stringify({ ...oldContent, ...translations }));
         })
       );
     },
