@@ -185,8 +185,8 @@ export default (args) => {
 
       if (contentTypeId === options.typeIdSettings) {
         return options.translationStrategy === STRATEGY_FILENAME
-          ? `../settings.${locale.code}.json`
-          : '../settings.json';
+          ? `../settings.${locale.code}.yaml`
+          : '../settings.yaml';
       }
 
       if (type === TYPE_CONTENT && sectionIds.has(id)) {
@@ -219,8 +219,8 @@ export default (args) => {
       }
 
       return options.translationStrategy === STRATEGY_FILENAME
-        ? `${id}.${locale.code}.json`
-        : `${id}.json`;
+        ? `${id}.${locale.code}.yaml`
+        : `${id}.yaml`;
     },
 
     async transform(transformContext, runtimeContext) {
