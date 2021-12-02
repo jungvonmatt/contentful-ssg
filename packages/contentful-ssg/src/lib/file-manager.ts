@@ -4,6 +4,7 @@ import { dirname, resolve, relative, join } from 'path';
 import ignore from 'ignore';
 import { readFile, readdir, lstat } from 'fs/promises';
 import { remove, outputFile } from 'fs-extra';
+import { existsSync } from 'fs';
 
 export class FileManager {
   ignoreBase: string = process.cwd();
@@ -39,7 +40,7 @@ export class FileManager {
     }
 
     // Create set of existing files
-    const existing = await globby(`${this.config.directory}/**/*.*`);
+    const existing = await globby([`${this.config.directory}/**/*.*`, `data/**/*.*`]);
 
     this.files = new Set(existing.map((file) => resolve(file)));
   }
@@ -91,7 +92,7 @@ export class FileManager {
       fileNames = await readdir(directory);
     }
 
-    if (fileNames.length === 0 && directory !== this.config.directory) {
+    if (fileNames.length === 0 && ![this.config.directory, 'data'].includes(directory)) {
       await remove(directory);
     }
   }
@@ -101,6 +102,10 @@ export class FileManager {
 
     await Promise.allSettled(promises);
     await this.removeEmptyDirectories(this.config.directory);
+    if (existsSync('data')) {
+      await this.removeEmptyDirectories('data');
+    }
+
     return true;
   }
 }
