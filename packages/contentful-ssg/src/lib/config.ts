@@ -14,6 +14,7 @@ import type {
   PluginInfo,
   PluginModule,
 } from '../types.js';
+import { reduceAsync } from './array.js';
 import { createRequire } from './create-require.js';
 import { isObject, removeEmpty } from './object.js';
 
@@ -126,6 +127,7 @@ export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
     environmentId: 'master',
     host: 'api.contentful.com',
     directory: resolve(process.cwd(), 'content'),
+    managedDirectories: [],
     plugins: [],
     resolvedPlugins: [],
   };
@@ -197,5 +199,17 @@ export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
       (result.plugins || []).map(async (plugin) => resolvePlugin(plugin, result))
     )),
   ];
-  return { ...result, resolvedPlugins };
+
+  result.managedDirectories = [...result.managedDirectories, result.directory];
+
+  const hookedConfig = await reduceAsync(
+    resolvedPlugins.filter((plugin) => typeof plugin.config === 'function'),
+    async (prev: Config, hooks) => {
+      const hook = hooks.config;
+      return hook(prev);
+    },
+    result
+  );
+
+  return { ...hookedConfig, ...result, resolvedPlugins };
 };

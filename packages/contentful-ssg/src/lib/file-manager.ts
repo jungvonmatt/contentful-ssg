@@ -39,8 +39,15 @@ export class FileManager {
       this.ignore = ignore().add(ignorePatterns.toString('utf8'));
     }
 
+    const directories = [
+      ...new Set([...(this.config.managedDirectories || []), this.config.directory]),
+    ];
+
+    const globPattern = directories.map((directory) =>
+      resolve(this.config.rootDir || '', directory, '**/*.*')
+    );
     // Create set of existing files
-    const existing = await globby([`${this.config.directory}/**/*.*`, `data/**/*.*`]);
+    const existing = await globby(globPattern);
 
     this.files = new Set(existing.map((file) => resolve(file)));
   }

@@ -52,6 +52,8 @@ export interface ContentfulRcConfig {
   host: string;
 }
 
+export type ConfigHook = (config: Config) => Config | Promise<Config>;
+
 export type RuntimeHook = (
   runtimeContext: RuntimeContext
 ) => Promise<Partial<RuntimeContext>> | Partial<RuntimeContext> | void;
@@ -66,6 +68,7 @@ export type ValidateHook = (
 ) => Promise<boolean> | boolean;
 
 export interface Hooks {
+  config?: ConfigHook;
   before?: RuntimeHook;
   after?: RuntimeHook;
   transform?: TransformHook<KeyValueMap>;
@@ -80,6 +83,7 @@ export type Config = Partial<ContentfulConfig> &
   Hooks & {
     rootDir?: string;
     directory: string;
+    managedDirectories?: string[];
     verbose?: boolean;
     plugins?: Array<[string, KeyValueMap] | PluginInfo | string>;
     resolvedPlugins?: Hooks[];
