@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.0.6...v1.1.0) (2021-12-02)
+
+
+### Bug Fixes
+
+* 🐛 Adds <rootDir>/data to managed directories ([d67de2b](https://github.com/jungvonmatt/contentful-ssg/commit/d67de2b4a78771076e5fd1d4e7beec0c1fb65a7d))
+
+
+
+
+
 ## [1.0.6](https://github.com/jungvonmatt/contentful-ssg/compare/v1.0.5...v1.0.6) (2021-12-02)
 
 **Note:** Version bump only for package @jungvonmatt/cssg-plugin-hugo

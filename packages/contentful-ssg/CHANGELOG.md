@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.0.6...v1.1.0) (2021-12-02)
+
+
+### Features
+
+* 🎸 Adds config hook for plugins ([fcdce82](https://github.com/jungvonmatt/contentful-ssg/commit/fcdce82af6b02d6e479efd6f677edabfa7f6d282))
+
+
+
+
+
 ## [1.0.6](https://github.com/jungvonmatt/contentful-ssg/compare/v1.0.5...v1.0.6) (2021-12-02)
 
 
