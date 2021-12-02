@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.6](https://github.com/jungvonmatt/contentful-ssg/compare/v1.0.5...v1.0.6) (2021-12-02)
+
+
+### Bug Fixes
+
+* 🐛 Manage files inside 'data' directory (hugo) ([0282afa](https://github.com/jungvonmatt/contentful-ssg/commit/0282afad065d8f47d17cf5d450aea73e2d6b2850))
+
+
+
+
+
 ## [1.0.5](https://github.com/jungvonmatt/contentful-ssg/compare/v1.0.4...v1.0.5) (2021-11-30)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg
