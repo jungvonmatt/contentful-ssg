@@ -62,6 +62,12 @@ export default (args) => {
   };
 
   return {
+    config(prev) {
+      const { managedDirectories } = prev || {};
+
+      return { ...prev, managedDirectories: [...(managedDirectories || []), 'data'] };
+    },
+
     // Before hook
     async before(runtimeContext) {
       const { helper, converter, data, localized } = runtimeContext;
