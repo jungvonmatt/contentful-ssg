@@ -215,7 +215,10 @@ export default (pluginOptions) => {
     const sources = Object.fromEntries(
       types.map((type) => {
         const fm = type === mimeType ? '' : `&fm=${type.replace('image/', '')}`;
-        return [type, widths.map((w) => ({ src: `${src}?${sizeParams(w)}&q=80${fm}`, width: w }))];
+        return [
+          type,
+          widths.map((w) => ({ src: `${src}?${sizeParams(w, ratio)}&q=80${fm}`, width: w })),
+        ];
       })
     );
 
