@@ -19,10 +19,15 @@ const defaultOptions = {
   typeIdSettings: 'd-settings',
   translationStrategy: STRATEGY_DIRECTORY,
   typeIdI18n: 'd-i18n',
+  menuDepth: 2,
+  typeIdMenu: 'c-menu',
   languageConfig: true,
   fieldIdHome: 'home',
   fieldIdSlug: 'slug',
   fieldIdParent: 'parent_page',
+  fieldIdMenuEntries: 'entries',
+  fieldIdMenuHide: 'hide_in_menu',
+  fieldIdMenuPos: 'menu_pos',
   typeConfig: {
     [TYPE_CONTENT]: ['page'],
   },
@@ -59,6 +64,62 @@ export default (args) => {
       ) || [];
 
     return type;
+  };
+
+  const buildMenu = (transformContext, depth = 0) => {
+    const { entry, entryMap } = transformContext;
+
+    const entries = entry.fields?.entries ?? [];
+    const nodes = entries.map((node, index) => ({
+      identifier: node.sys.id,
+      weight: (index + 1) * -10,
+      params: {
+        id: node.sys.id,
+        // eslint-disable-next-line camelcase
+        content_type: node.sys.contentType.sys.id,
+      },
+    }));
+
+    const getChildnodes = (entry, depth) => {
+      const id = entry?.sys?.id ?? 0;
+      const contentType = entry?.sys?.contentType?.sys?.id ?? '';
+
+      if (!id || !contentType || depth <= 0) {
+        return [];
+      }
+
+      const childnodes = [...entryMap.values()].filter(
+        (entry) => (entry?.fields?.[options.fieldIdParent]?.sys?.id ?? '') === id
+      );
+
+      // Filter childnodes based on hide_in_menu field
+      const filtered = childnodes.filter(
+        (entry) => !(entry?.fields?.[options.fieldIdMenuHide] ?? false)
+      );
+
+      // Sort based on menuPos field
+      const sorted = [...filtered].sort(
+        (a, b) =>
+          (a?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER) -
+          (b?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER)
+      );
+
+      return [
+        ...sorted.map((node, index) => ({
+          identifier: node.sys.id,
+          parent: id,
+          weight: (index + 1) * -10,
+          params: {
+            id: node.sys.id,
+            // eslint-disable-next-line camelcase
+            content_type: node.sys.contentType.sys.id,
+          },
+        })),
+        ...sorted.flatMap((node) => getChildnodes(node, depth - 1)),
+      ];
+    };
+
+    return [...nodes, ...entries.flatMap((node) => getChildnodes(node, depth))];
   };
 
   return {
@@ -125,8 +186,9 @@ export default (args) => {
       );
 
       const i18n = Object.fromEntries(locales.map((locale) => [locale.code, {}]));
+      const menus = Object.fromEntries(locales.map((locale) => [locale.code, {}]));
 
-      return { ...runtimeContext, helper, localized: enhancedLocalized, i18n };
+      return { ...runtimeContext, helper, localized: enhancedLocalized, i18n, menus };
     },
 
     /**
@@ -231,7 +293,7 @@ export default (args) => {
     },
 
     async transform(transformContext, runtimeContext) {
-      const { content, id, contentTypeId, locale } = transformContext;
+      const { content, id, contentTypeId, locale, entry } = transformContext;
 
       const type = getEntryType(transformContext);
 
@@ -245,6 +307,14 @@ export default (args) => {
 
         // Dont't write i-18n objects to the content folder
         return undefined;
+      }
+
+      // Automatically build hugo menus
+      // See https://gohugo.io/content-management/menus/
+      if (options.typeIdMenu && contentTypeId === options.typeIdMenu) {
+        const { name = 'main' } = entry.fields;
+        const menu = buildMenu(transformContext, options.menuDepth);
+        runtimeContext.menus[locale.code][name] = menu;
       }
 
       if (type === TYPE_CONTENT) {
@@ -272,6 +342,16 @@ export default (args) => {
             : {};
 
           return outputFile(dictionaryPath, toml.stringify({ ...oldContent, ...translations }));
+        })
+      );
+
+      const { stringify } = await import('@jungvonmatt/contentful-ssg/converter/toml');
+      const menus = runtimeContext?.menus ?? {};
+      await Promise.all(
+        Object.entries(menus).map(([localeCode, menuData]) => {
+          const file = `config/_default/menus.${localeCode}.toml`;
+          const data = stringify(menuData);
+          return outputFile(file, data);
         })
       );
     },
