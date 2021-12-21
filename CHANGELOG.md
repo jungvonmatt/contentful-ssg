@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.1.1...v1.2.0) (2021-12-21)
+
+
+### Features
+
+* 🎸 Generates hugo's menu.toml ([27e95a3](https://github.com/jungvonmatt/contentful-ssg/commit/27e95a33452b1aa5158ee89070889383cee4b6c5))
+
+
+
+
+
 ## [1.1.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.1.0...v1.1.1) (2021-12-16)
 
 
