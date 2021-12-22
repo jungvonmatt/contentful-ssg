@@ -55,6 +55,6 @@ This repository is published under the [MIT](LICENSE) license.
 [ci-image]: https://github.com/jungvonmatt/contentful-ssg/workflows/Tests/badge.svg
 [coveralls-url]: https://coveralls.io/github/jungvonmatt/contentful-ssg?branch=main
 [coveralls-image]: https://img.shields.io/coveralls/github/jungvonmatt/contentful-ssg/main.svg
-[sonarcloud-url]: https://sonarcloud.io/dashboard?id=jungvonmatt_create-contentful-hugo-app
-[sonarcloud-image]: https://sonarcloud.io/api/project_badges/measure?project=jungvonmatt_create-contentful-hugo-app&metric=alert_status
+[sonarcloud-url]: https://sonarcloud.io/dashboard?id=jungvonmatt_contentful-ssg
+[sonarcloud-image]: https://sonarcloud.io/api/project_badges/measure?project=jungvonmatt_contentful-ssg&metric=alert_status
 
