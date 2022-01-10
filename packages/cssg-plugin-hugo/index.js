@@ -19,12 +19,14 @@ const defaultOptions = {
   typeIdSettings: 'd-settings',
   translationStrategy: STRATEGY_DIRECTORY,
   typeIdI18n: 'd-i18n',
-  menuDepth: 2,
-  typeIdMenu: 'c-menu',
   languageConfig: true,
+  menuDepth: 0,
+  autoSubMenu: false,
+  typeIdMenu: 'c-menu',
   fieldIdHome: 'home',
   fieldIdSlug: 'slug',
   fieldIdParent: 'parent_page',
+  fieldIdMenu: 'menu',
   fieldIdMenuEntries: 'entries',
   fieldIdMenuHide: 'hide_in_menu',
   fieldIdMenuPos: 'menu_pos',
@@ -66,23 +68,85 @@ export default (args) => {
     return type;
   };
 
-  const buildMenu = (transformContext, depth = 0) => {
+  const buildMenu = async (transformContext, depth = 0) => {
     const { entry, entryMap } = transformContext;
+    const entries = entry.fields?.[options.fieldIdMenuEntries] ?? [];
+    const nodes = entries
+      .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+      .map((node, index) => ({
+        identifier: node.sys.id,
+        weight: (index + 1) * -10,
+        params: {
+          id: node.sys.id,
+          // eslint-disable-next-line camelcase
+          content_type: node.sys.contentType.sys.id,
+        },
+      }));
 
-    const entries = entry.fields?.entries ?? [];
-    const nodes = entries.map((node, index) => ({
-      identifier: node.sys.id,
-      weight: (index + 1) * -10,
-      params: {
-        id: node.sys.id,
-        // eslint-disable-next-line camelcase
-        content_type: node.sys.contentType.sys.id,
-      },
-    }));
-
-    const getChildnodes = (entry, depth) => {
+    // Resolve page entry
+    const resolvePageEntry = async (entry) => {
       const id = entry?.sys?.id ?? 0;
-      const contentType = entry?.sys?.contentType?.sys?.id ?? '';
+      const node = entryMap.get(id);
+      const contentType = node?.sys?.contentType?.sys?.id ?? '';
+      const pageId = node?.fields?.link_to_entry?.sys?.id;
+      if (contentType === 'page') {
+        return node;
+      }
+
+      if (pageId) {
+        return entryMap.get(pageId);
+      }
+
+      if (typeof options.resolvePage === 'function') {
+        return options.resolvePage(entry, entryMap);
+      }
+    };
+
+    const getChildnodesManual = async (entry, depth, ids = []) => {
+      const id = entry?.sys?.id ?? 0;
+      const page = await resolvePageEntry(entry);
+      const contentType = page?.sys?.contentType?.sys?.id ?? '';
+      const menuId = page?.fields?.[options.fieldIdMenu]?.sys?.id;
+
+      if (
+        !id ||
+        !contentType ||
+        !menuId ||
+        !entryMap.has(menuId) ||
+        ids.includes(id) ||
+        depth <= 0
+      ) {
+        return [];
+      }
+
+      const menu = entryMap.get(menuId);
+      const subentries = menu?.fields?.[options.fieldIdMenuEntries] ?? [];
+
+      const collected = await Promise.all(
+        subentries.flatMap((node) => getChildnodesManual(node, depth - 1, [...ids, id]))
+      );
+
+      return [
+        ...subentries
+          .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+          .map((node, index) => ({
+            identifier: node.sys.id,
+            parent: id,
+            weight: (index + 1) * -10,
+            params: {
+              id: node.sys.id,
+              // eslint-disable-next-line camelcase
+              content_type: node.sys.contentType.sys.id,
+            },
+          })),
+        ...collected,
+      ];
+    };
+
+    const getChildnodesRecursive = async (entry, depth) => {
+      const id = entry?.sys?.id ?? 0;
+      const page = await resolvePageEntry(id);
+      const contentType = page?.sys?.contentType?.sys?.id ?? '';
 
       if (!id || !contentType || depth <= 0) {
         return [];
@@ -104,22 +168,34 @@ export default (args) => {
           (b?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER)
       );
 
-      return [
-        ...sorted.map((node, index) => ({
-          identifier: node.sys.id,
-          parent: id,
-          weight: (index + 1) * -10,
-          params: {
-            id: node.sys.id,
-            // eslint-disable-next-line camelcase
-            content_type: node.sys.contentType.sys.id,
-          },
-        })),
-        ...sorted.flatMap((node) => getChildnodes(node, depth - 1)),
-      ];
+      return Array.from(
+        await Promise.allSettled([
+          ...sorted
+            .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+            .map((node, index) => ({
+              identifier: node.sys.id,
+              parent: id,
+              weight: (index + 1) * -10,
+              params: {
+                id: node.sys.id,
+                // eslint-disable-next-line camelcase
+                content_type: node.sys.contentType.sys.id,
+              },
+            })),
+          ...sorted.flatMap((node) => getChildnodesRecursive(node, depth - 1)),
+        ])
+      )
+        .map((a) => a.value)
+        .filter((v) => v);
     };
 
-    return [...nodes, ...entries.flatMap((node) => getChildnodes(node, depth))];
+    // When autoSubMenu parameter is set, we collect child pages automatically
+    // Otherwise we look for dedicated menu entries in page nodes
+    const childentries = options.autoSubMenu
+      ? await Promise.all(entries.flatMap((node) => getChildnodesRecursive(node, depth)))
+      : await Promise.all(entries.flatMap((node) => getChildnodesManual(node, depth)));
+
+    return [...nodes, ...childentries].flat(Infinity).filter((v) => v);
   };
 
   return {
@@ -313,7 +389,8 @@ export default (args) => {
       // See https://gohugo.io/content-management/menus/
       if (options.typeIdMenu && contentTypeId === options.typeIdMenu) {
         const { name = 'main' } = entry.fields;
-        const menu = buildMenu(transformContext, options.menuDepth);
+        const menu = await buildMenu(transformContext, options.menuDepth);
+
         runtimeContext.menus[locale.code][name] = menu;
       }
 
