@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.2.0...v1.3.0) (2022-01-10)
+
+
+### Features
+
+* 🎸 Consider menu reference in page node when building menu ([42499a4](https://github.com/jungvonmatt/contentful-ssg/commit/42499a4efb2f25275d8ea4fb74f72461aa441ba0))
+
+
+
+
+
 # [1.2.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.1.1...v1.2.0) (2021-12-21)
 
 
