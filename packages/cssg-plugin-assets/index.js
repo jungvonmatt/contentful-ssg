@@ -20,7 +20,7 @@ const processOptions = (options = {}) => {
     assetBase: '/assets/cf',
     assetFolder: 'static',
     cacheFolder: '.cache',
-    extraTypes: ['image/webp', 'image/avif'],
+    extraTypes: ['image/avif', 'image/webp'],
     ratios: {},
     focusAreas: {},
   };
