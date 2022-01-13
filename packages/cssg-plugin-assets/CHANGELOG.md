@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.3.0...v1.3.1) (2022-01-13)
+
+
+### Bug Fixes
+
+* 🐛 Change order of webp & avif ([e725a33](https://github.com/jungvonmatt/contentful-ssg/commit/e725a33ce516e4dd0e243c71323561ae20d87f81))
+
+
+
+
+
 ## [1.1.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.1.0...v1.1.1) (2021-12-16)
 
 
