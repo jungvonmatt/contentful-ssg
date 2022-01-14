@@ -213,10 +213,10 @@ export default (args) => {
       // Initialize getSettings
       const getSettings = getSettingsHelper(runtimeContext);
       helper.getSettings = getSettings;
-      // Write config toml according to locale settings in contentful
+      // Write config yaml according to locale settings in contentful
       if (options.languageConfig) {
         const rootDir = runtimeContext?.config?.rootDir ?? process.cwd();
-        const dst = path.join(rootDir, 'config/_default/languages.toml');
+        const dst = path.join(rootDir, 'config/_default/languages.yaml');
         const languageConfig = Object.fromEntries(
           locales.map((locale) => {
             const { code, name: languageName } = locale;
@@ -242,7 +242,7 @@ export default (args) => {
             ];
           })
         );
-        await outputFile(dst, converter.toml.stringify(languageConfig));
+        await outputFile(dst, converter.yaml.stringify(languageConfig));
       }
 
       // Find section pages and add them to the runtimeconfig
@@ -408,26 +408,25 @@ export default (args) => {
 
     async after(runtimeContext) {
       const contentDir = runtimeContext.config.directory;
-      const { toml } = runtimeContext.converter;
+      const { yaml } = runtimeContext.converter;
       const i18n = runtimeContext?.i18n ?? {};
 
       await Promise.all(
         Object.entries(i18n).map(async ([localeCode, translations]) => {
-          const dictionaryPath = path.join(contentDir, `../i18n/${localeCode}.toml`);
+          const dictionaryPath = path.join(contentDir, `../i18n/${localeCode}.yaml`);
           const oldContent = existsSync(dictionaryPath)
-            ? toml.parse(await readFile(dictionaryPath, 'utf8'))
+            ? yaml.parse(await readFile(dictionaryPath, 'utf8'))
             : {};
 
-          return outputFile(dictionaryPath, toml.stringify({ ...oldContent, ...translations }));
+          return outputFile(dictionaryPath, yaml.stringify({ ...oldContent, ...translations }));
         })
       );
 
-      const { stringify } = await import('@jungvonmatt/contentful-ssg/converter/toml');
       const menus = runtimeContext?.menus ?? {};
       await Promise.all(
         Object.entries(menus).map(([localeCode, menuData]) => {
-          const file = `config/_default/menus.${localeCode}.toml`;
-          const data = stringify(menuData);
+          const file = `config/_default/menus.${localeCode}.yaml`;
+          const data = yaml.stringify(menuData);
           return outputFile(file, data);
         })
       );
