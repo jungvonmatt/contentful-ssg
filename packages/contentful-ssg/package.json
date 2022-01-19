@@ -8,11 +8,14 @@
   "exports": {
     ".": "./dist/index.js",
     "./lib/object": "./dist/lib/object.js",
+    "./lib/config": "./dist/lib/config.js",
     "./lib/array": "./dist/lib/array.js",
     "./lib/utils": "./dist/lib/utils.js",
+    "./lib/ui": "./dist/lib/ui.js",
     "./lib/contentful": "./dist/lib/contentful.js",
     "./lib/hook-manager": "./dist/lib/hook-manager.js",
     "./lib/file-manager": "./dist/lib/file-manager.js",
+    "./converter": "./dist/converter/index.js",
     "./converter/json": "./dist/converter/json.js",
     "./converter/yaml": "./dist/converter/yaml.js",
     "./converter/toml": "./dist/converter/toml.js",
@@ -26,6 +29,12 @@
       ],
       "lib/utils": [
         "./dist/lib/utils.d.ts"
+      ],
+      "lib/ui": [
+        "./dist/lib/ui.d.ts"
+      ],
+      "lib/config": [
+        "./dist/lib/config.d.ts"
       ],
       "lib/object": [
         "./dist/lib/object.d.ts"
@@ -41,6 +50,9 @@
       ],
       "lib/file-manager": [
         "./dist/lib/file-manager.d.ts"
+      ],
+      "converter": [
+        "./dist/converter/index.d.ts"
       ],
       "converter/json": [
         "./dist/converter/json.d.ts"
@@ -79,7 +91,7 @@
     "dist"
   ],
   "author": "Jung von Matt TECH GmbH",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@contentful/rich-text-html-renderer": "^15.6.2",
     "@contentful/rich-text-types": "^15.6.2",

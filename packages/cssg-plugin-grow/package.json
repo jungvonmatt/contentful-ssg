@@ -23,7 +23,7 @@
     "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
   },
   "author": "Ben Zörb",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
   },
