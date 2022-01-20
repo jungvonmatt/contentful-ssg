@@ -13,6 +13,7 @@ import { forEachAsync } from '@jungvonmatt/contentful-ssg/lib/array';
 import { stringify } from '@jungvonmatt/contentful-ssg/converter';
 import { logError, askMissing, confirm } from '@jungvonmatt/contentful-ssg/lib/ui';
 import { createFakes } from './index.js';
+import chalk from 'chalk';
 
 const env = dotenv.config();
 dotenvExpand(env);
@@ -23,7 +24,8 @@ type CommandArgs = {
   contentType: string[];
   env: string;
   verbose: boolean;
-  force: boolean;
+  yes: boolean;
+  no: boolean;
 };
 
 const parseArgs = (cmd: CommandArgs) => ({
@@ -60,35 +62,49 @@ program
   .option('-c, --content-type <content-type...>', 'Specify content-types')
   .option('-e, --extension <extension>', 'Specify output format', 'yaml')
   .option('-o, --output-directory <directory>', 'Specify output directory', 'data')
-  .option('-f, --force', 'Overwrite')
+  .option('--yes', 'Overwrite')
+  .option('--no', 'Skip')
   .action(
     actionRunner(async (cmd: CommandArgs) => {
       const contentTypes: string[] = cmd?.contentType ?? [];
-      const force: boolean = cmd?.force ?? false;
+      const yes: boolean = cmd?.yes ?? false;
+      const no: boolean = cmd?.no ?? false;
       const format: string = cmd?.extension ?? '';
       const outputDirectory: string = cmd?.outputDirectory ?? '';
-      const config = await getConfig(parseArgs(cmd));
-      const verified = await askMissing(config);
-      const fakes = await createFakes(verified as ContentfulConfig, contentTypes);
+      const fakes = await createFakes(contentTypes);
+      console.log();
+      if (!Object.keys(fakes).length) {
+        console.log('No files generated.');
+        console.log(
+          `No content models found for: ${chalk.cyan(contentTypes.join(chalk.white(', ')))}`
+        );
+      }
+
       await forEachAsync(Object.entries(fakes), async ([contentTypeId, fakeData]) => {
         const [defaultData, minData] = fakeData;
         const dir = path.join(outputDirectory, contentTypeId);
         const filenameDefault = path.join(dir, `default.${format}`);
         const filenameMin = path.join(dir, `min.${format}`);
-        if (
+        if (existsSync(filenameDefault) && no) {
+          console.log(chalk.yellow(`  skipped: ${filenameDefault}`));
+        } else if (
           !existsSync(filenameDefault) ||
-          force ||
+          yes ||
           (await confirm(`Overwrite file: ${filenameDefault}`))
         ) {
           await outputFile(filenameDefault, stringify(defaultData, format));
+          console.log(chalk.green(`    added: ${filenameDefault}`));
         }
 
-        if (
+        if (existsSync(filenameMin) && no) {
+          console.log(chalk.yellow(`  skipped: ${filenameMin}`));
+        } else if (
           !existsSync(filenameMin) ||
-          force ||
+          yes ||
           (await confirm(`Overwrite file: ${filenameMin}`))
         ) {
           await outputFile(filenameMin, stringify(minData, format));
+          console.log(chalk.green(`    added: ${filenameMin}`));
         }
       });
     })
