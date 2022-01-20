@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.1...v1.4.2) (2022-01-20)
+
+
+### Bug Fixes
+
+* 🐛 Don't ask for delivery & preview token ([10a9a74](https://github.com/jungvonmatt/contentful-ssg/commit/10a9a74f24fecca9d8866d39e2ca9095e9a4d638))
+* 🐛 lint ([22c8b38](https://github.com/jungvonmatt/contentful-ssg/commit/22c8b38fbe1f62e20a597545808181fc488d04c6))
+
+
+
+
+
 ## [1.4.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.0...v1.4.1) (2022-01-20)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-fakes
