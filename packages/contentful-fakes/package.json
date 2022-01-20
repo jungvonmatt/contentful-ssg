@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-fakes",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Create fake data based on contentful data models",
   "main": "./dist/index.js",
   "type": "module",
