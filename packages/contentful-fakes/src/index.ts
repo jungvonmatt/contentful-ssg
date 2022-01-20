@@ -7,7 +7,12 @@ import { getMockData, ContentTypes } from './lib/faker.js';
 export async function createFakes(
   contentTypeIds: string[]
 ): Promise<Record<string, KeyValueMap[]>> {
-  const contentfulConfig = (await askMissing(await getConfig({}))) as ContentfulConfig;
+  const contentfulConfig = (await askMissing(
+    await getConfig({
+      previewAccessToken: '-',
+      accessToken: '-',
+    })
+  )) as ContentfulConfig;
   const environment = await getEnvironment(contentfulConfig);
   const { items: contentTypes } = await environment.getContentTypes();
   const { items } = await environment.getEditorInterfaces();
