@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 
 /* eslint-env node */
-import path from 'path';
-import { existsSync } from 'fs';
-import { outputFile } from 'fs-extra';
+import { stringify } from '@jungvonmatt/contentful-ssg/converter';
+import { forEachAsync } from '@jungvonmatt/contentful-ssg/lib/array';
+import { confirm, logError } from '@jungvonmatt/contentful-ssg/lib/ui';
+import chalk from 'chalk';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import { ContentfulConfig } from '@jungvonmatt/contentful-ssg';
-import { getConfig } from '@jungvonmatt/contentful-ssg/lib/config';
-import { forEachAsync } from '@jungvonmatt/contentful-ssg/lib/array';
-import { stringify } from '@jungvonmatt/contentful-ssg/converter';
-import { logError, askMissing, confirm } from '@jungvonmatt/contentful-ssg/lib/ui';
+import { existsSync } from 'fs';
+import { outputFile } from 'fs-extra';
+import path from 'path';
 import { createFakes } from './index.js';
-import chalk from 'chalk';
 
 const env = dotenv.config();
 dotenvExpand(env);
@@ -27,12 +25,6 @@ type CommandArgs = {
   yes: boolean;
   no: boolean;
 };
-
-const parseArgs = (cmd: CommandArgs) => ({
-  environment: cmd.env,
-  verbose: Boolean(cmd.verbose),
-  contentTypes: cmd.contentType,
-});
 
 type CommandError = Error & {
   errors?: Error[];
