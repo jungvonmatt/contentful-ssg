@@ -74,7 +74,7 @@ export default (args) => {
       .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
       .map((node, index) => ({
         identifier: node.sys.id,
-        weight: (index + 1) * -10,
+        weight: (index + 1) * 10,
         params: {
           id: node.sys.id,
           // eslint-disable-next-line camelcase
@@ -131,7 +131,7 @@ export default (args) => {
           .map((node, index) => ({
             identifier: node.sys.id,
             parent: id,
-            weight: (index + 1) * -10,
+            weight: (index + 1) * 10,
             params: {
               id: node.sys.id,
               // eslint-disable-next-line camelcase
@@ -174,7 +174,7 @@ export default (args) => {
             .map((node, index) => ({
               identifier: node.sys.id,
               parent: id,
-              weight: (index + 1) * -10,
+              weight: (index + 1) * 10,
               params: {
                 id: node.sys.id,
                 // eslint-disable-next-line camelcase
