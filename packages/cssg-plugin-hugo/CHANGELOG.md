@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.4](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.3...v1.4.4) (2022-01-24)
+
+
+### Bug Fixes
+
+* 🐛 Fix menu sort ([589f341](https://github.com/jungvonmatt/contentful-ssg/commit/589f341ecedbad7fcaaae43b360fa06a73a404c6))
+
+
+
+
+
 ## [1.4.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.2...v1.4.3) (2022-01-24)
 
 
