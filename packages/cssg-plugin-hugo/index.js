@@ -1,13 +1,9 @@
-import mergeOptionsModule from 'merge-options';
-
 import { snakeCaseKeys } from '@jungvonmatt/contentful-ssg/lib/object';
 import mm from 'micromatch';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
 import { readFile } from 'fs/promises';
 import path from 'path';
-
-const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
 
 export const TYPE_CONTENT = 'content';
 export const TYPE_DATA = 'data';
@@ -48,8 +44,11 @@ export default (args) => {
             const settingsEntries = Array.from(entryMap.values()).filter(
               (entry) => (entry?.sys?.contentType?.sys?.id ?? 'unknown') === options.typeIdSettings
             );
-            const settingsFields = settingsEntries.map((entry) => entry?.fields ?? {});
-            return [locale, mergeOptions(...settingsFields)];
+            const settingsFields = settingsEntries
+              .map((entry) => entry?.fields ?? {})
+              .reduce((result, fields) => ({ ...result, ...fields }), {});
+
+            return [locale, settingsFields];
           }
         )
       );

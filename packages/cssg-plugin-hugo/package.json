@@ -28,7 +28,6 @@
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "^1.4.0",
     "fs-extra": "^10.0.0",
-    "merge-options": "^3.0.4",
     "micromatch": "^4.0.4"
   }
 }
