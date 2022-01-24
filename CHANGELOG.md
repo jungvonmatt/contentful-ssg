@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.2...v1.4.3) (2022-01-24)
+
+
+### Bug Fixes
+
+* 🐛 Don't deep merge settings ([298c15e](https://github.com/jungvonmatt/contentful-ssg/commit/298c15ed3c80dc222b42909db610c41e977a9110))
+
+
+
+
+
 ## [1.4.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.1...v1.4.2) (2022-01-20)
 
 
