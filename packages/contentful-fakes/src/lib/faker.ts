@@ -391,9 +391,9 @@ const getRichtextFake = async (field: FieldInfo): Promise<KeyValueMap> => {
 const getArrayFake = async (field: FieldInfo): Promise<unknown[]> => {
   const { validations } = field.settings;
   const { size } = validations.find((validation) => Boolean(validation?.size)) || {};
-  let count = randomInt(0, 10);
+  let count = randomInt(0, 5);
   if (size) {
-    count = randomInt(size?.min ?? 0, size?.max ?? (size?.min ?? 0) + 10);
+    count = randomInt(size?.min ?? 0, size?.max ?? (size?.min ?? 0) + 5);
   }
 
   if (field.settings.items.type === FIELD_TYPE_SYMBOL) {

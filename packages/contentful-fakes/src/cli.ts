@@ -73,10 +73,9 @@ program
       }
 
       await forEachAsync(Object.entries(fakes), async ([contentTypeId, fakeData]) => {
-        const [defaultData, minData] = fakeData;
+        const [defaultData] = fakeData;
         const dir = path.join(outputDirectory, contentTypeId);
         const filenameDefault = path.join(dir, `default.${format}`);
-        const filenameMin = path.join(dir, `min.${format}`);
         if (existsSync(filenameDefault) && no) {
           console.log(chalk.yellow(`  skipped: ${filenameDefault}`));
         } else if (
@@ -86,17 +85,6 @@ program
         ) {
           await outputFile(filenameDefault, stringify(defaultData, format));
           console.log(chalk.green(`    added: ${filenameDefault}`));
-        }
-
-        if (existsSync(filenameMin) && no) {
-          console.log(chalk.yellow(`  skipped: ${filenameMin}`));
-        } else if (
-          !existsSync(filenameMin) ||
-          yes ||
-          (await confirm(`Overwrite file: ${filenameMin}`))
-        ) {
-          await outputFile(filenameMin, stringify(minData, format));
-          console.log(chalk.green(`    added: ${filenameMin}`));
         }
       });
     })
