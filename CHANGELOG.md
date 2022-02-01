@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.6](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.5...v1.4.6) (2022-02-01)
+
+
+### Bug Fixes
+
+* 🐛 Fixes rounding error when computing widths ([3cc1288](https://github.com/jungvonmatt/contentful-ssg/commit/3cc12884f7a75f9aa8bc321dbbb1b8d407709f0d))
+
+
+
+
+
 ## [1.4.5](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.4...v1.4.5) (2022-01-31)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg-project
