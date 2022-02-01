@@ -179,7 +179,7 @@ export default (pluginOptions) => {
               contentfulMaxWidth,
               contentfulMaxWidth * ratio,
               width,
-              Math.round(height * ratio),
+              Math.floor(height * ratio),
               ...sizes,
             ]
           : [contentfulMaxWidth, width, ...sizes]
