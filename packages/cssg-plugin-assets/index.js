@@ -7,6 +7,10 @@ import { optimize } from 'svgo';
 
 // Max width that can be handled by the contentful image api
 const contentfulMaxWidth = 4000;
+// Some image formats (avif) have an additional limitation on the megapixel size
+const maxMegaPixels = {
+  avif: 9,
+};
 
 /**
  *
@@ -21,6 +25,7 @@ const processOptions = (options = {}) => {
     assetFolder: 'static',
     cacheFolder: '.cache',
     extraTypes: ['image/avif', 'image/webp'],
+    quality: 80,
     ratios: {},
     focusAreas: {},
   };
@@ -102,9 +107,13 @@ export default (pluginOptions) => {
     await mkdirp(dirname(filepath));
 
     if (!existsSync(filepath) || !timestamp || timestamp > (await getModifiedTime(filepath))) {
-      const response = got(url);
-      const buffer = await response.buffer();
-      await promises.writeFile(filepath, buffer);
+      try {
+        const response = got(url);
+        const buffer = await response.buffer();
+        await promises.writeFile(filepath, buffer);
+      } catch {
+        console.log('Error downloading image:', url);
+      }
     }
 
     return promises.readFile(filepath, 'utf8');
@@ -121,9 +130,13 @@ export default (pluginOptions) => {
     await mkdirp(dirname(file));
 
     if (!existsSync(cacheFile) || (timestamp && timestamp > (await getModifiedTime(cacheFile)))) {
-      const response = got(url);
-      const buffer = await response.buffer();
-      await promises.writeFile(cacheFile, buffer);
+      try {
+        const response = got(url);
+        const buffer = await response.buffer();
+        await promises.writeFile(cacheFile, buffer);
+      } catch {
+        console.log('Error downloading image:', url);
+      }
     }
 
     await promises.copyFile(cacheFile, file);
@@ -212,12 +225,23 @@ export default (pluginOptions) => {
       ].join('&');
     };
 
+    const megaPixelFilter = (w, type = '-') => {
+      const max = maxMegaPixels?.[type.replace('image/', '')];
+      const r = ratio || width / height;
+      return !max || max >= (w * Math.floor(w / r)) / 1000000;
+    };
+
     const sources = Object.fromEntries(
       types.map((type) => {
         const fm = type === mimeType ? '' : `&fm=${type.replace('image/', '')}`;
         return [
           type,
-          widths.map((w) => ({ src: `${src}?${sizeParams(w, ratio)}&q=80${fm}`, width: w })),
+          widths
+            .filter((w) => megaPixelFilter(w, type))
+            .map((w) => ({
+              src: `${src}?${sizeParams(w, ratio)}&q=${options.quality}${fm}`,
+              width: w,
+            })),
         ];
       })
     );
@@ -310,7 +334,7 @@ export default (pluginOptions) => {
           getImageData(asset, ratio, focusArea),
         ])
       );
-      return { ...defaultValue, derivatives: { original, ...derivatives } };
+      return { ...defaultValue, src: original.src, derivatives: { original, ...derivatives } };
     }
 
     return { ...defaultValue, src: download ? getLocalSrc(src, sys) : src };
