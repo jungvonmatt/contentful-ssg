@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.7](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.6...v1.4.7) (2022-02-07)
+
+
+### Bug Fixes
+
+* 🐛 Consider contentful megapixel limitations on avif ([3ad6291](https://github.com/jungvonmatt/contentful-ssg/commit/3ad6291f666a9d004106be5b664bdc0c71243e30))
+
+
+
+
+
 ## [1.4.6](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.5...v1.4.6) (2022-02-01)
 
 
