@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.8](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.7...v1.4.8) (2022-02-09)
+
+
+### Bug Fixes
+
+* ensure preview mode can be activated in config ([#35](https://github.com/jungvonmatt/contentful-ssg/issues/35)) ([ea9fca5](https://github.com/jungvonmatt/contentful-ssg/commit/ea9fca5e18745ac2740d0c1bea1e0370a1ec17de))
+
+
+
+
+
 # [1.4.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.3.2...v1.4.0) (2022-01-19)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg
