@@ -22,8 +22,8 @@ dotenvExpand(env);
 
 const parseArgs = (cmd) => ({
   environment: cmd.env as string,
-  preview: Boolean(cmd.preview),
-  verbose: Boolean(cmd.verbose),
+  preview: cmd.preview as boolean,
+  verbose: cmd.verbose as boolean,
 });
 
 type CommandError = Error & {
