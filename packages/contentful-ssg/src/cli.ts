@@ -15,15 +15,15 @@ import { omitKeys } from './lib/object.js';
 
 import { getConfig, getEnvironmentConfig } from './lib/config.js';
 import { run } from './index.js';
-import { ContentfulConfig } from './types.js';
+import { Config, ContentfulConfig } from './types.js';
 
 const env = dotenv.config();
 dotenvExpand(env);
 
-const parseArgs = (cmd) => ({
-  environment: cmd.env as string,
+const parseFetchArgs = (cmd): Partial<Config> => ({
   preview: cmd.preview as boolean,
   verbose: cmd.verbose as boolean,
+  ignoreErrors: cmd.ignoreErrors as boolean,
 });
 
 type CommandError = Error & {
@@ -54,7 +54,7 @@ program
   .action(
     actionRunner(async (cmd) => {
       const useTypescript = Boolean(cmd?.typescript ?? false);
-      const config = await getConfig(parseArgs(cmd || {}));
+      const config = await getConfig();
       const verified = await askAll(config);
 
       const environmentConfig = getEnvironmentConfig();
@@ -148,9 +148,10 @@ program
   .description('Fetch content objects')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
+  .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
-      const config = await getConfig(parseArgs(cmd || {}));
+      const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
 
       return run(verified);

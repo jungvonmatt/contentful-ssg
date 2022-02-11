@@ -217,6 +217,11 @@ Fetch all content entries and store them as yaml in the configured directory
 npx cssg fetch
 ```
 
+To see all available command line options call
+```bash
+npx cssg help fetch
+```
+
 ## Example configuration
 
 ### Grow

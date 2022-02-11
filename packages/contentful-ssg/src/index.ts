@@ -73,10 +73,7 @@ export const run = async (config: Config): Promise<void> => {
       {
         title: 'Before Hook',
         skip: (ctx) => !ctx.hooks.has('before'),
-        task: async (ctx) => {
-          const result = await ctx.hooks.before();
-          ctx = { ...ctx, ...(result || {}) };
-        },
+        task: async (ctx) => ctx.hooks.before(),
       },
       {
         title: 'Writing files',
@@ -135,12 +132,8 @@ export const run = async (config: Config): Promise<void> => {
       {
         title: 'After Hook',
         skip: (ctx) => !ctx.hooks.has('after'),
-        task: async (ctx) => {
-          const result = await ctx.hooks.after();
-          ctx = { ...ctx, ...(result || {}) };
-        },
+        task: async (ctx) => ctx.hooks.after(),
       },
-
       {
         title: 'Cleanup',
         task: async (ctx) => ctx.fileManager.cleanup(),
@@ -152,4 +145,8 @@ export const run = async (config: Config): Promise<void> => {
   const ctx = await tasks.run();
   await ctx.stats.print();
   console.log('\n---------------------------------------------');
+
+  if (ctx.stats.errors?.length && !config.ignoreErrors) {
+    process.exit(1);
+  }
 };
