@@ -85,6 +85,7 @@ export type Config = Partial<ContentfulConfig> &
     directory: string;
     managedDirectories?: string[];
     verbose?: boolean;
+    ignoreErrors?: boolean;
     plugins?: Array<[string, KeyValueMap] | PluginInfo | string>;
     resolvedPlugins?: Hooks[];
     preset?: string;

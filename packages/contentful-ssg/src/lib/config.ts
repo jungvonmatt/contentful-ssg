@@ -122,7 +122,7 @@ export const getEnvironmentConfig = (strict = true): ContentfulConfig =>
  * Get configuration
  * @param {Object} args
  */
-export const getConfig = async (args?: Partial<Config>): Promise<Config> => {
+export const getConfig = async (args: Partial<Config> = {}): Promise<Config> => {
   const defaultOptions: Config = {
     environmentId: 'master',
     host: 'api.contentful.com',
