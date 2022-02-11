@@ -86,4 +86,62 @@ describe('Run', () => {
     expect(output).toMatch(`${chalk.cyan(0)} entries skipped due to validation issues`);
     expect(output).toMatch(`${chalk.red(0)} errors`);
   });
+
+  test('fails on exception before/after', async () => {
+    console.log = jest.fn();
+    const mockError = jest.fn().mockImplementation(() => {
+      throw new Error();
+    });
+
+    await expect(async () => {
+      await run({
+        directory: 'test',
+        before: mockError,
+      });
+    }).rejects.toThrowError();
+
+    await expect(async () => {
+      await run({
+        directory: 'test',
+        after: mockError,
+      });
+    }).rejects.toThrowError();
+  });
+
+  test('fails on transform exception', async () => {
+    console.log = jest.fn();
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation((number) => {
+      throw new Error('process.exit: ' + number);
+    });
+
+    await expect(async () => {
+      await run({
+        directory: 'test',
+        transform: async () => {
+          throw new Error();
+        },
+      });
+    }).rejects.toThrowError();
+
+    expect(mockExit).toHaveBeenCalledWith(1);
+    mockExit.mockRestore();
+  });
+
+  test('does not fail on transform exception with ignoreErrors option', async () => {
+    console.log = jest.fn();
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation((number) => {
+      throw new Error('process.exit: ' + number);
+    });
+
+    await run({
+      directory: 'test',
+      ignoreErrors: true,
+      transform: async () => {
+        throw new Error();
+      },
+    });
+
+    expect(mockExit).toBeCalledTimes(0);
+    mockExit.mockRestore();
+  });
 });
