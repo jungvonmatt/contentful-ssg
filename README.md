@@ -35,6 +35,12 @@ We appreciate any help on our repositories. For more details about how to
 contribute, see our [CONTRIBUTING.md](CONTRIBUTING.md)
 document.
 
+## Contributors
+<a href="https://github.com/jungvonmatt/contentful-ssg/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=jungvonmatt/contentful-ssg" />
+</a>
+
+
 ## You found a bug or want to propose a feature?
 
 - File an issue here on GitHub: [![File an issue](https://img.shields.io/badge/-Create%20Issue-6cc644.svg?logo=github&maxAge=31557600)](https://github.com/jungvonmatt/contentful-ssg/issues/new). Make sure to remove any credential from your code before sharing it.
