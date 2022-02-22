@@ -31,6 +31,13 @@ const defaultOptions = {
   },
 };
 
+// Currently Hugo language internals lowercase language codes,
+// which can cause conflicts with settings like defaultContentLanguage
+// which are not lowercased
+// See https://github.com/gohugoio/hugo/issues/7344
+// https://gohugo.io/content-management/multilingual/#configure-languages
+const hugoLocaleCode = locale => locale.code.toLowerCase();
+
 export default (args) => {
   const options = { ...defaultOptions, ...(args || {}) };
 
@@ -215,15 +222,25 @@ export default (args) => {
       // Write config yaml according to locale settings in contentful
       if (options.languageConfig) {
         const rootDir = runtimeContext?.config?.rootDir ?? process.cwd();
+        const mainConfigFile = path.join(rootDir, 'config/_default/config.yaml');
+        const mainConfig =  converter.yaml.parse(await readFile(mainConfigFile));
+        const defaultLocale = locales.find(locale => locale.default);
+        if (defaultLocale && mainConfig.languageCode) {
+          mainConfig.languageCode = hugoLocaleCode(defaultLocale);
+        }
+
+        if (defaultLocale && mainConfig.defaultContentLanguage) {
+          mainConfig.defaultContentLanguage = hugoLocaleCode(defaultLocale);
+        }
+
+        await outputFile(mainConfigFile, converter.yaml.stringify(mainConfig));
+
         const dst = path.join(rootDir, 'config/_default/languages.yaml');
         const languageConfig = Object.fromEntries(
           locales.map((locale) => {
             const { code, name: languageName } = locale;
-            // Currently Hugo language internals lowercase language codes,
-            // which can cause conflicts with settings like defaultContentLanguage
-            // which are not lowercased
-            // https://github.com/gohugoio/hugo/issues/7344
-            const languageCode = code.toLowerCase();
+
+            const languageCode = code;
             const [languageNameShort] = languageCode.split('-');
 
             const localeConfig = {
@@ -234,9 +251,9 @@ export default (args) => {
             };
 
             return [
-              code,
+              hugoLocaleCode(locale),
               options.translationStrategy === 'directory'
-                ? { contentDir: `content/${languageCode}`, ...localeConfig }
+                ? { contentDir: `content/${hugoLocaleCode(locale)}`, ...localeConfig }
                 : localeConfig,
             ];
           })
@@ -260,8 +277,8 @@ export default (args) => {
         })
       );
 
-      const i18n = Object.fromEntries(locales.map((locale) => [locale.code, {}]));
-      const menus = Object.fromEntries(locales.map((locale) => [locale.code, {}]));
+      const i18n = Object.fromEntries(locales.map((locale) => [hugoLocaleCode(locale), {}]));
+      const menus = Object.fromEntries(locales.map((locale) => [hugoLocaleCode(locale), {}]));
 
       return { ...runtimeContext, helper, localized: enhancedLocalized, i18n, menus };
     },
@@ -289,12 +306,12 @@ export default (args) => {
       const type = getEntryType(transformContext);
 
       if (type === TYPE_CONTENT) {
-        return options.translationStrategy === STRATEGY_FILENAME ? '' : locale.code;
+        return options.translationStrategy === STRATEGY_FILENAME ? '' : hugoLocaleCode(locale);
       }
 
       return options.translationStrategy === STRATEGY_FILENAME
         ? path.join('../data', contentTypeId)
-        : path.join('../data', locale.code, contentTypeId);
+        : path.join('../data', hugoLocaleCode(locale), contentTypeId);
     },
 
     /**
@@ -323,13 +340,13 @@ export default (args) => {
 
       if (homeId && entry?.sys?.id === homeId) {
         return options.translationStrategy === STRATEGY_FILENAME
-          ? `/_index.${locale.code}.md`
+          ? `/_index.${hugoLocaleCode(locale)}.md`
           : `/_index.md`;
       }
 
       if (contentTypeId === options.typeIdSettings) {
         return options.translationStrategy === STRATEGY_FILENAME
-          ? `../settings.${locale.code}.yaml`
+          ? `../settings.${hugoLocaleCode(locale)}.yaml`
           : '../settings.yaml';
       }
 
@@ -340,7 +357,7 @@ export default (args) => {
           entryMap: collectEntryMap,
         });
         return options.translationStrategy === STRATEGY_FILENAME
-          ? path.join(...(slugs || []).filter((v) => v), `_index.${locale.code}.md`)
+          ? path.join(...(slugs || []).filter((v) => v), `_index.${hugoLocaleCode(locale)}.md`)
           : path.join(...(slugs || []).filter((v) => v), `_index.md`);
       }
 
@@ -354,7 +371,7 @@ export default (args) => {
         return options.translationStrategy === STRATEGY_FILENAME
           ? path.join(
               ...(slugs || []).filter((v) => v),
-              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.${locale.code}.md`
+              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.${hugoLocaleCode(locale)}.md`
             )
           : path.join(
               ...(slugs || []).filter((v) => v),
@@ -363,7 +380,7 @@ export default (args) => {
       }
 
       return options.translationStrategy === STRATEGY_FILENAME
-        ? `${id}.${locale.code}.yaml`
+        ? `${id}.${hugoLocaleCode(locale)}.yaml`
         : `${id}.yaml`;
     },
 
@@ -378,7 +395,7 @@ export default (args) => {
         const { key, other, one } = content;
         const translations = one ? { one, other } : { other };
 
-        runtimeContext.i18n[locale.code][key] = translations;
+        runtimeContext.i18n[hugoLocaleCode(locale)][key] = translations;
 
         // Dont't write i-18n objects to the content folder
         return undefined;
@@ -390,7 +407,7 @@ export default (args) => {
         const { name = 'main' } = entry.fields;
         const menu = await buildMenu(transformContext, options.menuDepth);
 
-        runtimeContext.menus[locale.code][name] = menu;
+        runtimeContext.menus[hugoLocaleCode(locale)][name] = menu;
       }
 
       if (type === TYPE_CONTENT) {
