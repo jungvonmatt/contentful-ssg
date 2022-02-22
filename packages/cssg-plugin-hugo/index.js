@@ -36,7 +36,7 @@ const defaultOptions = {
 // which are not lowercased
 // See https://github.com/gohugoio/hugo/issues/7344
 // https://gohugo.io/content-management/multilingual/#configure-languages
-const hugoLocaleCode = locale => locale.code.toLowerCase();
+const hugoLocaleCode = (locale) => locale.code.toLowerCase();
 
 export default (args) => {
   const options = { ...defaultOptions, ...(args || {}) };
@@ -223,8 +223,8 @@ export default (args) => {
       if (options.languageConfig) {
         const rootDir = runtimeContext?.config?.rootDir ?? process.cwd();
         const mainConfigFile = path.join(rootDir, 'config/_default/config.yaml');
-        const mainConfig =  converter.yaml.parse(await readFile(mainConfigFile));
-        const defaultLocale = locales.find(locale => locale.default);
+        const mainConfig = converter.yaml.parse(await readFile(mainConfigFile));
+        const defaultLocale = locales.find((locale) => locale.default);
         if (defaultLocale && mainConfig.languageCode) {
           mainConfig.languageCode = hugoLocaleCode(defaultLocale);
         }
@@ -371,7 +371,9 @@ export default (args) => {
         return options.translationStrategy === STRATEGY_FILENAME
           ? path.join(
               ...(slugs || []).filter((v) => v),
-              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.${hugoLocaleCode(locale)}.md`
+              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.${hugoLocaleCode(
+                locale
+              )}.md`
             )
           : path.join(
               ...(slugs || []).filter((v) => v),
