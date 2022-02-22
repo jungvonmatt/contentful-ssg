@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.10](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.9...v1.4.10) (2022-02-22)
+
+
+### Bug Fixes
+
+* **hugo-locales:** Lowercase ISO locale codes to work with hugo ([088cb0b](https://github.com/jungvonmatt/contentful-ssg/commit/088cb0b871e3d93fb75641a5c031e61011838cda))
+
+
+
+
+
 ## [1.4.9](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.8...v1.4.9) (2022-02-11)
 
 **Note:** Version bump only for package @jungvonmatt/cssg-plugin-hugo
