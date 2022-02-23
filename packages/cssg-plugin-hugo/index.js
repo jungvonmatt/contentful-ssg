@@ -16,7 +16,7 @@ const defaultOptions = {
   translationStrategy: STRATEGY_DIRECTORY,
   typeIdI18n: 'd-i18n',
   languageConfig: true,
-  menuDepth: 0,
+  menuDepth: 2,
   autoSubMenu: false,
   typeIdMenu: 'c-menu',
   fieldIdHome: 'home',
@@ -75,13 +75,35 @@ export default (args) => {
     return type;
   };
 
-  const buildMenu = async (transformContext, depth = 0) => {
+  const getPageRef = (transformContext, runtimeContext, node) => {
+    const { utils, locale } = transformContext;
+    const { localized, defaultLocale } = runtimeContext;
+    const id = node?.sys?.id;
+
+    const localeData =
+      options.translationStrategy === STRATEGY_FILENAME
+        ? localized.get(defaultLocale)
+        : localized.get(locale.code);
+    const { entryMap } = localeData;
+    const entry = entryMap.get(id);
+
+    const slugs = utils.collectValues(`fields.${options.fieldIdSlug}`, {
+      linkField: `fields.${options.fieldIdParent}`,
+      entry,
+      entryMap,
+    });
+
+    return (slugs || [entry?.fields?.[options.fieldIdSlug]]).filter((v) => v).join('/');
+  };
+
+  const buildMenu = async (transformContext, runtimeContext, depth = 0) => {
     const { entry, entryMap } = transformContext;
     const entries = entry.fields?.[options.fieldIdMenuEntries] ?? [];
     const nodes = entries
       .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
       .map((node, index) => ({
         identifier: node.sys.id,
+        pageRef: getPageRef(transformContext, runtimeContext, node),
         weight: (index + 1) * 10,
         params: {
           id: node.sys.id,
@@ -408,7 +430,7 @@ export default (args) => {
       // See https://gohugo.io/content-management/menus/
       if (options.typeIdMenu && contentTypeId === options.typeIdMenu) {
         const { name = 'main' } = entry.fields;
-        const menu = await buildMenu(transformContext, options.menuDepth);
+        const menu = await buildMenu(transformContext, runtimeContext, options.menuDepth);
 
         runtimeContext.menus[hugoLocaleCode(locale)][name] = menu;
       }
