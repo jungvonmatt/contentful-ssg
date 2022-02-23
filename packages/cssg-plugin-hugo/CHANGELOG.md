@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.12](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.11...v1.4.12) (2022-02-23)
+
+
+### Bug Fixes
+
+* fix syntax error ([53ac989](https://github.com/jungvonmatt/contentful-ssg/commit/53ac989b9ba92b5c8ccd8759c77b17cf6dcebd22))
+
+
+
+
+
 ## [1.4.11](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.10...v1.4.11) (2022-02-23)
 
 
