@@ -160,6 +160,7 @@ export default (args) => {
           .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
           .map((node, index) => ({
             identifier: node.sys.id,
+            pageRef: getPageRef(transformContext, runtimeContext, node),
             parent: id,
             weight: (index + 1) * 10,
             params: {
@@ -203,6 +204,7 @@ export default (args) => {
             .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
             .map((node, index) => ({
               identifier: node.sys.id,
+              pageRef: getPageRef(transformContext, runtimeContext, node),
               parent: id,
               weight: (index + 1) * 10,
               params: {
