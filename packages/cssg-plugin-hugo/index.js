@@ -96,7 +96,7 @@ export default (args) => {
       const node = entryMap.get(id);
       const contentType = node?.sys?.contentType?.sys?.id ?? '';
       const pageId = node?.fields?.link_to_entry?.sys?.id;
-      if (options.menuRootTypes.contains(contentType)) {
+      if (options.menuRootTypes.includes(contentType)) {
         return node;
       }
 
