@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.5.0...v1.5.1) (2022-02-23)
+
+
+### Bug Fixes
+
+* **hugo-menu:** apply pageRef to child entries, too ([69c74a8](https://github.com/jungvonmatt/contentful-ssg/commit/69c74a8eef8fe6a98d1f17710818c2a87093873c))
+
+
+
+
+
 # [1.5.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.12...v1.5.0) (2022-02-23)
 
 
