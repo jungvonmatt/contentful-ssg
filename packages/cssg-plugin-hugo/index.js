@@ -26,6 +26,7 @@ const defaultOptions = {
   fieldIdMenuEntries: 'entries',
   fieldIdMenuHide: 'hide_in_menu',
   fieldIdMenuPos: 'menu_pos',
+  menuRootTypes: ['page', 'folder', 'x-folder'],
   typeConfig: {
     [TYPE_CONTENT]: ['page'],
   },
@@ -95,7 +96,7 @@ export default (args) => {
       const node = entryMap.get(id);
       const contentType = node?.sys?.contentType?.sys?.id ?? '';
       const pageId = node?.fields?.link_to_entry?.sys?.id;
-      if (contentType === 'page') {
+      if (options.menuRootTypes.contains(contentType)) {
         return node;
       }
 
