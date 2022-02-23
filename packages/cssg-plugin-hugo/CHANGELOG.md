@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.11](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.10...v1.4.11) (2022-02-23)
+
+
+### Bug Fixes
+
+* **hugo-menu:** makes menu roots configurable ([ac10c2f](https://github.com/jungvonmatt/contentful-ssg/commit/ac10c2f73646016d3ac69fd96f8a2ebca2247043))
+
+
+
+
+
 ## [1.4.10](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.9...v1.4.10) (2022-02-22)
 
 
