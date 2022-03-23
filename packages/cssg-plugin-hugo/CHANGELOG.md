@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.5.1...v1.5.2) (2022-03-23)
+
+
+### Bug Fixes
+
+* **menu:** use submenu as default value for fieldIdMenu ([e7a8b55](https://github.com/jungvonmatt/contentful-ssg/commit/e7a8b55a61cb3d5284561b318d0bf5b2a92a835e))
+
+
+
+
+
 ## [1.5.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.5.0...v1.5.1) (2022-02-23)
 
 

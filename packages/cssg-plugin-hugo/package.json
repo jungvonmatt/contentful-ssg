@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-hugo",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "",
   "main": "index.js",
   "typings": "./index.d.ts",
