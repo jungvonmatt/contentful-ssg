@@ -43,6 +43,7 @@ export interface ContentfulConfig {
   accessToken: string;
   host?: string;
   preview?: boolean;
+  sync?: boolean;
 }
 
 export interface ContentfulRcConfig {
@@ -113,6 +114,8 @@ export interface ContentfulData {
   contentTypes: ContentType[];
   entries: Entry[];
   assets: Asset[];
+  deletedEntries?: Entry[];
+  deletedAssets?: Asset[];
 }
 
 export interface LocalizedContent {
@@ -266,6 +269,15 @@ export interface PagedGetOptions<T> {
   aggregatedResponse?: CollectionProp<T>;
   query?: QueryOptions;
 }
+
+export interface SyncOptions {
+  type?: string;
+  content_type?: string;
+  limit?: number;
+  initial?: boolean;
+  nextSyncToken?: string;
+}
+
 export interface ErrorEntry {
   spaceId: string;
   environmentId: string;

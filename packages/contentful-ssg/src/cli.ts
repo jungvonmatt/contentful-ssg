@@ -16,6 +16,7 @@ import { omitKeys } from './lib/object.js';
 import { getConfig, getEnvironmentConfig } from './lib/config.js';
 import { run } from './index.js';
 import { Config, ContentfulConfig } from './types.js';
+import { resetSync } from './lib/contentful.js';
 
 const env = dotenv.config();
 dotenvExpand(env);
@@ -151,10 +152,27 @@ program
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
+      await resetSync();
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
 
       return run(verified);
+    })
+  );
+
+program
+  .command('watch')
+  .description('Fetch content objects && watch for changes')
+  .option('-p, --preview', 'Fetch with preview mode')
+  .option('-v, --verbose', 'Verbose output')
+  .option('--ignore-errors', 'No error return code when transform has errors')
+  .action(
+    actionRunner(async (cmd) => {
+      await resetSync();
+      const config = await getConfig(parseFetchArgs(cmd || {}));
+      const verified = await askMissing(config);
+
+      return run({ ...verified, sync: true });
     })
   );
 

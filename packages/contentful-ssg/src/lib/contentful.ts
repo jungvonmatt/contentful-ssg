@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { existsSync } from 'fs';
+import { readFile, unlink, writeFile } from 'fs/promises';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
 import type { Space, ApiKey, QueryOptions, CollectionProp } from 'contentful-management/types';
-import type { CreateClientParams, ContentfulClientApi, EntryFields } from 'contentful';
+import type {
+  CreateClientParams,
+  ContentfulClientApi,
+  EntryFields,
+  SyncCollection,
+} from 'contentful';
 import type {
   ContentfulConfig,
   FieldSettings,
@@ -11,6 +18,7 @@ import type {
   ContentType,
   Locale,
   PagedGetOptions,
+  SyncOptions,
 } from '../types.js';
 import contentful from 'contentful';
 import contentfulManagement from 'contentful-management';
@@ -33,6 +41,8 @@ export const LINK_TYPE_ASSET = 'Asset';
 export const LINK_TYPE_ENTRY = 'Entry';
 
 export const MAX_ALLOWED_LIMIT = 1000;
+
+export const SYNC_TOKEN_FILENAME = '.contentful_sync.lock';
 
 /**
  * Get contentType id from entry
@@ -239,6 +249,37 @@ const pagedGet = async <T>(
 };
 
 /**
+ * Synchronizes either all the content or only new content since last sync
+ * @param apiClient Contentful API client
+ * @returns Promise for the collection resulting of a sync operation
+ */
+const sync = async (apiClient): Promise<SyncCollection> => {
+  const options: SyncOptions = { initial: true };
+  if (existsSync(SYNC_TOKEN_FILENAME)) {
+    options.nextSyncToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
+    options.initial = false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const response: SyncCollection = (await apiClient.sync(options)) as SyncCollection;
+  if (response.nextSyncToken) {
+    await writeFile(SYNC_TOKEN_FILENAME, response.nextSyncToken);
+  }
+
+  return response;
+};
+
+export const isSyncRequest = () => existsSync(SYNC_TOKEN_FILENAME);
+
+export const resetSync = async () => {
+  if (isSyncRequest()) {
+    return unlink(SYNC_TOKEN_FILENAME);
+  }
+
+  return true;
+};
+
+/**
  * Gets all the existing entities based on pagination parameters.
  * The first call will have no aggregated response. Subsequent calls will
  * concatenate the new responses to the original one.
@@ -258,6 +299,13 @@ export const getContent = async (options: ContentfulConfig) => {
   const { items: contentTypes } = await pagedGet<ContentType>(apiClient, {
     method: 'getContentTypes',
   });
+
+  // Use the sync api if watch mode is enabled
+  if (options.sync) {
+    const { entries, assets, deletedEntries, deletedAssets } = await sync(apiClient);
+    return { entries, assets, deletedEntries, deletedAssets, contentTypes, locales };
+  }
+
   const { items: entries } = await pagedGet<Entry>(apiClient, {
     method: 'getEntries',
   });
