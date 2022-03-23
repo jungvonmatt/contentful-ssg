@@ -22,7 +22,7 @@ const defaultOptions = {
   fieldIdHome: 'home',
   fieldIdSlug: 'slug',
   fieldIdParent: 'parent_page',
-  fieldIdMenu: 'menu',
+  fieldIdMenu: 'submenu',
   fieldIdMenuEntries: 'entries',
   fieldIdMenuHide: 'hide_in_menu',
   fieldIdMenuPos: 'menu_pos',
