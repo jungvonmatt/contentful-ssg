@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-assets",
-  "version": "1.4.7",
+  "version": "1.6.0",
   "description": "",
   "main": "index.js",
   "type": "module",

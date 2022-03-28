@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.5.2...v1.6.0) (2022-03-28)
+
+
+### Features
+
+* **asset-sizes:** allow function passed in sizes array ([cbf3b28](https://github.com/jungvonmatt/contentful-ssg/commit/cbf3b2863f51925ff16b0fa869bf444b3bc1959a))
+
+
+
+
+
 ## [1.5.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.5.1...v1.5.2) (2022-03-23)
 
 
