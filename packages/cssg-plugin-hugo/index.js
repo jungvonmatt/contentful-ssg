@@ -26,6 +26,7 @@ const defaultOptions = {
   fieldIdMenuEntries: 'entries',
   fieldIdMenuHide: 'hide_in_menu',
   fieldIdMenuPos: 'menu_pos',
+  fieldIdMenuId: 'name',
   menuRootTypes: ['page', 'folder', 'x-folder'],
   typeConfig: {
     [TYPE_CONTENT]: ['page'],
@@ -431,10 +432,10 @@ export default (args) => {
       // Automatically build hugo menus
       // See https://gohugo.io/content-management/menus/
       if (options.typeIdMenu && contentTypeId === options.typeIdMenu) {
-        const { name = 'main' } = entry.fields;
+        const menu_id = entry.fields[options.fieldIdMenuId];
         const menu = await buildMenu(transformContext, runtimeContext, options.menuDepth);
 
-        runtimeContext.menus[hugoLocaleCode(locale)][name] = menu;
+        runtimeContext.menus[hugoLocaleCode(locale)][menu_id] = menu;
       }
 
       if (type === TYPE_CONTENT) {
