@@ -432,10 +432,10 @@ export default (args) => {
       // Automatically build hugo menus
       // See https://gohugo.io/content-management/menus/
       if (options.typeIdMenu && contentTypeId === options.typeIdMenu) {
-        const menu_id = entry.fields[options.fieldIdMenuId];
+        const menuId = entry.fields[options.fieldIdMenuId];
         const menu = await buildMenu(transformContext, runtimeContext, options.menuDepth);
 
-        runtimeContext.menus[hugoLocaleCode(locale)][menu_id] = menu;
+        runtimeContext.menus[hugoLocaleCode(locale)][menuId] = menu;
       }
 
       if (type === TYPE_CONTENT) {
