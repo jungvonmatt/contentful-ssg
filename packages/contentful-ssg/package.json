@@ -118,6 +118,7 @@
     "micromatch": "^4.0.4",
     "prettier": "^2.4.1",
     "read-pkg-up": "^9.0.0",
+    "rxjs": "^7.5.5",
     "slash": "^4.0.0",
     "snake-case": "^3.0.4",
     "tempy": "^2.0.0",

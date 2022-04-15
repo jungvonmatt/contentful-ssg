@@ -1,4 +1,5 @@
 import type { CollectOptions, Entry, TransformContext } from '../types.js';
+import { filter } from 'rxjs';
 import dlv from 'dlv';
 
 export const collectValues =
@@ -55,3 +56,23 @@ export const collect = <T = unknown>(
 
   return [value];
 };
+
+/**
+ * Wait for entry to be transformed
+ */
+export const waitFor =
+  (transformContext: Pick<TransformContext, 'entry' | 'observable' | 'entryMap'>) =>
+  async (id: string) =>
+    new Promise((resolve, reject) => {
+      if (transformContext.entry.sys.id === id) {
+        reject(new Error(`Can't wait for yourself`));
+      } else if (transformContext.entryMap.has(id)) {
+        transformContext.observable
+          .pipe(filter((ctx) => ctx?.entry?.sys?.id === id))
+          .subscribe((value) => {
+            resolve(value);
+          });
+      } else {
+        reject(new Error(`No entry with id "${id}" available`));
+      }
+    });

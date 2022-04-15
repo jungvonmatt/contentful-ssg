@@ -1,5 +1,6 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
+import type { Observable } from 'rxjs';
 import type { QueryOptions, CollectionProp } from 'contentful-management/types';
 
 import type {
@@ -202,6 +203,7 @@ export type Task = ListrTaskObject<RuntimeContext>;
 export interface TransformHelper {
   collectValues: <T>(key, options?: CollectOptions) => T[];
   collectParentValues: <T>(key, options?: CollectOptions) => T[];
+  waitFor: (id: string) => Promise<TransformContext>;
 }
 
 export type TransformContext = LocalizedContent & {
@@ -217,6 +219,7 @@ export type TransformContext = LocalizedContent & {
   fieldSettings?: Field;
   requiredFields?: string[];
   utils: TransformHelper;
+  observable: Observable<TransformContext>;
 };
 
 export interface Ignore {

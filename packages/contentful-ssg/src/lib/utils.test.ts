@@ -1,5 +1,6 @@
 import { Entry, TransformContext } from '../types.js';
-import { collect, collectParentValues, collectValues } from './utils.js';
+import { collect, collectParentValues, collectValues, waitFor } from './utils.js';
+import { BehaviorSubject } from 'rxjs';
 
 const data = new Map([
   ['1', { sys: { id: '1' }, fields: { slug: 'a' } }],
@@ -11,10 +12,34 @@ const data = new Map([
 
 const entryMap = new Map([
   ['1', { sys: { id: '1' }, fields: { slug: 'a' } }],
-  ['2', { sys: { id: '2' }, fields: { slug: 'b', parent: { sys: { id: '1' } }, link: { sys: { id: '1' } } } }],
-  ['3', { sys: { id: '3' }, fields: { slug: 'c', parent: { sys: { id: '2' } }, link: { sys: { id: '1' } } } }],
-  ['4', { sys: { id: '4' }, fields: { slug: 'd', parent: { sys: { id: '3' } }, link: { sys: { id: '3' } } } }],
-  ['5', { sys: { id: '5' }, fields: { slug: 'e', parent: { sys: { id: '4' } }, link: { sys: { id: '3' } } } }],
+  [
+    '2',
+    {
+      sys: { id: '2' },
+      fields: { slug: 'b', parent: { sys: { id: '1' } }, link: { sys: { id: '1' } } },
+    },
+  ],
+  [
+    '3',
+    {
+      sys: { id: '3' },
+      fields: { slug: 'c', parent: { sys: { id: '2' } }, link: { sys: { id: '1' } } },
+    },
+  ],
+  [
+    '4',
+    {
+      sys: { id: '4' },
+      fields: { slug: 'd', parent: { sys: { id: '3' } }, link: { sys: { id: '3' } } },
+    },
+  ],
+  [
+    '5',
+    {
+      sys: { id: '5' },
+      fields: { slug: 'e', parent: { sys: { id: '4' } }, link: { sys: { id: '3' } } },
+    },
+  ],
 ]) as unknown as Map<string, Entry>;
 
 const transformContext = { entryMap } as unknown as TransformContext;
@@ -81,5 +106,29 @@ describe('Utils', () => {
 
     expect(a).toEqual(['a', 'b', 'c', 'd', 'e']);
     expect(b).toEqual(['e', 'd', 'c', 'b', 'a']);
+  });
+
+  test('waitFor', async () => {
+    const subject = new BehaviorSubject<TransformContext>(null);
+    const observable = subject.asObservable();
+    const entry = entryMap.get('2');
+
+    // Throw error when waiting for the current entry
+    expect(async () => {
+      await waitFor({ ...transformContext, entry, observable })('2');
+    }).rejects.toThrowError();
+
+    // Throw error when waiting for non existing entry
+    expect(async () => {
+      await waitFor({ ...transformContext, entry, observable })('7');
+    }).rejects.toThrowError();
+
+    // Mimic 500ms wait time for entry
+    setTimeout(() => {
+      subject.next({ ...transformContext, entry: entryMap.get('4'), observable });
+    }, 500);
+
+    const value = await waitFor({ ...transformContext, entry, observable })('4');
+    expect(value).toEqual({ ...transformContext, entry: entryMap.get('4'), observable });
   });
 });
