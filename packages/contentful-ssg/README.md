@@ -220,7 +220,8 @@ itself is waiting for the current entry to be transformed.
   transform: (context) => {
     const { utils } = context;
     try {
-      const linkedContext = await utils.waitFor('<contentful-id>');
+      // You can overwrite the default wait timeout of 5000ms using the second parameter
+      const linkedContext = await utils.waitFor('<contentful-id>', 5000);
 
       if (linkedContext.error) {
         // Transform of linked entry failed
