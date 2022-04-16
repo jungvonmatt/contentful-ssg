@@ -203,7 +203,7 @@ export type Task = ListrTaskObject<RuntimeContext>;
 export interface TransformHelper {
   collectValues: <T>(key, options?: CollectOptions) => T[];
   collectParentValues: <T>(key, options?: CollectOptions) => T[];
-  waitFor: (id: string) => Promise<TransformContext>;
+  waitFor: (id: string, waitTimeout?: number) => Promise<ObservableContext>;
 }
 
 export type TransformContext = LocalizedContent & {
@@ -219,9 +219,14 @@ export type TransformContext = LocalizedContent & {
   fieldSettings?: Field;
   requiredFields?: string[];
   utils: TransformHelper;
-  observable: Observable<TransformContext>;
+  observable: Observable<ObservableContext>;
 };
 
+export type ObservableContext = Readonly<
+  Pick<TransformContext, 'id' | 'contentTypeId' | 'entry' | 'content' | 'locale'> & {
+    error?: unknown;
+  }
+>;
 export interface Ignore {
   add(pattern: string | Ignore | string[] | Ignore[]): Ignore;
   filter(paths: string[]): string[];

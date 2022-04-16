@@ -1,4 +1,11 @@
-import type { Config, RuntimeContext, Task, TransformContext, TransformHelper } from './types.js';
+import type {
+  Config,
+  ObservableContext,
+  RuntimeContext,
+  Task,
+  TransformContext,
+  TransformHelper,
+} from './types.js';
 import Listr from 'listr';
 import { BehaviorSubject } from 'rxjs';
 import chalk from 'chalk';
@@ -84,7 +91,7 @@ export const run = async (config: Config): Promise<void> => {
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
             task: async () => {
-              const subject = new BehaviorSubject<TransformContext>(null);
+              const subject = new BehaviorSubject<ObservableContext>(null);
               const data = ctx.localized.get(locale.code);
               const { entries = [] } = data || {};
 

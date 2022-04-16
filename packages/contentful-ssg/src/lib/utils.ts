@@ -62,17 +62,27 @@ export const collect = <T = unknown>(
  */
 export const waitFor =
   (transformContext: Pick<TransformContext, 'entry' | 'observable' | 'entryMap'>) =>
-  async (id: string) =>
+  async (id: string, waitTimeout = 5000) =>
     new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(
+          new Error(
+            `Exceeded timeout of ${waitTimeout} ms while waiting for entry ${id} to complete`
+          )
+        );
+      }, waitTimeout);
       if (transformContext.entry.sys.id === id) {
+        clearTimeout(timeout);
         reject(new Error(`Can't wait for yourself`));
       } else if (transformContext.entryMap.has(id)) {
         transformContext.observable
           .pipe(filter((ctx) => ctx?.entry?.sys?.id === id))
           .subscribe((value) => {
+            clearTimeout(timeout);
             resolve(value);
           });
       } else {
+        clearTimeout(timeout);
         reject(new Error(`No entry with id "${id}" available`));
       }
     });
