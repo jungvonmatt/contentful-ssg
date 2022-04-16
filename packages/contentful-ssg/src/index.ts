@@ -92,6 +92,7 @@ export const run = async (config: Config): Promise<void> => {
             title: `${locale.code}`,
             task: async () => {
               const subject = new BehaviorSubject<ObservableContext>(null);
+              const observable = subject.asObservable();
               const data = ctx.localized.get(locale.code);
               const { entries = [] } = data || {};
 
@@ -103,7 +104,7 @@ export const run = async (config: Config): Promise<void> => {
                 const utils = {
                   collectValues: collectValues({ ...data, entry }),
                   collectParentValues: collectParentValues({ ...data, entry }),
-                  waitFor: waitFor({ ...data, entry, observable: subject.asObservable() }),
+                  waitFor: waitFor({ ...data, entry, observable }),
                 } as TransformHelper;
 
                 const transformContext: TransformContext = {
@@ -113,7 +114,7 @@ export const run = async (config: Config): Promise<void> => {
                   entry,
                   locale,
                   utils,
-                  observable: subject.asObservable(),
+                  observable,
                 };
 
                 try {
