@@ -10,33 +10,35 @@ const data = new Map([
   ['5', { sys: { id: '5' }, fields: { slug: 'e', parent: '4' } }],
 ]) as unknown as Map<string, Entry>;
 
+const contentType = { sys: { id: 'test-type' } };
+
 const entryMap = new Map([
-  ['1', { sys: { id: '1' }, fields: { slug: 'a' } }],
+  ['1', { sys: { id: '1', contentType }, fields: { slug: 'a' } }],
   [
     '2',
     {
-      sys: { id: '2' },
+      sys: { id: '2', contentType },
       fields: { slug: 'b', parent: { sys: { id: '1' } }, link: { sys: { id: '1' } } },
     },
   ],
   [
     '3',
     {
-      sys: { id: '3' },
+      sys: { id: '3', contentType },
       fields: { slug: 'c', parent: { sys: { id: '2' } }, link: { sys: { id: '1' } } },
     },
   ],
   [
     '4',
     {
-      sys: { id: '4' },
+      sys: { id: '4', contentType },
       fields: { slug: 'd', parent: { sys: { id: '3' } }, link: { sys: { id: '3' } } },
     },
   ],
   [
     '5',
     {
-      sys: { id: '5' },
+      sys: { id: '5', contentType },
       fields: { slug: 'e', parent: { sys: { id: '4' } }, link: { sys: { id: '3' } } },
     },
   ],
@@ -123,6 +125,11 @@ describe('Utils', () => {
       await waitFor({ ...transformContext, entry, observable })('7');
     }).rejects.toThrowError();
 
+    // Throw error when waiting timeout is reached
+    await expect(async () => {
+      await waitFor({ ...transformContext, entry, observable })('4', 50);
+    }).rejects.toThrowError();
+
     // Mimic 500ms wait time for entry
     setTimeout(() => {
       subject.next({ ...transformContext, entry: entryMap.get('4'), observable });
@@ -130,5 +137,25 @@ describe('Utils', () => {
 
     const value = await waitFor({ ...transformContext, entry, observable })('4');
     expect(value).toEqual({ ...transformContext, entry: entryMap.get('4'), observable });
+  });
+
+  test('waitFor error', async () => {
+    const subject = new BehaviorSubject<TransformContext>(null);
+    const observable = subject.asObservable();
+    const entry = entryMap.get('2');
+
+    // Mimic 500ms wait time for entry
+    setTimeout(() => {
+      subject.next({
+        ...transformContext,
+        entry: entryMap.get('4'),
+        observable,
+        error: new Error('test error'),
+      });
+    }, 500);
+
+    await expect(async () => {
+      await waitFor({ ...transformContext, entry, observable })('4');
+    }).rejects.toThrowError('test error');
   });
 });

@@ -1,6 +1,10 @@
 import type { CollectOptions, Entry, TransformContext } from '../types.js';
+import { getContentId, getContentTypeId } from './contentful.js';
 import { filter } from 'rxjs';
 import dlv from 'dlv';
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const DEFAULT_WAIT_TIMEOUT = 10000;
 
 export const collectValues =
   (transformContext: Pick<TransformContext, 'entry' | 'entryMap'>) =>
@@ -62,24 +66,39 @@ export const collect = <T = unknown>(
  */
 export const waitFor =
   (transformContext: Pick<TransformContext, 'entry' | 'observable' | 'entryMap'>) =>
-  async (id: string, waitTimeout = 5000) =>
+  async (id: string, waitTimeout = DEFAULT_WAIT_TIMEOUT) =>
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
+        const sourceEntry = transformContext.entry;
+        const destEntry = transformContext.entryMap.get(id);
+        const source = `${getContentId(sourceEntry)} (${getContentTypeId(sourceEntry)})`;
+        const dest = `${getContentId(destEntry)} (${getContentTypeId(destEntry)})`;
+
         reject(
           new Error(
-            `Exceeded timeout of ${waitTimeout} ms while waiting for entry ${id} to complete`
+            `Exceeded timeout of ${waitTimeout} ms while waiting for entry ${id} to complete.
+Entry ${source} waiting for ${dest}.`
           )
         );
       }, waitTimeout);
       if (transformContext.entry.sys.id === id) {
         clearTimeout(timeout);
-        reject(new Error(`Can't wait for yourself`));
+        const sourceEntry = transformContext.entry;
+        const source = `${getContentId(sourceEntry)} (${getContentTypeId(sourceEntry)})`;
+        reject(
+          new Error(`Can't wait for yourself
+Entry ${source} waiting for ${source}.`)
+        );
       } else if (transformContext.entryMap.has(id)) {
         transformContext.observable
           .pipe(filter((ctx) => ctx?.entry?.sys?.id === id))
           .subscribe((value) => {
             clearTimeout(timeout);
-            resolve(value);
+            if (value.error) {
+              reject(value.error);
+            } else {
+              resolve(value);
+            }
           });
       } else {
         clearTimeout(timeout);
