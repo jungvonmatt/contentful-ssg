@@ -220,14 +220,15 @@ itself is waiting for the current entry to be transformed.
   transform: (context) => {
     const { utils } = context;
     try {
-      // You can overwrite the default wait timeout of 10000ms using the second parameter
+      // You can overwrite the default wait timeout of 20000ms using the second parameter
       const linkedContext = await utils.waitFor('<contentful-id>', 5000);
 
       // Do something usefull with the transformed data
       // which you can't do with context.entryMap.get('<contentful-id>')
 
     } catch (error) {
-      // Entry isn't available or the transform method for the entry throws an error
+      // Entry isn't available, the transform method for the entry throws an error
+      // or we encountered a cyclic dependency
     }
 
     return { ...content };

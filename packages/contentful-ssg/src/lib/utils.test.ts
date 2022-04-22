@@ -42,6 +42,34 @@ const entryMap = new Map([
       fields: { slug: 'e', parent: { sys: { id: '4' } }, link: { sys: { id: '3' } } },
     },
   ],
+  [
+    '6',
+    {
+      sys: { id: '6', contentType },
+      fields: { slug: 'f', parent: { sys: { id: '1' } }, link: { sys: { id: '1' } } },
+    },
+  ],
+  [
+    '7',
+    {
+      sys: { id: '7', contentType },
+      fields: { slug: 'g', parent: { sys: { id: '2' } }, link: { sys: { id: '1' } } },
+    },
+  ],
+  [
+    '8',
+    {
+      sys: { id: '8', contentType },
+      fields: { slug: 'h', parent: { sys: { id: '3' } }, link: { sys: { id: '3' } } },
+    },
+  ],
+  [
+    '9',
+    {
+      sys: { id: '9', contentType },
+      fields: { slug: 'i', parent: { sys: { id: '4' } }, link: { sys: { id: '3' } } },
+    },
+  ],
 ]) as unknown as Map<string, Entry>;
 
 const transformContext = { entryMap } as unknown as TransformContext;
@@ -117,15 +145,15 @@ describe('Utils', () => {
 
     // Throw error when waiting for the current entry
     expect(async () => {
-      await waitFor({ ...transformContext, entry, observable })('2');
+      await waitFor({ ...transformContext, entry: entryMap.get('2'), observable })('2');
     }).rejects.toThrowError();
 
     // Throw error when waiting for non existing entry
     expect(async () => {
-      await waitFor({ ...transformContext, entry, observable })('7');
+      await waitFor({ ...transformContext, entry: entryMap.get('3'), observable })('10');
     }).rejects.toThrowError();
 
-    // Throw error when waiting timeout is reached
+    // // Throw error when waiting timeout is reached
     await expect(async () => {
       await waitFor({ ...transformContext, entry, observable })('4', 50);
     }).rejects.toThrowError();
@@ -135,14 +163,14 @@ describe('Utils', () => {
       subject.next({ ...transformContext, entry: entryMap.get('4'), observable });
     }, 500);
 
-    const value = await waitFor({ ...transformContext, entry, observable })('4');
+    const value = await waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('4');
     expect(value).toEqual({ ...transformContext, entry: entryMap.get('4'), observable });
   });
 
   test('waitFor error', async () => {
     const subject = new BehaviorSubject<TransformContext>(null);
     const observable = subject.asObservable();
-    const entry = entryMap.get('2');
+    const entry = entryMap.get('3');
 
     // Mimic 500ms wait time for entry
     setTimeout(() => {
@@ -157,5 +185,40 @@ describe('Utils', () => {
     await expect(async () => {
       await waitFor({ ...transformContext, entry, observable })('4');
     }).rejects.toThrowError('test error');
+  });
+
+  test('detect cyclic dependency', async () => {
+    const subject = new BehaviorSubject<TransformContext>(null);
+    const observable = subject.asObservable();
+
+    // mimic behaviour in index.ts
+    const waitMock = async (source: string, dest: string) => {
+      try {
+        await waitFor({ ...transformContext, entry: entryMap.get(source), observable })(dest, 1000);
+        subject.next({
+          ...transformContext,
+          entry: entryMap.get(source),
+          observable,
+        });
+      } catch (error) {
+        subject.next({
+          ...transformContext,
+          entry: entryMap.get(source),
+          error,
+          observable,
+        });
+
+        throw error;
+      }
+    };
+
+    await expect(async () => {
+      await Promise.all([
+        waitMock('2', '4'),
+        waitMock('4', '1'),
+        waitMock('1', '3'),
+        waitMock('3', '2'),
+      ]);
+    }).rejects.toThrowError(/Found cyclic dependency/);
   });
 });
