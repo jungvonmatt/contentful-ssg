@@ -97,14 +97,23 @@ export const waitFor = (
 ) => {
   const sourceEntry = transformContext.entry;
   const sourceId = getContentId(sourceEntry);
+  const sourceContentTypeId = getContentTypeId(sourceEntry);
 
   return async (id: string, waitTimeout = DEFAULT_WAIT_TIMEOUT) => {
+    // Make sure we don't try to wait for the current entry
+    if (sourceId === id) {
+      const source = `${sourceId} (${sourceContentTypeId})`;
+      throw new Error(`Can't wait for yourself.
+Entry ${source} waiting for ${source}.`);
+    }
+
     waitForSubject.next({ source: getContentId(sourceEntry), dest: id });
 
     return new Promise((resolve, reject) => {
+      // If anything goes wrong, reject promise after waitTimeout
       const timeout = setTimeout(() => {
         const destEntry = transformContext.entryMap.get(id);
-        const source = `${sourceId} (${getContentTypeId(sourceEntry)})`;
+        const source = `${sourceId} (${sourceContentTypeId})`;
         const dest = `${getContentId(destEntry)} (${getContentTypeId(destEntry)})`;
 
         reject(
@@ -115,14 +124,7 @@ Entry ${source} waiting for ${dest}.`
         );
       }, waitTimeout);
 
-      if (transformContext.entry.sys.id === id) {
-        clearTimeout(timeout);
-        const source = `${getContentId(sourceEntry)} (${getContentTypeId(sourceEntry)})`;
-        reject(
-          new Error(`Can't wait for yourself
-Entry ${source} waiting for ${source}.`)
-        );
-      } else if (transformContext.entryMap.has(id)) {
+      if (transformContext.entryMap.has(id)) {
         transformContext.observable
           .pipe(filter((ctx) => ctx?.entry?.sys?.id === id))
           .subscribe((value) => {

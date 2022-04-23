@@ -141,22 +141,21 @@ describe('Utils', () => {
   test('waitFor', async () => {
     const subject = new BehaviorSubject<TransformContext>(null);
     const observable = subject.asObservable();
-    const entry = entryMap.get('2');
 
     // Throw error when waiting for the current entry
     expect(async () => {
       await waitFor({ ...transformContext, entry: entryMap.get('2'), observable })('2');
-    }).rejects.toThrowError();
+    }).rejects.toThrowError(/2.*waiting.*2/);
 
     // Throw error when waiting for non existing entry
     expect(async () => {
       await waitFor({ ...transformContext, entry: entryMap.get('3'), observable })('10');
-    }).rejects.toThrowError();
+    }).rejects.toThrowError('No entry with id "10" available');
 
     // // Throw error when waiting timeout is reached
     await expect(async () => {
-      await waitFor({ ...transformContext, entry, observable })('4', 50);
-    }).rejects.toThrowError();
+      await waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('4', 50);
+    }).rejects.toThrowError(/Exceeded timeout of 50 ms/);
 
     // Mimic 500ms wait time for entry
     setTimeout(() => {
