@@ -224,7 +224,7 @@ export type TransformContext = LocalizedContent & {
 
 export type ObservableContext = Readonly<
   Pick<TransformContext, 'id' | 'contentTypeId' | 'entry' | 'content' | 'locale'> & {
-    error?: unknown;
+    error?: Error;
   }
 >;
 export interface Ignore {

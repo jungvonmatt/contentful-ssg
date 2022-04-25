@@ -98,6 +98,7 @@ export const waitFor = (
   const sourceEntry = transformContext.entry;
   const sourceId = getContentId(sourceEntry);
   const sourceContentTypeId = getContentTypeId(sourceEntry);
+  const source = `${sourceId} (${sourceContentTypeId})`;
 
   return async (id: string, waitTimeout = DEFAULT_WAIT_TIMEOUT) => {
     // Make sure we don't try to wait for the current entry
@@ -108,14 +109,14 @@ Entry ${source} waiting for ${source}.`);
     }
 
     waitForSubject.next({ source: getContentId(sourceEntry), dest: id });
+    const destEntry = transformContext.entryMap.get(id);
+    const destId = getContentId(destEntry);
+    const destContentTypeId = getContentTypeId(destEntry);
+    const dest = `${destId} (${destContentTypeId})`;
 
     return new Promise((resolve, reject) => {
       // If anything goes wrong, reject promise after waitTimeout
       const timeout = setTimeout(() => {
-        const destEntry = transformContext.entryMap.get(id);
-        const source = `${sourceId} (${sourceContentTypeId})`;
-        const dest = `${getContentId(destEntry)} (${getContentTypeId(destEntry)})`;
-
         reject(
           new Error(
             `Exceeded timeout of ${waitTimeout} ms while waiting for entry ${id} to complete.
@@ -130,19 +131,21 @@ Entry ${source} waiting for ${dest}.`
           .subscribe((value) => {
             clearTimeout(timeout);
             if (value.error) {
-              reject(value.error);
+              reject(new Error(`Awaited entry ${dest} errored: ${value?.error?.message ?? ''}`));
             } else {
               resolve(value);
             }
           });
 
         cyclicErrorObservable
-          .pipe(filter((v) => v?.[sourceId]?.some((value) => value.includes(sourceId))))
+          .pipe(filter((v) => v?.[sourceId]?.includes(sourceId)))
           .pipe(distinct())
           .subscribe((v) => {
             clearTimeout(timeout);
             const deps = v?.[sourceId] ?? [];
-            reject(new Error(`Found cyclic dependency: ${[sourceId, ...deps].join(' -> ')}`));
+            reject(
+              new Error(`Found cyclic dependency in ${source}: ${[sourceId, ...deps].join(' -> ')}`)
+            );
           });
       } else {
         clearTimeout(timeout);

@@ -128,7 +128,12 @@ export const run = async (config: Config): Promise<void> => {
                   await write({ ...transformContext, content }, ctx, config);
                   ctx.stats.addSuccess(transformContext);
                 } catch (error: unknown) {
-                  subject.next({ ...transformContext, error });
+                  if (error instanceof Error) {
+                    subject.next({ ...transformContext, error });
+                  } else if (typeof error === 'string') {
+                    subject.next({ ...transformContext, error: new Error(error) });
+                  }
+
                   if (error instanceof ValidationError) {
                     ctx.stats.addSkipped(transformContext, error);
                   } else if (typeof error === 'string' || error instanceof Error) {

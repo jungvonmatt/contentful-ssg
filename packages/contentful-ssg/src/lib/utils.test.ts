@@ -190,8 +190,18 @@ describe('Utils', () => {
     const subject = new BehaviorSubject<TransformContext>(null);
     const observable = subject.asObservable();
 
+    // let 9 finish regularly
+    setTimeout(() => {
+      subject.next({
+        ...transformContext,
+        entry: entryMap.get('9'),
+        observable,
+      });
+    }, 100);
+
     // mimic behaviour in index.ts
-    const waitMock = async (source: string, dest: string) => {
+    const waitMock = async (source: string, dest: string, delay: number) => {
+      await new Promise((resolve) => setTimeout(resolve, delay));
       try {
         await waitFor({ ...transformContext, entry: entryMap.get(source), observable })(dest, 1000);
         subject.next({
@@ -199,6 +209,7 @@ describe('Utils', () => {
           entry: entryMap.get(source),
           observable,
         });
+        return `SUCCESS ${source}`;
       } catch (error) {
         subject.next({
           ...transformContext,
@@ -206,18 +217,22 @@ describe('Utils', () => {
           error,
           observable,
         });
-
-        throw error;
+        return `${error.message}`;
       }
     };
 
-    await expect(async () => {
-      await Promise.all([
-        waitMock('2', '4'),
-        waitMock('4', '1'),
-        waitMock('1', '3'),
-        waitMock('3', '2'),
-      ]);
-    }).rejects.toThrowError(/Found cyclic dependency/);
+    const result = await Promise.all([
+      waitMock('6', '8', 0),
+      waitMock('8', '5', 10),
+      waitMock('5', '7', 20),
+      waitMock('7', '6', 30),
+      waitMock('3', '9', 40),
+    ]);
+
+    expect(result[0]).toMatch('Found cyclic dependency in 6 (test-type): 6 -> 8 -> 5 -> 7 -> 6');
+    expect(result[1]).toMatch('Found cyclic dependency in 8 (test-type): 8 -> 5 -> 7 -> 6 -> 8');
+    expect(result[2]).toMatch('Found cyclic dependency in 5 (test-type): 5 -> 7 -> 6 -> 8 -> 5');
+    expect(result[3]).toMatch(/Awaited entry 6 \(test-type\) errored/);
+    expect(result[4]).toMatch('SUCCESS 3');
   });
 });
