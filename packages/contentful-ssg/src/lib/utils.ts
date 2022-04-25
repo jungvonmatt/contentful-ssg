@@ -103,7 +103,6 @@ export const waitFor = (
   return async (id: string, waitTimeout = DEFAULT_WAIT_TIMEOUT) => {
     // Make sure we don't try to wait for the current entry
     if (sourceId === id) {
-      const source = `${sourceId} (${sourceContentTypeId})`;
       throw new Error(`Can't wait for yourself.
 Entry ${source} waiting for ${source}.`);
     }
