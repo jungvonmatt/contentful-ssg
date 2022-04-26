@@ -137,7 +137,7 @@ export const run = async (config: Config): Promise<void> => {
 
                   if (error instanceof ValidationError) {
                     ctx.stats.addSkipped(transformContext, error);
-                  } else if (typeof error === 'string' || error instanceof Error) {
+                  } else {
                     ctx.stats.addError(transformContext, error);
                   }
                 }
