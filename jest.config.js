@@ -15,6 +15,7 @@ export default {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  testResultsProcessor: 'jest-sonar-reporter',
   transformIgnorePatterns: ['node_modules/(?!(@jungvonmatt/contentful-ssg))'],
   testRegex: '/src/.*\\.test.(js|ts)$',
 
