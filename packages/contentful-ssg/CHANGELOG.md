@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.6.1...v1.7.0) (2022-04-26)
+
+
+### Features
+
+* **utils:** adds waitFor util ([#39](https://github.com/jungvonmatt/contentful-ssg/issues/39)) ([0840ecd](https://github.com/jungvonmatt/contentful-ssg/commit/0840ecde90a3e08cebde144dafabb720c2e2124f))
+
+
+
+
+
 ## [1.4.9](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.8...v1.4.9) (2022-02-11)
 
 
