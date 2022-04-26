@@ -2,6 +2,7 @@ import type { CollectOptions, Entry, TransformContext } from '../types.js';
 import { getContentId, getContentTypeId } from './contentful.js';
 import { ReplaySubject, map, distinct, filter } from 'rxjs';
 import dlv from 'dlv';
+import { WrappedError } from './error.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const DEFAULT_WAIT_TIMEOUT = 20000;
@@ -130,7 +131,7 @@ Entry ${source} waiting for ${dest}.`
           .subscribe((value) => {
             clearTimeout(timeout);
             if (value.error) {
-              reject(new Error(`Awaited entry ${dest} errored: ${value?.error?.message ?? ''}`));
+              reject(new WrappedError(`Awaited entry ${dest} errored`, value.error));
             } else {
               resolve(value);
             }

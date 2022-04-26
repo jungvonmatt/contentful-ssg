@@ -28,11 +28,12 @@ export class Stats {
     this.success.push({ message, ...this.toEntry(context) });
   }
 
-  addError(context: TransformContext, error: string | Error): void {
-    if (typeof error === 'string') {
-      this.errors.push({ error: new Error(error), ...this.toEntry(context) });
-    } else {
+  addError(context: TransformContext, error: unknown): void {
+    if (error instanceof Error) {
       this.errors.push({ error, ...this.toEntry(context) });
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
+      this.errors.push({ error: new Error(`${error}`), ...this.toEntry(context) });
     }
   }
 

@@ -212,7 +212,7 @@ The same as collectValues just without the value from the current entry
 ###### waitFor
 
 Wait for specific entry to be transformed.
-Be aware that this can lead to dead ends when you're awaiting something which
+Be aware that this can lead to deadlocks when you're awaiting something which
 itself is waiting for the current entry to be transformed.
 
 ```js

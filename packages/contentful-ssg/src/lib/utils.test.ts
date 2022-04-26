@@ -1,6 +1,7 @@
 import { Entry, TransformContext } from '../types.js';
 import { collect, collectParentValues, collectValues, waitFor } from './utils.js';
 import { BehaviorSubject } from 'rxjs';
+import { WrappedError } from './error.js';
 
 const data = new Map([
   ['1', { sys: { id: '1' }, fields: { slug: 'a' } }],
@@ -183,7 +184,15 @@ describe('Utils', () => {
 
     await expect(async () => {
       await waitFor({ ...transformContext, entry, observable })('4');
-    }).rejects.toThrowError('test error');
+    }).rejects.toThrowError(WrappedError);
+
+    try {
+      await waitFor({ ...transformContext, entry, observable })('4');
+    } catch (error) {
+      expect(error).toBeInstanceOf(WrappedError);
+      expect(error.message).toMatch('Awaited entry 4 (test-type) errored');
+      expect(error.originalError.message).toEqual('test error');
+    }
   });
 
   test('detect cyclic dependency', async () => {

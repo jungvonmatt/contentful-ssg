@@ -130,8 +130,9 @@ export const run = async (config: Config): Promise<void> => {
                 } catch (error: unknown) {
                   if (error instanceof Error) {
                     subject.next({ ...transformContext, error });
-                  } else if (typeof error === 'string') {
-                    subject.next({ ...transformContext, error: new Error(error) });
+                  } else {
+                    // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
+                    subject.next({ ...transformContext, error: new Error(`${error}`) });
                   }
 
                   if (error instanceof ValidationError) {
