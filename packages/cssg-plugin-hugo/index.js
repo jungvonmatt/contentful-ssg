@@ -101,7 +101,7 @@ export default (args) => {
     const { entry, entryMap } = transformContext;
     const entries = entry.fields?.[options.fieldIdMenuEntries] ?? [];
     const nodes = entries
-      .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+      .filter((node) => node?.sys?.id)
       .map((node, index) => ({
         identifier: node.sys.id,
         pageRef: getPageRef(transformContext, runtimeContext, node),
@@ -109,7 +109,7 @@ export default (args) => {
         params: {
           id: node.sys.id,
           // eslint-disable-next-line camelcase
-          content_type: node.sys.contentType.sys.id,
+          content_type: entryMap.get(node.sys.id).sys.contentType.sys.id,
         },
       }));
 
