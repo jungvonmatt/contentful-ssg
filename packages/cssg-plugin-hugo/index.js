@@ -161,18 +161,22 @@ export default (args) => {
         subentries.flatMap((node) => getChildnodesManual(node, depth - 1, [...ids, id]))
       );
 
+      const getId = (node) => node?.sys?.id;
+      const getContentTypeId = (node) =>
+        node?.sys?.contentType?.sys?.id || entryMap?.get(node?.sys?.id)?.sys?.contentType?.sys?.id;
+
       return [
         ...subentries
-          .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+          .filter((node) => getId(node) && getContentTypeId(node))
           .map((node, index) => ({
-            identifier: node.sys.id,
+            identifier: getId(node),
             pageRef: getPageRef(transformContext, runtimeContext, node),
             parent: id,
             weight: (index + 1) * 10,
             params: {
-              id: node.sys.id,
+              id: getId(node),
               // eslint-disable-next-line camelcase
-              content_type: node.sys.contentType.sys.id,
+              content_type: getContentTypeId(node),
             },
           })),
         ...collected,
