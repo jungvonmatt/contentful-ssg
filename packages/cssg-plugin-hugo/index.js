@@ -106,7 +106,7 @@ export default (args) => {
     const entries = entry.fields?.[options.fieldIdMenuEntries] ?? [];
     const nodes = entries
       .map((node) => getFromEntryMap(node))
-      .filter((node) => getContentId(node) && getContentTypeId(node))
+      .filter((node) => Boolean(node))
       .map((node, index) => ({
         identifier: getContentId(node),
         pageRef: getPageRef(transformContext, runtimeContext, node),
@@ -164,7 +164,7 @@ export default (args) => {
       return [
         ...subentries
           .map((node) => getFromEntryMap(node))
-          .filter((node) => getContentId(node) && getContentTypeId(node))
+          .filter((node) => Boolean(node))
           .map((node, index) => ({
             identifier: getContentId(node),
             pageRef: getPageRef(transformContext, runtimeContext, node),
@@ -209,7 +209,7 @@ export default (args) => {
         await Promise.allSettled([
           ...sorted
             .map((node) => getFromEntryMap(node))
-            .filter((node) => getContentId(node) && getContentTypeId(node))
+            .filter((node) => Boolean(node))
             .map((node, index) => ({
               identifier: getContentId(node),
               pageRef: getPageRef(transformContext, runtimeContext, node),
