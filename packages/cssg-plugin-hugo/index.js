@@ -1,4 +1,5 @@
 import { snakeCaseKeys } from '@jungvonmatt/contentful-ssg/lib/object';
+import { getContentId, getContentTypeId } from '@jungvonmatt/contentful-ssg/lib/contentful';
 import mm from 'micromatch';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
@@ -100,19 +101,18 @@ export default (args) => {
   const buildMenu = async (transformContext, runtimeContext, depth = 0) => {
     const { entry, entryMap } = transformContext;
 
-    const getId = (node) => node?.sys?.id;
-    const getContentTypeId = (node) =>
-      node?.sys?.contentType?.sys?.id || entryMap?.get(node?.sys?.id)?.sys?.contentType?.sys?.id;
+    const getFromEntryMap = (node) => entryMap?.get(getContentId(node));
 
     const entries = entry.fields?.[options.fieldIdMenuEntries] ?? [];
     const nodes = entries
-      .filter((node) => getId(node) && getContentTypeId(node))
+      .map((node) => getFromEntryMap(node))
+      .filter((node) => getContentId(node) && getContentTypeId(node))
       .map((node, index) => ({
-        identifier: getId(node),
+        identifier: getContentId(node),
         pageRef: getPageRef(transformContext, runtimeContext, node),
         weight: (index + 1) * 10,
         params: {
-          id: getId(node),
+          id: getContentId(node),
           // eslint-disable-next-line camelcase
           content_type: getContentTypeId(node),
         },
@@ -161,20 +161,17 @@ export default (args) => {
         subentries.flatMap((node) => getChildnodesManual(node, depth - 1, [...ids, id]))
       );
 
-      const getId = (node) => node?.sys?.id;
-      const getContentTypeId = (node) =>
-        node?.sys?.contentType?.sys?.id || entryMap?.get(node?.sys?.id)?.sys?.contentType?.sys?.id;
-
       return [
         ...subentries
-          .filter((node) => getId(node) && getContentTypeId(node))
+          .map((node) => getFromEntryMap(node))
+          .filter((node) => getContentId(node) && getContentTypeId(node))
           .map((node, index) => ({
-            identifier: getId(node),
+            identifier: getContentId(node),
             pageRef: getPageRef(transformContext, runtimeContext, node),
             parent: id,
             weight: (index + 1) * 10,
             params: {
-              id: getId(node),
+              id: getContentId(node),
               // eslint-disable-next-line camelcase
               content_type: getContentTypeId(node),
             },
@@ -211,16 +208,17 @@ export default (args) => {
       return Array.from(
         await Promise.allSettled([
           ...sorted
-            .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+            .map((node) => getFromEntryMap(node))
+            .filter((node) => getContentId(node) && getContentTypeId(node))
             .map((node, index) => ({
-              identifier: node.sys.id,
+              identifier: getContentId(node),
               pageRef: getPageRef(transformContext, runtimeContext, node),
               parent: id,
               weight: (index + 1) * 10,
               params: {
-                id: node.sys.id,
+                id: getContentId(node),
                 // eslint-disable-next-line camelcase
-                content_type: node.sys.contentType.sys.id,
+                content_type: getContentTypeId(node),
               },
             })),
           ...sorted.flatMap((node) => getChildnodesRecursive(node, depth - 1)),
