@@ -1,6 +1,6 @@
 import { Entry, TransformContext } from '../types.js';
 import { collect, collectParentValues, collectValues, waitFor } from './utils.js';
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { WrappedError } from './error.js';
 
 const data = new Map([
@@ -140,7 +140,7 @@ describe('Utils', () => {
   });
 
   test('waitFor', async () => {
-    const subject = new BehaviorSubject<TransformContext>(null);
+    const subject = new ReplaySubject<TransformContext>(null);
     const observable = subject.asObservable();
 
     // Throw error when waiting for the current entry
@@ -168,7 +168,7 @@ describe('Utils', () => {
   });
 
   test('waitFor error', async () => {
-    const subject = new BehaviorSubject<TransformContext>(null);
+    const subject = new ReplaySubject<TransformContext>(null);
     const observable = subject.asObservable();
     const entry = entryMap.get('3');
 
@@ -196,7 +196,7 @@ describe('Utils', () => {
   });
 
   test('detect cyclic dependency', async () => {
-    const subject = new BehaviorSubject<TransformContext>(null);
+    const subject = new ReplaySubject<TransformContext>(null);
     const observable = subject.asObservable();
 
     // let 9 finish regularly
@@ -243,5 +243,56 @@ describe('Utils', () => {
     expect(result[2]).toMatch('Found cyclic dependency in 5 (test-type): 5 -> 7 -> 6 -> 8 -> 5');
     expect(result[3]).toMatch(/Awaited entry 6 \(test-type\) errored/);
     expect(result[4]).toMatch('SUCCESS 3');
+  });
+
+  test('handle subscriptions on postponed subscribe', async () => {
+    const subject = new ReplaySubject<TransformContext>();
+    const observable = subject.asObservable();
+
+    const finishSuccess = (id, time = 0) =>
+      setTimeout(() => {
+        subject.next({
+          ...transformContext,
+          entry: entryMap.get(id),
+          observable,
+        });
+      }, time);
+
+    const finishError = (id, time = 0) =>
+      setTimeout(() => {
+        subject.next({
+          ...transformContext,
+          entry: entryMap.get(id),
+          error: new Error(`Error on ${id}`),
+          observable,
+        });
+      }, time);
+
+    finishSuccess('2', 20);
+    finishSuccess('3', 40);
+    finishError('4', 30);
+    finishSuccess('5', 50);
+
+    const transFormMock = () =>
+      Promise.all([
+        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('2'),
+        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('3'),
+        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('4'),
+        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('5'),
+      ]);
+
+    const result = await new Promise((resolve) => {
+      setTimeout(async () => {
+        try {
+          const result = await transFormMock();
+          resolve(result);
+        } catch (error) {
+          resolve(error);
+        }
+      }, 500);
+    });
+
+    expect(result).toBeInstanceOf(WrappedError);
+    expect((result as WrappedError).message).toMatch(/Awaited entry 4 \(test-type\) errored/);
   });
 });

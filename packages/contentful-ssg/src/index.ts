@@ -7,7 +7,7 @@ import type {
   TransformHelper,
 } from './types.js';
 import Listr from 'listr';
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import chalk from 'chalk';
 import { getContentTypeId, getContentId } from './lib/contentful.js';
 import { setup } from './tasks/setup.js';
@@ -91,7 +91,7 @@ export const run = async (config: Config): Promise<void> => {
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
             task: async () => {
-              const subject = new BehaviorSubject<ObservableContext>(null);
+              const subject = new ReplaySubject<ObservableContext>();
               const observable = subject.asObservable();
               const data = ctx.localized.get(locale.code);
               const { entries = [] } = data || {};
