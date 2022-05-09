@@ -43,3 +43,6 @@ content/
 .idea
 .vs
 .vscode
+
+# turborepo
+.turbo

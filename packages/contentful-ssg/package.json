@@ -170,5 +170,10 @@
     "compilerOptions": {
       "module": "es2020"
     }
+  },
+  "jestSonar": {
+    "reportPath": "coverage",
+    "reportFile": "test-report.xml",
+    "indent": 2
   }
 }

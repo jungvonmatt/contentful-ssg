@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  plugins: ['prettier'],
   extends: ['xo', 'xo-typescript/space'],
   parser: '@typescript-eslint/parser',
   parserOptions: {

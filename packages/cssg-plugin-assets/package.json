@@ -39,5 +39,10 @@
     "got": "^11.8.3",
     "mkdirp": "^1.0.4",
     "svgo": "^2.8.0"
+  },
+  "jestSonar": {
+    "reportPath": "coverage",
+    "reportFile": "test-report.xml",
+    "indent": 2
   }
 }

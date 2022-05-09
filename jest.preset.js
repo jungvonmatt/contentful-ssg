@@ -7,10 +7,9 @@ export default {
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   moduleFileExtensions: ['ts', 'js', 'mjs'],
   passWithNoTests: true,
-  resolver: '@nrwl/jest/plugins/resolver',
   extensionsToTreatAsEsm: ['.ts'],
   transform: { '^.+\\.(ts|js)$': 'ts-jest' },
-  // testResultsProcessor: 'jest-sonar-reporter',
+  testResultsProcessor: 'jest-sonar-reporter',
   preset: 'ts-jest/presets/default-esm',
   moduleDirectories: ['node_modules', `${__dirname}/packages`],
 
