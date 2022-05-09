@@ -27,7 +27,7 @@
     "./converter/yaml": "./dist/converter/yaml.js",
     "./converter/toml": "./dist/converter/toml.js",
     "./converter/markdown": "./dist/converter/markdown.js",
-    "./test/mock": "./dist/__test__/mock.js"
+    "./__test__/mock": "./dist/__test__/mock.js"
   },
   "typesVersions": {
     "*": {
@@ -73,7 +73,7 @@
       "converter/markdown": [
         "./dist/converter/markdown.d.ts"
       ],
-      "test/mock": [
+      "__test__/mock": [
         "./dist/__test__/mock.d.ts"
       ]
     }
@@ -88,6 +88,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint --color src --fix --ext .ts",
+    "test": "jest",
     "precompile": "npm run clean",
     "compile": "tsc --build",
     "postcompile": "chmod +x ./dist/cli.js",

@@ -13,6 +13,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
+    "test": "jest",
     "lint": "eslint --color src --fix --ext .ts",
     "precompile": "npm run clean",
     "compile": "tsc --build",

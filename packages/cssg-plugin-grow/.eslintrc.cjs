@@ -7,7 +7,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     extraFileExtensions: [".cjs"]
   },
-  ignorePatterns: ['**/*.cjs','src/**/*.test.ts', 'src/__test__/*',"src/**/*.fixme.ts"],
+  ignorePatterns: ['**/jest.config.js', '**/*.cjs','src/**/*.test.ts', 'src/__test__/*',"src/**/*.test.ts"],
   env: {
     node: true,
     jest: true,

@@ -9,6 +9,7 @@
   },
   "type": "module",
   "scripts": {
+    "test": "jest",
     "lint": "eslint --color index.js --fix"
   },
   "repository": {
