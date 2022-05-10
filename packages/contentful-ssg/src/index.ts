@@ -1,13 +1,21 @@
-import type { Config, RuntimeContext, Task, TransformContext, TransformHelper } from './types.js';
+import type {
+  Config,
+  ObservableContext,
+  RuntimeContext,
+  Task,
+  TransformContext,
+  TransformHelper,
+} from './types.js';
 import Listr from 'listr';
+import { ReplaySubject } from 'rxjs';
 import chalk from 'chalk';
 import { getContentTypeId, getContentId, isSyncRequest } from './lib/contentful.js';
 import { setup } from './tasks/setup.js';
 import { fetch } from './tasks/fetch.js';
 import { localize } from './tasks/localize.js';
 import { transform } from './tasks/transform.js';
-import { getFilepath, write } from './tasks/write.js';
-import { collectParentValues, collectValues } from './lib/utils.js';
+import { write } from './tasks/write.js';
+import { collectParentValues, collectValues, waitFor } from './lib/utils.js';
 import { ValidationError } from './lib/error.js';
 
 /**
@@ -83,6 +91,8 @@ export const run = async (config: Config): Promise<void> => {
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
             task: async () => {
+              const subject = new ReplaySubject<ObservableContext>();
+              const observable = subject.asObservable();
               const data = ctx.localized.get(locale.code);
               const { entries = [] } = data || {};
 
@@ -94,6 +104,7 @@ export const run = async (config: Config): Promise<void> => {
                 const utils = {
                   collectValues: collectValues({ ...data, entry }),
                   collectParentValues: collectParentValues({ ...data, entry }),
+                  waitFor: waitFor({ ...data, entry, observable }),
                 } as TransformHelper;
 
                 const transformContext: TransformContext = {
@@ -103,10 +114,12 @@ export const run = async (config: Config): Promise<void> => {
                   entry,
                   locale,
                   utils,
+                  observable,
                 };
 
                 try {
                   const content = await transform(transformContext, ctx, config);
+                  subject.next({ ...transformContext, content });
 
                   if (typeof content === 'undefined') {
                     return;
@@ -115,9 +128,16 @@ export const run = async (config: Config): Promise<void> => {
                   await write({ ...transformContext, content }, ctx, config);
                   ctx.stats.addSuccess(transformContext);
                 } catch (error: unknown) {
+                  if (error instanceof Error) {
+                    subject.next({ ...transformContext, error });
+                  } else {
+                    // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
+                    subject.next({ ...transformContext, error: new Error(`${error}`) });
+                  }
+
                   if (error instanceof ValidationError) {
                     ctx.stats.addSkipped(transformContext, error);
-                  } else if (typeof error === 'string' || error instanceof Error) {
+                  } else {
                     ctx.stats.addError(transformContext, error);
                   }
                 }

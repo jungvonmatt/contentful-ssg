@@ -1,4 +1,5 @@
 import { snakeCaseKeys } from '@jungvonmatt/contentful-ssg/lib/object';
+import { getContentId, getContentTypeId } from '@jungvonmatt/contentful-ssg/lib/contentful';
 import mm from 'micromatch';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
@@ -22,10 +23,11 @@ const defaultOptions = {
   fieldIdHome: 'home',
   fieldIdSlug: 'slug',
   fieldIdParent: 'parent_page',
-  fieldIdMenu: 'menu',
+  fieldIdMenu: 'submenu',
   fieldIdMenuEntries: 'entries',
   fieldIdMenuHide: 'hide_in_menu',
   fieldIdMenuPos: 'menu_pos',
+  fieldIdMenuId: 'name',
   menuRootTypes: ['page', 'folder', 'x-folder'],
   typeConfig: {
     [TYPE_CONTENT]: ['page'],
@@ -98,17 +100,21 @@ export default (args) => {
 
   const buildMenu = async (transformContext, runtimeContext, depth = 0) => {
     const { entry, entryMap } = transformContext;
+
+    const getFromEntryMap = (node) => entryMap?.get(getContentId(node));
+
     const entries = entry.fields?.[options.fieldIdMenuEntries] ?? [];
     const nodes = entries
-      .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+      .map((node) => getFromEntryMap(node))
+      .filter((node) => Boolean(node))
       .map((node, index) => ({
-        identifier: node.sys.id,
+        identifier: getContentId(node),
         pageRef: getPageRef(transformContext, runtimeContext, node),
         weight: (index + 1) * 10,
         params: {
-          id: node.sys.id,
+          id: getContentId(node),
           // eslint-disable-next-line camelcase
-          content_type: node.sys.contentType.sys.id,
+          content_type: getContentTypeId(node),
         },
       }));
 
@@ -157,16 +163,17 @@ export default (args) => {
 
       return [
         ...subentries
-          .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+          .map((node) => getFromEntryMap(node))
+          .filter((node) => Boolean(node))
           .map((node, index) => ({
-            identifier: node.sys.id,
+            identifier: getContentId(node),
             pageRef: getPageRef(transformContext, runtimeContext, node),
             parent: id,
             weight: (index + 1) * 10,
             params: {
-              id: node.sys.id,
+              id: getContentId(node),
               // eslint-disable-next-line camelcase
-              content_type: node.sys.contentType.sys.id,
+              content_type: getContentTypeId(node),
             },
           })),
         ...collected,
@@ -201,16 +208,17 @@ export default (args) => {
       return Array.from(
         await Promise.allSettled([
           ...sorted
-            .filter((node) => node?.sys?.id && node?.sys?.contentType?.sys?.id)
+            .map((node) => getFromEntryMap(node))
+            .filter((node) => Boolean(node))
             .map((node, index) => ({
-              identifier: node.sys.id,
+              identifier: getContentId(node),
               pageRef: getPageRef(transformContext, runtimeContext, node),
               parent: id,
               weight: (index + 1) * 10,
               params: {
-                id: node.sys.id,
+                id: getContentId(node),
                 // eslint-disable-next-line camelcase
-                content_type: node.sys.contentType.sys.id,
+                content_type: getContentTypeId(node),
               },
             })),
           ...sorted.flatMap((node) => getChildnodesRecursive(node, depth - 1)),
@@ -436,7 +444,7 @@ export default (args) => {
       // Automatically build hugo menus
       // See https://gohugo.io/content-management/menus/
       if (options.typeIdMenu && contentTypeId === options.typeIdMenu) {
-        const { name = 'main' } = entry.fields;
+        const menuId = entry.fields[options.fieldIdMenuId];
         const menu = await buildMenu(transformContext, runtimeContext, options.menuDepth);
         if (!runtimeContext.menus) {
           runtimeContext.menus = {};
@@ -446,7 +454,7 @@ export default (args) => {
           runtimeContext.menus[hugoLocaleCode(locale)] = {};
         }
 
-        runtimeContext.menus[hugoLocaleCode(locale)][name] = menu;
+        runtimeContext.menus[hugoLocaleCode(locale)][menuId] = menu;
       }
 
       if (type === TYPE_CONTENT) {

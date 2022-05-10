@@ -175,8 +175,14 @@ export default (pluginOptions) => {
     const { width, height } = asset?.fields?.file?.details?.image ?? {};
     const mimeType = asset?.fields?.file?.contentType;
     const url = asset?.fields?.file?.url;
-    const sizes = options.sizes || [];
     const types = [...new Set([...(options.extraTypes || []), mimeType])];
+    const sizes = (options.sizes || []).map((value) => {
+      if (typeof value === 'function') {
+        return value(asset, ratio, focusArea);
+      }
+
+      return parseFloat(value);
+    });
 
     if (!url || !width || !height) {
       return {};

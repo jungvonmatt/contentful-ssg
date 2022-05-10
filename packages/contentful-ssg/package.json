@@ -1,7 +1,14 @@
 {
   "name": "@jungvonmatt/contentful-ssg",
-  "version": "1.4.9",
+  "version": "1.7.3",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
   "main": "./dist/index.js",
   "type": "module",
   "typings": "./dist/types.d.ts",
@@ -118,6 +125,7 @@
     "micromatch": "^4.0.4",
     "prettier": "^2.4.1",
     "read-pkg-up": "^9.0.0",
+    "rxjs": "^7.5.5",
     "slash": "^4.0.0",
     "snake-case": "^3.0.4",
     "tempy": "^2.0.0",

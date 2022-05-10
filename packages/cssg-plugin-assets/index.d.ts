@@ -1,8 +1,13 @@
+import type { Asset } from 'contentful';
+
 export type KeyValueMap<T = any> = Record<string, T>;
 
-export interface RatioConfig {
+interface Dynamic<T> {
+  [key: string]: T;
+}
+
+export type RatioConfig = Dynamic<KeyValueMap<KeyValueMap<number>> | RatioConfig> & {
   default?: KeyValueMap<number>;
-  [x: string]: KeyValueMap<KeyValueMap<number>> | RatioConfig;
 }
 
 export type FocusArea =
@@ -20,14 +25,17 @@ export type FocusArea =
 
 export type MimeTypes = 'image/jpg' | 'image/png' | 'image/webp' | 'image/gif' | 'image/avif';
 
-export interface FocusAreaConfig {
+export type FocusAreaConfig = Dynamic<KeyValueMap<FocusArea> | FocusAreaConfig> & {
   default?: FocusArea;
-  [x: string]: KeyValueMap<FocusArea> | FocusAreaConfig;
 }
+
+export type SizeFunction = (asset?: Asset, ratio?: number, focusArea?: FocusArea) => number;
+
+export type Size = number | SizeFunction;
 
 export interface AssetPluginConfig {
   download?: boolean; // Serve assets from local instead of using the contentful cdn
-  sizes?: number[]; // Widths which should be generated
+  sizes?: Size[]; // Widths which should be generated
   rootDir?: string; // Project root
   assetBase?: string; // Base URI. Defaults to '/assets/cf'. Will be located in your asset folder
   assetFolder?: string; // Public folder relative to you project root. Usually something like 'public' or 'static' depending on your static site generator.

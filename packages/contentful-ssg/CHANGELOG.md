@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.2...v1.7.3) (2022-05-02)
+
+
+### Bug Fixes
+
+* **observable:** uses ReplaySubject for transforms ([89c6318](https://github.com/jungvonmatt/contentful-ssg/commit/89c6318cebbf74f4db3f126403a7ef07e8e76fbe))
+
+
+
+
+
+## [1.7.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.0...v1.7.1) (2022-04-27)
+
+**Note:** Version bump only for package @jungvonmatt/contentful-ssg
+
+
+
+
+
+# [1.7.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.6.1...v1.7.0) (2022-04-26)
+
+
+### Features
+
+* **utils:** adds waitFor util ([#39](https://github.com/jungvonmatt/contentful-ssg/issues/39)) ([0840ecd](https://github.com/jungvonmatt/contentful-ssg/commit/0840ecde90a3e08cebde144dafabb720c2e2124f))
+
+
+
+
+
 ## [1.4.9](https://github.com/jungvonmatt/contentful-ssg/compare/v1.4.8...v1.4.9) (2022-02-11)
 
 

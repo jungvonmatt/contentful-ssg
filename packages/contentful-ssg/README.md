@@ -209,6 +209,33 @@ Get values from linked pages to e.g. build an url out of parent slugs.
 
 The same as collectValues just without the value from the current entry
 
+###### waitFor
+
+Wait for specific entry to be transformed.
+Be aware that this can lead to deadlocks when you're awaiting something which
+itself is waiting for the current entry to be transformed.
+
+```js
+{
+  transform: (context) => {
+    const { utils } = context;
+    try {
+      // You can overwrite the default wait timeout of 20000ms using the second parameter
+      const linkedContext = await utils.waitFor('<contentful-id>', 5000);
+
+      // Do something usefull with the transformed data
+      // which you can't do with context.entryMap.get('<contentful-id>')
+
+    } catch (error) {
+      // Entry isn't available, the transform method for the entry throws an error
+      // or we encountered a cyclic dependency
+    }
+
+    return { ...content };
+  };
+}
+```
+
 ### fetch
 
 Fetch all content entries and store them as yaml in the configured directory

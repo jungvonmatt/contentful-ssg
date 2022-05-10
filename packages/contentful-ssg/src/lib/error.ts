@@ -17,3 +17,13 @@ export class ValidationError extends Error {
     this.name = 'ValidationError';
   }
 }
+
+export class WrappedError extends Error {
+  originalError: unknown;
+
+  constructor(message: string, error: unknown) {
+    super(message);
+    this.originalError = error;
+    this.name = 'WrappedError';
+  }
+}
