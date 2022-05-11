@@ -2,7 +2,13 @@
 import { existsSync } from 'fs';
 import { readFile, unlink, writeFile } from 'fs/promises';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
-import type { Space, ApiKey, QueryOptions, CollectionProp } from 'contentful-management/types';
+import type {
+  Space,
+  ApiKey,
+  QueryOptions,
+  CollectionProp,
+  CreateWebhooksProps,
+} from 'contentful-management/types';
 import type {
   CreateClientParams,
   ContentfulClientApi,
@@ -203,6 +209,78 @@ export const getPreviewApiKey = async (options: ContentfulConfig) => {
   const { accessToken: previewAccessToken } = previewApiKey as ApiKey;
 
   return previewAccessToken;
+};
+
+export const getWebhooks = async (options: ContentfulConfig) => {
+  const space = await getSpace(options);
+  const { items: webhooks = [] } = await space.getWebhooks();
+
+  return webhooks;
+};
+
+export const addWebhook = async (
+  options: ContentfulConfig,
+  id: string,
+  data: CreateWebhooksProps
+) => {
+  const space = await getSpace(options);
+  const webhook = await space.createWebhookWithId(id, data);
+
+  return webhook;
+};
+
+export const deleteWebhook = async (options: ContentfulConfig, id: string) => {
+  const space = await getSpace(options);
+  const webhook = await space.getWebhook(id);
+
+  return webhook.delete();
+};
+
+export const addWatchWebhook = async (options: ContentfulConfig, url: string) => {
+  let topics = [
+    'ContentType.publish',
+    'ContentType.unpublish',
+    'ContentType.delete',
+    'Entry.publish',
+    'Entry.unpublish',
+    'Entry.delete',
+    'Asset.publish',
+    'Asset.unpublish',
+    'Asset.delete',
+  ];
+
+  if (options.preview) {
+    topics = [
+      ...topics,
+      'ContentType.save',
+      'Entry.save',
+      'Entry.auto_save',
+      'Asset.save',
+      'Asset.auto_save',
+    ];
+  }
+
+  return addWebhook(options, 'contentful-ssg-watcher', {
+    name: 'contentful-ssg-watcher',
+    url,
+    httpBasicUsername: null,
+    topics,
+    filters: [
+      {
+        equals: [
+          {
+            doc: 'sys.environment.sys.id',
+          },
+          options.environmentId,
+        ],
+      },
+    ],
+    transformation: {
+      includeContentLength: true,
+    },
+
+    headers: [],
+  });
 };
 
 /**

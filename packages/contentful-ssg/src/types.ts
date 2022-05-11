@@ -3,6 +3,8 @@ import type { Document } from '@contentful/rich-text-types';
 import type { Observable } from 'rxjs';
 import type { QueryOptions, CollectionProp } from 'contentful-management/types';
 
+export type { Ignore } from 'ignore';
+
 import type {
   EntryFields,
   Locale as ContentfulLocale,
@@ -230,13 +232,6 @@ export type ObservableContext = Readonly<
     error?: Error;
   }
 >;
-export interface Ignore {
-  add(pattern: string | Ignore | string[] | Ignore[]): Ignore;
-  filter(paths: string[]): string[];
-  createFilter(): (path: string) => boolean;
-  ignores(pathname: string): boolean;
-}
-
 export interface StatsEntry extends KeyValueMap {
   id: string;
   contentTypeId: string;
