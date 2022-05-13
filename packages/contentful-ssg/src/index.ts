@@ -1,6 +1,9 @@
 import type {
   Config,
   ObservableContext,
+  Asset,
+  Entry,
+  RunResult,
   RuntimeContext,
   Task,
   TransformContext,
@@ -63,7 +66,10 @@ class CustomListrRenderer {
  * Dump contentful objects to files
  * @param {Object} config
  */
-export const run = async (config: Config): Promise<void> => {
+export const run = async (
+  config: Config,
+  prev: RunResult = { observables: {}, localized: {} }
+): Promise<RunResult> => {
   const tasks = new Listr<RuntimeContext>(
     [
       {
@@ -91,10 +97,31 @@ export const run = async (config: Config): Promise<void> => {
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
             task: async () => {
-              const subject = new ReplaySubject<ObservableContext>();
+              if (!prev?.observables?.[locale.code]) {
+                prev.observables[locale.code] = new ReplaySubject<ObservableContext>();
+              }
+
+              const subject = prev.observables[locale.code];
               const observable = subject.asObservable();
+
               const data = ctx.localized.get(locale.code);
+
               const { entries = [] } = data || {};
+
+              data.assetMap = new Map<string, Asset>([
+                ...(prev?.localized[locale.code]?.assetMap ?? new Map()),
+                ...data.assetMap,
+              ]);
+
+              data.entryMap = new Map<string, Entry>([
+                ...(prev?.localized[locale.code]?.entryMap ?? new Map()),
+                ...data.entryMap,
+              ]);
+
+              data.entries = Array.from(data.entryMap.values());
+              data.assets = Array.from(data.assetMap.values());
+
+              prev.localized[locale.code] = data;
 
               const promises = entries.map(async (entry) => {
                 const id = getContentId(entry);
@@ -170,4 +197,6 @@ export const run = async (config: Config): Promise<void> => {
   if (ctx.stats.errors?.length && !config.ignoreErrors) {
     process.exit(1);
   }
+
+  return prev;
 };

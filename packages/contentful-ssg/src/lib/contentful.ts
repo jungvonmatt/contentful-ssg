@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { existsSync } from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 import { readFile, unlink, writeFile } from 'fs/promises';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
 import type {
@@ -260,7 +261,10 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
     ];
   }
 
-  return addWebhook(options, 'contentful-ssg-watcher', {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const uuid = uuidv4() as string;
+
+  return addWebhook(options, uuid, {
     name: 'contentful-ssg-watcher',
     url,
     httpBasicUsername: null,

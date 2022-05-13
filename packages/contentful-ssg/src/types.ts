@@ -1,6 +1,6 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
-import type { Observable } from 'rxjs';
+import type { Observable, ReplaySubject } from 'rxjs';
 import type { QueryOptions, CollectionProp } from 'contentful-management/types';
 
 export type { Ignore } from 'ignore';
@@ -289,3 +289,8 @@ export interface ErrorEntry {
   locale: Locale;
   missingFields: string[];
 }
+
+export type RunResult = {
+  observables: Record<string, ReplaySubject<ObservableContext>>;
+  localized: Record<string, LocalizedContent>;
+};

@@ -67,8 +67,6 @@ export const startServer = (port = 1414, callback: Function = () => 1): Server =
       return res.status(401).send();
     }
 
-    await callback();
-
     const { sys } = req.body;
     if (
       !sys ||
@@ -85,6 +83,9 @@ export const startServer = (port = 1414, callback: Function = () => 1): Server =
     if (typeof triggerType !== 'string') {
       return res.status(401).send('Invalid format');
     }
+
+    console.log({ triggerType, id: sys.id, contentType: sys.contentType.sys.id });
+    await callback();
 
     return res.status(200).send({
       id: sys.id,

@@ -5,6 +5,7 @@
 import path from 'path';
 import chalk from 'chalk';
 import ngrok from 'ngrok';
+import getPort from 'get-port';
 import exitHook from 'async-exit-hook';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
@@ -180,10 +181,11 @@ program
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
 
-      await run({ ...verified, sync: true });
+      const prev = await run({ ...verified, sync: true });
 
-      const server = startServer(1414, async () => {
-        return run({ ...verified, sync: true });
+      const port = await getPort({ port: 1414 });
+      const server = startServer(port, async () => {
+        return run({ ...verified, sync: true }, prev);
       });
 
       const stopServer = async () =>
@@ -197,7 +199,7 @@ program
           });
         });
 
-      const url = await ngrok.connect(1414);
+      const url = await ngrok.connect(port);
       console.log(`\nListening for hooks on ${chalk.cyan(url)}\n`);
       const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
