@@ -8,6 +8,7 @@ import type {
   Task,
   TransformContext,
   TransformHelper,
+  LocalizedContent,
 } from './types.js';
 import Listr from 'listr';
 import { ReplaySubject } from 'rxjs';
@@ -18,6 +19,7 @@ import { fetch } from './tasks/fetch.js';
 import { localize } from './tasks/localize.js';
 import { transform } from './tasks/transform.js';
 import { write } from './tasks/write.js';
+import { remove } from './tasks/remove.js';
 import { collectParentValues, collectValues, waitFor } from './lib/utils.js';
 import { ValidationError } from './lib/error.js';
 
@@ -78,7 +80,47 @@ export const run = async (
       },
       {
         title: 'Pulling data from contentful',
-        task: async (ctx) => fetch(ctx, config),
+        task: async (ctx) => {
+          await fetch(ctx, config);
+
+          // Add missing fields to deletedEntries
+          // DeletedEntries from sync doesn't contain the contentType field in sys
+          // and the fields object which makes it hard to locate the file which should be removed
+          const entryMap =
+            prev.localized?.[ctx.defaultLocale]?.entryMap ??
+            (new Map() as LocalizedContent['entryMap']);
+
+          ctx.data.deletedEntries = ctx.data.deletedEntries.map((entry) => {
+            if (entryMap.has(entry.sys.id)) {
+              const prevEntry: Entry = entryMap.get(entry.sys.id);
+
+              return { ...prevEntry, sys: { ...prevEntry.sys, ...entry.sys } };
+            }
+
+            return entry;
+          });
+
+          // Remove deleted entries from prev result
+          ctx.data.locales.forEach((locale) => {
+            ctx.data.deletedEntries.forEach((entry) => {
+              if (prev.localized?.[locale.code]?.entryMap.has(entry.sys.id)) {
+                prev.localized?.[locale.code]?.entryMap.delete(entry.sys.id);
+                prev.localized[locale.code].entries = Array.from(
+                  prev.localized?.[locale.code]?.entryMap.values()
+                );
+              }
+            });
+
+            ctx.data.deletedAssets.forEach((asset) => {
+              if (prev.localized?.[locale.code]?.assetMap.has(asset.sys.id)) {
+                prev.localized?.[locale.code]?.assetMap.delete(asset.sys.id);
+                prev.localized[locale.code].assets = Array.from(
+                  prev.localized?.[locale.code]?.assetMap.values()
+                );
+              }
+            });
+          });
+        },
       },
       {
         title: 'Localize data',
@@ -90,13 +132,16 @@ export const run = async (
         task: async (ctx) => ctx.hooks.before(),
       },
       {
-        title: 'Writing files',
+        title: 'Remove Hook',
+        skip: (ctx) => (ctx.data.deletedEntries ?? []).length === 0,
         task: async (ctx) => {
-          const { locales = [] } = ctx.data;
-
+          const { locales = [], deletedEntries = [] } = ctx.data;
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
             task: async () => {
+              const data = ctx.localized.get(locale.code);
+
+              // Get observables from previous run
               if (!prev?.observables?.[locale.code]) {
                 prev.observables[locale.code] = new ReplaySubject<ObservableContext>();
               }
@@ -104,10 +149,55 @@ export const run = async (
               const subject = prev.observables[locale.code];
               const observable = subject.asObservable();
 
+              const promises = deletedEntries.map(async (entry) => {
+                const id = getContentId(entry);
+                const contentTypeId = getContentTypeId(entry);
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                const utils = {} as TransformHelper;
+
+                const transformContext: TransformContext = {
+                  ...data,
+                  id,
+                  contentTypeId,
+                  entry,
+                  locale,
+                  observable,
+                  utils,
+                };
+
+                return remove(transformContext, ctx, config);
+              });
+
+              return Promise.all(promises);
+            },
+          }));
+
+          return new Listr(tasks, { concurrent: true });
+        },
+      },
+      {
+        title: 'Writing files',
+        task: async (ctx) => {
+          const { locales = [] } = ctx.data;
+
+          const tasks = locales.map((locale) => ({
+            title: `${locale.code}`,
+            task: async () => {
               const data = ctx.localized.get(locale.code);
 
+              // Only walk new entries
               const { entries = [] } = data || {};
 
+              // Get observables from previous run
+              if (!prev?.observables?.[locale.code]) {
+                prev.observables[locale.code] = new ReplaySubject<ObservableContext>();
+              }
+
+              const subject = prev.observables[locale.code];
+              const observable = subject.asObservable();
+
+              // Merge entries entries & assets from previous run
+              // so that tey are available to changed entries
               data.assetMap = new Map<string, Asset>([
                 ...(prev?.localized[locale.code]?.assetMap ?? new Map()),
                 ...data.assetMap,
@@ -121,6 +211,7 @@ export const run = async (
               data.entries = Array.from(data.entryMap.values());
               data.assets = Array.from(data.assetMap.values());
 
+              // Store data for the next run
               prev.localized[locale.code] = data;
 
               const promises = entries.map(async (entry) => {
@@ -167,6 +258,8 @@ export const run = async (
                   } else {
                     ctx.stats.addError(transformContext, error);
                   }
+
+                  await remove(transformContext, ctx, config);
                 }
               });
 

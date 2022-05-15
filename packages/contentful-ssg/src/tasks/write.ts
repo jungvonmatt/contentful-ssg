@@ -12,7 +12,7 @@ const formatMapping = {
   '.toml': TYPE_TOML,
 };
 
-const getFormat = async (
+export const getFormat = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
   config: Config

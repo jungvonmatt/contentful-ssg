@@ -63,35 +63,13 @@ export const startServer = (port = 1414, callback: Function = () => 1): Server =
     return res.status(200).send('ok');
   });
   app.post('/', async (req: ContentfulWebhookRequest, res: Response) => {
+    console.log('POST:', req?.headers?.['x-contentful-topic']);
     if (!req.body.sys) {
       return res.status(401).send();
     }
 
-    const { sys } = req.body;
-    if (
-      !sys ||
-      !sys.id ||
-      (sys.type !== 'Asset' &&
-        sys.type !== 'Entry' &&
-        sys.type !== 'ContentType' &&
-        sys.type !== 'DeletedEntry')
-    ) {
-      return res.status(401).send('Invalid format');
-    }
-
-    const triggerType = req.headers['x-contentful-topic'];
-    if (typeof triggerType !== 'string') {
-      return res.status(401).send('Invalid format');
-    }
-
-    console.log({ triggerType, id: sys.id, contentType: sys.contentType.sys.id });
     await callback();
-
-    return res.status(200).send({
-      id: sys.id,
-      type: sys.type,
-      message: 'Did nothing',
-    });
+    return res.status(200).send();
   });
 
   return app.listen(port, () => {

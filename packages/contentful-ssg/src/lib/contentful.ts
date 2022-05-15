@@ -242,9 +242,13 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
     'ContentType.publish',
     'ContentType.unpublish',
     'ContentType.delete',
+    'Entry.archive',
+    'Entry.unarchive',
     'Entry.publish',
     'Entry.unpublish',
     'Entry.delete',
+    'Asset.archive',
+    'Asset.unarchive',
     'Asset.publish',
     'Asset.unpublish',
     'Asset.delete',
@@ -396,6 +400,28 @@ export const getContent = async (options: ContentfulConfig) => {
   });
 
   return { entries, assets, contentTypes, locales };
+};
+
+export const getEntriesLinkedToEntry = async (options: ContentfulConfig, id: string) => {
+  const apiClient = getClient(options);
+
+  const { items: entries } = await pagedGet<Entry>(apiClient, {
+    method: 'getEntries',
+    query: { links_to_entry: id },
+  });
+
+  return entries;
+};
+
+export const getEntriesLinkedToAsset = async (options: ContentfulConfig, id: string) => {
+  const apiClient = getClient(options);
+
+  const { items: entries } = await pagedGet<Entry>(apiClient, {
+    method: 'getEntries',
+    query: { links_to_asset: id },
+  });
+
+  return entries;
 };
 
 /**
