@@ -8,6 +8,7 @@ import { IncomingHttpHeaders } from 'http';
 import { Entry, Asset, ContentType } from 'contentful';
 
 const app = express();
+app.disable('x-powered-by');
 app.use(express.urlencoded({ extended: true }));
 app.use(
   express.json({
