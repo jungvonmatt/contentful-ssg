@@ -205,7 +205,6 @@ describe('Contentful', () => {
       name: 'name',
       url: 'url',
       topics: ['abc'],
-      active: true,
       headers: [],
     });
 

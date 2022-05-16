@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import express, { Express, Response } from 'express';
-import { Server } from 'net';
+
+import { Asset, ContentType, Entry } from 'contentful';
+import express, { Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
-import { Entry, Asset, ContentType } from 'contentful';
 
 const app = express();
 app.disable('x-powered-by');

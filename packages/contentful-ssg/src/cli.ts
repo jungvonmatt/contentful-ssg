@@ -187,12 +187,10 @@ program
         port = url.port || url.protocol === 'https:' ? 443 : 80;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const app = getApp(async () => {
         return run({ ...verified, sync: true }, prev);
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const server = app.listen(port);
 
       const stopServer = async () =>
