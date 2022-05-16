@@ -63,7 +63,6 @@ export const startServer = (port = 1414, callback: Function = () => 1): Server =
     return res.status(200).send('ok');
   });
   app.post('/', async (req: ContentfulWebhookRequest, res: Response) => {
-    console.log('POST:', req?.headers?.['x-contentful-topic']);
     if (!req.body.sys) {
       return res.status(401).send();
     }
@@ -72,8 +71,5 @@ export const startServer = (port = 1414, callback: Function = () => 1): Server =
     return res.status(200).send();
   });
 
-  return app.listen(port, () => {
-    console.log();
-    console.log(` [contentful-ssg] server started at http://localhost:${port}`);
-  });
+  return app.listen(port);
 };

@@ -201,9 +201,15 @@ export interface RuntimeContext {
     markdown: Converter;
     toml: Converter;
   };
+  observables?: Record<string, ReplaySubject<ObservableContext>>;
 }
 
 export type Task = ListrTaskObject<RuntimeContext>;
+
+export type RunResult = {
+  observables: Record<string, ReplaySubject<ObservableContext>>;
+  localized: Record<string, LocalizedContent>;
+};
 
 export interface TransformHelper {
   collectValues: <T>(key, options?: CollectOptions) => T[];
@@ -289,8 +295,3 @@ export interface ErrorEntry {
   locale: Locale;
   missingFields: string[];
 }
-
-export type RunResult = {
-  observables: Record<string, ReplaySubject<ObservableContext>>;
-  localized: Record<string, LocalizedContent>;
-};

@@ -3,13 +3,11 @@ import { fetch } from './fetch';
 
 jest.mock('../lib/contentful.js', () => {
   return {
-    getContent: jest
-      .fn()
-      .mockResolvedValue({
-        locales: [{ default: true, code: 'en' }],
-        contentTypes: [],
-        somethingelse: false,
-      }),
+    getContent: jest.fn().mockResolvedValue({
+      locales: [{ default: true, code: 'en' }],
+      contentTypes: [],
+      somethingelse: false,
+    }),
     getFieldSettings: jest.fn().mockReturnValue({ fields: 'TEST' }),
   };
 });
@@ -23,6 +21,7 @@ describe('Fetch', () => {
       defaultLocale: 'en',
       data: {
         locales: [{ default: true, code: 'en' }],
+        entries: [],
         contentTypes: [],
         somethingelse: false,
         fieldSettings: { fields: 'TEST' },

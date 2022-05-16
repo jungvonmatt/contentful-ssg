@@ -200,7 +200,7 @@ program
         });
 
       const url = await ngrok.connect(port);
-      console.log(`\nListening for hooks on ${chalk.cyan(url)}\n`);
+      console.log(`\n  Listening for hooks on ${chalk.cyan(url)}\n`);
       const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
       exitHook(async (cb) => {

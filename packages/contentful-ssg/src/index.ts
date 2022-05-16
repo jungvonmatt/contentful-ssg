@@ -1,27 +1,27 @@
+import chalk from 'chalk';
+import Listr from 'listr';
+import { ReplaySubject } from 'rxjs';
+import { getContentId, getContentTypeId, isSyncRequest } from './lib/contentful.js';
+import { ValidationError } from './lib/error.js';
+import { collectParentValues, collectValues, waitFor } from './lib/utils.js';
+import { fetch } from './tasks/fetch.js';
+import { localize } from './tasks/localize.js';
+import { remove } from './tasks/remove.js';
+import { setup } from './tasks/setup.js';
+import { transform } from './tasks/transform.js';
+import { write } from './tasks/write.js';
 import type {
-  Config,
-  ObservableContext,
   Asset,
+  Config,
   Entry,
+  LocalizedContent,
+  ObservableContext,
   RunResult,
   RuntimeContext,
   Task,
   TransformContext,
   TransformHelper,
-  LocalizedContent,
 } from './types.js';
-import Listr from 'listr';
-import { ReplaySubject } from 'rxjs';
-import chalk from 'chalk';
-import { getContentTypeId, getContentId, isSyncRequest } from './lib/contentful.js';
-import { setup } from './tasks/setup.js';
-import { fetch } from './tasks/fetch.js';
-import { localize } from './tasks/localize.js';
-import { transform } from './tasks/transform.js';
-import { write } from './tasks/write.js';
-import { remove } from './tasks/remove.js';
-import { collectParentValues, collectValues, waitFor } from './lib/utils.js';
-import { ValidationError } from './lib/error.js';
 
 /**
  * This is a very simple listr renderer which does not swallow log output from
@@ -70,7 +70,10 @@ class CustomListrRenderer {
  */
 export const run = async (
   config: Config,
-  prev: RunResult = { observables: {}, localized: {} }
+  prev: RunResult = {
+    observables: {},
+    localized: {},
+  }
 ): Promise<RunResult> => {
   const tasks = new Listr<RuntimeContext>(
     [
@@ -90,35 +93,40 @@ export const run = async (
             prev.localized?.[ctx.defaultLocale]?.entryMap ??
             (new Map() as LocalizedContent['entryMap']);
 
-          ctx.data.deletedEntries = ctx.data.deletedEntries.map((entry) => {
-            if (entryMap.has(entry.sys.id)) {
-              const prevEntry: Entry = entryMap.get(entry.sys.id);
+          ctx.data.deletedEntries =
+            ctx?.data?.deletedEntries?.map((entry) => {
+              if (entryMap.has(entry.sys.id)) {
+                const prevEntry: Entry = entryMap.get(entry.sys.id);
 
-              return { ...prevEntry, sys: { ...prevEntry.sys, ...entry.sys } };
-            }
+                return { ...prevEntry, sys: { ...prevEntry.sys, ...entry.sys } };
+              }
 
-            return entry;
-          });
+              return entry;
+            }) ?? [];
 
           // Remove deleted entries from prev result
           ctx.data.locales.forEach((locale) => {
-            ctx.data.deletedEntries.forEach((entry) => {
-              if (prev.localized?.[locale.code]?.entryMap.has(entry.sys.id)) {
-                prev.localized?.[locale.code]?.entryMap.delete(entry.sys.id);
-                prev.localized[locale.code].entries = Array.from(
-                  prev.localized?.[locale.code]?.entryMap.values()
-                );
-              }
-            });
+            if (ctx?.data?.deletedEntries?.length) {
+              ctx.data.deletedEntries.forEach((entry) => {
+                if (prev.localized?.[locale.code]?.entryMap.has(entry.sys.id)) {
+                  prev.localized?.[locale.code]?.entryMap.delete(entry.sys.id);
+                  prev.localized[locale.code].entries = Array.from(
+                    prev.localized?.[locale.code]?.entryMap.values()
+                  );
+                }
+              });
+            }
 
-            ctx.data.deletedAssets.forEach((asset) => {
-              if (prev.localized?.[locale.code]?.assetMap.has(asset.sys.id)) {
-                prev.localized?.[locale.code]?.assetMap.delete(asset.sys.id);
-                prev.localized[locale.code].assets = Array.from(
-                  prev.localized?.[locale.code]?.assetMap.values()
-                );
-              }
-            });
+            if (ctx?.data?.deletedAssets?.length) {
+              ctx.data.deletedAssets.forEach((asset) => {
+                if (prev.localized?.[locale.code]?.assetMap.has(asset.sys.id)) {
+                  prev.localized?.[locale.code]?.assetMap.delete(asset.sys.id);
+                  prev.localized[locale.code].assets = Array.from(
+                    prev.localized?.[locale.code]?.assetMap.values()
+                  );
+                }
+              });
+            }
           });
         },
       },
@@ -132,7 +140,7 @@ export const run = async (
         task: async (ctx) => ctx.hooks.before(),
       },
       {
-        title: 'Remove Hook',
+        title: 'Remove deleted files',
         skip: (ctx) => (ctx.data.deletedEntries ?? []).length === 0,
         task: async (ctx) => {
           const { locales = [], deletedEntries = [] } = ctx.data;
@@ -285,7 +293,7 @@ export const run = async (
 
   const ctx = await tasks.run();
   await ctx.stats.print();
-  console.log('\n---------------------------------------------');
+  console.log('\n  -------------------------------------------');
 
   if (ctx.stats.errors?.length && !config.ignoreErrors) {
     process.exit(1);
