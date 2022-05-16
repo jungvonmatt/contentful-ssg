@@ -170,10 +170,7 @@ program
   .description('Fetch content objects && watch for changes')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
-  .option(
-    '-l, --local',
-    'Local usage. Establishes a secure tunnel using ngrok for contentful hooks'
-  )
+  .option('--url <url>', 'Url where the the server is reachable from the outside')
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
@@ -183,7 +180,13 @@ program
 
       const prev = await run({ ...verified, sync: true });
 
-      const port = await getPort({ port: 1414 });
+      let port = await getPort({ port: 1414 });
+      if (cmd.url) {
+        console.log(cmd);
+        const url = new URL(cmd.url);
+        port = url.port || url.protocol === 'https:' ? 443 : 80;
+      }
+
       const server = startServer(port, async () => {
         return run({ ...verified, sync: true }, prev);
       });
@@ -199,7 +202,7 @@ program
           });
         });
 
-      const url = await ngrok.connect(port);
+      const url = (cmd.url as string) || (await ngrok.connect(port));
       console.log(`\n  Listening for hooks on ${chalk.cyan(url)}\n`);
       const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
