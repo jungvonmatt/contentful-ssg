@@ -16,7 +16,7 @@ import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { logError, confirm, askAll, askMissing } from './lib/ui.js';
 import { omitKeys } from './lib/object.js';
-import { startServer } from './server/index.js';
+import { getApp } from './server/index.js';
 
 import { getConfig, getEnvironmentConfig } from './lib/config.js';
 import { run } from './index.js';
@@ -187,9 +187,13 @@ program
         port = url.port || url.protocol === 'https:' ? 443 : 80;
       }
 
-      const server = startServer(port, async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const app = getApp(async () => {
         return run({ ...verified, sync: true }, prev);
       });
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const server = app.listen(port);
 
       const stopServer = async () =>
         new Promise((resolve, reject) => {

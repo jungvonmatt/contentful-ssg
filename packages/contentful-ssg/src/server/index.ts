@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import express, { Response } from 'express';
+import express, { Express, Response } from 'express';
 import { Server } from 'net';
 import { IncomingHttpHeaders } from 'http';
 import { Entry, Asset, ContentType } from 'contentful';
@@ -56,7 +56,7 @@ interface ContentfulWebhookRequest {
   body: Entry<unknown> | Asset | ContentType;
 }
 
-export const startServer = (port = 1414, callback: Function = () => 1): Server => {
+export const getApp = (callback: Function = () => 1) => {
   app.get('/status', (_req, res: Response) => res.status(200).send('ok'));
 
   app.get('/', async (_req, res: Response) => {
@@ -65,12 +65,12 @@ export const startServer = (port = 1414, callback: Function = () => 1): Server =
   });
   app.post('/', async (req: ContentfulWebhookRequest, res: Response) => {
     if (!req.body.sys) {
-      return res.status(401).send();
+      return res.status(401).send('error');
     }
 
     await callback();
-    return res.status(200).send();
+    return res.status(200).send('ok');
   });
 
-  return app.listen(port);
+  return app;
 };

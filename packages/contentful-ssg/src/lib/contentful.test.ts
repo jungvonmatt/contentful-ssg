@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { ContentfulConfig } from '../types.js';
+import { ContentfulConfig, Entry } from '../types.js';
 import { getContent as getMockContent } from '../__test__/mock.js';
 import {
   convertToMap,
@@ -21,6 +21,10 @@ import {
   getApiKey,
   getPreviewApiKey,
   MAX_ALLOWED_LIMIT,
+  getWebhooks,
+  addWebhook,
+  deleteWebhook,
+  addWatchWebhook,
 } from './contentful.js';
 
 const configMock = {
@@ -52,12 +56,52 @@ jest.mock('contentful-management', () => {
   const mockedEnvironment = {
     sys: { id: 'environment-id' },
   };
+
+  const mockedWebhook = {
+    name: '...',
+    url: '...',
+    httpBasicUsername: null,
+    topics: [
+      'ContentType.publish',
+      'ContentType.unpublish',
+      'ContentType.delete',
+      'Entry.archive',
+      'Entry.unarchive',
+      'Entry.publish',
+      'Entry.unpublish',
+      'Entry.delete',
+      'Asset.archive',
+      'Asset.unarchive',
+      'Asset.publish',
+      'Asset.unpublish',
+      'Asset.delete',
+    ],
+    active: true,
+    sys: {
+      type: 'WebhookDefinition',
+      id: 'b737d0fe-d100-490a-a378-48453ca5b541',
+      version: 1,
+    },
+    headers: [],
+    delete: jest.fn().mockResolvedValue('deleted'),
+  };
+
   const mockedSpace = {
     sys: { id: 'space-id' },
     getEnvironments: jest.fn().mockResolvedValue({ items: [mockedEnvironment] }),
     getEnvironment: jest.fn().mockResolvedValue(mockedEnvironment),
     getApiKeys: jest.fn().mockResolvedValue({ items: [mockedApiKey] }),
     getPreviewApiKeys: jest.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
+    getWebhooks: jest.fn().mockResolvedValue({ items: [mockedWebhook] }),
+    getWebhook: jest.fn().mockResolvedValue(mockedWebhook),
+    createWebhookWithId: jest.fn().mockImplementation((id, data) => ({
+      ...data,
+      sys: {
+        type: 'WebhookDefinition',
+        id,
+        version: 1,
+      },
+    })),
   };
 
   return {
@@ -123,6 +167,13 @@ describe('Contentful', () => {
     }).rejects.toThrowError(/Missing required parameter: environmentId/);
   });
 
+  test('getEnvironmentId', () => {
+    const success = getEnvironmentId({ sys: { environment: { sys: { id: 'test' } } } } as Entry);
+    const error = getEnvironmentId({} as Entry);
+    expect(error).toBe('unknown');
+    expect(success).toBe('test');
+  });
+
   test('getApiKey', async () => {
     const key = await getApiKey(configMock);
     expect(key).toEqual('accessToken');
@@ -143,6 +194,48 @@ describe('Contentful', () => {
     expect(assets.length).toBe(4);
     expect(contentTypes.length).toBe(3);
     expect(locales.length).toBe(2);
+  });
+
+  test('getWebhooks', async () => {
+    const webhooks = await getWebhooks(configMock);
+    expect(webhooks.length).toBe(1);
+  });
+  test('addWebhook', async () => {
+    const webhook = await addWebhook(configMock, 'id', {
+      name: 'name',
+      url: 'url',
+      topics: ['abc'],
+      active: true,
+      headers: [],
+    });
+
+    expect(webhook?.sys?.id).toBe('id');
+    expect(webhook?.name).toBe('name');
+  });
+
+  test('deleteWebhook', async () => {
+    const result = await deleteWebhook(configMock, 'id');
+    expect(result).toBe('deleted');
+  });
+
+  test('addWatchWebhook', async () => {
+    const webhook = await addWatchWebhook(configMock, 'http://test.url');
+    expect(webhook.url).toBe('http://test.url');
+    expect(webhook.topics).toEqual([
+      'ContentType.publish',
+      'ContentType.unpublish',
+      'ContentType.delete',
+      'Entry.archive',
+      'Entry.unarchive',
+      'Entry.publish',
+      'Entry.unpublish',
+      'Entry.delete',
+      'Asset.archive',
+      'Asset.unarchive',
+      'Asset.publish',
+      'Asset.unpublish',
+      'Asset.delete',
+    ]);
   });
 
   test('isContentfulObject', () => {
