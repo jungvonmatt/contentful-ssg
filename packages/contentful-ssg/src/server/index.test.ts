@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { getApp } from './index.js';
 
-const mockCallback = jest.fn(() => true);
+const mockCallback = jest.fn();
 const app = getApp(mockCallback);
 
 describe('Watch server', () => {

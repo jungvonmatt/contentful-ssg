@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import { existsSync } from 'fs';
+import { readFile, unlink } from 'fs/promises';
 import { ContentfulConfig, Entry } from '../types.js';
 import { getContent as getMockContent } from '../__test__/mock.js';
 import {
@@ -20,11 +22,13 @@ import {
   getEnvironments,
   getApiKey,
   getPreviewApiKey,
-  MAX_ALLOWED_LIMIT,
   getWebhooks,
   addWebhook,
   deleteWebhook,
   addWatchWebhook,
+  resetSync,
+  SYNC_TOKEN_FILENAME,
+  isSyncRequest,
 } from './contentful.js';
 
 const configMock = {
@@ -46,6 +50,22 @@ jest.mock('contentful', () => {
         .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
         .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
         .mockResolvedValue({ items: Array(4), total: 2004 }),
+      sync: jest
+        .fn()
+        .mockResolvedValueOnce({
+          nextSyncToken: 'sync-token',
+          entries: Array(5),
+          assets: Array(3),
+          deletedEntries: [{ sys: { id: 'entry' } }],
+          deletedAssets: [{ sys: { id: 'asset' } }],
+        })
+        .mockResolvedValueOnce({
+          nextSyncToken: 'sync-token-2',
+          entries: [],
+          assets: [],
+          deletedEntries: [{ sys: { id: 'entry-2' } }],
+          deletedAssets: [],
+        }),
     }),
   };
 });
@@ -196,6 +216,30 @@ describe('Contentful', () => {
     expect(locales.length).toBe(2);
   });
 
+  test('getContent (sync)', async () => {
+    expect(isSyncRequest()).toBe(false);
+    const first = await getContent({ ...configMock, sync: true });
+    expect(Array.isArray(first.entries)).toBe(true);
+    expect(Array.isArray(first.assets)).toBe(true);
+    expect(Array.isArray(first.contentTypes)).toBe(true);
+    expect(Array.isArray(first.locales)).toBe(true);
+    expect(Array.isArray(first.deletedAssets)).toBe(true);
+    expect(Array.isArray(first.deletedEntries)).toBe(true);
+    expect(existsSync(SYNC_TOKEN_FILENAME)).toBe(true);
+    expect(isSyncRequest()).toBe(true);
+    const firstToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
+    expect(firstToken).toBe('sync-token');
+
+    const second = await getContent({ ...configMock, sync: true });
+    expect(second.deletedEntries.length).toBe(1);
+    const secondToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
+    expect(secondToken).toBe('sync-token-2');
+
+    await resetSync();
+    expect(isSyncRequest()).toBe(false);
+    expect(existsSync(SYNC_TOKEN_FILENAME)).toBe(false);
+  });
+
   test('getWebhooks', async () => {
     const webhooks = await getWebhooks(configMock);
     expect(webhooks.length).toBe(1);
@@ -234,6 +278,31 @@ describe('Contentful', () => {
       'Asset.publish',
       'Asset.unpublish',
       'Asset.delete',
+    ]);
+  });
+
+  test('addWatchWebhook (preview)', async () => {
+    const webhook = await addWatchWebhook({ ...configMock, preview: true }, 'http://test.url');
+    expect(webhook.url).toBe('http://test.url');
+    expect(webhook.topics).toEqual([
+      'ContentType.publish',
+      'ContentType.unpublish',
+      'ContentType.delete',
+      'Entry.archive',
+      'Entry.unarchive',
+      'Entry.publish',
+      'Entry.unpublish',
+      'Entry.delete',
+      'Asset.archive',
+      'Asset.unarchive',
+      'Asset.publish',
+      'Asset.unpublish',
+      'Asset.delete',
+      'ContentType.save',
+      'Entry.save',
+      'Entry.auto_save',
+      'Asset.save',
+      'Asset.auto_save',
     ]);
   });
 

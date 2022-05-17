@@ -64,6 +64,50 @@ class CustomListrRenderer {
   }
 }
 
+export const mergePrev = (ctx: RuntimeContext, prev: RunResult) => {
+  // Add missing fields to deletedEntries
+  // DeletedEntries from sync doesn't contain the contentType field in sys
+  // and the fields object which makes it hard to locate the file which should be removed
+  const entryMap =
+    prev.localized?.[ctx.defaultLocale]?.entryMap ?? (new Map() as LocalizedContent['entryMap']);
+
+  ctx.data.deletedEntries =
+    ctx?.data?.deletedEntries?.map((entry) => {
+      if (entryMap.has(entry.sys.id)) {
+        const prevEntry: Entry = entryMap.get(entry.sys.id);
+
+        return { ...prevEntry, sys: { ...prevEntry.sys, ...entry.sys } };
+      }
+
+      return entry;
+    }) ?? [];
+
+  // Remove deleted entries from prev result
+  ctx.data.locales.forEach((locale) => {
+    if (ctx?.data?.deletedEntries?.length) {
+      ctx.data.deletedEntries.forEach((entry) => {
+        if (prev.localized?.[locale.code]?.entryMap.has(entry.sys.id)) {
+          prev.localized?.[locale.code]?.entryMap.delete(entry.sys.id);
+          prev.localized[locale.code].entries = Array.from(
+            prev.localized?.[locale.code]?.entryMap.values()
+          );
+        }
+      });
+    }
+
+    if (ctx?.data?.deletedAssets?.length) {
+      ctx.data.deletedAssets.forEach((asset) => {
+        if (prev.localized?.[locale.code]?.assetMap.has(asset.sys.id)) {
+          prev.localized?.[locale.code]?.assetMap.delete(asset.sys.id);
+          prev.localized[locale.code].assets = Array.from(
+            prev.localized?.[locale.code]?.assetMap.values()
+          );
+        }
+      });
+    }
+  });
+};
+
 /**
  * Dump contentful objects to files
  * @param {Object} config
@@ -85,49 +129,7 @@ export const run = async (
         title: 'Pulling data from contentful',
         task: async (ctx) => {
           await fetch(ctx, config);
-
-          // Add missing fields to deletedEntries
-          // DeletedEntries from sync doesn't contain the contentType field in sys
-          // and the fields object which makes it hard to locate the file which should be removed
-          const entryMap =
-            prev.localized?.[ctx.defaultLocale]?.entryMap ??
-            (new Map() as LocalizedContent['entryMap']);
-
-          ctx.data.deletedEntries =
-            ctx?.data?.deletedEntries?.map((entry) => {
-              if (entryMap.has(entry.sys.id)) {
-                const prevEntry: Entry = entryMap.get(entry.sys.id);
-
-                return { ...prevEntry, sys: { ...prevEntry.sys, ...entry.sys } };
-              }
-
-              return entry;
-            }) ?? [];
-
-          // Remove deleted entries from prev result
-          ctx.data.locales.forEach((locale) => {
-            if (ctx?.data?.deletedEntries?.length) {
-              ctx.data.deletedEntries.forEach((entry) => {
-                if (prev.localized?.[locale.code]?.entryMap.has(entry.sys.id)) {
-                  prev.localized?.[locale.code]?.entryMap.delete(entry.sys.id);
-                  prev.localized[locale.code].entries = Array.from(
-                    prev.localized?.[locale.code]?.entryMap.values()
-                  );
-                }
-              });
-            }
-
-            if (ctx?.data?.deletedAssets?.length) {
-              ctx.data.deletedAssets.forEach((asset) => {
-                if (prev.localized?.[locale.code]?.assetMap.has(asset.sys.id)) {
-                  prev.localized?.[locale.code]?.assetMap.delete(asset.sys.id);
-                  prev.localized[locale.code].assets = Array.from(
-                    prev.localized?.[locale.code]?.assetMap.values()
-                  );
-                }
-              });
-            }
-          });
+          mergePrev(ctx, prev);
         },
       },
       {

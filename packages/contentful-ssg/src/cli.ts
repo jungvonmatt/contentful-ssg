@@ -178,9 +178,9 @@ program
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
 
-      const prev = await run({ ...verified, sync: true });
+      let prev = await run({ ...verified, sync: true });
 
-      let port = await getPort({ port: 1414 });
+      let port = await getPort({ port: 1314 });
       if (cmd.url) {
         console.log(cmd);
         const url = new URL(cmd.url);
@@ -188,7 +188,7 @@ program
       }
 
       const app = getApp(async () => {
-        return run({ ...verified, sync: true }, prev);
+        prev = await run({ ...verified, sync: true }, prev);
       });
 
       const server = app.listen(port);
@@ -210,11 +210,8 @@ program
 
       exitHook(async (cb) => {
         await webhook.delete();
-        cb();
-      });
-
-      exitHook(async (cb) => {
         await stopServer();
+        await resetSync();
         cb();
       });
     })

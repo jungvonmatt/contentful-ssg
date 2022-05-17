@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import { Asset, ContentType, Entry } from 'contentful';
 import express, { Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
@@ -53,7 +51,7 @@ interface ContentfulWebhookRequest {
   body: Entry<unknown> | Asset | ContentType;
 }
 
-export const getApp = (callback: Function = () => 1) => {
+export const getApp = (callback: () => Promise<void>) => {
   app.get('/status', (_req, res: Response) => res.status(200).send('ok'));
 
   app.get('/', async (_req, res: Response) => {

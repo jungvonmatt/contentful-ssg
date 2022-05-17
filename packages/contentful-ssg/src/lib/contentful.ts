@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { existsSync } from 'fs';
+import { hostname } from 'os';
 import { v4 as uuidv4 } from 'uuid';
 import { readFile, unlink, writeFile } from 'fs/promises';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
@@ -225,9 +226,7 @@ export const addWebhook = async (
   data: CreateWebhooksProps
 ) => {
   const space = await getSpace(options);
-  const webhook = await space.createWebhookWithId(id, data);
-
-  return webhook;
+  return space.createWebhookWithId(id, data);
 };
 
 export const deleteWebhook = async (options: ContentfulConfig, id: string) => {
@@ -269,7 +268,7 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
   const uuid = uuidv4() as string;
 
   return addWebhook(options, uuid, {
-    name: 'contentful-ssg-watcher',
+    name: `contentful-ssg (${hostname()})`,
     url,
     httpBasicUsername: null,
     topics,
@@ -343,7 +342,7 @@ const sync = async (apiClient): Promise<SyncCollection> => {
   const options: SyncOptions = { initial: true };
   if (existsSync(SYNC_TOKEN_FILENAME)) {
     options.nextSyncToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
-    options.initial = false;
+    delete options.initial;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call

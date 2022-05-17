@@ -280,11 +280,9 @@ export interface PagedGetOptions<T> {
 }
 
 export interface SyncOptions {
-  type?: string;
-  content_type?: string;
-  limit?: number;
   initial?: boolean;
   nextSyncToken?: string;
+  resolveLinks?: boolean;
 }
 
 export interface ErrorEntry {
