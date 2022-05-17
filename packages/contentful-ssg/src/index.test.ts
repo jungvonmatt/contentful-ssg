@@ -144,4 +144,22 @@ describe('Run', () => {
     expect(mockExit).toBeCalledTimes(0);
     mockExit.mockRestore();
   });
+
+  test('does not fail on transform exception in sync mode', async () => {
+    console.log = jest.fn();
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation((number) => {
+      throw new Error('process.exit: ' + number);
+    });
+
+    await run({
+      directory: 'test',
+      sync: true,
+      transform: async () => {
+        throw new Error();
+      },
+    });
+
+    expect(mockExit).toBeCalledTimes(0);
+    mockExit.mockRestore();
+  });
 });

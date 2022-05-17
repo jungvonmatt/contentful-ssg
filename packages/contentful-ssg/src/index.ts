@@ -297,7 +297,7 @@ export const run = async (
   await ctx.stats.print();
   console.log('\n  -------------------------------------------');
 
-  if (ctx.stats.errors?.length && !config.ignoreErrors) {
+  if (!ctx.config.sync && ctx.stats.errors?.length && !config.ignoreErrors) {
     process.exit(1);
   }
 
