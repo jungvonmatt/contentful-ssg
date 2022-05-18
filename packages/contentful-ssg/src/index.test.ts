@@ -1,6 +1,8 @@
 import chalk from 'chalk';
-import { run } from './index.js';
+import { run, cleanupPrevData } from './index.js';
 import { write } from './tasks/write.js';
+import { RunResult, RuntimeContext } from './types.js';
+import { getContent } from './__test__/mock.js';
 
 jest.mock('./lib/contentful.js', () => {
   const originalModule = jest.requireActual('./lib/contentful.js');
@@ -143,5 +145,67 @@ describe('Run', () => {
 
     expect(mockExit).toBeCalledTimes(0);
     mockExit.mockRestore();
+  });
+
+  test('does not fail on transform exception in sync mode', async () => {
+    console.log = jest.fn();
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation((number) => {
+      throw new Error('process.exit: ' + number);
+    });
+
+    await run({
+      directory: 'test',
+      sync: true,
+      transform: async () => {
+        throw new Error();
+      },
+    });
+
+    expect(mockExit).toBeCalledTimes(0);
+    mockExit.mockRestore();
+  });
+
+  test('cleanupPrevData', async () => {
+    const mockData = await getContent();
+    const [entry] = mockData.entries;
+    const [asset] = mockData.assets;
+    const [locale] = mockData.locales;
+
+    const prev: RunResult = {
+      observables: {},
+      localized: {
+        [locale.code]: {
+          assets: mockData.assets,
+          entries: mockData.entries,
+          assetMap: mockData.assetMap,
+          entryMap: mockData.entryMap,
+        },
+      },
+    };
+
+    const deletedEntry = { sys: { id: entry.sys.id, type: 'DeletedEntry' } };
+    const deletedAsset = { sys: { id: asset.sys.id, type: 'DeletedAsset' } };
+
+    const context: RuntimeContext = {
+      defaultLocale: locale.code,
+      data: {
+        deletedEntries: [deletedEntry],
+        deletedAssets: [deletedAsset],
+        locales: [locale],
+      },
+    } as RuntimeContext;
+
+    cleanupPrevData(context, prev);
+
+    for (let node of context.data.deletedEntries) {
+      expect(Object.keys(node)).toEqual(expect.arrayContaining(['sys', 'fields']));
+      expect(Object.keys(node.sys)).toEqual(expect.arrayContaining(['contentType']));
+      expect(node.sys.type).toEqual('DeletedEntry');
+    }
+
+    expect(prev.localized[locale.code].entries.length).toBe(mockData.entries.length - 1);
+    expect(prev.localized[locale.code].assets.length).toBe(mockData.assets.length - 1);
+    expect(prev.localized[locale.code].entryMap.has(deletedEntry.sys.id)).toBe(false);
+    expect(prev.localized[locale.code].assetMap.has(deletedAsset.sys.id)).toBe(false);
   });
 });

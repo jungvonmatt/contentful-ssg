@@ -1,5 +1,7 @@
 /* eslint-env jest */
-import { ContentfulConfig } from '../types.js';
+import { existsSync } from 'fs';
+import { readFile, unlink } from 'fs/promises';
+import { ContentfulConfig, Entry } from '../types.js';
 import { getContent as getMockContent } from '../__test__/mock.js';
 import {
   convertToMap,
@@ -20,7 +22,13 @@ import {
   getEnvironments,
   getApiKey,
   getPreviewApiKey,
-  MAX_ALLOWED_LIMIT,
+  getWebhooks,
+  addWebhook,
+  deleteWebhook,
+  addWatchWebhook,
+  resetSync,
+  SYNC_TOKEN_FILENAME,
+  isSyncRequest,
 } from './contentful.js';
 
 const configMock = {
@@ -42,6 +50,22 @@ jest.mock('contentful', () => {
         .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
         .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
         .mockResolvedValue({ items: Array(4), total: 2004 }),
+      sync: jest
+        .fn()
+        .mockResolvedValueOnce({
+          nextSyncToken: 'sync-token',
+          entries: Array(5),
+          assets: Array(3),
+          deletedEntries: [{ sys: { id: 'entry' } }],
+          deletedAssets: [{ sys: { id: 'asset' } }],
+        })
+        .mockResolvedValueOnce({
+          nextSyncToken: 'sync-token-2',
+          entries: [],
+          assets: [],
+          deletedEntries: [{ sys: { id: 'entry-2' } }],
+          deletedAssets: [],
+        }),
     }),
   };
 });
@@ -52,12 +76,52 @@ jest.mock('contentful-management', () => {
   const mockedEnvironment = {
     sys: { id: 'environment-id' },
   };
+
+  const mockedWebhook = {
+    name: '...',
+    url: '...',
+    httpBasicUsername: null,
+    topics: [
+      'ContentType.publish',
+      'ContentType.unpublish',
+      'ContentType.delete',
+      'Entry.archive',
+      'Entry.unarchive',
+      'Entry.publish',
+      'Entry.unpublish',
+      'Entry.delete',
+      'Asset.archive',
+      'Asset.unarchive',
+      'Asset.publish',
+      'Asset.unpublish',
+      'Asset.delete',
+    ],
+    active: true,
+    sys: {
+      type: 'WebhookDefinition',
+      id: 'b737d0fe-d100-490a-a378-48453ca5b541',
+      version: 1,
+    },
+    headers: [],
+    delete: jest.fn().mockResolvedValue('deleted'),
+  };
+
   const mockedSpace = {
     sys: { id: 'space-id' },
     getEnvironments: jest.fn().mockResolvedValue({ items: [mockedEnvironment] }),
     getEnvironment: jest.fn().mockResolvedValue(mockedEnvironment),
     getApiKeys: jest.fn().mockResolvedValue({ items: [mockedApiKey] }),
     getPreviewApiKeys: jest.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
+    getWebhooks: jest.fn().mockResolvedValue({ items: [mockedWebhook] }),
+    getWebhook: jest.fn().mockResolvedValue(mockedWebhook),
+    createWebhookWithId: jest.fn().mockImplementation((id, data) => ({
+      ...data,
+      sys: {
+        type: 'WebhookDefinition',
+        id,
+        version: 1,
+      },
+    })),
   };
 
   return {
@@ -123,6 +187,13 @@ describe('Contentful', () => {
     }).rejects.toThrowError(/Missing required parameter: environmentId/);
   });
 
+  test('getEnvironmentId', () => {
+    const success = getEnvironmentId({ sys: { environment: { sys: { id: 'test' } } } } as Entry);
+    const error = getEnvironmentId({} as Entry);
+    expect(error).toBe('unknown');
+    expect(success).toBe('test');
+  });
+
   test('getApiKey', async () => {
     const key = await getApiKey(configMock);
     expect(key).toEqual('accessToken');
@@ -143,6 +214,96 @@ describe('Contentful', () => {
     expect(assets.length).toBe(4);
     expect(contentTypes.length).toBe(3);
     expect(locales.length).toBe(2);
+  });
+
+  test('getContent (sync)', async () => {
+    expect(isSyncRequest()).toBe(false);
+    const first = await getContent({ ...configMock, sync: true });
+    expect(Array.isArray(first.entries)).toBe(true);
+    expect(Array.isArray(first.assets)).toBe(true);
+    expect(Array.isArray(first.contentTypes)).toBe(true);
+    expect(Array.isArray(first.locales)).toBe(true);
+    expect(Array.isArray(first.deletedAssets)).toBe(true);
+    expect(Array.isArray(first.deletedEntries)).toBe(true);
+    expect(existsSync(SYNC_TOKEN_FILENAME)).toBe(true);
+    expect(isSyncRequest()).toBe(true);
+    const firstToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
+    expect(firstToken).toBe('sync-token');
+
+    const second = await getContent({ ...configMock, sync: true });
+    expect(second.deletedEntries.length).toBe(1);
+    const secondToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
+    expect(secondToken).toBe('sync-token-2');
+
+    await resetSync();
+    expect(isSyncRequest()).toBe(false);
+    expect(existsSync(SYNC_TOKEN_FILENAME)).toBe(false);
+  });
+
+  test('getWebhooks', async () => {
+    const webhooks = await getWebhooks(configMock);
+    expect(webhooks.length).toBe(1);
+  });
+  test('addWebhook', async () => {
+    const webhook = await addWebhook(configMock, 'id', {
+      name: 'name',
+      url: 'url',
+      topics: ['abc'],
+      headers: [],
+    });
+
+    expect(webhook?.sys?.id).toBe('id');
+    expect(webhook?.name).toBe('name');
+  });
+
+  test('deleteWebhook', async () => {
+    const result = await deleteWebhook(configMock, 'id');
+    expect(result).toBe('deleted');
+  });
+
+  test('addWatchWebhook', async () => {
+    const webhook = await addWatchWebhook(configMock, 'http://test.url');
+    expect(webhook.url).toBe('http://test.url');
+    expect(webhook.topics).toEqual([
+      'ContentType.publish',
+      'ContentType.unpublish',
+      'ContentType.delete',
+      'Entry.archive',
+      'Entry.unarchive',
+      'Entry.publish',
+      'Entry.unpublish',
+      'Entry.delete',
+      'Asset.archive',
+      'Asset.unarchive',
+      'Asset.publish',
+      'Asset.unpublish',
+      'Asset.delete',
+    ]);
+  });
+
+  test('addWatchWebhook (preview)', async () => {
+    const webhook = await addWatchWebhook({ ...configMock, preview: true }, 'http://test.url');
+    expect(webhook.url).toBe('http://test.url');
+    expect(webhook.topics).toEqual([
+      'ContentType.publish',
+      'ContentType.unpublish',
+      'ContentType.delete',
+      'Entry.archive',
+      'Entry.unarchive',
+      'Entry.publish',
+      'Entry.unpublish',
+      'Entry.delete',
+      'Asset.archive',
+      'Asset.unarchive',
+      'Asset.publish',
+      'Asset.unpublish',
+      'Asset.delete',
+      'ContentType.save',
+      'Entry.save',
+      'Entry.auto_save',
+      'Asset.save',
+      'Asset.auto_save',
+    ]);
   });
 
   test('isContentfulObject', () => {

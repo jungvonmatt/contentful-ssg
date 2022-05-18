@@ -47,7 +47,7 @@ npx cssg init --typescript
 | spaceId            | `string`                                                              | `undefined`   | Contentful Space id                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | environmentId      | `string`                                                              | `'master'`    | Contentful Environment id                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | format             | `string`\|`function`\|`object`                                        | `'yaml'`      | File format ( `yaml`, `toml`, `md`, `json`) You can add a function returning the format or you can add a mapping object like `{yaml: [glob pattern]}` ([pattern](https://github.com/micromatch/micromatch) should match the directory)                                                                                                                                                                                                                                     |
-| plugins            | `[string]`\|`[[string, options]]`\|`[{resolve:'string', options:{}}]` | `[]`          | Add plugins to contentful-ssg. See [Plugins](#plugins) |
+| plugins            | `[string]`\|`[[string, options]]`\|`[{resolve:'string', options:{}}]` | `[]`          | Add plugins to contentful-ssg. See [Plugins](#plugins)                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | directory          | `string`                                                              | `'./content'` | Base directory for content files.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | validate           | `function`                                                            | `undefined`   | Pass `function(transformContext, runtimeContext){...}` to validate an entry. Return `false` to skip the entry completely. Without a validate function entries with a missing required field are skipped.                                                                                                                                                                                                                                                                   |
 | transform          | `function`                                                            | `undefined`   | Pass `function(transformContext, runtimeContext){...}` to modify the stored object. Return `undefined` to skip the entry completely. (no file will be written)                                                                                                                                                                                                                                                                                                             |
@@ -71,6 +71,7 @@ plugins: ['my-plugin-package', './plugins/my-local-plugin]
 All plugins can have options specified by wrapping the name and an options object in an array inside your config or by using a more verbose object notation.
 
 For specifying no options, these are all equivalent:
+
 ```js
 {
   "plugins": ["my-plugin", ["my-plugin"], ["my-plugin", {}], {resolve: "my-plugin", options: {}}]
@@ -78,6 +79,7 @@ For specifying no options, these are all equivalent:
 ```
 
 To specify an option, pass an object with the keys as the option names.
+
 ```js
 {
   "plugins": [
@@ -225,7 +227,6 @@ itself is waiting for the current entry to be transformed.
 
       // Do something usefull with the transformed data
       // which you can't do with context.entryMap.get('<contentful-id>')
-
     } catch (error) {
       // Entry isn't available, the transform method for the entry throws an error
       // or we encountered a cyclic dependency
@@ -245,8 +246,23 @@ npx cssg fetch
 ```
 
 To see all available command line options call
+
 ```bash
 npx cssg help fetch
+```
+
+### watch
+
+Same as `fetch` but also starts a webserver listening for changes and registers a contentful webhook
+
+```bash
+npx cssg watch
+```
+
+To see all available command line options call
+
+```bash
+npx cssg help watch
 ```
 
 ## Example configuration

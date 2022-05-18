@@ -1,8 +1,12 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 /* eslint-env node */
 import path from 'path';
 import chalk from 'chalk';
+import ngrok from 'ngrok';
+import getPort from 'get-port';
+import exitHook from 'async-exit-hook';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { outputFile } from 'fs-extra';
@@ -12,10 +16,12 @@ import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { logError, confirm, askAll, askMissing } from './lib/ui.js';
 import { omitKeys } from './lib/object.js';
+import { getApp } from './server/index.js';
 
 import { getConfig, getEnvironmentConfig } from './lib/config.js';
 import { run } from './index.js';
 import { Config, ContentfulConfig } from './types.js';
+import { addWatchWebhook, resetSync } from './lib/contentful.js';
 
 const env = dotenv.config();
 dotenvExpand(env);
@@ -44,7 +50,7 @@ const errorHandler = (error: CommandError, silence: boolean) => {
 const actionRunner =
   (fn, log = true) =>
   (...args) =>
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     fn(...args).catch((error) => errorHandler(error, !log));
 const program = new Command();
 program
@@ -151,10 +157,62 @@ program
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
+      await resetSync();
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
 
       return run(verified);
+    })
+  );
+
+program
+  .command('watch')
+  .description('Fetch content objects && watch for changes')
+  .option('-p, --preview', 'Fetch with preview mode')
+  .option('-v, --verbose', 'Verbose output')
+  .option('--url <url>', 'Url where the the server is reachable from the outside')
+  .option('--ignore-errors', 'No error return code when transform has errors')
+  .action(
+    actionRunner(async (cmd) => {
+      await resetSync();
+      const config = await getConfig(parseFetchArgs(cmd || {}));
+      const verified = await askMissing(config);
+
+      let prev = await run({ ...verified, sync: true });
+
+      let port = await getPort({ port: 1314 });
+      if (cmd.url) {
+        const url = new URL(cmd.url);
+        port = url.port || url.protocol === 'https:' ? 443 : 80;
+      }
+
+      const app = getApp(async () => {
+        prev = await run({ ...verified, sync: true }, prev);
+      });
+
+      const server = app.listen(port);
+
+      const stopServer = async () =>
+        new Promise((resolve, reject) => {
+          server.close((err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(true);
+            }
+          });
+        });
+
+      const url = (cmd.url as string) || (await ngrok.connect(port));
+      console.log(`\n  Listening for hooks on ${chalk.cyan(url)}\n`);
+      const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
+
+      exitHook(async (cb) => {
+        await webhook.delete();
+        await stopServer();
+        await resetSync();
+        cb();
+      });
     })
   );
 
