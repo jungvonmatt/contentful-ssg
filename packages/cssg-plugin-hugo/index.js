@@ -89,6 +89,18 @@ export default (args) => {
     const { entryMap } = localeData;
     const entry = entryMap.get(id);
 
+    const contentType = getContentTypeId(entry);
+    if (!options.typeConfig[TYPE_CONTENT].includes(contentType)) {
+      if (entry?.fields?.link_to_entry?.sys?.id) {
+        return getPageRef(transformContext, runtimeContext, entry.fields.link_to_entry);
+      }
+
+      if (entry?.fields?.link_to_url) {
+        const url = new URL(entry.fields.link_to_url);
+        return url.pathname.slice(1);
+      }
+    }
+
     const slugs = utils.collectValues(`fields.${options.fieldIdSlug}`, {
       linkField: `fields.${options.fieldIdParent}`,
       entry,

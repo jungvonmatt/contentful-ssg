@@ -19,6 +19,8 @@ import type { FileManager } from './lib/file-manager.js';
 import type { Stats } from './lib/stats.js';
 import type { HookManager } from './lib/hook-manager.js';
 
+export type { Ignore } from 'ignore';
+
 export type KeyValueMap<T = any> = Record<string, T>;
 
 export type Locale = ContentfulLocale;
@@ -238,6 +240,7 @@ export type ObservableContext = Readonly<
     error?: Error;
   }
 >;
+
 export interface StatsEntry extends KeyValueMap {
   id: string;
   contentTypeId: string;
