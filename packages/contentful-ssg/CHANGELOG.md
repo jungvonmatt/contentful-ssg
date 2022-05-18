@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.4](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.3...v1.7.4) (2022-05-18)
+
+
+### Bug Fixes
+
+* **types:** export ignore type directly from package ([7fbea44](https://github.com/jungvonmatt/contentful-ssg/commit/7fbea4469a110839a14315add6cd546402a45ed3))
+
+
+
+
+
 ## [1.7.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.2...v1.7.3) (2022-05-02)
 
 
