@@ -64,7 +64,7 @@ class CustomListrRenderer {
   }
 }
 
-export const mergePrev = (ctx: RuntimeContext, prev: RunResult) => {
+export const cleanupPrevData = (ctx: RuntimeContext, prev: RunResult) => {
   // Add missing fields to deletedEntries
   // DeletedEntries from sync doesn't contain the contentType field in sys
   // and the fields object which makes it hard to locate the file which should be removed
@@ -129,7 +129,7 @@ export const run = async (
         title: 'Pulling data from contentful',
         task: async (ctx) => {
           await fetch(ctx, config);
-          mergePrev(ctx, prev);
+          cleanupPrevData(ctx, prev);
         },
       },
       {

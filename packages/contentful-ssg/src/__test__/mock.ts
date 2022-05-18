@@ -8,7 +8,15 @@ import {
 } from '../lib/contentful.js';
 import { FileManager } from '../lib/file-manager.js';
 import { HookManager } from '../lib/hook-manager.js';
-import type { Config, RuntimeContext, TransformContext } from '../types.js';
+import type {
+  ContentType,
+  Locale,
+  Asset,
+  Entry,
+  Config,
+  RuntimeContext,
+  TransformContext,
+} from '../types.js';
 
 const cache = new Map();
 
@@ -31,10 +39,10 @@ export const readFixtureSync = (file) => {
 };
 
 export const getContent = async () => {
-  const assets = await readFixture('assets.json');
-  const entries = await readFixture('entries.json');
-  const locales = await readFixture('locales.json');
-  const contentTypes = await readFixture('content_types.json');
+  const assets = (await readFixture('assets.json')) as Asset[];
+  const entries = (await readFixture('entries.json')) as Entry[];
+  const locales = (await readFixture('locales.json')) as Locale[];
+  const contentTypes = (await readFixture('content_types.json')) as ContentType[];
 
   const [entry] = entries;
   const [asset] = assets;
@@ -54,7 +62,21 @@ export const getContent = async () => {
     },
   };
 
-  return { entries, assets, contentTypes, locales, assetLink, entryLink, entry, asset };
+  const assetMap = new Map(assets.map((asset) => [asset.sys.id, asset]));
+  const entryMap = new Map(entries.map((entry) => [entry.sys.id, entry]));
+
+  return {
+    entries,
+    assets,
+    contentTypes,
+    locales,
+    assetLink,
+    entryLink,
+    entry,
+    asset,
+    assetMap,
+    entryMap,
+  };
 };
 
 export const getConfig = (fixture: Partial<Config> = {}): Config => ({
@@ -64,10 +86,10 @@ export const getConfig = (fixture: Partial<Config> = {}): Config => ({
 });
 
 export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): RuntimeContext => {
-  const assets = readFixtureSync('assets.json');
-  const entries = readFixtureSync('entries.json');
-  const locales = readFixtureSync('locales.json');
-  const contentTypes = readFixtureSync('content_types.json');
+  const assets = readFixtureSync('assets.json') as Asset[];
+  const entries = readFixtureSync('entries.json') as Entry[];
+  const locales = readFixtureSync('locales.json') as Locale[];
+  const contentTypes = readFixtureSync('content_types.json') as ContentType[];
 
   const fieldSettings = getFieldSettings(contentTypes);
   const { code: defaultLocale } = locales.find((locale) => locale.default) || locales[0];
