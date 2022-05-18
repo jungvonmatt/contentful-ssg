@@ -182,7 +182,6 @@ program
 
       let port = await getPort({ port: 1314 });
       if (cmd.url) {
-        console.log(cmd);
         const url = new URL(cmd.url);
         port = url.port || url.protocol === 'https:' ? 443 : 80;
       }
