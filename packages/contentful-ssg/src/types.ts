@@ -17,6 +17,8 @@ import type { FileManager } from './lib/file-manager.js';
 import type { Stats } from './lib/stats.js';
 import type { HookManager } from './lib/hook-manager.js';
 
+export type { Ignore } from 'ignore';
+
 export type KeyValueMap<T = any> = Record<string, T>;
 
 export type Locale = ContentfulLocale;
@@ -227,12 +229,6 @@ export type ObservableContext = Readonly<
     error?: Error;
   }
 >;
-export interface Ignore {
-  add(pattern: string | Ignore | string[] | Ignore[]): Ignore;
-  filter(paths: string[]): string[];
-  createFilter(): (path: string) => boolean;
-  ignores(pathname: string): boolean;
-}
 
 export interface StatsEntry extends KeyValueMap {
   id: string;
