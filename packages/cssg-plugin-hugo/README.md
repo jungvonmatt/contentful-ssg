@@ -2,7 +2,7 @@
 
 Provides support for the [hugo](https://gohugo.io/) static site generator.
 
-This plugin provides some usefull but opinionated settings/features for the use with the hugo static site generator.
+This plugin provides some usefull but highly opinionated settings/features for the use with the hugo static site generator.
 
 **Multilingual Mode**
 
