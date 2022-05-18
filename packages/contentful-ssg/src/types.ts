@@ -3,8 +3,6 @@ import type { Document } from '@contentful/rich-text-types';
 import type { Observable, ReplaySubject } from 'rxjs';
 import type { QueryOptions, CollectionProp } from 'contentful-management/types';
 
-export type { Ignore } from 'ignore';
-
 import type {
   EntryFields,
   Locale as ContentfulLocale,
