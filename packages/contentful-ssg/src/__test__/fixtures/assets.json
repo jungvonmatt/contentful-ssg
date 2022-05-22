@@ -1,5 +1,81 @@
 [
   {
+    "metadata": {
+      "tags": []
+    },
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "2JSOnsCZ5gwuVXOPCxSIaF",
+      "type": "Asset",
+      "createdAt": "2022-05-19T21:49:55.900Z",
+      "updatedAt": "2022-05-19T21:51:57.971Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "publishedVersion": 3,
+      "publishedAt": "2022-05-19T21:51:57.971Z",
+      "firstPublishedAt": "2022-05-19T21:51:57.971Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "publishedCounter": 1,
+      "version": 4,
+      "publishedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      }
+    },
+    "fields": {
+      "title": {
+        "en-US": "test"
+      },
+      "description": {
+        "en-US": "Dummy image"
+      },
+      "file": {
+        "en-US": {
+          "url": "//images.ctfassets.net/gpdredy5px7h/2JSOnsCZ5gwuVXOPCxSIaF/40a49a50a6038a07d46e1e80b2b5e4b0/test.jpeg",
+          "details": {
+            "size": 114586,
+            "image": {
+              "width": 1920,
+              "height": 1080
+            }
+          },
+          "fileName": "test.jpeg",
+          "contentType": "image/jpeg"
+        }
+      }
+    }
+  },
+  {
+    "metadata": {
+      "tags": []
+    },
     "sys": {
       "space": {
         "sys": {
@@ -10,7 +86,7 @@
       },
       "id": "3t1t8PDynjpXbAzv6zOVQq",
       "type": "Asset",
-      "createdAt": "2021-01-14T13:07:23.790Z",
+      "createdAt": "2021-01-14T13:06:43.751Z",
       "updatedAt": "2021-01-14T13:07:23.790Z",
       "environment": {
         "sys": {
@@ -19,7 +95,32 @@
           "linkType": "Environment"
         }
       },
-      "revision": 1
+      "publishedVersion": 4,
+      "publishedAt": "2021-01-14T13:07:23.790Z",
+      "firstPublishedAt": "2021-01-14T13:07:23.790Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "publishedCounter": 1,
+      "version": 5,
+      "publishedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      }
     },
     "fields": {
       "title": {

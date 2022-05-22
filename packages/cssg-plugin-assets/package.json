@@ -12,6 +12,7 @@
     "eslint-config-xo-typescript": "^0.47.1",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.2",
+    "fs-extra": "^10.1.0",
     "jest": "^27.3.0"
   },
   "publishConfig": {
