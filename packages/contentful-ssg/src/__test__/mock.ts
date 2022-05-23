@@ -22,7 +22,7 @@ const cache = new Map();
 
 export const readFixture = async (file) => {
   if (!cache.has(file)) {
-    const content = await fs.readJSON(path.join(__dirname, 'fixtures', file));
+    const content = await fs.readJSON(path.join(__dirname, '../../src/__test__/fixtures', file));
     cache.set(file, content);
   }
 
@@ -31,7 +31,7 @@ export const readFixture = async (file) => {
 
 export const readFixtureSync = (file) => {
   if (!cache.has(file)) {
-    const content = fs.readJSONSync(path.join(__dirname, 'fixtures', file));
+    const content = fs.readJSONSync(path.join(__dirname, '../../src/__test__/fixtures', file));
     cache.set(file, content);
   }
 

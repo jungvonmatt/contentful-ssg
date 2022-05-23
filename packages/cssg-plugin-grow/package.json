@@ -14,6 +14,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint --color src --fix --ext .ts",
+    "test": "jest",
     "precompile": "npm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
@@ -46,5 +47,10 @@
       "module": "es2020",
       "composite": true
     }
+  },
+  "jestSonar": {
+    "reportPath": "coverage",
+    "reportFile": "test-report.xml",
+    "indent": 2
   }
 }

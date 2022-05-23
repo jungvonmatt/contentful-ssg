@@ -47,8 +47,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - name: Run Coveralls
-        uses: coverallsapp/github-action@master
-        if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.node, '16')
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+      # - name: Run Coveralls
+      #   uses: coverallsapp/github-action@master
+      #   if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.node, '16')
+      #   with:
+      #     github-token: '${{ secrets.GITHUB_TOKEN }}'

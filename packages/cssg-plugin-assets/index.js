@@ -30,7 +30,7 @@ const processOptions = (options = {}) => {
     focusAreas: {},
   };
 
-  const { rootDir, cacheFolder, assetFolder } = { ...defaultOptions, options };
+  const { rootDir, cacheFolder, assetFolder } = { ...defaultOptions, ...options };
 
   return {
     ...defaultOptions,

@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  plugins: ['prettier'],
   extends: ['xo', 'xo-typescript/space'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -7,7 +8,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     extraFileExtensions: [".cjs"]
   },
-  ignorePatterns: ['**/*.cjs','src/**/*.test.ts', 'src/__test__/*',"src/**/*.fixme.ts"],
+  ignorePatterns: ['**/jest.config.js', '**/*.cjs','src/**/*.test.ts', 'src/__test__/*',"src/**/*.test.ts"],
   env: {
     node: true,
     jest: true,

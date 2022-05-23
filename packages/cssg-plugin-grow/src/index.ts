@@ -1,5 +1,11 @@
-import {RuntimeContext, TransformContext, Hooks, KeyValueMap, PluginSource} from '@jungvonmatt/contentful-ssg';
-import {join, relative} from 'path';
+import {
+  Hooks,
+  KeyValueMap,
+  PluginSource,
+  RuntimeContext,
+  TransformContext,
+} from '@jungvonmatt/contentful-ssg';
+import { join, relative } from 'path';
 
 export interface TypeConfigEntry {
   [x: string]: string;
@@ -32,28 +38,30 @@ const buildInFields = [
 
 const getContentTypeDirectory = async (
   contentTypeId: string,
-  runtimeContext: RuntimeContext,
+  runtimeContext: RuntimeContext
 ): Promise<string> => {
   const contentTypeDirectory = await runtimeContext.hooks.mapDirectory(
-    {contentTypeId} as TransformContext,
-    contentTypeId,
+    { contentTypeId } as TransformContext,
+    contentTypeId
   );
 
   return join(runtimeContext.config.directory || process.cwd(), contentTypeDirectory);
 };
 
-const plugin = (options: PluginConfig): Required<Pick<Hooks, 'after' | 'transform' | 'mapEntryLink'>> => ({
+const plugin = (
+  options: PluginConfig
+): Required<Pick<Hooks, 'after' | 'transform' | 'mapEntryLink'>> => ({
   /**
-     * Map document links to other yaml documents
-     * @param transformContext
-     * @param runtimeContext
-     * @returns
-     */
+   * Map document links to other yaml documents
+   * @param transformContext
+   * @param runtimeContext
+   * @returns
+   */
   async mapEntryLink(
     transformContext: TransformContext,
-    runtimeContext?: RuntimeContext,
+    runtimeContext?: RuntimeContext
   ): Promise<string | undefined> {
-    const {entry, contentTypeId, entryMap, locale} = transformContext;
+    const { entry, contentTypeId, entryMap, locale } = transformContext;
     const id = entry?.sys?.id ?? '';
     const directory = await getContentTypeDirectory(contentTypeId, runtimeContext);
 
@@ -69,13 +77,16 @@ const plugin = (options: PluginConfig): Required<Pick<Hooks, 'after' | 'transfor
   },
 
   /**
-     * Map keys for build in fields
-     * @param {Object} content
-     * @param {Object} config
-     */
-  async transform(transformContext: TransformContext, runtimeContext: RuntimeContext): Promise<KeyValueMap> {
+   * Map keys for build in fields
+   * @param {Object} content
+   * @param {Object} config
+   */
+  async transform(
+    transformContext: TransformContext,
+    runtimeContext: RuntimeContext
+  ): Promise<KeyValueMap> {
     const content = runtimeContext.helper.object.snakeCaseKeys(transformContext?.content ?? {});
-    const {entry, contentTypeId} = transformContext;
+    const { entry, contentTypeId } = transformContext;
 
     if (Object.keys(options.typeConfig || {}).includes(contentTypeId)) {
       return content;
@@ -87,24 +98,24 @@ const plugin = (options: PluginConfig): Required<Pick<Hooks, 'after' | 'transfor
     };
 
     return Object.fromEntries<KeyValueMap>(
-      Object.entries<any>({...dates, date: dates.published, ...content}).map(([key, value]) => {
+      Object.entries<any>({ ...dates, date: dates.published, ...content }).map(([key, value]) => {
         if (buildInFields.includes(key)) {
           return [`$${key}`, value];
         }
 
         return [key, value];
-      }),
+      })
     );
   },
 
   /**
-     * Add blueprint files
-     * @param runtimeContext
-     */
+   * Add blueprint files
+   * @param runtimeContext
+   */
   async after(runtimeContext: RuntimeContext) {
     // Add blueprints
-    const {fileManager, converter} = runtimeContext;
-    const {typeConfig} = options || {};
+    const { fileManager, converter } = runtimeContext;
+    const { typeConfig } = options || {};
 
     const promises = Object.entries<TypeConfigEntry>(typeConfig).map(
       async ([contentType, blueprint]) => {
@@ -116,7 +127,7 @@ const plugin = (options: PluginConfig): Required<Pick<Hooks, 'after' | 'transfor
         } catch (error: unknown) {
           console.log(error);
         }
-      },
+      }
     );
 
     return Promise.all(promises);

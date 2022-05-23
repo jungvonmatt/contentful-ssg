@@ -9,6 +9,7 @@
   },
   "type": "module",
   "scripts": {
+    "test": "jest",
     "lint": "eslint --color index.js --fix"
   },
   "repository": {
@@ -27,7 +28,12 @@
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "^1.7.4",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^10.1.0",
     "micromatch": "^4.0.4"
+  },
+  "jestSonar": {
+    "reportPath": "coverage",
+    "reportFile": "test-report.xml",
+    "indent": 2
   }
 }

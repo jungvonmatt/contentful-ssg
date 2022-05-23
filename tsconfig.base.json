@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["dom", "dom.iterable", "es2020", "esnext"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@jungvonmatt/*": ["packages/*"]
+    },
+    "strict": false,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "removeComments": true,
+    "noEmit": false,
+    "resolveJsonModule": false,
+    "isolatedModules": true
+  },
+  "exclude": ["**/*.test.ts", "**/*.stub.ts", "node_modules", "dist"]
+}
