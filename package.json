@@ -68,5 +68,8 @@
     "reportPath": "coverage",
     "reportFile": "test-report.xml",
     "indent": 2
+  },
+  "dependencies": {
+    "fs-extra": "^10.1.0"
   }
 }

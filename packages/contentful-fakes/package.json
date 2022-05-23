@@ -38,9 +38,9 @@
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "^1.7.4",
     "casual": "^1.6.2",
-    "chalk": "^5.0.0",
+    "chalk": "^4.1.2",
     "faker": "^5.5.3",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^10.1.0",
     "randexp": "^0.5.3"
   },
   "devDependencies": {
