@@ -28,7 +28,6 @@ import {
   getRichtextFake,
   getSymbolFake,
   getTextFake,
-  getTextForId,
 } from './faker.js';
 
 import { ContentTypeFieldValidation } from 'contentful-management/types';
@@ -42,10 +41,17 @@ const getFieldInfo = (
   interface: { fieldId: 'id', widgetId },
 });
 
-const getField = (type) => {
+const getField = (type: string) => {
   const info = getFieldInfo(type);
   info.settings.type = type;
   info.settings.items = { type: FIELD_TYPE_SYMBOL };
+  return info;
+};
+
+const getArrayField = (type: string, linkType?: string) => {
+  const info = getFieldInfo(`array - ${type}`);
+  info.settings.type = FIELD_TYPE_ARRAY;
+  info.settings.items = { type, linkType };
   return info;
 };
 
@@ -134,6 +140,16 @@ describe('contentful-fakes', () => {
     expect(inValue.includes(result)).toBeTruthy();
   });
 
+  it('getSymbolFake (validation: regex)', async () => {
+    const regexp = {
+      pattern: '^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$',
+      flags: '',
+    };
+
+    const result = await getSymbolFake(getFieldInfo('-', [{ regexp }]));
+    expect(result).toMatch(new RegExp(regexp.pattern));
+  });
+
   it('getSymbolFake (interface: urlEditor)', async () => {
     const result = await getSymbolFake(getFieldInfo('-', [], 'urlEditor'));
     expect(result).toMatch(
@@ -213,7 +229,7 @@ describe('contentful-fakes', () => {
     const info = getFieldInfo('-');
     info.settings.linkType = LINK_TYPE_ASSET;
     const result = await getLinkFake(info);
-    console.log(result);
+
     expect(Object.keys(result)).toEqual([
       'mime_type',
       'url',
@@ -371,6 +387,7 @@ describe('contentful-fakes', () => {
         getField(FIELD_TYPE_BOOLEAN),
         getField(FIELD_TYPE_LINK),
         getField(FIELD_TYPE_OBJECT),
+        getField('unknown'),
       ],
     };
 
@@ -389,5 +406,76 @@ describe('contentful-fakes', () => {
     expect(typeof result[FIELD_TYPE_BOOLEAN]).toEqual('boolean');
     expect(typeof result[FIELD_TYPE_LINK]).toEqual('object');
     expect(typeof result[FIELD_TYPE_OBJECT]).toEqual('object');
+    expect(typeof result.unknown).toEqual('undefined');
+  });
+
+  it('getArrayFake (type: symbbol)', async () => {
+    const field = getArrayField(FIELD_TYPE_SYMBOL);
+    field.settings.validations = [{ size: { min: 2, max: 4 } }];
+
+    const result = (await getArrayFake(field)) as string[];
+
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBeGreaterThanOrEqual(2);
+    expect(result.length).toBeLessThanOrEqual(4);
+
+    result.forEach((symbol) => {
+      expect(typeof symbol).toBe('string');
+      expect(symbol.length).toBeLessThanOrEqual(255);
+    });
+  });
+
+  it('getArrayFake (type: text)', async () => {
+    const field = getArrayField(FIELD_TYPE_TEXT);
+    field.settings.validations = [{ size: { min: 2, max: 4 } }];
+
+    const result = (await getArrayFake(field)) as string[];
+
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBeGreaterThanOrEqual(2);
+    expect(result.length).toBeLessThanOrEqual(4);
+
+    result.forEach((text) => {
+      expect(typeof text).toBe('string');
+    });
+  });
+
+  it('getArrayFake (type: asset link)', async () => {
+    const field = getArrayField(FIELD_TYPE_LINK, LINK_TYPE_ASSET);
+    field.settings.validations = [{ size: { min: 2, max: 4 } }];
+
+    const result = await getArrayFake(field);
+
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBeGreaterThanOrEqual(2);
+    expect(result.length).toBeLessThanOrEqual(4);
+
+    result.forEach((asset) => {
+      expect(Object.keys(asset)).toEqual([
+        'mime_type',
+        'url',
+        'title',
+        'description',
+        'width',
+        'height',
+        'file_size',
+      ]);
+    });
+  });
+
+  it('getArrayFake (type: entry link)', async () => {
+    const field = getArrayField(FIELD_TYPE_LINK, LINK_TYPE_ENTRY);
+    field.settings.validations = [{ size: { min: 2, max: 4 } }];
+    field.settings.items.validations = [{ linkContentType: ['content-type'] }];
+
+    const result = await getArrayFake(field);
+
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBeGreaterThanOrEqual(2);
+    expect(result.length).toBeLessThanOrEqual(4);
+
+    result.forEach((entry) => {
+      expect(entry).toMatchObject({ id: 'default', content_type: 'content-type' });
+    });
   });
 });
