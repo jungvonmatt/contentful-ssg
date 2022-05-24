@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { remove } from 'fs-extra';
+import got from 'got';
 import {
   getContent,
   getTransformContext,
@@ -9,6 +10,17 @@ import {
 import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
 import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
 import plugin from './index.js';
+
+jest.mock('got', () =>
+  jest.fn().mockImplementation(() => {
+    return {
+      buffer: () =>
+        Buffer.from(
+          `<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><g><circle cx="15" cy="15" r="13.85"/></g></svg>`
+        ),
+    };
+  })
+);
 
 const getMockData = async (type) => {
   const content = await getContent();
@@ -32,6 +44,13 @@ const getMockData = async (type) => {
 };
 
 describe('cssg-plugin-assets', () => {
+  beforeEach(async () => {
+    const cacheDir = join(__dirname, '.cache');
+    if (existsSync(cacheDir)) {
+      await remove(cacheDir);
+    }
+  });
+
   it('mapAssetLink (basic)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/jpeg');
     const instance = plugin();
@@ -151,12 +170,65 @@ describe('cssg-plugin-assets', () => {
     await remove(assetFolder);
   });
 
+  it('mapAssetLink (download with HUGO_BASEURL)', async () => {
+    process.env.HUGO_BASEURL = '/hugo-base';
+    const { transformContext, runtimeContext, defaultValue } = await getMockData('image/jpeg');
+    const assetFolder = join(__dirname, 'test-public');
+    const cacheFolder = join(__dirname, 'test-cache');
+    const instance = plugin({
+      assetBase: '/test-temp',
+      assetFolder,
+      cacheFolder,
+      download: true,
+    });
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+
+    const image = result?.derivatives?.original ?? {};
+
+    expect(image.src).toMatch(/^\/hugo-base\/test-temp/);
+
+    image.srcsets.forEach((source) =>
+      source.srcset.split(',').forEach((src) => {
+        expect(src.trim()).toMatch(/^\/hugo-base\/test-temp/);
+      })
+    );
+  });
+
+  it('mapAssetLink (empty asset)', async () => {
+    const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
+
+    const instance = plugin();
+    const result = await instance.mapAssetLink(
+      { ...transformContext, asset: null },
+      runtimeContext,
+      defaultValue
+    );
+
+    expect(result.mimeType).toBe('image/svg+xml');
+    expect(result?.source).toEqual(undefined);
+  });
+
   it('mapAssetLink (svg)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
     const instance = plugin();
     const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
 
-    expect(result.mimeType).toBe('image/svg+xml')
-    expect(result?.source ?? '').toMatch(/^<svg.*<\/svg>/mg)
-  }
+    expect(result.mimeType).toBe('image/svg+xml');
+    expect(result?.source ?? '').toMatch(/^<svg.*<\/svg>/gm);
+  });
+
+  it('mapAssetLink (cache)', async () => {
+    got.mockClear();
+    const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
+    const instance = plugin();
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const resultFromCache = await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    );
+
+    expect(result).toMatchObject(resultFromCache);
+    expect(got).toHaveBeenCalledTimes(1);
+  });
 });

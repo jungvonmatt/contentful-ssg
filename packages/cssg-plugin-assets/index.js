@@ -92,10 +92,10 @@ export default (pluginOptions) => {
   };
 
   const readAsset = async (asset) => {
-    const { sys, fields } = asset;
+    const { sys, fields } = asset || {};
     const { createdAt, updatedAt } = sys || {};
-    const fileUurl = fields?.file?.url;
-    const src = fileUurl.startsWith('//') ? `https:${fileUurl}` : fileUurl;
+    const fileUrl = fields?.file?.url ?? '';
+    const src = fileUrl.startsWith('//') ? `https:${fileUrl}` : fileUrl;
 
     if (!src) {
       return;
@@ -110,6 +110,7 @@ export default (pluginOptions) => {
       try {
         const response = got(url);
         const buffer = await response.buffer();
+
         await promises.writeFile(filepath, buffer);
       } catch {
         console.log('Error downloading image:', url);
@@ -280,7 +281,7 @@ export default (pluginOptions) => {
   const mapAssetLink = async (transformContext, runtimeContext, defaultValue) => {
     const { download } = options || {};
     const { asset, entry, fieldId } = transformContext;
-    const { sys } = asset;
+    const { sys } = asset || {};
     const { url, mimeType = '' } = defaultValue;
     const src = url.startsWith('//') ? `https:${url}` : url;
 
