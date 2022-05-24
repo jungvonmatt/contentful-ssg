@@ -177,10 +177,9 @@ program
       await resetSync();
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
-
       let prev = await run({ ...verified, sync: true });
-
       let port = await getPort({ port: 1314 });
+
       if (cmd.url) {
         const url = new URL(cmd.url);
         if (url.port) {
