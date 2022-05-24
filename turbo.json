@@ -5,16 +5,16 @@
     "compile": {
       "dependsOn": ["^compile"],
       "outputs": ["dist/**"],
-      "inputs": ["src/**/*.ts"]
+      "inputs": ["src/*.ts", "src/**/*.ts"]
     },
     "test": {
       "dependsOn": ["^compile"],
-      "inputs": ["src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"],
+      "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"],
       "outputs": ["coverage/**"]
     },
     "lint": {
       "dependsOn": ["^compile"],
-      "inputs": ["src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"],
+      "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"],
       "outputs": []
     },
     "test:ci": {
