@@ -12,7 +12,7 @@ export default {
   testResultsProcessor: 'jest-sonar-reporter',
   preset: 'ts-jest/presets/default-esm',
   moduleDirectories: ['node_modules', `${__dirname}/packages`],
-  coverageReporters: ['text', 'cobertura'],
+  coverageReporters: ['text', 'clover', 'json', 'lcov', 'cobertura'],
 
   globals: {
     'ts-jest': {
