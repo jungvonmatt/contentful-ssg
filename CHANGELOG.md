@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.4...v1.8.0-alpha.0) (2022-05-24)
+
+
+### Bug Fixes
+
+* bumps fs-extra ([42cb100](https://github.com/jungvonmatt/contentful-ssg/commit/42cb100df8d47ca11bfa0834cf7610d9cdbe2931))
+* **cssg-plugin-assets:** adds contentful-ssg devdependency ([0cb688f](https://github.com/jungvonmatt/contentful-ssg/commit/0cb688f29a26308016b6a24a4408bb66d4ac6ef4))
+* **watcher:** fix port when url is passed ([9316e62](https://github.com/jungvonmatt/contentful-ssg/commit/9316e6256354fae88074e305f5d16f86d4c2b0c2))
+
+
+
+
+
 ## [1.7.4](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.3...v1.7.4) (2022-05-18)
 
 

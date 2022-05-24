@@ -1,12 +1,12 @@
 {
   "name": "@jungvonmatt/cssg-plugin-assets",
-  "version": "1.6.0",
+  "version": "1.8.0-alpha.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "typings": "./index.d.ts",
   "devDependencies": {
-    "@jungvonmatt/contentful-ssg": "^1.7.4",
+    "@jungvonmatt/contentful-ssg": "^1.8.0-alpha.0",
     "eslint": "^8.0.1",
     "eslint-config-xo": "^0.39.0",
     "eslint-config-xo-space": "^0.30.0",
@@ -42,7 +42,6 @@
     "mkdirp": "^1.0.4",
     "svgo": "^2.8.0"
   },
-
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-report.xml",

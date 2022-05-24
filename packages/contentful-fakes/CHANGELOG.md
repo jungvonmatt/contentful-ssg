@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.4...v1.8.0-alpha.0) (2022-05-24)
+
+
+### Bug Fixes
+
+* bumps fs-extra ([42cb100](https://github.com/jungvonmatt/contentful-ssg/commit/42cb100df8d47ca11bfa0834cf7610d9cdbe2931))
+
+
+
+
+
 ## [1.7.4](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.3...v1.7.4) (2022-05-18)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-fakes
