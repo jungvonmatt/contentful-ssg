@@ -183,7 +183,11 @@ program
       let port = await getPort({ port: 1314 });
       if (cmd.url) {
         const url = new URL(cmd.url);
-        port = url.port || url.protocol === 'https:' ? 443 : 80;
+        if (url.port) {
+          port = parseInt(url.port, 10);
+        } else {
+          port = url.protocol === 'https:' ? 443 : 80;
+        }
       }
 
       const app = getApp(async () => {
