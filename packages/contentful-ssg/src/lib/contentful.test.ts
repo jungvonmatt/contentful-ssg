@@ -115,7 +115,7 @@ jest.mock('contentful-management', () => {
     getPreviewApiKeys: jest.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
     getWebhooks: jest.fn().mockResolvedValue({ items: [mockedWebhook] }),
     getWebhook: jest.fn().mockImplementation((id) => {
-      if (/new/.test(id) || id === createHash('md5').update('http://test.url').digest('hex')) {
+      if (/new/.test(id) || id === createHash('sha1').update('http://test.url').digest('hex')) {
         throw new Error('Not Found');
       }
 
