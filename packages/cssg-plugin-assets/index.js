@@ -105,7 +105,6 @@ export default (pluginOptions) => {
     const url = new URL(src);
     const filepath = join(options.cachePath, getLocalPath(src, {}, false));
     await mkdirp(dirname(filepath));
-
     if (!existsSync(filepath) || !timestamp || timestamp > (await getModifiedTime(filepath))) {
       try {
         const response = got(url);

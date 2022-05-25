@@ -7,5 +7,4 @@ export default {
     },
   },
   moduleFileExtensions: ['ts', 'js'],
-  collectCoverage: true,
 };

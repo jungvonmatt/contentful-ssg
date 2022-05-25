@@ -23,7 +23,7 @@
     "start": "lerna run start",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "test:ci": "turbo run test:ci",
+    "test:ci": "turbo run lint && jest",
     "prepare": "husky install"
   },
   "workspaces": [
@@ -46,6 +46,7 @@
     "husky": "^7.0.4",
     "jest": "^27.3.0",
     "jest-esm-transformer": "^1.0.0",
+    "jest-sonar": "^0.2.12",
     "jest-sonar-reporter": "^2.0.0",
     "lerna": "^4.0.0",
     "lint-staged": "^12.1.2",

@@ -47,10 +47,5 @@
       "module": "es2020",
       "composite": true
     }
-  },
-  "jestSonar": {
-    "reportPath": "coverage",
-    "reportFile": "test-report.xml",
-    "indent": 2
   }
 }

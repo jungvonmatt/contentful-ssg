@@ -9,19 +9,14 @@
     },
     "test": {
       "dependsOn": ["^compile"],
-      "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"],
-      "outputs": ["coverage/**"]
+      "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"]
     },
     "lint": {
       "dependsOn": ["^compile"],
       "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"],
       "outputs": []
     },
-    "test:ci": {
-      "dependsOn": ["compile", "test", "lint"],
-      "outputs": []
-    },
-    "dev": {
+    "watch": {
       "cache": false
     }
   }

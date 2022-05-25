@@ -44,8 +44,8 @@ const getMockData = async (type) => {
 };
 
 describe('cssg-plugin-assets', () => {
-  beforeEach(async () => {
-    const cacheDir = join(__dirname, '.cache');
+  afterEach(async () => {
+    const cacheDir = join(process.cwd(), '.cache');
     if (existsSync(cacheDir)) {
       await remove(cacheDir);
     }
@@ -142,8 +142,8 @@ describe('cssg-plugin-assets', () => {
 
   it('mapAssetLink (download)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/jpeg');
-    const assetFolder = join(__dirname, 'test-public');
-    const cacheFolder = join(__dirname, 'test-cache');
+    const assetFolder = join(process.cwd(), 'test-public');
+    const cacheFolder = join(process.cwd(), 'test-cache');
     const instance = plugin({
       assetBase: '/test-temp',
       assetFolder,
@@ -173,8 +173,8 @@ describe('cssg-plugin-assets', () => {
   it('mapAssetLink (download with HUGO_BASEURL)', async () => {
     process.env.HUGO_BASEURL = '/hugo-base';
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/jpeg');
-    const assetFolder = join(__dirname, 'test-public');
-    const cacheFolder = join(__dirname, 'test-cache');
+    const assetFolder = join(process.cwd(), 'test-public');
+    const cacheFolder = join(process.cwd(), 'test-cache');
     const instance = plugin({
       assetBase: '/test-temp',
       assetFolder,

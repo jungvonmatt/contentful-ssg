@@ -9,11 +9,10 @@ export default {
   passWithNoTests: true,
   extensionsToTreatAsEsm: ['.ts'],
   transform: { '^.+\\.(ts|js)$': 'ts-jest' },
-  testResultsProcessor: 'jest-sonar-reporter',
   preset: 'ts-jest/presets/default-esm',
   moduleDirectories: ['node_modules', `${__dirname}/packages`],
-  coverageReporters: ['text', 'clover', 'json', 'lcov', 'cobertura'],
-
+  coverageReporters: ['text', 'clover', 'json', 'lcov'],
+  coveragePathIgnorePatterns: ['/node_modules/', '__test__'],
   globals: {
     'ts-jest': {
       useESM: true,
