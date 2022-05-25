@@ -1,6 +1,7 @@
 /* eslint-env jest */
 import { existsSync } from 'fs';
 import { readFile, unlink } from 'fs/promises';
+import { createHash } from 'crypto';
 import { ContentfulConfig, Entry } from '../types.js';
 import { getContent as getMockContent } from '../__test__/mock.js';
 import {
@@ -114,7 +115,7 @@ jest.mock('contentful-management', () => {
     getPreviewApiKeys: jest.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
     getWebhooks: jest.fn().mockResolvedValue({ items: [mockedWebhook] }),
     getWebhook: jest.fn().mockImplementation((id) => {
-      if (/new/.test(id) || id === 'http://test.url') {
+      if (/new/.test(id) || id === createHash('md5').update('http://test.url').digest('hex')) {
         throw new Error('Not Found');
       }
 
