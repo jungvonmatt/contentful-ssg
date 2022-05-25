@@ -13,6 +13,9 @@ lib-cov
 coverage
 *.lcov
 
+# sonar
+.scannerwork
+
 # Dependency directories
 node_modules/
 jspm_packages/
