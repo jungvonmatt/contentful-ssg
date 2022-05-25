@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { existsSync } from 'fs';
 import { hostname } from 'os';
+import { createHash } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { readFile, unlink, writeFile } from 'fs/promises';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
@@ -226,7 +227,13 @@ export const addWebhook = async (
   data: CreateWebhooksProps
 ) => {
   const space = await getSpace(options);
-  return space.createWebhookWithId(id, data);
+
+  try {
+    const webhook = await space.getWebhook(id);
+    return webhook;
+  } catch {
+    return space.createWebhookWithId(id, data);
+  }
 };
 
 export const deleteWebhook = async (options: ContentfulConfig, id: string) => {
@@ -265,7 +272,7 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const uuid = uuidv4() as string;
+  const uuid = url ? createHash('md5').update(url).digest('hex') : (uuidv4() as string);
 
   return addWebhook(options, uuid, {
     name: `contentful-ssg (${hostname()})`,

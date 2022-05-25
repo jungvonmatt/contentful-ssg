@@ -170,7 +170,11 @@ program
   .description('Fetch content objects && watch for changes')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
-  .option('--url <url>', 'Url where the the server is reachable from the outside')
+  .option('--url <url>', 'Webhook url')
+  .option(
+    '--port <port>',
+    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration'
+  )
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
@@ -189,11 +193,19 @@ program
         }
       }
 
+      if (cmd.port) {
+        port = parseInt(cmd.port, 10);
+      }
+
       const app = getApp(async () => {
         prev = await run({ ...verified, sync: true }, prev);
       });
 
-      const server = app.listen(port);
+      console.log();
+
+      const server = app.listen(port, () => {
+        console.log(`  Internal server listening on port :${chalk.cyan(port)}`);
+      });
 
       const stopServer = async () =>
         new Promise((resolve, reject) => {
@@ -207,11 +219,14 @@ program
         });
 
       const url = (cmd.url as string) || (await ngrok.connect(port));
-      console.log(`\n  Listening for hooks on ${chalk.cyan(url)}\n`);
+      console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
       const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
       exitHook(async (cb) => {
-        await webhook.delete();
+        try {
+          await webhook.delete();
+        } catch {}
+
         await stopServer();
         await resetSync();
         cb();
