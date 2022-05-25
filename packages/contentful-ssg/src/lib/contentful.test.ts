@@ -113,7 +113,13 @@ jest.mock('contentful-management', () => {
     getApiKeys: jest.fn().mockResolvedValue({ items: [mockedApiKey] }),
     getPreviewApiKeys: jest.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
     getWebhooks: jest.fn().mockResolvedValue({ items: [mockedWebhook] }),
-    getWebhook: jest.fn().mockResolvedValue(mockedWebhook),
+    getWebhook: jest.fn().mockImplementation((id) => {
+      if (/new/.test(id) || id === 'http://test.url') {
+        throw new Error('Not Found');
+      }
+
+      return mockedWebhook;
+    }),
     createWebhookWithId: jest.fn().mockImplementation((id, data) => ({
       ...data,
       sys: {
@@ -245,14 +251,14 @@ describe('Contentful', () => {
     expect(webhooks.length).toBe(1);
   });
   test('addWebhook', async () => {
-    const webhook = await addWebhook(configMock, 'id', {
+    const webhook = await addWebhook(configMock, 'new-id', {
       name: 'name',
       url: 'url',
       topics: ['abc'],
       headers: [],
     });
 
-    expect(webhook?.sys?.id).toBe('id');
+    expect(webhook?.sys?.id).toBe('new-id');
     expect(webhook?.name).toBe('name');
   });
 
