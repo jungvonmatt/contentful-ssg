@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0-alpha.1...v1.8.0-alpha.2) (2022-05-25)
+
+
+### Bug Fixes
+
+* **test:** without crypto ([1faef20](https://github.com/jungvonmatt/contentful-ssg/commit/1faef206b810212b7b3ec02633f5ae9a759b71fb))
+* **watcher:** adds option to overwrite watch port ([cc9f890](https://github.com/jungvonmatt/contentful-ssg/commit/cc9f890601b96fb8795cf5e8cdbdd99290ba2351))
+* **watch:** use crypto for webhook id ([36f4506](https://github.com/jungvonmatt/contentful-ssg/commit/36f45068b2aee82a8af0c88c1b7fc1e0d6133cb3))
+
+
+
+
+
 # [1.8.0-alpha.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0-alpha.0...v1.8.0-alpha.1) (2022-05-24)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg
