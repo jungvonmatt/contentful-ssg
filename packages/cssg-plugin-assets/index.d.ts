@@ -35,6 +35,7 @@ export type Size = number | SizeFunction;
 
 export interface AssetPluginConfig {
   download?: boolean; // Serve assets from local instead of using the contentful cdn
+  generatePosterImages?: boolean; // Use ffmpeg to generate poster images for videos
   sizes?: Size[]; // Widths which should be generated
   rootDir?: string; // Project root
   assetBase?: string; // Base URI. Defaults to '/assets/cf'. Will be located in your asset folder

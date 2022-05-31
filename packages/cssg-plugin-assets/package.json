@@ -35,6 +35,8 @@
   },
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.1",
     "cli-progress": "^3.9.1",
     "contentful": "^9.1.4",
     "download": "^8.0.0",

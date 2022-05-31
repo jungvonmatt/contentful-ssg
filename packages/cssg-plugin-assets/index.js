@@ -1,9 +1,11 @@
+/* eslint-disable complexity */
 import { resolve, extname as pathExtname, basename, dirname, join } from 'path';
 import { existsSync, promises } from 'fs';
 import mkdirp from 'mkdirp';
 import got from 'got';
 import { SingleBar, Presets } from 'cli-progress';
 import { optimize } from 'svgo';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 
 // Max width that can be handled by the contentful image api
 const contentfulMaxWidth = 4000;
@@ -45,7 +47,75 @@ const processOptions = (options = {}) => {
 
 export default (pluginOptions) => {
   const queue = new Set();
+  const posterQueue = new Set();
   const options = processOptions(pluginOptions);
+
+  const ffmpeg = createFFmpeg();
+
+  const generatePosterImageSrc = (src, sys) => {
+    const filepath = getLocalPath(src, sys, !options.download);
+    const posterFilePath = `${filepath.replace(/\.\w+$/, '')}-poster.jpg`;
+
+    posterQueue.add(
+      JSON.stringify({
+        src: filepath,
+        dest: posterFilePath,
+      })
+    );
+
+    return posterFilePath;
+  };
+
+  const generatePosterImage = async (src, dest) => {
+    const srcPath = join(options.assetPath, src);
+    const destPath = join(options.assetPath, dest);
+    const tmpSrc = src.replace(/^\//, '').replace(/\//g, '-');
+    const tmpDest = dest.replace(/^\//, '').replace(/\//g, '-');
+
+    // Write file to MEMFS first so that ffmpeg.wasm is able to consume it
+    // eslint-disable-next-line new-cap
+    ffmpeg.FS('writeFile', tmpSrc, await fetchFile(srcPath));
+    await ffmpeg.run('-i', tmpSrc, '-vframes', '1', '-f', 'image2', tmpDest);
+    await promises.writeFile(
+      destPath,
+      // eslint-disable-next-line new-cap
+      ffmpeg.FS('readFile', tmpDest)
+    );
+
+    return destPath;
+  };
+
+  const generatePosterImages = async () => {
+    const files = [...posterQueue].map((json) => JSON.parse(json));
+
+    const bar = new SingleBar(
+      {
+        format:
+          '    ➞ Generating poster images: [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}',
+      },
+      Presets.legacy
+    );
+    let progress = 0;
+    // Start the progress bar with a total value of 200 and start value of 0
+    bar.start(files.length, 0);
+
+    // Ffmpeg wasm can't process more than one file at a time
+    // so we need to run it serial
+    for (const file of files) {
+      try {
+        const { src, dest } = file;
+        // eslint-disable-next-line no-await-in-loop
+        await generatePosterImage(src, dest);
+        progress++;
+        bar.update(progress);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    bar.stop();
+    return true;
+  };
 
   const getLocalPath = (src, sys, addToQueue = true) => {
     const url = new URL(src);
@@ -343,12 +413,25 @@ export default (pluginOptions) => {
       return { ...defaultValue, src: original.src, derivatives: { original, ...derivatives } };
     }
 
+    if (mimeType.startsWith('video') && options.generatePosterImages) {
+      return {
+        ...defaultValue,
+        src: download ? getLocalSrc(src, sys) : src,
+        poster: generatePosterImageSrc(src, sys),
+      };
+    }
+
     return { ...defaultValue, src: download ? getLocalSrc(src, sys) : src };
   };
 
   const after = async () => {
-    if (options.download) {
+    if (options.download || options.generatePosterImages) {
       await fetchAssets();
+    }
+
+    if (options.generatePosterImages) {
+      await ffmpeg.load();
+      await generatePosterImages();
     }
   };
 
