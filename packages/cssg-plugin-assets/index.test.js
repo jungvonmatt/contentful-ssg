@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, basename } from 'path';
 import { existsSync } from 'fs';
 import { remove } from 'fs-extra';
 import got from 'got';
@@ -10,6 +10,7 @@ import {
 import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
 import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
 import plugin from './index.js';
+import exp from 'constants';
 
 jest.mock('got', () =>
   jest.fn().mockImplementation(() => {
@@ -21,6 +22,20 @@ jest.mock('got', () =>
     };
   })
 );
+
+jest.mock('@ffmpeg/ffmpeg', () => {
+  const createFFmpeg = jest.fn().mockReturnValue({
+    FS: jest.fn().mockReturnValue('content'),
+    run: jest.fn().mockResolvedValue(true),
+    load: jest.fn().mockResolvedValue(true),
+  });
+  const fetchFile = jest.fn().mockResolvedValue(true);
+
+  return {
+    createFFmpeg,
+    fetchFile,
+  };
+});
 
 const getMockData = async (type) => {
   const content = await getContent();
@@ -165,6 +180,30 @@ describe('cssg-plugin-assets', () => {
         expect(existsSync(join(cacheFolder, file))).toBe(true);
       })
     );
+
+    await remove(cacheFolder);
+    await remove(assetFolder);
+  });
+
+  it('mapAssetLink (generatePoster)', async () => {
+    const { transformContext, runtimeContext, defaultValue } = await getMockData('video/mp4');
+    const assetFolder = join(process.cwd(), 'test-public');
+    const cacheFolder = join(process.cwd(), 'test-cache');
+    const instance = plugin({
+      assetBase: '/test-temp',
+      assetFolder,
+      cacheFolder,
+      generatePosterImages: true,
+    });
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    await instance.after();
+
+    const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
+
+    expect(result.mimeType).toEqual('video/mp4');
+    expect(basename(result.poster)).toEqual(fileName);
+
+    expect(existsSync(join(assetFolder, result.poster))).toBe(true);
 
     await remove(cacheFolder);
     await remove(assetFolder);

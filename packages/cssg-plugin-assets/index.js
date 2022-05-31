@@ -72,10 +72,19 @@ export default (pluginOptions) => {
     const tmpSrc = src.replace(/^\//, '').replace(/\//g, '-');
     const tmpDest = dest.replace(/^\//, '').replace(/\//g, '-');
 
+    let additionalArgs = [];
+    if (options.posterPosition) {
+      additionalArgs = [...additionalArgs, '-ss', options.posterPosition];
+    }
+
+    if (options.posterSize) {
+      additionalArgs = [...additionalArgs, '-s', options.posterSize];
+    }
+
     // Write file to MEMFS first so that ffmpeg.wasm is able to consume it
     // eslint-disable-next-line new-cap
     ffmpeg.FS('writeFile', tmpSrc, await fetchFile(srcPath));
-    await ffmpeg.run('-i', tmpSrc, '-vframes', '1', '-f', 'image2', tmpDest);
+    await ffmpeg.run('-i', tmpSrc, ...additionalArgs, '-vframes', '1', '-f', 'image2', tmpDest);
     await promises.writeFile(
       destPath,
       // eslint-disable-next-line new-cap

@@ -98,17 +98,20 @@ ratios?: RatioConfig; //
 focusAreas?: FocusAreaConfig; //
 }
 
-| Name        | Type       | Default                        | Description                                                                                                                                                                  |
-| ----------- | ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| download    | `boolean`  | `false`                        | Download assets to bypass the contentful cdn on your production site.                                                                                                        |
-| sizes       | `number[]` | `[1920, 1280, 640, 320]`       | Widths which should be generated.                                                                                                                                            |
-| rootDir     | `string`   | `process.cwd()`                | Project root. Only used alongside `download` option.                                                                                                                         |
-| assetBase   | `string`   | `'/assets/cf'`                 | Base URI. Defaults to '/assets/cf'. Will be located in your asset folder. Only used alongside `download` option.                                                             |
-| assetFolder | `string`   | `'static'`                     | Public folder relative to you project root. Usually something like 'public' or 'static' depending on your static site generator. Only used alongside `download` option.      |
-| cacheFolder | `string`   | `'.cache'`                     | Folder where the downloaded assets should be cached. Only used alongside `download` option.                                                                                  |
-| extraTypes  | `boolean`  | `['image/webp', 'image/avif']` | Additional mimetypes to create alongside the asset mime-type.                                                                                                                |
-| ratios      | `object`   | `{}`                           | Configure ratios per content-type && field or add a default ratio config                                                                                                     |
-| focusAreas  | `object`   | `{default: 'center'}`          | Specify [focus area](https://www.contentful.com/developers/docs/references/images-api/#/reference/resizing-&-cropping/specify-focus-area) which should be used for cropping. |
+| Name                 | Type       | Default                        | Description                                                                                                                                                                  |
+| -------------------- | ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| download             | `boolean`  | `false`                        | Download assets to bypass the contentful cdn on your production site.                                                                                                        |
+| sizes                | `number[]` | `[1920, 1280, 640, 320]`       | Widths which should be generated.                                                                                                                                            |
+| rootDir              | `string`   | `process.cwd()`                | Project root. Only used alongside `download` option.                                                                                                                         |
+| assetBase            | `string`   | `'/assets/cf'`                 | Base URI. Defaults to '/assets/cf'. Will be located in your asset folder. Only used alongside `download` option.                                                             |
+| assetFolder          | `string`   | `'static'`                     | Public folder relative to you project root. Usually something like 'public' or 'static' depending on your static site generator. Only used alongside `download` option.      |
+| cacheFolder          | `string`   | `'.cache'`                     | Folder where the downloaded assets should be cached. Only used alongside `download` option.                                                                                  |
+| extraTypes           | `boolean`  | `['image/webp', 'image/avif']` | Additional mimetypes to create alongside the asset mime-type.                                                                                                                |
+| ratios               | `object`   | `{}`                           | Configure ratios per content-type && field or add a default ratio config                                                                                                     |
+| focusAreas           | `object`   | `{default: 'center'}`          | Specify [focus area](https://www.contentful.com/developers/docs/references/images-api/#/reference/resizing-&-cropping/specify-focus-area) which should be used for cropping. |
+| generatePosterImages | `boolean`  | `false`                        | Generate poster images for contentful videos.                                                                                                                                |
+| posterPosition       | `string`   | `undefined`                    | Specify a position in the video for the poster image. See https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax. Leave empty to use the first frame                      |
+| posterSize           | `string`   | `undefined`                    | Specify size of the poster image in the format &lt;width&gt;x&lt;height&gt;. Leave empty to use the video size.                                                              |
 
 Example:
 

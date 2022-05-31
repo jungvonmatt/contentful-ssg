@@ -144,5 +144,74 @@
         }
       }
     }
+  },
+  {
+    "metadata": {
+      "tags": []
+    },
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "focmz63cn6j9"
+        }
+      },
+      "id": "3NIRCubNZhxuGRRca3zQMo",
+      "type": "Asset",
+      "createdAt": "2022-05-25T13:58:24.835Z",
+      "updatedAt": "2022-05-25T13:58:37.038Z",
+      "environment": {
+        "sys": {
+          "id": "develop",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "publishedVersion": 4,
+      "publishedAt": "2022-05-25T13:58:37.038Z",
+      "firstPublishedAt": "2022-05-25T13:58:37.038Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "publishedCounter": 1,
+      "version": 5,
+      "publishedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      }
+    },
+    "fields": {
+      "title": {
+        "en-US": "video"
+      },
+      "description": {
+        "en-US": ""
+      },
+      "file": {
+        "en-US": {
+          "url": "//videos.ctfassets.net/focmz63cn6j9/3NIRCubNZhxuGRRca3zQMo/9846ea45648f018477b31b3647ec16ce/city-jimmy.mp4",
+          "details": {
+            "size": 1512243
+          },
+          "fileName": "city-jimmy.mp4",
+          "contentType": "video/mp4"
+        }
+      }
+    }
   }
 ]
