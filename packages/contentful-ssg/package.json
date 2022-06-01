@@ -27,6 +27,8 @@
     "./converter/yaml": "./dist/converter/yaml.js",
     "./converter/toml": "./dist/converter/toml.js",
     "./converter/markdown": "./dist/converter/markdown.js",
+    "./mapper": "./dist/mapper/index.js",
+    "./tasks": "./dist/tasks/index.js",
     "./__test__/mock": "./dist/__test__/mock.js"
   },
   "typesVersions": {
@@ -72,6 +74,12 @@
       ],
       "converter/markdown": [
         "./dist/converter/markdown.d.ts"
+      ],
+      "./mapper": [
+        "./dist/mapper/index.d.ts"
+      ],
+      "./tasks": [
+        "./dist/tasks/index.d.ts"
       ],
       "__test__/mock": [
         "./dist/__test__/mock.d.ts"
