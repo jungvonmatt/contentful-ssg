@@ -1,15 +1,16 @@
-import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper';
-import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks';
+import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
+import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
 import {
   getContent,
   getRuntimeContext,
   getTransformContext,
 } from '@jungvonmatt/contentful-ssg/__test__/mock';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { existsSync } from 'fs';
 import { remove } from 'fs-extra';
 import got from 'got';
 import { basename, join } from 'path';
-import plugin from './index.js';
+import plugin, { ProcessedImage, ProcessedSvg, ProcessedVideo } from './index.js';
 
 jest.mock('got', () =>
   jest.fn().mockImplementation(() => {
@@ -27,6 +28,7 @@ jest.mock('@ffmpeg/ffmpeg', () => {
     FS: jest.fn().mockReturnValue('content'),
     run: jest.fn().mockResolvedValue(true),
     load: jest.fn().mockResolvedValue(true),
+    isLoaded: jest.fn().mockReturnValue(false),
   });
   const fetchFile = jest.fn().mockResolvedValue(true);
 
@@ -37,6 +39,8 @@ jest.mock('@ffmpeg/ffmpeg', () => {
 });
 
 const mockedGot = got as jest.MockedFunction<typeof got>;
+const mockedCreateFFmpeg = createFFmpeg as jest.MockedFunction<typeof createFFmpeg>;
+const mockedFetchFile = fetchFile as jest.MockedFunction<typeof fetchFile>;
 
 const getMockData = async (type) => {
   const content = await getContent();
@@ -70,7 +74,11 @@ describe('cssg-plugin-assets', () => {
   it('mapAssetLink (basic)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/jpeg');
     const instance = plugin();
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedImage;
 
     // All fields from default value should be present
     expect(result).toMatchObject(defaultValue);
@@ -88,9 +96,17 @@ describe('cssg-plugin-assets', () => {
         default: { square: 1 / 1, landscape: 16 / 9, portrait: 3 / 4, rectangle: 4 / 3 },
       },
     });
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedImage;
 
-    const { original, square, landscape, portrait, rectangle } = result?.derivatives ?? {};
+    const original = result?.derivatives?.original;
+    const square = result?.derivatives?.square;
+    const landscape = result?.derivatives?.landscape;
+    const portrait = result?.derivatives?.portrait;
+    const rectangle = result?.derivatives?.rectangle;
 
     expect(original.width).toBe(1920);
     expect(original.height).toBe(1080);
@@ -129,14 +145,18 @@ describe('cssg-plugin-assets', () => {
     const instance = plugin({
       sizes: [3600, 1980, 1280, 10],
     });
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedImage;
 
-    const image = result?.derivatives?.original ?? {};
+    const image = result?.derivatives?.original;
 
-    expect(image.width).toBe(1920);
+    expect(image?.width).toBe(1920);
 
-    const [source] = image.srcsets;
-    const srcset = source.srcset.split(',');
+    const [source] = image?.srcsets ?? [];
+    const srcset = source?.srcset?.split(',') ?? [];
     expect(srcset.length).toBe(3);
     srcset.forEach((src, i) => expect(src).toMatch(extectedMatcher[i]));
   });
@@ -146,11 +166,15 @@ describe('cssg-plugin-assets', () => {
     const extraTypes = ['image/avif', 'image/webp', 'image/png'];
 
     const instance = plugin({ extraTypes });
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedImage;
 
-    const image = result?.derivatives?.original ?? {};
+    const image = result?.derivatives?.original;
 
-    expect(image.srcsets.length).toBe(4);
+    expect(image?.srcsets?.length ?? []).toBe(4);
 
     extraTypes.forEach((type, i) => expect(image.srcsets[i].type).toBe(type));
     expect(image.srcsets[extraTypes.length].type).toBe('image/jpeg');
@@ -166,12 +190,16 @@ describe('cssg-plugin-assets', () => {
       cacheFolder,
       download: true,
     });
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedImage;
     await instance.after();
 
-    const image = result?.derivatives?.original ?? {};
+    const image = result?.derivatives?.original;
 
-    expect(image.src).toMatch(/^\/test-temp/);
+    expect(image?.src).toMatch(/^\/test-temp/);
 
     image.srcsets.forEach((source) =>
       source.srcset.split(',').forEach((src) => {
@@ -196,7 +224,11 @@ describe('cssg-plugin-assets', () => {
       cacheFolder,
       generatePosterImages: true,
     });
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedVideo;
     await instance.after();
 
     const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
@@ -204,7 +236,55 @@ describe('cssg-plugin-assets', () => {
     expect(result.mimeType).toEqual('video/mp4');
     expect(basename(result.poster)).toEqual(fileName);
 
+    expect(existsSync(join(cacheFolder, result.poster))).toBe(true);
     expect(existsSync(join(assetFolder, result.poster))).toBe(true);
+
+    await remove(cacheFolder);
+    await remove(assetFolder);
+  });
+
+  it('mapAssetLink (generatePoster with parameters)', async () => {
+    const { transformContext, runtimeContext, defaultValue } = await getMockData('video/mp4');
+    const assetFolder = join(process.cwd(), 'test-public');
+    const cacheFolder = join(process.cwd(), 'test-cache');
+    const instance = plugin({
+      assetBase: '/test-temp',
+      assetFolder,
+      cacheFolder,
+      generatePosterImages: true,
+      posterScale: '300:200',
+      posterPosition: '00:02',
+    });
+
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedVideo;
+    await instance.after();
+
+    const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
+
+    expect(result.mimeType).toEqual('video/mp4');
+    expect(basename(result.poster)).toEqual(fileName);
+
+    expect(existsSync(join(cacheFolder, result.poster))).toBe(true);
+    expect(existsSync(join(assetFolder, result.poster))).toBe(true);
+
+    const mock = mockedCreateFFmpeg.getMockImplementation()();
+    expect(mock.run).toHaveBeenCalledWith(
+      '-i',
+      'test-temp-3NIRCubNZhxuGRRca3zQMo-city-jimmy.mp4',
+      '-ss',
+      '00:02',
+      '-vf',
+      'scale=300:200',
+      '-vframes',
+      '1',
+      '-f',
+      'image2',
+      'test-temp-3NIRCubNZhxuGRRca3zQMo-city-jimmy-poster.jpg'
+    );
 
     await remove(cacheFolder);
     await remove(assetFolder);
@@ -221,11 +301,15 @@ describe('cssg-plugin-assets', () => {
       cacheFolder,
       download: true,
     });
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedImage;
 
-    const image = result?.derivatives?.original ?? {};
+    const image = result?.derivatives?.original;
 
-    expect(image.src).toMatch(/^\/hugo-base\/test-temp/);
+    expect(image?.src ?? '').toMatch(/^\/hugo-base\/test-temp/);
 
     image.srcsets.forEach((source) =>
       source.srcset.split(',').forEach((src) => {
@@ -238,11 +322,11 @@ describe('cssg-plugin-assets', () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
 
     const instance = plugin();
-    const result = await instance.mapAssetLink(
+    const result = (await instance.mapAssetLink(
       { ...transformContext, asset: null },
       runtimeContext,
       defaultValue
-    );
+    )) as ProcessedSvg;
 
     expect(result.mimeType).toBe('image/svg+xml');
     expect(result?.source).toEqual(undefined);
@@ -251,7 +335,11 @@ describe('cssg-plugin-assets', () => {
   it('mapAssetLink (svg)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
     const instance = plugin();
-    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+    const result = (await instance.mapAssetLink(
+      transformContext,
+      runtimeContext,
+      defaultValue
+    )) as ProcessedSvg;
 
     expect(result.mimeType).toBe('image/svg+xml');
     expect(result?.source ?? '').toMatch(/^<svg.*<\/svg>/gm);

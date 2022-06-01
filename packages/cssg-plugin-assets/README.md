@@ -14,16 +14,39 @@ You can specify global defaults for ratios and focus areas, defaults per content
 
 ```js
   options: {
-    sizes: [480, 960, 1280] // Generate these widths
+    // Generate these widths
+    sizes: [480, 960, 1280]
     focusAreas: {
-      default: 'face',                          // Use the largest face detected as focus area
-    }
-    ratios: {
-      default: {square: 1/1, landscape: 16/9},  // Generates original ratio, square and landscape derivatives when nothing else is specified
-      contentTypeId: {
-        default: {rectangle: 4/3},              // contentTypeId.fields.anyFieldId is generated with original and rectangle derivatives
-        fieldId: {square: 1/1},                 // contentTypeId.fields.fieldId is generated with original and square derivatives
+      // Use center as default focus area
+      default: 'center',
+      contentTypes: {
+        'media-content-type': {
+          // Use center as default focus area for media-content-type
+          default: 'top',
+          // create overwrites per field
+          fields: {
+            // Use the largest face detected as focus area for fieldId in media-content-type
+            fieldId: 'face',
+          }
+        }
       }
+    },
+    ratios: {
+      // square and landscape derivatives when nothing else is specified. The 'original' ratio is always available.
+      default: {square: 1/1, landscape: 16/9},
+      // Define overwrites per content-type
+      contentTypes: {
+        'media-content-type': {
+          // default ratio for media-content-type should be rectangle ()
+          default: {rectangle: 4/3},
+          // create overwrites per field
+          fields: {
+            // fieldId in this contentType is generated with original and square derivatives
+            fieldId: {square: 1/1},
+          }
+        }
+      }
+
     },
   }
 ```

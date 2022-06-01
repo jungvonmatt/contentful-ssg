@@ -1,12 +1,12 @@
 /* eslint-disable complexity */
-import { resolve, extname as pathExtname, basename, dirname, join } from 'path';
-import { existsSync, promises } from 'fs';
-import mkdirp from 'mkdirp';
-import got from 'got';
-import { SingleBar, Presets } from 'cli-progress';
-import { optimize } from 'svgo';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import { Asset } from '@jungvonmatt/contentful-ssg/dist/types';
+import { Asset, MapAssetLink, TransformContext } from '@jungvonmatt/contentful-ssg';
+import { Presets, SingleBar } from 'cli-progress';
+import { existsSync, promises } from 'fs';
+import got from 'got';
+import mkdirp from 'mkdirp';
+import { basename, dirname, extname as pathExtname, join, resolve } from 'path';
+import { optimize } from 'svgo';
 
 // Max width that can be handled by the contentful image api
 const contentfulMaxWidth = 4000;
@@ -29,41 +29,31 @@ export type FocusArea =
   | 'face'
   | 'faces';
 
-// export type RatioConfig = {
-//   default?: Ratios;
-//   [x: string]: any;
-//   // [x: string]: {
-//   //   default?: Ratios;
-//   //   [fieldId: string]: Ratios;
-//   // };
-// };
-
-// export type RatioConfig = {
-//   [x: string]: {
-//     default?: Ratios;
-//     [fieldId: string]: Ratios;
-//   };
-// } & { default?: Ratios; };
-
-export type RatioDefaultConfig = {
+export type RatioConfig = {
   default?: Ratios;
-};
-
-export type RatioConfig = RatioDefaultConfig & {
-  [contentTypeId: string]: RatioDefaultConfig & {
-    [fieldId: string]: Ratios;
+  contentTypes?: {
+    [contentTypeId: string]: {
+      default?: Ratios;
+      fields?: {
+        [fieldId: string]: Ratios;
+      };
+    };
   };
 };
 
 export type FocusAreaConfig = {
   default?: FocusArea;
-  [x: string]: any;
-  // [x: string]: {
-  //   default?: FocusArea;
-  //   [fieldId: string]: FocusArea;
-  // };
+  contentTypes?: {
+    [contentTypeId: string]: {
+      default?: FocusArea;
+      fields?: {
+        [fieldId: string]: FocusArea;
+      };
+    };
+  };
 };
 
+// eslint-disable-next-line no-unused-vars
 export type SizesCallback = (asset: Asset, ratio: number, focusArea: string) => number;
 
 export interface PluginConfig {
@@ -81,8 +71,53 @@ export interface PluginConfig {
   download?: boolean;
   generatePosterImages?: boolean;
   posterPosition?: string;
-  posterSize?: string;
+  posterScale?: string;
 }
+
+export type ProcessedAsset = MapAssetLink & {
+  src: string;
+};
+
+export type ProcessedSvg = ProcessedAsset & {
+  source: string;
+  srcsets: [];
+};
+
+type Srcset = {
+  type: string;
+  srcset: string;
+};
+
+export type Derivative = {
+  width: number;
+  height: number;
+  sizes: string;
+  srcsets: Srcset[];
+  src: string;
+};
+
+export type ProcessedImage = ProcessedAsset & {
+  derivatives: {
+    original: Derivative;
+    [ratio: string]: Derivative;
+  };
+};
+
+export type ProcessedVideo = ProcessedAsset & {
+  poster?: string;
+};
+
+const getAssetTimestamp = async (sys: Asset['sys']) =>
+  Date.parse(sys?.updatedAt || sys?.createdAt) || 0;
+
+const getFileTimestamp = async (file) => {
+  if (existsSync(file)) {
+    const { mtime } = await promises.stat(file);
+    return Date.parse(mtime.toISOString());
+  }
+
+  return 0;
+};
 
 /**
  *
@@ -122,50 +157,63 @@ export default (pluginOptions?: PluginConfig) => {
 
   const ffmpeg = createFFmpeg();
 
-  const generatePosterImageSrc = (src, sys) => {
-    const filepath = getLocalPath(src, sys, !options.download);
-    const posterFilePath = `${filepath.replace(/\.\w+$/, '')}-poster.jpg`;
-
-    posterQueue.add(
-      JSON.stringify({
-        src: filepath,
-        dest: posterFilePath,
-      })
-    );
-
-    return posterFilePath;
-  };
+  const getPosterImageFilePath = (videoFile) => `${videoFile.replace(/\.\w+$/, '')}-poster.jpg`;
 
   const generatePosterImage = async (src, dest) => {
-    const srcPath = join(options.assetPath, src);
+    const srcPath = join(options.cachePath, src);
+    const cachedDestPath = join(options.cachePath, dest);
     const destPath = join(options.assetPath, dest);
-    const tmpSrc = src.replace(/^\//, '').replace(/\//g, '-');
-    const tmpDest = dest.replace(/^\//, '').replace(/\//g, '-');
 
-    let additionalArgs = [];
-    if (options.posterPosition) {
-      additionalArgs = [...additionalArgs, '-ss', options.posterPosition];
-    }
+    const timestampSrc = await getFileTimestamp(srcPath);
+    const timestampDestCached = await getFileTimestamp(cachedDestPath);
+    const timestampDest = await getFileTimestamp(cachedDestPath);
 
-    if (options.posterSize) {
-      additionalArgs = [...additionalArgs, '-s', options.posterSize];
-    }
+    if (!timestampDestCached || timestampDestCached < timestampSrc) {
+      const ffmpegSrc = src.replace(/^\//, '').replace(/\//g, '-');
+      const ffmpegDest = dest.replace(/^\//, '').replace(/\//g, '-');
 
-    // Write file to MEMFS first so that ffmpeg.wasm is able to consume it
-    // eslint-disable-next-line new-cap
-    ffmpeg.FS('writeFile', tmpSrc, await fetchFile(srcPath));
-    await ffmpeg.run('-i', tmpSrc, ...additionalArgs, '-vframes', '1', '-f', 'image2', tmpDest);
-    await promises.writeFile(
-      destPath,
+      let additionalArgs = [];
+      if (options.posterPosition) {
+        additionalArgs = [...additionalArgs, '-ss', options.posterPosition];
+      }
+
+      if (options.posterScale) {
+        additionalArgs = [...additionalArgs, '-vf', `scale=${options.posterScale}`];
+      }
+
+      if (!ffmpeg.isLoaded()) {
+        await ffmpeg.load();
+      }
+
+      // Write file to MEMFS first so that ffmpeg.wasm is able to consume it
       // eslint-disable-next-line new-cap
-      ffmpeg.FS('readFile', tmpDest)
-    );
+      ffmpeg.FS('writeFile', ffmpegSrc, await fetchFile(srcPath));
+      await ffmpeg.run(
+        '-i',
+        ffmpegSrc,
+        ...additionalArgs,
+        '-vframes',
+        '1',
+        '-f',
+        'image2',
+        ffmpegDest
+      );
+      await promises.writeFile(
+        cachedDestPath,
+        // eslint-disable-next-line new-cap
+        ffmpeg.FS('readFile', ffmpegDest)
+      );
+    }
 
-    return destPath;
+    if (!timestampDest || timestampDest < timestampDestCached || timestampDest < timestampSrc) {
+      await promises.copyFile(cachedDestPath, destPath);
+    }
+
+    return dest;
   };
 
   const generatePosterImages = async () => {
-    const files = [...posterQueue].map((json) => JSON.parse(json));
+    const files = [...posterQueue];
 
     const bar = new SingleBar(
       {
@@ -180,9 +228,9 @@ export default (pluginOptions?: PluginConfig) => {
 
     // Ffmpeg wasm can't process more than one file at a time
     // so we need to run it serial
-    for (const file of files) {
+    for (const src of files) {
       try {
-        const { src, dest } = file;
+        const dest = getPosterImageFilePath(src);
         // eslint-disable-next-line no-await-in-loop
         await generatePosterImage(src, dest);
         progress++;
@@ -222,15 +270,6 @@ export default (pluginOptions?: PluginConfig) => {
     return join(options.assetBase, assetId, file);
   };
 
-  const getModifiedTime = async (file) => {
-    if (existsSync(file)) {
-      const { mtime } = await promises.stat(file);
-      return Date.parse(mtime.toISOString());
-    }
-
-    return 0;
-  };
-
   const getLocalSrc = (src, sys, addToQueue = true) => {
     const localPath = getLocalPath(src, sys, addToQueue);
     if (process.env.HUGO_BASEURL) {
@@ -242,7 +281,6 @@ export default (pluginOptions?: PluginConfig) => {
 
   const readAsset = async (asset) => {
     const { sys, fields } = asset || {};
-    const { createdAt, updatedAt } = sys || {};
     const fileUrl = fields?.file?.url ?? '';
     const src = fileUrl.startsWith('//') ? `https:${fileUrl}` : fileUrl;
 
@@ -250,11 +288,14 @@ export default (pluginOptions?: PluginConfig) => {
       return;
     }
 
-    const timestamp = Date.parse(updatedAt || createdAt) || 0;
     const url = new URL(src);
     const filepath = join(options.cachePath, getLocalPath(src, {}, false));
     await mkdirp(dirname(filepath));
-    if (!existsSync(filepath) || !timestamp || timestamp > (await getModifiedTime(filepath))) {
+
+    const assetTimestamp = await getAssetTimestamp(sys);
+    const fileTimestamp = await getFileTimestamp(filepath);
+
+    if (!existsSync(filepath) || !assetTimestamp || assetTimestamp > fileTimestamp) {
       try {
         const response = got(url);
         const buffer = await response.buffer();
@@ -278,7 +319,10 @@ export default (pluginOptions?: PluginConfig) => {
     await mkdirp(dirname(cacheFile));
     await mkdirp(dirname(file));
 
-    if (!existsSync(cacheFile) || (timestamp && timestamp > (await getModifiedTime(cacheFile)))) {
+    const cachedFileTimestamp = await getFileTimestamp(cacheFile);
+    const fileTimestamp = await getFileTimestamp(file);
+
+    if (!existsSync(cacheFile) || (timestamp && timestamp > cachedFileTimestamp)) {
       try {
         const response = got(url);
         const buffer = await response.buffer();
@@ -288,7 +332,9 @@ export default (pluginOptions?: PluginConfig) => {
       }
     }
 
-    await promises.copyFile(cacheFile, file);
+    if (!fileTimestamp || fileTimestamp < cachedFileTimestamp || fileTimestamp < timestamp) {
+      await promises.copyFile(cacheFile, file);
+    }
 
     return filepath;
   };
@@ -426,7 +472,11 @@ export default (pluginOptions?: PluginConfig) => {
     };
   };
 
-  const mapAssetLink = async (transformContext, runtimeContext, defaultValue) => {
+  const mapAssetLink = async (
+    transformContext: TransformContext,
+    _runtimeContext,
+    defaultValue: MapAssetLink
+  ): Promise<ProcessedAsset | ProcessedSvg | ProcessedImage | ProcessedVideo> => {
     const { download } = options || {};
     const { asset, entry, fieldId } = transformContext;
     const { sys } = asset || {};
@@ -437,16 +487,19 @@ export default (pluginOptions?: PluginConfig) => {
     const defaultRatio = entry?.fields?.ratio ?? options?.ratios?.default;
     const contentTypeDefaultRatio =
       options?.ratios?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']?.default ?? defaultRatio;
-    const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: contentTypeRatios } = options.ratios;
-    const ratioConfig = contentTypeRatios?.[fieldId] ?? contentTypeDefaultRatio;
+
+    const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: contentTypeRatios } =
+      options?.ratios?.contentTypes ?? {};
+    const ratioConfig = contentTypeRatios?.fields?.[fieldId] ?? contentTypeDefaultRatio;
 
     // Get focusArea from config
     const defaultFocusArea = entry?.fields?.focus_area ?? options?.focusAreas?.default ?? 'center';
     const contentTypeDefaultFocusArea =
       options?.focusAreas?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']?.default ??
       defaultFocusArea;
-    const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: focusAreaConfig } = options.focusAreas;
-    const focusArea = focusAreaConfig?.[fieldId] ?? contentTypeDefaultFocusArea;
+    const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: focusAreaConfig } =
+      options?.focusAreas?.contentTypes ?? {};
+    const focusArea = focusAreaConfig?.fields?.[fieldId] ?? contentTypeDefaultFocusArea;
 
     if (mimeType === 'image/svg+xml') {
       const source = await readAsset(asset);
@@ -478,7 +531,7 @@ export default (pluginOptions?: PluginConfig) => {
         source: optimized,
         srcsets: [],
         src: download ? getLocalSrc(src, sys) : src,
-      };
+      } as ProcessedSvg;
     }
 
     if (mimeType.startsWith('image')) {
@@ -489,18 +542,26 @@ export default (pluginOptions?: PluginConfig) => {
           getImageData(asset, ratio, focusArea),
         ])
       );
-      return { ...defaultValue, src: original.src, derivatives: { original, ...derivatives } };
+      return {
+        ...defaultValue,
+        src: original.src,
+        derivatives: { original, ...derivatives },
+      } as ProcessedImage;
     }
 
     if (mimeType.startsWith('video') && options.generatePosterImages) {
+      const filepath = getLocalPath(src, sys, !options.download);
+
+      posterQueue.add(filepath);
+
       return {
         ...defaultValue,
         src: download ? getLocalSrc(src, sys) : src,
-        poster: generatePosterImageSrc(src, sys),
-      };
+        poster: getPosterImageFilePath(filepath),
+      } as ProcessedVideo;
     }
 
-    return { ...defaultValue, src: download ? getLocalSrc(src, sys) : src };
+    return { ...defaultValue, src: download ? getLocalSrc(src, sys) : src } as ProcessedAsset;
   };
 
   const after = async () => {
@@ -509,7 +570,6 @@ export default (pluginOptions?: PluginConfig) => {
     }
 
     if (options.generatePosterImages) {
-      await ffmpeg.load();
       await generatePosterImages();
     }
   };

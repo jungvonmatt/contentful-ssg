@@ -2,9 +2,12 @@
   "name": "@jungvonmatt/cssg-plugin-assets",
   "version": "1.8.0-alpha.2",
   "description": "",
-  "main": "index.js",
   "type": "module",
-  "typings": "./index.d.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "devDependencies": {
     "@jungvonmatt/contentful-ssg": "^1.8.0-alpha.2",
     "eslint": "^8.0.1",
