@@ -1,11 +1,11 @@
 /* eslint-disable complexity */
-import { resolve, extname as pathExtname, basename, dirname, join } from 'path';
-import { existsSync, promises } from 'fs';
-import mkdirp from 'mkdirp';
-import got from 'got';
-import { SingleBar, Presets } from 'cli-progress';
-import { optimize } from 'svgo';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { Presets, SingleBar } from 'cli-progress';
+import { existsSync, promises } from 'fs';
+import got from 'got';
+import mkdirp from 'mkdirp';
+import { basename, dirname, extname as pathExtname, join, resolve } from 'path';
+import { optimize } from 'svgo';
 
 // Max width that can be handled by the contentful image api
 const contentfulMaxWidth = 4000;
@@ -77,8 +77,8 @@ export default (pluginOptions) => {
       additionalArgs = [...additionalArgs, '-ss', options.posterPosition];
     }
 
-    if (options.posterSize) {
-      additionalArgs = [...additionalArgs, '-s', options.posterSize];
+    if (options.posterScale) {
+      additionalArgs = [...additionalArgs, '-vf', `scale=${options.posterScale}`];
     }
 
     // Write file to MEMFS first so that ffmpeg.wasm is able to consume it
