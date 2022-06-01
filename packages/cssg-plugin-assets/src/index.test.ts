@@ -1,14 +1,14 @@
-import { join, basename } from 'path';
+import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper';
+import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks';
+import {
+  getContent,
+  getRuntimeContext,
+  getTransformContext,
+} from '@jungvonmatt/contentful-ssg/__test__/mock';
 import { existsSync } from 'fs';
 import { remove } from 'fs-extra';
 import got from 'got';
-import {
-  getContent,
-  getTransformContext,
-  getRuntimeContext,
-} from '@jungvonmatt/contentful-ssg/__test__/mock';
-import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
-import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
+import { basename, join } from 'path';
 import plugin from './index.js';
 
 jest.mock('got', () =>
@@ -35,6 +35,8 @@ jest.mock('@ffmpeg/ffmpeg', () => {
     fetchFile,
   };
 });
+
+const mockedGot = got as jest.MockedFunction<typeof got>;
 
 const getMockData = async (type) => {
   const content = await getContent();
@@ -256,7 +258,7 @@ describe('cssg-plugin-assets', () => {
   });
 
   it('mapAssetLink (cache)', async () => {
-    got.mockClear();
+    mockedGot.mockClear();
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
     const instance = plugin();
     const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
