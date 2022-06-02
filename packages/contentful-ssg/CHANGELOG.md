@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.5](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0-alpha.4...v1.8.0-alpha.5) (2022-06-02)
+
+
+### Bug Fixes
+
+* **watcher:** use url from environment variable ([425ed41](https://github.com/jungvonmatt/contentful-ssg/commit/425ed41ae6cbe3ba135a25266918998199d470cd))
+
+
+
+
+
 # [1.8.0-alpha.4](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0-alpha.2...v1.8.0-alpha.4) (2022-06-02)
 
 
