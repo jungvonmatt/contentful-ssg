@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.4](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0-alpha.2...v1.8.0-alpha.4) (2022-06-02)
+
+
+### Bug Fixes
+
+* **contentful:** prefer sha1 over md5 ([825c007](https://github.com/jungvonmatt/contentful-ssg/commit/825c007131abe78b9003abb6985ca4fe480441b3))
+* **sonar:** fix coverage stats ([a1f2538](https://github.com/jungvonmatt/contentful-ssg/commit/a1f2538b892029f36ab4af57e9ca311b12320b58))
+* **watcher:** allow url & port to be set via environment variable ([4afa533](https://github.com/jungvonmatt/contentful-ssg/commit/4afa53344a6a8093700f8b9119a069011ea72a72))
+
+
+
+
+
 # [1.8.0-alpha.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0-alpha.2...v1.8.0-alpha.3) (2022-06-02)
 
 

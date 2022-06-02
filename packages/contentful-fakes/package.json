@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-fakes",
-  "version": "1.8.0-alpha.3",
+  "version": "1.8.0-alpha.4",
   "description": "Create fake data based on contentful data models",
   "main": "./dist/index.js",
   "type": "module",
@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
-    "@jungvonmatt/contentful-ssg": "^1.8.0-alpha.3",
+    "@jungvonmatt/contentful-ssg": "^1.8.0-alpha.4",
     "casual": "^1.6.2",
     "chalk": "^4.1.2",
     "faker": "^5.5.3",

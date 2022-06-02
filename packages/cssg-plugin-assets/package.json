@@ -1,12 +1,12 @@
 {
   "name": "@jungvonmatt/cssg-plugin-assets",
-  "version": "1.8.0-alpha.3",
+  "version": "1.8.0-alpha.4",
   "description": "",
   "main": "index.js",
   "type": "module",
   "typings": "./index.d.ts",
   "devDependencies": {
-    "@jungvonmatt/contentful-ssg": "^1.8.0-alpha.3",
+    "@jungvonmatt/contentful-ssg": "^1.8.0-alpha.4",
     "eslint": "^8.0.1",
     "eslint-config-xo": "^0.39.0",
     "eslint-config-xo-space": "^0.30.0",
