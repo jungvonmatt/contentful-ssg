@@ -217,7 +217,8 @@ program
           });
         });
 
-      const url = (cmd.url as string) || (await ngrok.connect(port));
+      const url =
+        process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
       console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
       const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
