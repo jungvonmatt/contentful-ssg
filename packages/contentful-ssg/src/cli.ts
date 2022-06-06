@@ -2,26 +2,25 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 /* eslint-env node */
-import path from 'path';
-import chalk from 'chalk';
-import ngrok from 'ngrok';
-import getPort from 'get-port';
 import exitHook from 'async-exit-hook';
-import { existsSync } from 'fs';
-import { readFile } from 'fs/promises';
-import { outputFile } from 'fs-extra';
-import prettier from 'prettier';
+import chalk from 'chalk';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import { logError, confirm, askAll, askMissing } from './lib/ui.js';
-import { omitKeys } from './lib/object.js';
-import { getApp } from './server/index.js';
-
-import { getConfig, getEnvironmentConfig } from './lib/config.js';
+import { existsSync } from 'fs';
+import { outputFile } from 'fs-extra';
+import { readFile } from 'fs/promises';
+import getPort from 'get-port';
+import ngrok from 'ngrok';
+import path from 'path';
+import prettier from 'prettier';
 import { run } from './index.js';
-import { Config, ContentfulConfig } from './types.js';
+import { getConfig, getEnvironmentConfig } from './lib/config.js';
 import { addWatchWebhook, resetSync } from './lib/contentful.js';
+import { omitKeys } from './lib/object.js';
+import { askAll, askMissing, confirm, logError } from './lib/ui.js';
+import { getApp } from './server/index.js';
+import { Config, ContentfulConfig } from './types.js';
 
 const env = dotenv.config();
 dotenvExpand(env);
@@ -170,10 +169,10 @@ program
   .description('Fetch content objects && watch for changes')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
-  .option('--url <url>', 'Webhook url')
+  .option('--url <url>', 'Webhook url.\nCan also be set via environment variable CSSG_WEBHOOK_URL')
   .option(
     '--port <port>',
-    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration'
+    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT'
   )
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
@@ -184,8 +183,8 @@ program
       let prev = await run({ ...verified, sync: true });
       let port = await getPort({ port: 1314 });
 
-      if (cmd.url) {
-        const url = new URL(cmd.url);
+      if (process.env.CSSG_WEBHOOK_URL || cmd.url) {
+        const url = new URL(process.env.CSSG_WEBHOOK_URL || cmd.url);
         if (url.port) {
           port = parseInt(url.port, 10);
         } else {
@@ -193,8 +192,8 @@ program
         }
       }
 
-      if (cmd.port) {
-        port = parseInt(cmd.port, 10);
+      if (process.env.CSSG_WEBHOOK_PORT || cmd.port) {
+        port = parseInt(process.env.CSSG_WEBHOOK_PORT || cmd.port, 10);
       }
 
       const app = getApp(async () => {
@@ -218,7 +217,8 @@ program
           });
         });
 
-      const url = (cmd.url as string) || (await ngrok.connect(port));
+      const url =
+        process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
       console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
       const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
