@@ -1,4 +1,9 @@
-import type { Asset, MapAssetLink, TransformContext } from '@jungvonmatt/contentful-ssg';
+import type {
+  Asset,
+  MapAssetLink,
+  RuntimeContext,
+  TransformContext,
+} from '@jungvonmatt/contentful-ssg';
 import type { PluginConfig, ProcessedImage } from '../types.js';
 import { getAssetHelper } from './asset.js';
 
@@ -120,6 +125,7 @@ export const getImageHelper = (options: PluginConfig) => {
 
   const mapAssetLink = async (
     transformContext: TransformContext,
+    runtimeContext: RuntimeContext,
     content: MapAssetLink
   ): Promise<ProcessedImage> => {
     const { asset, entry, fieldId } = transformContext;

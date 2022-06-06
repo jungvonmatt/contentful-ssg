@@ -1,4 +1,4 @@
-import type { MapAssetLink, TransformContext } from '@jungvonmatt/contentful-ssg';
+import type { MapAssetLink, RuntimeContext, TransformContext } from '@jungvonmatt/contentful-ssg';
 import { resolve } from 'path';
 import { getAssetHelper } from './helper/asset.js';
 import { getImageHelper } from './helper/image.js';
@@ -64,7 +64,7 @@ export default (pluginOptions?: PluginConfig) => {
 
   const mapAssetLink = async (
     transformContext: TransformContext,
-    _runtimeContext,
+    runtimeContext: RuntimeContext,
     defaultValue: MapAssetLink
   ): Promise<ProcessedAsset | ProcessedSvg | ProcessedImage | ProcessedVideo> => {
     const { download } = options;
@@ -74,15 +74,15 @@ export default (pluginOptions?: PluginConfig) => {
     const src = url.startsWith('//') ? `https:${url}` : url;
 
     if (mimeType === 'image/svg+xml') {
-      return svgHelper.mapAssetLink(transformContext, defaultValue);
+      return svgHelper.mapAssetLink(transformContext, runtimeContext, defaultValue);
     }
 
     if (mimeType.startsWith('image')) {
-      return imageHelper.mapAssetLink(transformContext, defaultValue);
+      return imageHelper.mapAssetLink(transformContext, runtimeContext, defaultValue);
     }
 
     if (mimeType.startsWith('video')) {
-      return videoHelper.mapAssetLink(transformContext, defaultValue);
+      return videoHelper.mapAssetLink(transformContext, runtimeContext, defaultValue);
     }
 
     return {

@@ -134,7 +134,7 @@ focusAreas?: FocusAreaConfig; //
 | focusAreas           | `object`   | `{default: 'center'}`          | Specify [focus area](https://www.contentful.com/developers/docs/references/images-api/#/reference/resizing-&-cropping/specify-focus-area) which should be used for cropping. |
 | generatePosterImages | `boolean`  | `false`                        | Generate poster images for contentful videos.                                                                                                                                |
 | posterPosition       | `string`   | `undefined`                    | Specify a position in the video for the poster image. See https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax. Leave empty to use the first frame                      |
-| posterScale           | `string`   | `undefined`                    | Specify size of the poster image in the format &lt;width&gt;:&lt;height&gt;. Leave empty to use the video size. See https://trac.ffmpeg.org/wiki/Scaling                                                              |
+| posterScale          | `string`   | `undefined`                    | Specify the scale filter used to generate the poster image. See https://trac.ffmpeg.org/wiki/Scaling. Leave empty to use the video size.                                     |
 
 Example:
 

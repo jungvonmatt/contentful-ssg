@@ -1,4 +1,4 @@
-import { MapAssetLink, TransformContext } from '@jungvonmatt/contentful-ssg';
+import { MapAssetLink, RuntimeContext, TransformContext } from '@jungvonmatt/contentful-ssg';
 import type { PluginConfig, ProcessedSvg } from '../types.js';
 import { getAssetHelper } from './asset.js';
 import { optimize, OptimizedSvg, OptimizeOptions } from 'svgo';
@@ -22,6 +22,7 @@ export const getSvgHelper = (options: PluginConfig) => {
 
   const mapAssetLink = async (
     transformContext: TransformContext,
+    runtimeContext: RuntimeContext,
     content: MapAssetLink
   ): Promise<ProcessedSvg> => {
     const { asset } = transformContext;

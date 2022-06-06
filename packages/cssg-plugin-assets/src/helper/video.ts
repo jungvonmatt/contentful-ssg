@@ -1,5 +1,5 @@
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import type { MapAssetLink, TransformContext } from '@jungvonmatt/contentful-ssg';
+import type { MapAssetLink, RuntimeContext, TransformContext } from '@jungvonmatt/contentful-ssg';
 import { Presets, SingleBar } from 'cli-progress';
 import { promises } from 'fs';
 import { join } from 'path';
@@ -100,6 +100,7 @@ export const getVideoHelper = (options: PluginConfig) => {
 
   const mapAssetLink = async (
     transformContext: TransformContext,
+    runtimeContext: RuntimeContext,
     content: MapAssetLink
   ): Promise<ProcessedVideo> => {
     const { asset } = transformContext;
@@ -116,6 +117,10 @@ export const getVideoHelper = (options: PluginConfig) => {
     };
 
     if (options.generatePosterImages) {
+      if (typeof ffmpeg.setLogging === 'function') {
+        ffmpeg.setLogging(runtimeContext.config.verbose);
+      }
+
       result.poster = getPosterImageFilePath(filepath);
     }
 
