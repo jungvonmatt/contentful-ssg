@@ -10,7 +10,8 @@ import { existsSync } from 'fs';
 import { remove } from 'fs-extra';
 import got from 'got';
 import { basename, join } from 'path';
-import plugin, { ProcessedImage, ProcessedSvg, ProcessedVideo } from './index.js';
+import plugin from './index.js';
+import { ProcessedImage, ProcessedSvg, ProcessedVideo } from './types.js';
 
 jest.mock('got', () =>
   jest.fn().mockImplementation(() => {
@@ -65,9 +66,12 @@ const getMockData = async (type) => {
 
 describe('cssg-plugin-assets', () => {
   afterEach(async () => {
-    const cacheDir = join(process.cwd(), '.cache');
-    if (existsSync(cacheDir)) {
-      await remove(cacheDir);
+    const tempDirs = ['.cache', 'static'];
+    for (const dir of tempDirs) {
+      const dirpath = join(process.cwd(), dir);
+      if (existsSync(dirpath)) {
+        await remove(dirpath);
+      }
     }
   });
 
@@ -141,9 +145,9 @@ describe('cssg-plugin-assets', () => {
 
   it('mapAssetLink (sizes)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/jpeg');
-    const extectedMatcher = [/1920w$/, /1280w$/, /10w$/];
+    const extectedMatcher = [/1920w$/, /1280w$/, /700w$/, /10w$/];
     const instance = plugin({
-      sizes: [3600, 1980, 1280, 10],
+      sizes: [3600, 1980, 1280, 10, () => 700],
     });
     const result = (await instance.mapAssetLink(
       transformContext,
@@ -157,7 +161,7 @@ describe('cssg-plugin-assets', () => {
 
     const [source] = image?.srcsets ?? [];
     const srcset = source?.srcset?.split(',') ?? [];
-    expect(srcset.length).toBe(3);
+    expect(srcset.length).toBe(4);
     srcset.forEach((src, i) => expect(src).toMatch(extectedMatcher[i]));
   });
 
@@ -274,7 +278,7 @@ describe('cssg-plugin-assets', () => {
     const mock = mockedCreateFFmpeg.getMockImplementation()();
     expect(mock.run).toHaveBeenCalledWith(
       '-i',
-      'test-temp-3NIRCubNZhxuGRRca3zQMo-city-jimmy.mp4',
+      'test-temp-1J3uqsCGfgXe8pWnEf55Iz-file_example_MP4_640_3MG.mp4',
       '-ss',
       '00:02',
       '-vf',
@@ -283,7 +287,7 @@ describe('cssg-plugin-assets', () => {
       '1',
       '-f',
       'image2',
-      'test-temp-3NIRCubNZhxuGRRca3zQMo-city-jimmy-poster.jpg'
+      'test-temp-1J3uqsCGfgXe8pWnEf55Iz-file_example_MP4_640_3MG-poster.jpg'
     );
 
     await remove(cacheFolder);
@@ -345,7 +349,7 @@ describe('cssg-plugin-assets', () => {
     expect(result?.source ?? '').toMatch(/^<svg.*<\/svg>/gm);
   });
 
-  it('mapAssetLink (cache)', async () => {
+  it('mapAssetLink (cached svg)', async () => {
     mockedGot.mockClear();
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
     const instance = plugin();
@@ -358,5 +362,15 @@ describe('cssg-plugin-assets', () => {
 
     expect(result).toMatchObject(resultFromCache);
     expect(got).toHaveBeenCalledTimes(1);
+  });
+
+  it('mapAssetLink (asset)', async () => {
+    mockedGot.mockClear();
+    const { transformContext, runtimeContext, defaultValue } = await getMockData('application/pdf');
+    const instance = plugin();
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
+
+    expect(result.mimeType).toBe('application/pdf');
+    expect(result.src).toBeTruthy();
   });
 });
