@@ -14,19 +14,11 @@
   "typings": "./dist/types.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./lib/object": "./dist/lib/object.js",
-    "./lib/config": "./dist/lib/config.js",
-    "./lib/array": "./dist/lib/array.js",
-    "./lib/utils": "./dist/lib/utils.js",
-    "./lib/ui": "./dist/lib/ui.js",
-    "./lib/contentful": "./dist/lib/contentful.js",
-    "./lib/hook-manager": "./dist/lib/hook-manager.js",
-    "./lib/file-manager": "./dist/lib/file-manager.js",
+    "./lib/*": "./dist/lib/*.js",
     "./converter": "./dist/converter/index.js",
-    "./converter/json": "./dist/converter/json.js",
-    "./converter/yaml": "./dist/converter/yaml.js",
-    "./converter/toml": "./dist/converter/toml.js",
-    "./converter/markdown": "./dist/converter/markdown.js",
+    "./converter/*": "./dist/converter/*.js",
+    "./mapper/*": "./dist/mapper/*.js",
+    "./tasks/*": "./dist/tasks/*.js",
     "./__test__/mock": "./dist/__test__/mock.js"
   },
   "typesVersions": {
@@ -34,44 +26,20 @@
       ".": [
         "./dist/types.d.ts"
       ],
-      "lib/utils": [
-        "./dist/lib/utils.d.ts"
-      ],
-      "lib/ui": [
-        "./dist/lib/ui.d.ts"
-      ],
-      "lib/config": [
-        "./dist/lib/config.d.ts"
-      ],
-      "lib/object": [
-        "./dist/lib/object.d.ts"
-      ],
-      "lib/array": [
-        "./dist/lib/array.d.ts"
-      ],
-      "lib/contentful": [
-        "./dist/lib/contentful.d.ts"
-      ],
-      "lib/hook-manager": [
-        "./dist/lib/hook-manager.d.ts"
-      ],
-      "lib/file-manager": [
-        "./dist/lib/file-manager.d.ts"
+      "lib/*": [
+        "./dist/lib/*"
       ],
       "converter": [
         "./dist/converter/index.d.ts"
       ],
-      "converter/json": [
-        "./dist/converter/json.d.ts"
+      "converter/*": [
+        "./dist/converter/*"
       ],
-      "converter/yaml": [
-        "./dist/converter/yaml.d.ts"
+      "mapper/*": [
+        "./dist/mapper/*"
       ],
-      "converter/toml": [
-        "./dist/converter/toml.d.ts"
-      ],
-      "converter/markdown": [
-        "./dist/converter/markdown.d.ts"
+      "tasks/*": [
+        "dist/tasks/*"
       ],
       "__test__/mock": [
         "./dist/__test__/mock.d.ts"

@@ -144,5 +144,137 @@
         }
       }
     }
+  },
+  {
+    "metadata": {
+      "tags": []
+    },
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "1J3uqsCGfgXe8pWnEf55Iz",
+      "type": "Asset",
+      "createdAt": "2022-06-06T22:06:40.586Z",
+      "updatedAt": "2022-06-06T22:06:57.071Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "publishedVersion": 3,
+      "publishedAt": "2022-06-06T22:06:57.071Z",
+      "firstPublishedAt": "2022-06-06T22:06:57.071Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "publishedCounter": 1,
+      "version": 4,
+      "publishedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      }
+    },
+    "fields": {
+      "title": {
+        "en-US": "file example MP4 640 3MG"
+      },
+      "file": {
+        "en-US": {
+          "url": "//videos.ctfassets.net/gpdredy5px7h/1J3uqsCGfgXe8pWnEf55Iz/993750eabc17cb4a568d3993d1c97ef9/file_example_MP4_640_3MG.mp4",
+          "details": {
+            "size": 3114374
+          },
+          "fileName": "file_example_MP4_640_3MG.mp4",
+          "contentType": "video/mp4"
+        }
+      }
+    }
+  },
+  {
+    "metadata": {
+      "tags": []
+    },
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "gpdredy5px7h"
+        }
+      },
+      "id": "5B0NQTKpQVNyPCwF7Ffd3e",
+      "type": "Asset",
+      "createdAt": "2022-06-06T21:46:37.849Z",
+      "updatedAt": "2022-06-06T21:46:48.772Z",
+      "environment": {
+        "sys": {
+          "id": "master",
+          "type": "Link",
+          "linkType": "Environment"
+        }
+      },
+      "publishedVersion": 3,
+      "publishedAt": "2022-06-06T21:46:48.772Z",
+      "firstPublishedAt": "2022-06-06T21:46:48.772Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      },
+      "publishedCounter": 1,
+      "version": 4,
+      "publishedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2lyDFdgxALbzi4FDNHc9x9"
+        }
+      }
+    },
+    "fields": {
+      "title": {
+        "en-US": "Test"
+      },
+      "file": {
+        "en-US": {
+          "url": "//assets.ctfassets.net/gpdredy5px7h/5B0NQTKpQVNyPCwF7Ffd3e/4c30c592475882e0f3c76265f19db101/Test.pdf",
+          "details": {
+            "size": 599538
+          },
+          "fileName": "Test.pdf",
+          "contentType": "application/pdf"
+        }
+      }
+    }
   }
 ]

@@ -24,7 +24,7 @@ export default {
     // Removes .js at the end to match typescript files
     '^(\\.{1,2}/.*)\\.js$': '$1',
     // Typescript packages
-    '^@jungvonmatt/(contentful-ssg|contentful-fakes|cssg-plugin-grow)/(.*)$': `${__dirname}/packages/$1/dist/$2`,
+    '^@jungvonmatt/(contentful-ssg|contentful-fakes|cssg-plugin-grow|cssg-plugin-assets)/(.*)$': `${__dirname}/packages/$1/dist/$2`,
     // Javascript packages
     '^@jungvonmatt/(.*)$': `${__dirname}/packages/$1`,
   },
