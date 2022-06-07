@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   plugins: ['prettier'],
-  extends: ['xo', 'xo-typescript/space'],
+  extends: ['xo', 'xo-typescript/space','plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: ['./tsconfig.json'],
@@ -14,3 +14,4 @@ module.exports = {
     jest: true,
   },
 };
+

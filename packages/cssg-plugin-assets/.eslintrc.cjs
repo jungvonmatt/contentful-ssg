@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   plugins: ['prettier'],
-  extends: ["xo-space", 'plugin:prettier/recommended'],
+  extends: ['xo', 'xo-typescript/space','plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: ['./tsconfig.json'],
