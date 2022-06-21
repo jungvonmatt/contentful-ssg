@@ -128,7 +128,7 @@ export const getRegexValue = (regex: RegexType) => {
 
   // US Phone number
   if (pattern === '^\\d[ -.]?\\(?\\d\\d\\d\\)?[ -.]?\\d\\d\\d[ -.]?\\d\\d\\d\\d$') {
-    return faker.phone.phoneNumber('#-(###)-###-####');
+    return faker.phone.number('#-(###)-###-####');
   }
 
   // US Zip code
