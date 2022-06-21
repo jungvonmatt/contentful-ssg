@@ -23,7 +23,7 @@ import {
 
 import { ContentFields, KeyValueMap, Control } from 'contentful-management/types';
 
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import casual from 'casual';
 import RandExp from 'randexp';
 import { oneOf, randomInt } from './helper.js';
@@ -261,7 +261,7 @@ export const getSymbolFake = async (field: FieldInfo): Promise<string> => {
     result = result.slice(0, count);
 
     while (result.length < min) {
-      result = `${result} ${faker.lorem.sentence() as string}`.slice(0, count);
+      result = `${result} ${faker.lorem.sentence()}`.slice(0, count);
     }
   }
 
@@ -298,7 +298,7 @@ export const getTextFake = async (field: FieldInfo): Promise<string> => {
     result = result.slice(0, count);
 
     while (result.length < min) {
-      result = `${result} ${faker.lorem.paragraphs(5) as string}`.slice(0, count);
+      result = `${result} ${faker.lorem.paragraphs(5)}`.slice(0, count);
     }
   }
 

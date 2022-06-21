@@ -39,7 +39,7 @@
     "@jungvonmatt/contentful-ssg": "^1.8.0",
     "casual": "^1.6.2",
     "chalk": "^4.1.2",
-    "faker": "^5.5.3",
+    "@faker-js/faker": "^7.3.0",
     "fs-extra": "^10.1.0",
     "randexp": "^0.5.3"
   },
