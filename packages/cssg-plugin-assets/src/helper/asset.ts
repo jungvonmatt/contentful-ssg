@@ -27,7 +27,7 @@ export const getAssetHelper = (options: PluginConfig) => {
     return 0;
   };
 
-  const getLocalPath = (src, sys, addToQueue = true) => {
+  const getLocalPath = (src: string, sys, addToQueue = true) => {
     const url = new URL(src);
     const { searchParams, pathname } = url;
     const extname = pathExtname(pathname);
@@ -68,7 +68,9 @@ export const getAssetHelper = (options: PluginConfig) => {
     const cacheFile = join(options.cachePath, filepath);
     const file = join(options.assetPath, filepath);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await mkdirp(dirname(cacheFile));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await mkdirp(dirname(file));
 
     const cachedFileTimestamp = await getFileTimestamp(cacheFile);
@@ -94,12 +96,14 @@ export const getAssetHelper = (options: PluginConfig) => {
   };
 
   const fetchAssets = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const bar = new SingleBar(
       { format: '    ➞ Fetching files: [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}' },
       Presets.legacy
     );
     let progress = 0;
     // Start the progress bar with a total value of 200 and start value of 0
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     bar.start(queue.size, 0);
     await Promise.all(
       [...queue].map(async (file) => {
@@ -107,13 +111,15 @@ export const getAssetHelper = (options: PluginConfig) => {
         try {
           await fetchAsset(src, timestamp);
           progress++;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           bar.update(progress);
-        } catch (error) {
+        } catch (error: unknown) {
           console.log(error);
         }
       })
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     bar.stop();
     return true;
   };

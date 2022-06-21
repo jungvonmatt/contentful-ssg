@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-types
 class Queue<T extends Object> {
   data: Set<string>;
 
@@ -31,10 +32,12 @@ export const getQueue = <T = unknown>(key: string): Queue<T> => {
     queues.set(key, new Queue<T>());
   }
 
-  return queues.get(key);
+  return queues.get(key) as Queue<T>;
 };
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const DOWNLOAD = 'download';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FFMPEG = 'ffmpeg';
 
 export const getDownloadQueue = <T = unknown>(): Queue<T> => getQueue<T>(DOWNLOAD);

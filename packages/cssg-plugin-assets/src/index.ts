@@ -85,10 +85,12 @@ export default (pluginOptions?: PluginConfig) => {
       return videoHelper.mapAssetLink(transformContext, runtimeContext, defaultValue);
     }
 
-    return {
+    const result: ProcessedAsset = {
       ...defaultValue,
       src: download ? assetHelper.getLocalSrc(src, sys) : src,
-    } as ProcessedAsset;
+    };
+
+    return result;
   };
 
   const after = async () => {

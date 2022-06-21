@@ -17,31 +17,28 @@ export type FocusArea =
 
 export type RatioConfig = {
   default?: Ratios;
-  contentTypes?: {
-    [contentTypeId: string]: {
+  contentTypes?: Record<
+    string,
+    {
       default?: Ratios;
-      fields?: {
-        [fieldId: string]: Ratios;
-      };
-    };
-  };
+      fields?: Record<string, Ratios>;
+    }
+  >;
 };
 
 export type FocusAreaConfig = {
   default?: FocusArea;
-  contentTypes?: {
-    [contentTypeId: string]: {
+  contentTypes?: Record<
+    string,
+    {
       default?: FocusArea;
-      fields?: {
-        [fieldId: string]: FocusArea;
-      };
-    };
-  };
+      fields?: Record<string, FocusArea>;
+    }
+  >;
 };
 
-// eslint-disable-next-line no-unused-vars
 export type SizesCallback = (asset: Asset, ratio: number, focusArea: string) => number;
-// eslint-disable-next-line no-unused-vars
+
 type SvgPluginCallback = (transformContext: TransformContext) => Promise<Plugin[]>;
 
 export interface PluginConfig {
@@ -67,14 +64,14 @@ export type ProcessedAsset = MapAssetLink & {
   src: string;
 };
 
-export type ProcessedSvg = ProcessedAsset & {
-  source: string;
-  srcsets: [];
-};
-
 type Srcset = {
   type: string;
   srcset: string;
+};
+
+export type ProcessedSvg = ProcessedAsset & {
+  source: string;
+  srcsets: Srcset[];
 };
 
 export type Derivative = {
@@ -87,8 +84,8 @@ export type Derivative = {
 
 export type ProcessedImage = ProcessedAsset & {
   derivatives: {
-    original: Derivative;
     [ratio: string]: Derivative;
+    original: Derivative;
   };
 };
 

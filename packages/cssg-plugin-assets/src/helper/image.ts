@@ -4,7 +4,7 @@ import type {
   RuntimeContext,
   TransformContext,
 } from '@jungvonmatt/contentful-ssg';
-import type { PluginConfig, ProcessedImage } from '../types.js';
+import type { Derivative, FocusArea, PluginConfig, ProcessedImage, Ratios } from '../types.js';
 import { getAssetHelper } from './asset.js';
 
 // Max width that can be handled by the contentful image api
@@ -17,7 +17,7 @@ const maxMegaPixels = {
 export const getImageHelper = (options: PluginConfig) => {
   const { getLocalSrc } = getAssetHelper(options);
 
-  const getImageData = (asset: Asset, ratio, focusArea) => {
+  const getImageData = (asset: Asset, ratio: number, focusArea: string) => {
     const { width, height } = asset?.fields?.file?.details?.image ?? {};
     const mimeType = asset?.fields?.file?.contentType;
     const url = asset?.fields?.file?.url;
@@ -64,7 +64,7 @@ export const getImageHelper = (options: PluginConfig) => {
     const maxHeight = Math.round(maxWidth / (ratio || width / height));
     const sizesAttribute = `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`;
 
-    const sizeParams = (width, ratio) => {
+    const sizeParams = (width: number, ratio: number) => {
       if (!ratio) {
         return `w=${width}`;
       }
@@ -78,7 +78,7 @@ export const getImageHelper = (options: PluginConfig) => {
     };
 
     const megaPixelFilter = (w, type = '-') => {
-      const max = maxMegaPixels?.[type.replace('image/', '')];
+      const max = maxMegaPixels?.[type.replace('image/', '')] as number;
       const r = ratio || width / height;
       return !max || max >= (w * Math.floor(w / r)) / 1000000;
     };
@@ -132,19 +132,21 @@ export const getImageHelper = (options: PluginConfig) => {
     const { mimeType = '' } = content;
 
     // Get ratio from config
-    const defaultRatio = entry?.fields?.ratio ?? options?.ratios?.default;
+    const defaultRatio = (entry?.fields?.ratio as number) ?? options?.ratios?.default;
     const contentTypeDefaultRatio =
-      options?.ratios?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']?.default ?? defaultRatio;
+      (options?.ratios?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']?.default as Ratios) ??
+      defaultRatio;
 
     const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: contentTypeRatios } =
       options?.ratios?.contentTypes ?? {};
     const ratioConfig = contentTypeRatios?.fields?.[fieldId] ?? contentTypeDefaultRatio;
 
     // Get focusArea from config
-    const defaultFocusArea = entry?.fields?.focus_area ?? options?.focusAreas?.default ?? 'center';
+    const defaultFocusArea =
+      (entry?.fields?.focus_area as FocusArea) ?? options?.focusAreas?.default ?? 'center';
     const contentTypeDefaultFocusArea =
-      options?.focusAreas?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']?.default ??
-      defaultFocusArea;
+      (options?.focusAreas?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']
+        ?.default as FocusArea) ?? defaultFocusArea;
     const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: focusAreaConfig } =
       options?.focusAreas?.contentTypes ?? {};
     const focusArea = focusAreaConfig?.fields?.[fieldId] ?? contentTypeDefaultFocusArea;
@@ -157,15 +159,20 @@ export const getImageHelper = (options: PluginConfig) => {
           getImageData(asset, ratio, focusArea),
         ])
       );
-      return {
+
+      const result: ProcessedImage = {
         ...content,
         src: original.src,
-        derivatives: { original, ...derivatives },
-      } as ProcessedImage;
+        derivatives: { original: original as Derivative, ...derivatives },
+      };
+
+      return result;
     }
   };
 
-  const after = async () => {};
+  const after = async () => {
+    return true;
+  };
 
   return {
     mapAssetLink,

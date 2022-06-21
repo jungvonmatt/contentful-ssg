@@ -1,4 +1,4 @@
-import { MapAssetLink, RuntimeContext, TransformContext } from '@jungvonmatt/contentful-ssg';
+import { Asset, MapAssetLink, RuntimeContext, TransformContext } from '@jungvonmatt/contentful-ssg';
 import type { PluginConfig, ProcessedSvg } from '../types.js';
 import { getAssetHelper } from './asset.js';
 import { optimize, OptimizedSvg, OptimizeOptions } from 'svgo';
@@ -6,7 +6,7 @@ import { optimize, OptimizedSvg, OptimizeOptions } from 'svgo';
 export const getSvgHelper = (options: PluginConfig) => {
   const { fetchAsset, getLocalSrc, getAssetTimestamp } = getAssetHelper(options);
 
-  const readAsset = async (asset) => {
+  const readAsset = async (asset: Asset) => {
     const { sys, fields } = asset || {};
     const fileUrl = fields?.file?.url ?? '';
     const src = fileUrl.startsWith('//') ? `https:${fileUrl}` : fileUrl;
@@ -41,15 +41,19 @@ export const getSvgHelper = (options: PluginConfig) => {
     const { data: optimized } = optimize(source, svgoOptions) as OptimizedSvg;
 
     // Add viewBox if not present
-    return {
+    const result: ProcessedSvg = {
       ...content,
       source: optimized,
       srcsets: [],
       src: options.download ? getLocalSrc(src, asset.sys) : src,
-    } as ProcessedSvg;
+    };
+
+    return result;
   };
 
-  const after = async () => {};
+  const after = async () => {
+    return true;
+  };
 
   return {
     mapAssetLink,
