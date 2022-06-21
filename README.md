@@ -43,7 +43,8 @@ document.
 
 ## You found a bug or want to propose a feature?
 
-- File an issue here on GitHub: [![File an issue](https://img.shields.io/badge/-Create%20Issue-6cc644.svg?logo=github&maxAge=31557600)](https://github.com/jungvonmatt/contentful-ssg/issues/new). Make sure to remove any credential from your code before sharing it.
+File an issue here on GitHub: [![File an issue](https://img.shields.io/badge/-Create%20Issue-6cc644.svg?logo=github&maxAge=31557600)](https://github.com/jungvonmatt/contentful-ssg/issues/new).\
+Make sure to remove any credential from your code before sharing it.
 
 ## License
 
