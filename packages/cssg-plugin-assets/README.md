@@ -14,16 +14,39 @@ You can specify global defaults for ratios and focus areas, defaults per content
 
 ```js
   options: {
-    sizes: [480, 960, 1280] // Generate these widths
+    // Generate these widths
+    sizes: [480, 960, 1280]
     focusAreas: {
-      default: 'face',                          // Use the largest face detected as focus area
-    }
-    ratios: {
-      default: {square: 1/1, landscape: 16/9},  // Generates original ratio, square and landscape derivatives when nothing else is specified
-      contentTypeId: {
-        default: {rectangle: 4/3},              // contentTypeId.fields.anyFieldId is generated with original and rectangle derivatives
-        fieldId: {square: 1/1},                 // contentTypeId.fields.fieldId is generated with original and square derivatives
+      // Use center as default focus area
+      default: 'center',
+      contentTypes: {
+        'media-content-type': {
+          // Use center as default focus area for media-content-type
+          default: 'top',
+          // create overwrites per field
+          fields: {
+            // Use the largest face detected as focus area for fieldId in media-content-type
+            fieldId: 'face',
+          }
+        }
       }
+    },
+    ratios: {
+      // square and landscape derivatives when nothing else is specified. The 'original' ratio is always available.
+      default: {square: 1/1, landscape: 16/9},
+      // Define overwrites per content-type
+      contentTypes: {
+        'media-content-type': {
+          // default ratio for media-content-type should be rectangle ()
+          default: {rectangle: 4/3},
+          // create overwrites per field
+          fields: {
+            // fieldId in this contentType is generated with original and square derivatives
+            fieldId: {square: 1/1},
+          }
+        }
+      }
+
     },
   }
 ```
@@ -98,17 +121,20 @@ ratios?: RatioConfig; //
 focusAreas?: FocusAreaConfig; //
 }
 
-| Name        | Type       | Default                        | Description                                                                                                                                                                  |
-| ----------- | ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| download    | `boolean`  | `false`                        | Download assets to bypass the contentful cdn on your production site.                                                                                                        |
-| sizes       | `number[]` | `[1920, 1280, 640, 320]`       | Widths which should be generated.                                                                                                                                            |
-| rootDir     | `string`   | `process.cwd()`                | Project root. Only used alongside `download` option.                                                                                                                         |
-| assetBase   | `string`   | `'/assets/cf'`                 | Base URI. Defaults to '/assets/cf'. Will be located in your asset folder. Only used alongside `download` option.                                                             |
-| assetFolder | `string`   | `'static'`                     | Public folder relative to you project root. Usually something like 'public' or 'static' depending on your static site generator. Only used alongside `download` option.      |
-| cacheFolder | `string`   | `'.cache'`                     | Folder where the downloaded assets should be cached. Only used alongside `download` option.                                                                                  |
-| extraTypes  | `boolean`  | `['image/webp', 'image/avif']` | Additional mimetypes to create alongside the asset mime-type.                                                                                                                |
-| ratios      | `object`   | `{}`                           | Configure ratios per content-type && field or add a default ratio config                                                                                                     |
-| focusAreas  | `object`   | `{default: 'center'}`          | Specify [focus area](https://www.contentful.com/developers/docs/references/images-api/#/reference/resizing-&-cropping/specify-focus-area) which should be used for cropping. |
+| Name                 | Type       | Default                        | Description                                                                                                                                                                  |
+| -------------------- | ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| download             | `boolean`  | `false`                        | Download assets to bypass the contentful cdn on your production site.                                                                                                        |
+| sizes                | `number[]` | `[1920, 1280, 640, 320]`       | Widths which should be generated.                                                                                                                                            |
+| rootDir              | `string`   | `process.cwd()`                | Project root. Only used alongside `download` option.                                                                                                                         |
+| assetBase            | `string`   | `'/assets/cf'`                 | Base URI. Defaults to '/assets/cf'. Will be located in your asset folder. Only used alongside `download` option.                                                             |
+| assetFolder          | `string`   | `'static'`                     | Public folder relative to you project root. Usually something like 'public' or 'static' depending on your static site generator. Only used alongside `download` option.      |
+| cacheFolder          | `string`   | `'.cache'`                     | Folder where the downloaded assets should be cached. Only used alongside `download` option.                                                                                  |
+| extraTypes           | `boolean`  | `['image/webp', 'image/avif']` | Additional mimetypes to create alongside the asset mime-type.                                                                                                                |
+| ratios               | `object`   | `{}`                           | Configure ratios per content-type && field or add a default ratio config                                                                                                     |
+| focusAreas           | `object`   | `{default: 'center'}`          | Specify [focus area](https://www.contentful.com/developers/docs/references/images-api/#/reference/resizing-&-cropping/specify-focus-area) which should be used for cropping. |
+| generatePosterImages | `boolean`  | `false`                        | Generate poster images for contentful videos.                                                                                                                                |
+| posterPosition       | `string`   | `undefined`                    | Specify a position in the video for the poster image. See https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax. Leave empty to use the first frame                      |
+| posterScale          | `string`   | `undefined`                    | Specify the scale filter used to generate the poster image. See https://trac.ffmpeg.org/wiki/Scaling. Leave empty to use the video size.                                     |
 
 Example:
 

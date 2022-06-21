@@ -1,7 +1,23 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { existsSync } from 'fs';
+import { hostname } from 'os';
+import { createHash } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+import { readFile, unlink, writeFile } from 'fs/promises';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
-import type { Space, ApiKey, QueryOptions, CollectionProp } from 'contentful-management/types';
-import type { CreateClientParams, ContentfulClientApi, EntryFields } from 'contentful';
+import type {
+  Space,
+  ApiKey,
+  QueryOptions,
+  CollectionProp,
+  CreateWebhooksProps,
+} from 'contentful-management/types';
+import type {
+  CreateClientParams,
+  ContentfulClientApi,
+  EntryFields,
+  SyncCollection,
+} from 'contentful';
 import type {
   ContentfulConfig,
   FieldSettings,
@@ -11,6 +27,7 @@ import type {
   ContentType,
   Locale,
   PagedGetOptions,
+  SyncOptions,
 } from '../types.js';
 import contentful from 'contentful';
 import contentfulManagement from 'contentful-management';
@@ -33,6 +50,8 @@ export const LINK_TYPE_ASSET = 'Asset';
 export const LINK_TYPE_ENTRY = 'Entry';
 
 export const MAX_ALLOWED_LIMIT = 1000;
+
+export const SYNC_TOKEN_FILENAME = '.contentful_sync.lock';
 
 /**
  * Get contentType id from entry
@@ -195,6 +214,89 @@ export const getPreviewApiKey = async (options: ContentfulConfig) => {
   return previewAccessToken;
 };
 
+export const getWebhooks = async (options: ContentfulConfig) => {
+  const space = await getSpace(options);
+  const { items: webhooks = [] } = await space.getWebhooks();
+
+  return webhooks;
+};
+
+export const addWebhook = async (
+  options: ContentfulConfig,
+  id: string,
+  data: CreateWebhooksProps
+) => {
+  const space = await getSpace(options);
+
+  try {
+    const webhook = await space.getWebhook(id);
+    return webhook;
+  } catch {
+    return space.createWebhookWithId(id, data);
+  }
+};
+
+export const deleteWebhook = async (options: ContentfulConfig, id: string) => {
+  const space = await getSpace(options);
+  const webhook = await space.getWebhook(id);
+
+  return webhook.delete();
+};
+
+export const addWatchWebhook = async (options: ContentfulConfig, url: string) => {
+  let topics = [
+    'ContentType.publish',
+    'ContentType.unpublish',
+    'ContentType.delete',
+    'Entry.archive',
+    'Entry.unarchive',
+    'Entry.publish',
+    'Entry.unpublish',
+    'Entry.delete',
+    'Asset.archive',
+    'Asset.unarchive',
+    'Asset.publish',
+    'Asset.unpublish',
+    'Asset.delete',
+  ];
+
+  if (options.preview) {
+    topics = [
+      ...topics,
+      'ContentType.save',
+      'Entry.save',
+      'Entry.auto_save',
+      'Asset.save',
+      'Asset.auto_save',
+    ];
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const uuid = url ? createHash('sha1').update(url).digest('hex') : (uuidv4() as string);
+
+  return addWebhook(options, uuid, {
+    name: `contentful-ssg (${hostname()})`,
+    url,
+    httpBasicUsername: null,
+    topics,
+    filters: [
+      {
+        equals: [
+          {
+            doc: 'sys.environment.sys.id',
+          },
+          options.environmentId,
+        ],
+      },
+    ],
+    transformation: {
+      includeContentLength: true,
+    },
+
+    headers: [],
+  });
+};
+
 /**
  * Gets all the existing entities based on pagination parameters.
  * The first call will have no aggregated response. Subsequent calls will
@@ -239,6 +341,37 @@ const pagedGet = async <T>(
 };
 
 /**
+ * Synchronizes either all the content or only new content since last sync
+ * @param apiClient Contentful API client
+ * @returns Promise for the collection resulting of a sync operation
+ */
+const sync = async (apiClient): Promise<SyncCollection> => {
+  const options: SyncOptions = { initial: true };
+  if (existsSync(SYNC_TOKEN_FILENAME)) {
+    options.nextSyncToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
+    delete options.initial;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const response: SyncCollection = (await apiClient.sync(options)) as SyncCollection;
+  if (response.nextSyncToken) {
+    await writeFile(SYNC_TOKEN_FILENAME, response.nextSyncToken);
+  }
+
+  return response;
+};
+
+export const isSyncRequest = () => existsSync(SYNC_TOKEN_FILENAME);
+
+export const resetSync = async () => {
+  if (isSyncRequest()) {
+    return unlink(SYNC_TOKEN_FILENAME);
+  }
+
+  return true;
+};
+
+/**
  * Gets all the existing entities based on pagination parameters.
  * The first call will have no aggregated response. Subsequent calls will
  * concatenate the new responses to the original one.
@@ -258,6 +391,13 @@ export const getContent = async (options: ContentfulConfig) => {
   const { items: contentTypes } = await pagedGet<ContentType>(apiClient, {
     method: 'getContentTypes',
   });
+
+  // Use the sync api if watch mode is enabled
+  if (options.sync) {
+    const { entries, assets, deletedEntries, deletedAssets } = await sync(apiClient);
+    return { entries, assets, deletedEntries, deletedAssets, contentTypes, locales };
+  }
+
   const { items: entries } = await pagedGet<Entry>(apiClient, {
     method: 'getEntries',
   });
@@ -266,6 +406,28 @@ export const getContent = async (options: ContentfulConfig) => {
   });
 
   return { entries, assets, contentTypes, locales };
+};
+
+export const getEntriesLinkedToEntry = async (options: ContentfulConfig, id: string) => {
+  const apiClient = getClient(options);
+
+  const { items: entries } = await pagedGet<Entry>(apiClient, {
+    method: 'getEntries',
+    query: { links_to_entry: id },
+  });
+
+  return entries;
+};
+
+export const getEntriesLinkedToAsset = async (options: ContentfulConfig, id: string) => {
+  const apiClient = getClient(options);
+
+  const { items: entries } = await pagedGet<Entry>(apiClient, {
+    method: 'getEntries',
+    query: { links_to_asset: id },
+  });
+
+  return entries;
 };
 
 /**

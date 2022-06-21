@@ -15,17 +15,15 @@
   },
   "scripts": {
     "clean": "lerna run clean",
-    "commit": "git-cz",
+    "commit": "cz",
     "postinstall": "lerna bootstrap --hoist --progress --no-ci",
     "prepublishOnly": "npm run test:ci",
     "release": "lerna version --no-private --conventional-commits --create-release github --yes && lerna publish from-git --yes",
-    "compile": "lerna run compile",
+    "compile": "turbo run compile",
     "start": "lerna run start",
-    "lint": "lerna run lint",
-    "test": "jest",
-    "test:ci": "npm run compile && npm run test:prod",
-    "test:prod": "npm run lint && npm run test -- --coverage --no-cache",
-    "test:watch": "jest --watch",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:ci": "turbo run lint && jest",
     "prepare": "husky install"
   },
   "workspaces": [
@@ -37,6 +35,7 @@
     ]
   },
   "devDependencies": {
+    "@changesets/cli": "^2.22.0",
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
     "@types/jest": "^27.0.3",
@@ -46,12 +45,16 @@
     "git-cz": "^4.8.0",
     "husky": "^7.0.4",
     "jest": "^27.3.0",
+    "jest-esm-transformer": "^1.0.0",
+    "jest-sonar": "^0.2.12",
     "jest-sonar-reporter": "^2.0.0",
     "lerna": "^4.0.0",
     "lint-staged": "^12.1.2",
     "prettier": "^2.4.1",
+    "supertest": "^6.2.3",
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
+    "turbo": "^1.2.9",
     "typescript": "^4.5.2"
   },
   "config": {
@@ -60,12 +63,15 @@
       "helpMessage": "Use \"npm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
     },
     "commitizen": {
-      "path": "./node_modules/git-cz"
+      "path": "./node_modules/cz-conventional-changelog"
     }
   },
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-report.xml",
     "indent": 2
+  },
+  "dependencies": {
+    "fs-extra": "^10.1.0"
   }
 }

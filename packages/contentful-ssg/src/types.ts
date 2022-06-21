@@ -1,6 +1,6 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
-import type { Observable } from 'rxjs';
+import type { Observable, ReplaySubject } from 'rxjs';
 import type { QueryOptions, CollectionProp } from 'contentful-management/types';
 
 import type {
@@ -46,6 +46,7 @@ export interface ContentfulConfig {
   accessToken: string;
   host?: string;
   preview?: boolean;
+  sync?: boolean;
 }
 
 export interface ContentfulRcConfig {
@@ -116,6 +117,8 @@ export interface ContentfulData {
   contentTypes: ContentType[];
   entries: Entry[];
   assets: Asset[];
+  deletedEntries?: Entry[];
+  deletedAssets?: Asset[];
 }
 
 export interface LocalizedContent {
@@ -198,9 +201,15 @@ export interface RuntimeContext {
     markdown: Converter;
     toml: Converter;
   };
+  observables?: Record<string, ReplaySubject<ObservableContext>>;
 }
 
 export type Task = ListrTaskObject<RuntimeContext>;
+
+export type RunResult = {
+  observables: Record<string, ReplaySubject<ObservableContext>>;
+  localized: Record<string, LocalizedContent>;
+};
 
 export interface TransformHelper {
   collectValues: <T>(key, options?: CollectOptions) => T[];
@@ -270,6 +279,13 @@ export interface PagedGetOptions<T> {
   aggregatedResponse?: CollectionProp<T>;
   query?: QueryOptions;
 }
+
+export interface SyncOptions {
+  initial?: boolean;
+  nextSyncToken?: string;
+  resolveLinks?: boolean;
+}
+
 export interface ErrorEntry {
   spaceId: string;
   environmentId: string;

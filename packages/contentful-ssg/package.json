@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-ssg",
-  "version": "1.7.4",
+  "version": "1.8.0-alpha.6",
   "description": "",
   "repository": {
     "type": "git",
@@ -14,66 +14,34 @@
   "typings": "./dist/types.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./lib/object": "./dist/lib/object.js",
-    "./lib/config": "./dist/lib/config.js",
-    "./lib/array": "./dist/lib/array.js",
-    "./lib/utils": "./dist/lib/utils.js",
-    "./lib/ui": "./dist/lib/ui.js",
-    "./lib/contentful": "./dist/lib/contentful.js",
-    "./lib/hook-manager": "./dist/lib/hook-manager.js",
-    "./lib/file-manager": "./dist/lib/file-manager.js",
+    "./lib/*": "./dist/lib/*.js",
     "./converter": "./dist/converter/index.js",
-    "./converter/json": "./dist/converter/json.js",
-    "./converter/yaml": "./dist/converter/yaml.js",
-    "./converter/toml": "./dist/converter/toml.js",
-    "./converter/markdown": "./dist/converter/markdown.js",
-    "./test/mock": "./dist/__test__/mock.js"
+    "./converter/*": "./dist/converter/*.js",
+    "./mapper/*": "./dist/mapper/*.js",
+    "./tasks/*": "./dist/tasks/*.js",
+    "./__test__/mock": "./dist/__test__/mock.js"
   },
   "typesVersions": {
     "*": {
       ".": [
         "./dist/types.d.ts"
       ],
-      "lib/utils": [
-        "./dist/lib/utils.d.ts"
-      ],
-      "lib/ui": [
-        "./dist/lib/ui.d.ts"
-      ],
-      "lib/config": [
-        "./dist/lib/config.d.ts"
-      ],
-      "lib/object": [
-        "./dist/lib/object.d.ts"
-      ],
-      "lib/array": [
-        "./dist/lib/array.d.ts"
-      ],
-      "lib/contentful": [
-        "./dist/lib/contentful.d.ts"
-      ],
-      "lib/hook-manager": [
-        "./dist/lib/hook-manager.d.ts"
-      ],
-      "lib/file-manager": [
-        "./dist/lib/file-manager.d.ts"
+      "lib/*": [
+        "./dist/lib/*"
       ],
       "converter": [
         "./dist/converter/index.d.ts"
       ],
-      "converter/json": [
-        "./dist/converter/json.d.ts"
+      "converter/*": [
+        "./dist/converter/*"
       ],
-      "converter/yaml": [
-        "./dist/converter/yaml.d.ts"
+      "mapper/*": [
+        "./dist/mapper/*"
       ],
-      "converter/toml": [
-        "./dist/converter/toml.d.ts"
+      "tasks/*": [
+        "dist/tasks/*"
       ],
-      "converter/markdown": [
-        "./dist/converter/markdown.d.ts"
-      ],
-      "test/mock": [
+      "__test__/mock": [
         "./dist/__test__/mock.d.ts"
       ]
     }
@@ -88,6 +56,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint --color src --fix --ext .ts",
+    "test": "jest",
     "precompile": "npm run clean",
     "compile": "tsc --build",
     "postcompile": "chmod +x ./dist/cli.js",
@@ -105,6 +74,7 @@
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^3.0.2",
     "@iarna/toml": "^2.2.5",
     "@swc-node/register": "^1.4.0",
+    "async-exit-hook": "^2.0.1",
     "chalk": "^4.1.2",
     "commander": "^8.3.0",
     "contentful": "^9.1.4",
@@ -114,8 +84,10 @@
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "esbuild": "^0.13.13",
+    "express": "^4.18.1",
     "find-up": "^6.2.0",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^10.1.0",
+    "get-port": "^6.1.2",
     "globby": "^12.0.2",
     "gray-matter": "^4.0.3",
     "inquirer": "^8.2.0",
@@ -123,16 +95,19 @@
     "listr": "^0.14.3",
     "merge-options": "^3.0.4",
     "micromatch": "^4.0.4",
+    "ngrok": "^4.3.1",
     "prettier": "^2.4.1",
     "read-pkg-up": "^9.0.0",
     "rxjs": "^7.5.5",
     "slash": "^4.0.0",
     "snake-case": "^3.0.4",
     "tempy": "^2.0.0",
-    "type-fest": "^2.5.3"
+    "type-fest": "^2.5.3",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/dlv": "^1.1.2",
+    "@types/express": "^4.17.13",
     "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^8.1.3",
     "@types/jest": "^27.0.3",
@@ -151,6 +126,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.3.0",
     "rimraf": "^3.0.2",
+    "supertest": "^6.2.3",
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"

@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-hugo",
-  "version": "1.7.4",
+  "version": "1.8.0-alpha.6",
   "description": "",
   "main": "index.js",
   "typings": "./index.d.ts",
@@ -9,6 +9,7 @@
   },
   "type": "module",
   "scripts": {
+    "test": "jest",
     "lint": "eslint --color index.js --fix"
   },
   "repository": {
@@ -26,8 +27,8 @@
   },
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
-    "@jungvonmatt/contentful-ssg": "^1.7.4",
-    "fs-extra": "^10.0.0",
+    "@jungvonmatt/contentful-ssg": "^1.8.0-alpha.6",
+    "fs-extra": "^10.1.0",
     "micromatch": "^4.0.4"
   }
 }

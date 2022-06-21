@@ -322,10 +322,7 @@ export default (args) => {
         })
       );
 
-      const i18n = Object.fromEntries(locales.map((locale) => [hugoLocaleCode(locale), {}]));
-      const menus = Object.fromEntries(locales.map((locale) => [hugoLocaleCode(locale), {}]));
-
-      return { ...runtimeContext, helper, localized: enhancedLocalized, i18n, menus };
+      return { ...runtimeContext, helper, localized: enhancedLocalized };
     },
 
     /**
@@ -442,6 +439,14 @@ export default (args) => {
         const { key, other, one } = content;
         const translations = one ? { one, other } : { other };
 
+        if (!runtimeContext.i18n) {
+          runtimeContext.i18n = {};
+        }
+
+        if (!runtimeContext.i18n[hugoLocaleCode(locale)]) {
+          runtimeContext.i18n[hugoLocaleCode(locale)] = {};
+        }
+
         runtimeContext.i18n[hugoLocaleCode(locale)][key] = translations;
 
         // Dont't write i-18n objects to the content folder
@@ -453,6 +458,13 @@ export default (args) => {
       if (options.typeIdMenu && contentTypeId === options.typeIdMenu) {
         const menuId = entry.fields[options.fieldIdMenuId];
         const menu = await buildMenu(transformContext, runtimeContext, options.menuDepth);
+        if (!runtimeContext.menus) {
+          runtimeContext.menus = {};
+        }
+
+        if (!runtimeContext.menus[hugoLocaleCode(locale)]) {
+          runtimeContext.menus[hugoLocaleCode(locale)] = {};
+        }
 
         runtimeContext.menus[hugoLocaleCode(locale)][menuId] = menu;
       }

@@ -90,7 +90,7 @@ type RegexType = {
   flags: string;
 };
 
-const getRegexValue = (regex: RegexType) => {
+export const getRegexValue = (regex: RegexType) => {
   const { pattern, flags } = regex;
 
   // First try to handle regex values predefined in contentful
@@ -128,18 +128,18 @@ const getRegexValue = (regex: RegexType) => {
 
   // US Phone number
   if (pattern === '^\\d[ -.]?\\(?\\d\\d\\d\\)?[ -.]?\\d\\d\\d[ -.]?\\d\\d\\d\\d$') {
-    return faker.phone.phoneNumber();
+    return faker.phone.phoneNumber('#-(###)-###-####');
   }
 
   // US Zip code
-  if (pattern === '^\\d{5}$|^\\d{5}-\\d{4}$}') {
+  if (pattern === '^\\d{5}$|^\\d{5}-\\d{4}$') {
     return faker.address.zipCode();
   }
 
-  return new RandExp(pattern, flags);
+  return new RandExp(pattern, flags).gen();
 };
 
-const getTextForId = (id: string) => {
+export const getTextForId = (id: string) => {
   if (
     [
       'username',
@@ -172,7 +172,11 @@ const getTextForId = (id: string) => {
       'building_number',
     ].includes(id)
   ) {
-    return casual?.[id]() ?? faker.lorem.word();
+    if (typeof casual?.[id] === 'function') {
+      return casual?.[id]();
+    }
+
+    return casual?.[id] ?? faker.lorem.word();
   }
 
   if (['uuid', 'uid', 'id'].includes(id)) {
@@ -182,16 +186,16 @@ const getTextForId = (id: string) => {
   return undefined;
 };
 
-const getIntegerFake = async (field: FieldInfo): Promise<unknown> => {
+export const getIntegerFake = async (field: FieldInfo): Promise<number> => {
   return getNumberFake(field, 1);
 };
 
-const getNumberFake = async (field: FieldInfo, precision = 0.005): Promise<unknown> => {
+export const getNumberFake = async (field: FieldInfo, precision = 0.005): Promise<number> => {
   const { validations = [] } = field.settings;
 
   const { in: values } = validations.find((validation) => Boolean(validation?.in)) || {};
   if (values) {
-    return oneOf(values);
+    return oneOf<number>(values as number[]);
   }
 
   const { range } = validations.find((validation) => Boolean(validation?.range)) || {};
@@ -213,13 +217,13 @@ const getNumberFake = async (field: FieldInfo, precision = 0.005): Promise<unkno
   return faker.datatype.number({ precision });
 };
 
-const getSymbolFake = async (field: FieldInfo): Promise<unknown> => {
+export const getSymbolFake = async (field: FieldInfo): Promise<string> => {
   const { widgetId } = field.interface;
   const { validations = [], id } = field.settings;
 
   const { in: values } = validations.find((validation) => Boolean(validation?.in)) || {};
   if (values) {
-    return oneOf(values);
+    return oneOf(values as string[]);
   }
 
   let result = '';
@@ -253,14 +257,18 @@ const getSymbolFake = async (field: FieldInfo): Promise<unknown> => {
   const { size } = validations.find((validation) => Boolean(validation?.size)) || {};
   if (size) {
     const { min = 0, max = 255 } = size;
-    const count = randomInt(min, max);
+    const count = randomInt(min, Math.min(255, max));
     result = result.slice(0, count);
+
+    while (result.length < min) {
+      result = `${result} ${faker.lorem.sentence() as string}`.slice(0, count);
+    }
   }
 
-  return result;
+  return result.slice(0, 255);
 };
 
-const getTextFake = async (field: FieldInfo): Promise<unknown> => {
+export const getTextFake = async (field: FieldInfo): Promise<string> => {
   const { validations = [], id } = field.settings;
   const { in: values } = validations.find((validation) => Boolean(validation?.in)) || {};
 
@@ -288,12 +296,16 @@ const getTextFake = async (field: FieldInfo): Promise<unknown> => {
     const { min = 0, max = 50000 } = size;
     const count = randomInt(min, max);
     result = result.slice(0, count);
+
+    while (result.length < min) {
+      result = `${result} ${faker.lorem.paragraphs(5) as string}`.slice(0, count);
+    }
   }
 
   return result;
 };
 
-const getAssetFake = async (): Promise<KeyValueMap> => {
+export const getAssetFake = async (): Promise<KeyValueMap> => {
   const sizes = [640, 480, 600, 800, 1024];
   const width = oneOf(sizes);
   const height = oneOf(sizes);
@@ -309,7 +321,7 @@ const getAssetFake = async (): Promise<KeyValueMap> => {
   };
 };
 
-const getEntryScheme = async (field: FieldInfo): Promise<KeyValueMap> => {
+export const getEntryScheme = async (field: FieldInfo): Promise<KeyValueMap> => {
   const { validations } = field.settings;
 
   const { linkContentType = [] } =
@@ -325,7 +337,7 @@ const getEntryScheme = async (field: FieldInfo): Promise<KeyValueMap> => {
   return {};
 };
 
-const getLinkFake = async (field: FieldInfo): Promise<KeyValueMap> => {
+export const getLinkFake = async (field: FieldInfo): Promise<KeyValueMap> => {
   if (field?.settings?.linkType === LINK_TYPE_ASSET) {
     return getAssetFake();
   }
@@ -333,7 +345,7 @@ const getLinkFake = async (field: FieldInfo): Promise<KeyValueMap> => {
   return getEntryScheme(field);
 };
 
-const getRichtextFake = async (field: FieldInfo): Promise<KeyValueMap> => {
+export const getRichtextFake = async (field: FieldInfo): Promise<KeyValueMap> => {
   const { validations } = field.settings;
 
   const { enabledMarks: marks = [] } =
@@ -388,7 +400,7 @@ const getRichtextFake = async (field: FieldInfo): Promise<KeyValueMap> => {
   };
 };
 
-const getArrayFake = async (field: FieldInfo): Promise<unknown[]> => {
+export const getArrayFake = async (field: FieldInfo): Promise<unknown[]> => {
   const { validations } = field.settings;
   const { size } = validations.find((validation) => Boolean(validation?.size)) || {};
   let count = randomInt(0, 5);

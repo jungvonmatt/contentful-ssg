@@ -1,20 +1,25 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 /* eslint-env node */
-import path from 'path';
+import exitHook from 'async-exit-hook';
 import chalk from 'chalk';
-import { existsSync } from 'fs';
-import { readFile } from 'fs/promises';
-import { outputFile } from 'fs-extra';
-import prettier from 'prettier';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import { logError, confirm, askAll, askMissing } from './lib/ui.js';
-import { omitKeys } from './lib/object.js';
-
-import { getConfig, getEnvironmentConfig } from './lib/config.js';
+import { existsSync } from 'fs';
+import { outputFile } from 'fs-extra';
+import { readFile } from 'fs/promises';
+import getPort from 'get-port';
+import ngrok from 'ngrok';
+import path from 'path';
+import prettier from 'prettier';
 import { run } from './index.js';
+import { getConfig, getEnvironmentConfig } from './lib/config.js';
+import { addWatchWebhook, resetSync } from './lib/contentful.js';
+import { omitKeys } from './lib/object.js';
+import { askAll, askMissing, confirm, logError } from './lib/ui.js';
+import { getApp } from './server/index.js';
 import { Config, ContentfulConfig } from './types.js';
 
 const env = dotenv.config();
@@ -44,7 +49,7 @@ const errorHandler = (error: CommandError, silence: boolean) => {
 const actionRunner =
   (fn, log = true) =>
   (...args) =>
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     fn(...args).catch((error) => errorHandler(error, !log));
 const program = new Command();
 program
@@ -151,10 +156,81 @@ program
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
+      await resetSync();
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
 
       return run(verified);
+    })
+  );
+
+program
+  .command('watch')
+  .description('Fetch content objects && watch for changes')
+  .option('-p, --preview', 'Fetch with preview mode')
+  .option('-v, --verbose', 'Verbose output')
+  .option('--url <url>', 'Webhook url.\nCan also be set via environment variable CSSG_WEBHOOK_URL')
+  .option(
+    '--port <port>',
+    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT'
+  )
+  .option('--ignore-errors', 'No error return code when transform has errors')
+  .action(
+    actionRunner(async (cmd) => {
+      await resetSync();
+      const config = await getConfig(parseFetchArgs(cmd || {}));
+      const verified = await askMissing(config);
+      let prev = await run({ ...verified, sync: true });
+      let port = await getPort({ port: 1314 });
+
+      if (process.env.CSSG_WEBHOOK_URL || cmd.url) {
+        const url = new URL(process.env.CSSG_WEBHOOK_URL || cmd.url);
+        if (url.port) {
+          port = parseInt(url.port, 10);
+        } else {
+          port = url.protocol === 'https:' ? 443 : 80;
+        }
+      }
+
+      if (process.env.CSSG_WEBHOOK_PORT || cmd.port) {
+        port = parseInt(process.env.CSSG_WEBHOOK_PORT || cmd.port, 10);
+      }
+
+      const app = getApp(async () => {
+        prev = await run({ ...verified, sync: true }, prev);
+      });
+
+      console.log();
+
+      const server = app.listen(port, () => {
+        console.log(`  Internal server listening on port :${chalk.cyan(port)}`);
+      });
+
+      const stopServer = async () =>
+        new Promise((resolve, reject) => {
+          server.close((err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(true);
+            }
+          });
+        });
+
+      const url =
+        process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
+      console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
+      const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
+
+      exitHook(async (cb) => {
+        try {
+          await webhook.delete();
+        } catch {}
+
+        await stopServer();
+        await resetSync();
+        cb();
+      });
     })
   );
 
