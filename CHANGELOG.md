@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.4...v1.8.0) (2022-06-21)
+
+
+### Bug Fixes
+
+* bump package-lock ([4835bf6](https://github.com/jungvonmatt/contentful-ssg/commit/4835bf67deee0c48b35808193dc559d5e45161bf))
+* **cssg-plugin-assets:** fix linter issues ([f8c641c](https://github.com/jungvonmatt/contentful-ssg/commit/f8c641cf77561ca4fe40472935773053ff1bd8fc))
+
+
+
+
+
 # [1.8.0-alpha.6](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0-alpha.5...v1.8.0-alpha.6) (2022-06-07)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg-project
