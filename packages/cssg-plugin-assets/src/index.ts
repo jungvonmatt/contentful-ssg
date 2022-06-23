@@ -13,7 +13,7 @@ import type {
 } from './types.js';
 
 /**
- *
+ * Adds default to options
  * @param {*} options
  * @returns
  */
