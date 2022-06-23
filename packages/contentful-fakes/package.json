@@ -24,6 +24,10 @@
     "type": "git",
     "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
   },
+  "files": [
+    "src",
+    "dist"
+  ],
   "keywords": [
     "fake",
     "data",

@@ -8,6 +8,10 @@
   "exports": {
     ".": "./dist/index.js"
   },
+  "files": [
+    "src",
+    "dist"
+  ],
   "devDependencies": {
     "@jungvonmatt/contentful-ssg": "^1.8.0",
     "@types/svgo": "^2.6.3",
