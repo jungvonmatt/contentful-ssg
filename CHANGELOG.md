@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.0...v1.8.1) (2022-06-23)
+
+
+### Bug Fixes
+
+* adds files config to package.json ([ddfea54](https://github.com/jungvonmatt/contentful-ssg/commit/ddfea540bd8133b8238626cc46e209fdc19a7a97))
+* **dependencies:** bump faker-js ([9cade0b](https://github.com/jungvonmatt/contentful-ssg/commit/9cade0b3ff7d047e66402abe7f1f6193896235bd))
+* **dependencies:** bump turbo ([0d3f012](https://github.com/jungvonmatt/contentful-ssg/commit/0d3f01243573d86f5ac0d16be4bcea9d7362e20d))
+* **dependencies:** removes unused dependency ([8aed859](https://github.com/jungvonmatt/contentful-ssg/commit/8aed859ad1aedbb0a26642c93a5f9314f457edc7))
+
+
+
+
+
 # [1.8.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.4...v1.8.0) (2022-06-21)
 
 
