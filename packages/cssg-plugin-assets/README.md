@@ -111,15 +111,6 @@ plugins: [
 
 ## Options
 
-sizes?: number[]; // Widths which should be generated
-rootDir?: string; // Project root
-assetBase?: string; //
-assetFolder?: string; //
-cacheFolder?: string; //
-extraTypes?: MimeTypes[]; // Defaults to ['image/webp', 'image/avif'].
-ratios?: RatioConfig; //
-focusAreas?: FocusAreaConfig; //
-}
 
 | Name                 | Type       | Default                        | Description                                                                                                                                                                  |
 | -------------------- | ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
