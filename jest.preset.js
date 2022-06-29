@@ -8,8 +8,11 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'mjs'],
   passWithNoTests: true,
   extensionsToTreatAsEsm: ['.ts'],
-  transform: { '^.+\\.(ts|js)$': 'ts-jest' },
-  preset: 'ts-jest/presets/default-esm',
+  transform: {
+    '^.+\\.[tj]s$': 'ts-jest',
+  },
+  transformIgnorePatterns: ['node_modules/(?!(serialize-error))'],
+  preset: 'ts-jest/presets/js-with-ts-esm',
   moduleDirectories: ['node_modules', `${__dirname}/packages`],
   coverageReporters: ['text', 'clover', 'json', 'lcov'],
   coveragePathIgnorePatterns: ['/node_modules/', '__test__'],
@@ -19,7 +22,6 @@ export default {
       tsconfig: '<rootDir>/tsconfig.json',
     },
   },
-
   moduleNameMapper: {
     // Removes .js at the end to match typescript files
     '^(\\.{1,2}/.*)\\.js$': '$1',

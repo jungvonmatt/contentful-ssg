@@ -1,7 +1,8 @@
 import chalk from 'chalk';
 import Listr from 'listr';
 import { ReplaySubject } from 'rxjs';
-import { getContentId, getContentTypeId, isSyncRequest } from './lib/contentful.js';
+import { initializeCache } from './lib/cf-cache.js';
+import { getContentId, getContentTypeId } from './lib/contentful.js';
 import { ValidationError } from './lib/error.js';
 import { collectParentValues, collectValues, waitFor } from './lib/utils.js';
 import { fetch } from './tasks/fetch.js';
@@ -119,6 +120,7 @@ export const run = async (
     localized: {},
   }
 ): Promise<RunResult> => {
+  const hasPrev = Object.values(prev.localized).length > 0;
   const tasks = new Listr<RuntimeContext>(
     [
       {
@@ -286,7 +288,10 @@ export const run = async (
       },
       {
         title: 'Cleanup',
-        skip: () => isSyncRequest(),
+        skip: (ctx) => {
+          const cache = initializeCache(ctx.config);
+          return cache.hasSyncToken();
+        },
         task: async (ctx) => ctx.fileManager.cleanup(),
       },
     ],
@@ -294,7 +299,7 @@ export const run = async (
   );
 
   const ctx = await tasks.run();
-  await ctx.stats.print();
+  await ctx.stats.print(hasPrev && prev);
   console.log('\n  -------------------------------------------');
 
   if (!ctx.config.sync && ctx.stats.errors?.length && !config.ignoreErrors) {

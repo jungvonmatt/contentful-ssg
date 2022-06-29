@@ -126,16 +126,14 @@ Entry ${source} waiting for ${dest}.`
       }, waitTimeout);
 
       if (transformContext.entryMap.has(id)) {
-        transformContext.observable
-          .pipe(filter((ctx) => ctx?.entry?.sys?.id === id))
-          .subscribe((value) => {
-            clearTimeout(timeout);
-            if (value.error) {
-              reject(new WrappedError(`Awaited entry ${dest} errored`, value.error));
-            } else {
-              resolve(value);
-            }
-          });
+        transformContext.observable.pipe(filter((ctx) => ctx?.id === id)).subscribe((value) => {
+          clearTimeout(timeout);
+          if (value.error) {
+            reject(new WrappedError(`Awaited entry ${dest} errored`, value.error));
+          } else {
+            resolve(value);
+          }
+        });
 
         cyclicErrorObservable
           .pipe(filter((v) => v?.[sourceId]?.includes(sourceId)))

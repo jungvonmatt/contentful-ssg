@@ -75,7 +75,7 @@ export interface Hooks {
   config?: ConfigHook;
   before?: RuntimeHook;
   after?: RuntimeHook;
-  transform?: TransformHook<KeyValueMap>;
+  transform?: TransformHook<KeyValueMap | undefined>;
   mapDirectory?: TransformHook<string>;
   mapFilename?: TransformHook<string>;
   mapMetaFields?: TransformHook<KeyValueMap>;
@@ -234,7 +234,7 @@ export type TransformContext = LocalizedContent & {
 };
 
 export type ObservableContext = Readonly<
-  Pick<TransformContext, 'id' | 'contentTypeId' | 'entry' | 'content' | 'locale'> & {
+  Pick<TransformContext, 'id' | 'contentTypeId' | 'content' | 'locale'> & {
     error?: Error;
   }
 >;
