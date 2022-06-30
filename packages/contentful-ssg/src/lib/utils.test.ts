@@ -1,4 +1,4 @@
-import { Entry, TransformContext } from '../types.js';
+import { Entry, ObservableContext, TransformContext } from '../types.js';
 import { collect, collectParentValues, collectValues, waitFor } from './utils.js';
 import { ReplaySubject } from 'rxjs';
 import { WrappedError } from './error.js';
@@ -78,45 +78,59 @@ const transformContext = { entryMap } as unknown as TransformContext;
 describe('Utils', () => {
   test('collectValues', () => {
     const entry = entryMap.get('5');
-    const slugsReverse = collectValues({ ...transformContext, entry })('fields.slug');
-    const slugs = collectValues({ ...transformContext, entry })('fields.slug', { reverse: false });
+    expect(entry).toBeTruthy();
+    if (entry) {
+      const slugsReverse = collectValues({ ...transformContext, entry })('fields.slug');
+      const slugs = collectValues({ ...transformContext, entry })('fields.slug', {
+        reverse: false,
+      });
 
-    expect(slugsReverse).toEqual(['a', 'b', 'c', 'd', 'e']);
-    expect(slugs).toEqual(['e', 'd', 'c', 'b', 'a']);
+      expect(slugsReverse).toEqual(['a', 'b', 'c', 'd', 'e']);
+      expect(slugs).toEqual(['e', 'd', 'c', 'b', 'a']);
+    }
   });
 
   test('collectValues (empty)', () => {
     const entry = entryMap.get('1');
-    const slugs = collectValues({ ...transformContext, entry })('fields.slug');
-    const parent = collectParentValues({ ...transformContext, entry })('fields.slug');
+    expect(entry).toBeTruthy();
+    if (entry) {
+      const slugs = collectValues({ ...transformContext, entry })('fields.slug');
+      const parent = collectParentValues({ ...transformContext, entry })('fields.slug');
 
-    expect(slugs).toEqual(['a']);
-    expect(parent).toEqual([]);
+      expect(slugs).toEqual(['a']);
+      expect(parent).toEqual([]);
+    }
   });
 
   test('collectValues with different link field', () => {
     const entry = entryMap.get('5');
-    const slugsReverse = collectValues({ ...transformContext, entry })('fields.slug', {
-      linkField: 'fields.link',
-    });
-    const slugs = collectValues({ ...transformContext, entry })('fields.slug', {
-      reverse: false,
-      linkField: 'fields.link',
-    });
+    expect(entry).toBeTruthy();
+    if (entry) {
+      const slugsReverse = collectValues({ ...transformContext, entry })('fields.slug', {
+        linkField: 'fields.link',
+      });
+      const slugs = collectValues({ ...transformContext, entry })('fields.slug', {
+        reverse: false,
+        linkField: 'fields.link',
+      });
 
-    expect(slugsReverse).toEqual(['a', 'c', 'e']);
-    expect(slugs).toEqual(['e', 'c', 'a']);
+      expect(slugsReverse).toEqual(['a', 'c', 'e']);
+      expect(slugs).toEqual(['e', 'c', 'a']);
+    }
   });
 
   test('collectParentValues', () => {
     const entry = entryMap.get('5');
-    const slugsReverse = collectParentValues({ ...transformContext, entry })('fields.slug');
-    const slugs = collectParentValues({ ...transformContext, entry })('fields.slug', {
-      reverse: false,
-    });
+    expect(entry).toBeTruthy();
+    if (entry) {
+      const slugsReverse = collectParentValues({ ...transformContext, entry })('fields.slug');
+      const slugs = collectParentValues({ ...transformContext, entry })('fields.slug', {
+        reverse: false,
+      });
 
-    expect(slugsReverse).toEqual(['a', 'b', 'c', 'd']);
-    expect(slugs).toEqual(['d', 'c', 'b', 'a']);
+      expect(slugsReverse).toEqual(['a', 'b', 'c', 'd']);
+      expect(slugs).toEqual(['d', 'c', 'b', 'a']);
+    }
   });
 
   test('collect', () => {
@@ -126,58 +140,69 @@ describe('Utils', () => {
       getValue: (item) => item.fields.slug,
     };
 
-    const a = collect(data.get('5'), data, {
-      ...getter,
-      reverse: true,
-    });
-    const b = collect(data.get('5'), data, {
-      ...getter,
-      reverse: false,
-    });
+    const entry = data.get('5');
+    expect(entry).toBeTruthy();
+    if (entry) {
+      const a = collect(entry, data, {
+        ...getter,
+        reverse: true,
+      });
+      const b = collect(entry, data, {
+        ...getter,
+        reverse: false,
+      });
 
-    expect(a).toEqual(['a', 'b', 'c', 'd', 'e']);
-    expect(b).toEqual(['e', 'd', 'c', 'b', 'a']);
+      expect(a).toEqual(['a', 'b', 'c', 'd', 'e']);
+      expect(b).toEqual(['e', 'd', 'c', 'b', 'a']);
+    }
   });
 
   test('waitFor', async () => {
-    const subject = new ReplaySubject<TransformContext>(null);
+    const subject = new ReplaySubject<ObservableContext>();
     const observable = subject.asObservable();
 
     // Throw error when waiting for the current entry
     expect(async () => {
-      await waitFor({ ...transformContext, entry: entryMap.get('2'), observable })('2');
+      await waitFor({ ...transformContext, entry: entryMap.get('2') as Entry, observable })('2');
     }).rejects.toThrowError(/2.*waiting.*2/);
 
     // Throw error when waiting for non existing entry
     expect(async () => {
-      await waitFor({ ...transformContext, entry: entryMap.get('3'), observable })('10');
+      await waitFor({ ...transformContext, entry: entryMap.get('3') as Entry, observable })('10');
     }).rejects.toThrowError('No entry with id "10" available');
 
     // // Throw error when waiting timeout is reached
     await expect(async () => {
-      await waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('4', 50);
+      await waitFor({ ...transformContext, entry: entryMap.get('1') as Entry, observable })(
+        '4',
+        50
+      );
     }).rejects.toThrowError(/Exceeded timeout of 50 ms/);
 
     // Mimic 500ms wait time for entry
     setTimeout(() => {
-      subject.next({ ...transformContext, entry: entryMap.get('4'), observable });
+      subject.next({ ...transformContext, id: '4' });
     }, 500);
 
-    const value = await waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('4');
-    expect(value).toEqual({ ...transformContext, entry: entryMap.get('4'), observable });
+    const value = await waitFor({
+      ...transformContext,
+      entry: entryMap.get('1') as Entry,
+      observable,
+    })('4');
+
+    expect(value).toEqual({ ...transformContext, id: '4' });
   });
 
   test('waitFor error', async () => {
-    const subject = new ReplaySubject<TransformContext>(null);
+    const subject = new ReplaySubject<ObservableContext>();
     const observable = subject.asObservable();
-    const entry = entryMap.get('3');
+    const entry = entryMap.get('3') as Entry;
 
     // Mimic 500ms wait time for entry
     setTimeout(() => {
       subject.next({
         ...transformContext,
-        entry: entryMap.get('4'),
-        observable,
+        id: '4',
         error: new Error('test error'),
       });
     }, 500);
@@ -196,15 +221,14 @@ describe('Utils', () => {
   });
 
   test('detect cyclic dependency', async () => {
-    const subject = new ReplaySubject<TransformContext>(null);
+    const subject = new ReplaySubject<ObservableContext>();
     const observable = subject.asObservable();
 
     // let 9 finish regularly
     setTimeout(() => {
       subject.next({
         ...transformContext,
-        entry: entryMap.get('9'),
-        observable,
+        id: '9',
       });
     }, 100);
 
@@ -212,19 +236,20 @@ describe('Utils', () => {
     const waitMock = async (source: string, dest: string, delay: number) => {
       await new Promise((resolve) => setTimeout(resolve, delay));
       try {
-        await waitFor({ ...transformContext, entry: entryMap.get(source), observable })(dest, 1000);
+        await waitFor({ ...transformContext, entry: entryMap.get(source) as Entry, observable })(
+          dest,
+          1000
+        );
         subject.next({
           ...transformContext,
-          entry: entryMap.get(source),
-          observable,
+          id: source,
         });
         return `SUCCESS ${source}`;
       } catch (error) {
         subject.next({
           ...transformContext,
-          entry: entryMap.get(source),
+          id: source,
           error,
-          observable,
         });
         return `${error.message}`;
       }
@@ -246,15 +271,14 @@ describe('Utils', () => {
   });
 
   test('handle subscriptions on postponed subscribe', async () => {
-    const subject = new ReplaySubject<TransformContext>();
+    const subject = new ReplaySubject<ObservableContext>();
     const observable = subject.asObservable();
 
     const finishSuccess = (id, time = 0) =>
       setTimeout(() => {
         subject.next({
           ...transformContext,
-          entry: entryMap.get(id),
-          observable,
+          id,
         });
       }, time);
 
@@ -262,9 +286,8 @@ describe('Utils', () => {
       setTimeout(() => {
         subject.next({
           ...transformContext,
-          entry: entryMap.get(id),
+          id,
           error: new Error(`Error on ${id}`),
-          observable,
         });
       }, time);
 
@@ -275,10 +298,10 @@ describe('Utils', () => {
 
     const transFormMock = () =>
       Promise.all([
-        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('2'),
-        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('3'),
-        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('4'),
-        waitFor({ ...transformContext, entry: entryMap.get('1'), observable })('5'),
+        waitFor({ ...transformContext, entry: entryMap.get('1') as Entry, observable })('2'),
+        waitFor({ ...transformContext, entry: entryMap.get('1') as Entry, observable })('3'),
+        waitFor({ ...transformContext, entry: entryMap.get('1') as Entry, observable })('4'),
+        waitFor({ ...transformContext, entry: entryMap.get('1') as Entry, observable })('5'),
       ]);
 
     const result = await new Promise((resolve) => {

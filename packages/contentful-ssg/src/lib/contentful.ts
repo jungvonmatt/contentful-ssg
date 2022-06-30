@@ -1,36 +1,35 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { existsSync } from 'fs';
-import { hostname } from 'os';
-import { createHash } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
-import { readFile, unlink, writeFile } from 'fs/promises';
-import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
 import type {
-  Space,
-  ApiKey,
-  QueryOptions,
-  CollectionProp,
-  CreateWebhooksProps,
-} from 'contentful-management/types';
-import type {
-  CreateClientParams,
   ContentfulClientApi,
+  CreateClientParams,
   EntryFields,
   SyncCollection,
 } from 'contentful';
+import contentful from 'contentful';
+import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
+import contentfulManagement from 'contentful-management';
 import type {
-  ContentfulConfig,
-  FieldSettings,
-  Node,
-  Entry,
+  ApiKey,
+  CollectionProp,
+  CreateWebhooksProps,
+  QueryOptions,
+  Space,
+} from 'contentful-management/types';
+import { createHash } from 'crypto';
+import { hostname } from 'os';
+import { v4 as uuidv4 } from 'uuid';
+import type {
   Asset,
+  ContentfulConfig,
   ContentType,
+  Entry,
+  FieldSettings,
   Locale,
+  Node,
   PagedGetOptions,
   SyncOptions,
 } from '../types.js';
-import contentful from 'contentful';
-import contentfulManagement from 'contentful-management';
+import { initializeCache } from './cf-cache.js';
 
 let client: ContentfulClientApi;
 let managementClient: ContentfulManagementApi;
@@ -50,8 +49,6 @@ export const LINK_TYPE_ASSET = 'Asset';
 export const LINK_TYPE_ENTRY = 'Entry';
 
 export const MAX_ALLOWED_LIMIT = 1000;
-
-export const SYNC_TOKEN_FILENAME = '.contentful_sync.lock';
 
 /**
  * Get contentType id from entry
@@ -345,30 +342,21 @@ const pagedGet = async <T>(
  * @param apiClient Contentful API client
  * @returns Promise for the collection resulting of a sync operation
  */
-const sync = async (apiClient): Promise<SyncCollection> => {
+const sync = async (apiClient, config: ContentfulConfig): Promise<SyncCollection> => {
+  const cache = initializeCache(config);
   const options: SyncOptions = { initial: true };
-  if (existsSync(SYNC_TOKEN_FILENAME)) {
-    options.nextSyncToken = await readFile(SYNC_TOKEN_FILENAME, 'utf8');
+  if (cache.hasSyncToken()) {
+    options.nextSyncToken = await cache.getSyncToken();
     delete options.initial;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const response: SyncCollection = (await apiClient.sync(options)) as SyncCollection;
   if (response.nextSyncToken) {
-    await writeFile(SYNC_TOKEN_FILENAME, response.nextSyncToken);
+    await cache.setSyncToken(response.nextSyncToken);
   }
 
   return response;
-};
-
-export const isSyncRequest = () => existsSync(SYNC_TOKEN_FILENAME);
-
-export const resetSync = async () => {
-  if (isSyncRequest()) {
-    return unlink(SYNC_TOKEN_FILENAME);
-  }
-
-  return true;
 };
 
 /**
@@ -394,7 +382,7 @@ export const getContent = async (options: ContentfulConfig) => {
 
   // Use the sync api if watch mode is enabled
   if (options.sync) {
-    const { entries, assets, deletedEntries, deletedAssets } = await sync(apiClient);
+    const { entries, assets, deletedEntries, deletedAssets } = await sync(apiClient, options);
     return { entries, assets, deletedEntries, deletedAssets, contentTypes, locales };
   }
 

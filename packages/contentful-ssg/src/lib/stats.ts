@@ -1,9 +1,10 @@
-import type { Config, KeyValueMap, StatsEntry, TransformContext } from '../types.js';
-import { getEntries, groupBy } from './object.js';
-import { writeFile } from 'fs/promises';
 import chalk from 'chalk';
+import { writeFile } from 'fs/promises';
 import { join } from 'path';
+import type { Config, KeyValueMap, RunResult, StatsEntry, TransformContext } from '../types.js';
 import { ValidationError } from './error.js';
+import { getEntries, groupBy } from './object.js';
+import { getObservableCount } from './observable.js';
 
 export class Stats {
   config: Config;
@@ -41,7 +42,7 @@ export class Stats {
     this.skipped.push({ error, ...this.toEntry(context) });
   }
 
-  async print() {
+  async print(prev?: RunResult) {
     console.log('\n    -----------\n');
     const stats = groupBy<StatsEntry>(this.success, 'contentTypeId');
 
@@ -60,7 +61,30 @@ export class Stats {
     const filenameSkipped = `validation-errors-${timestamp}.log`;
     const filenameErrors = `errors-${timestamp}.log`;
 
-    console.log(`\n  Saved ${chalk.green(this.success.length)} entries`);
+    if (prev) {
+      const successCounts = await Promise.all(
+        Object.entries(prev.observables).map(async ([, observable]) => {
+          return getObservableCount(observable, (ctx) => !ctx.error);
+        })
+      );
+      const errorCounts = await Promise.all(
+        Object.entries(prev.observables).map(async ([, observable]) => {
+          return getObservableCount(observable, (ctx) => Boolean(ctx.error));
+        })
+      );
+
+      const successCount = successCounts.reduce((result, count) => result + count, 0);
+      const errorCount = errorCounts.reduce((result, count) => result + count, 0);
+
+      console.log(
+        `  Sync cache contains ${chalk.green(successCount)} entries and ${chalk.red(
+          errorCount
+        )} errors`
+      );
+    }
+
+    console.log(`\n  Saved ${chalk.green(this.success.length)}${prev ? ' new' : ''} entries`);
+
     console.log(
       `  ${chalk.cyan(this.skipped.length)} entries skipped due to validation issues.`,
       this.config.verbose && this.skipped.length
@@ -70,7 +94,7 @@ export class Stats {
         : ''
     );
     console.log(
-      `  ${chalk.red(this.errors.length)} errors.`,
+      `  ${chalk.red(this.errors.length)}${prev ? ' new' : ''} errors.`,
       this.config.verbose && this.errors.length
         ? `See ${filenameErrors} for details.`
         : this.errors.length

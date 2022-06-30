@@ -6,8 +6,11 @@ export default {
       tsconfig: '<rootDir>/tsconfig.json',
     },
   },
+
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.js$': '@swc/jest',
+    '^.+\\.ts$': 'ts-jest',
   },
+
   moduleFileExtensions: ['ts', 'js', 'html'],
 };
