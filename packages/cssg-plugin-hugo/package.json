@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-hugo",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "",
   "main": "index.js",
   "typings": "./index.d.ts",
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
-    "@jungvonmatt/contentful-ssg": "^1.8.0",
+    "@jungvonmatt/contentful-ssg": "^1.9.0",
     "fs-extra": "^10.1.0",
     "micromatch": "^4.0.4"
   }

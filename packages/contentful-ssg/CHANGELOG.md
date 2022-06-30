@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.2...v1.9.0) (2022-06-30)
+
+
+### Features
+
+* **watch:** serialize watch state on subsequent runs ([#49](https://github.com/jungvonmatt/contentful-ssg/issues/49)) ([48ec401](https://github.com/jungvonmatt/contentful-ssg/commit/48ec4010733a3d46ce34a3703198d635b8f432d0))
+
+
+
+
+
 # [1.8.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.7.4...v1.8.0) (2022-06-21)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg
