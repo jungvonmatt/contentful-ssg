@@ -20,13 +20,15 @@ You can specify global defaults for ratios and focus areas, defaults per content
       // Use center as default focus area
       default: 'center',
       contentTypes: {
-        'media-content-type': {
-          // Use center as default focus area for media-content-type
+        'content_type_id': {
+          // Use center as default focus area for content_type_id
           default: 'top',
           // create overwrites per field
           fields: {
-            // Use the largest face detected as focus area for fieldId in media-content-type
-            fieldId: 'face',
+            // Use the largest face detected as focus area for field_id in content_type_id
+            field_id: 'face',
+            // use the value from field custom_focus_area in content_type_id
+            alt_field_id: 'field:custom_focus_area'
           }
         }
       }
@@ -111,7 +113,6 @@ plugins: [
 
 ## Options
 
-
 | Name                 | Type       | Default                        | Description                                                                                                                                                                  |
 | -------------------- | ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | download             | `boolean`  | `false`                        | Download assets to bypass the contentful cdn on your production site.                                                                                                        |
@@ -143,7 +144,15 @@ plugins: [
       cacheFolder: '.cache',
       extraTypes: ['image/webp'],
       ratios: { default: { square: 1 / 1, portrait: 3 / 4, landscape: 16 / 9 } },
-      focusAreas: { default: 'face' },
+      focusAreas: {
+        default: 'face',
+        contentTypes: {
+          c_media: {
+            mobile_src: 'field:mobile_focus_area',
+            desktop_src: 'field:desktop_focus_area',
+          },
+        },
+      },
     },
   },
 ];

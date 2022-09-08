@@ -1,3 +1,5 @@
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { Asset } from '@jungvonmatt/contentful-ssg';
 import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
 import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
 import {
@@ -5,7 +7,6 @@ import {
   getRuntimeContext,
   getTransformContext,
 } from '@jungvonmatt/contentful-ssg/__test__/mock';
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { existsSync } from 'fs';
 import { remove } from 'fs-extra';
 import got from 'got';
@@ -48,7 +49,7 @@ const getMockData = async (type) => {
   const runtimeContext = getRuntimeContext();
   const entry = localizeEntry(content.entry, 'en-US', runtimeContext.data);
   const asset = localizeEntry(
-    content.assets.find((asset) => asset?.fields?.file?.['en-US']?.contentType === type),
+    content.assets.find((asset) => asset?.fields?.file?.['en-US']?.contentType === type) as Asset,
     'en-US',
     runtimeContext.data
   );
@@ -238,10 +239,10 @@ describe('cssg-plugin-assets', () => {
     const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
 
     expect(result.mimeType).toEqual('video/mp4');
-    expect(basename(result.poster)).toEqual(fileName);
+    expect(basename(result?.poster ?? '')).toEqual(fileName);
 
-    expect(existsSync(join(cacheFolder, result.poster))).toBe(true);
-    expect(existsSync(join(assetFolder, result.poster))).toBe(true);
+    expect(existsSync(join(cacheFolder, result?.poster ?? ''))).toBe(true);
+    expect(existsSync(join(assetFolder, result?.poster ?? ''))).toBe(true);
 
     await remove(cacheFolder);
     await remove(assetFolder);
@@ -270,11 +271,12 @@ describe('cssg-plugin-assets', () => {
     const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
 
     expect(result.mimeType).toEqual('video/mp4');
-    expect(basename(result.poster)).toEqual(fileName);
+    expect(basename(result?.poster ?? '')).toEqual(fileName);
 
-    expect(existsSync(join(cacheFolder, result.poster))).toBe(true);
-    expect(existsSync(join(assetFolder, result.poster))).toBe(true);
+    expect(existsSync(join(cacheFolder, result?.poster ?? ''))).toBe(true);
+    expect(existsSync(join(assetFolder, result?.poster ?? ''))).toBe(true);
 
+    // @ts-ignore
     const mock = mockedCreateFFmpeg.getMockImplementation()();
     expect(mock.run).toHaveBeenCalledWith(
       '-i',
@@ -327,7 +329,7 @@ describe('cssg-plugin-assets', () => {
 
     const instance = plugin();
     const result = (await instance.mapAssetLink(
-      { ...transformContext, asset: null },
+      { ...transformContext, asset: undefined },
       runtimeContext,
       defaultValue
     )) as ProcessedSvg;

@@ -4,7 +4,15 @@ import type {
   RuntimeContext,
   TransformContext,
 } from '@jungvonmatt/contentful-ssg';
-import type { Derivative, FocusArea, PluginConfig, ProcessedImage, Ratios } from '../types.js';
+import type {
+  Derivative,
+  FocusArea,
+  FocusAreaConfig,
+  PluginConfig,
+  ProcessedImage,
+  RatioConfig,
+  Ratios,
+} from '../types.js';
 import { getAssetHelper } from './asset.js';
 
 // Max width that can be handled by the contentful image api
@@ -12,6 +20,50 @@ const contentfulMaxWidth = 4000;
 // Some image formats (avif) have an additional limitation on the megapixel size
 const maxMegaPixels = {
   avif: 9,
+};
+
+export const getRatioConfig = (
+  transformContext: TransformContext,
+  config: RatioConfig | undefined
+): Ratios => {
+  const { entry, fieldId } = transformContext;
+  const contentTypeId = entry?.sys?.contentType?.sys?.id ?? 'default';
+
+  // Try to get configuration from plugin configuration
+  const defaultConfig = config?.default;
+  const contentTypeDefaultConfig = config?.contentTypes?.[contentTypeId]?.default;
+  const fieldConfig = config?.contentTypes?.[contentTypeId]?.fields?.[fieldId];
+  return fieldConfig ?? contentTypeDefaultConfig ?? defaultConfig ?? {};
+};
+
+export const getFocusArea = (
+  transformContext: TransformContext,
+  config: FocusAreaConfig | undefined
+): FocusArea => {
+  const { entry, fieldId } = transformContext;
+  const contentTypeId = entry?.sys?.contentType?.sys?.id ?? 'default';
+
+  const defaultConfig = config?.default;
+  const contentTypeDefaultConfig = config?.contentTypes?.[contentTypeId]?.default;
+  const fieldConfig = config?.contentTypes?.[contentTypeId]?.fields?.[fieldId];
+  const value = fieldConfig ?? contentTypeDefaultConfig ?? defaultConfig;
+
+  const [, referenceFieldId = `${fieldId}_focus_area`] = value?.split(':') ?? [];
+
+  const fallback =
+    (!contentTypeDefaultConfig?.startsWith('field:') && (contentTypeDefaultConfig as FocusArea)) ||
+    (!defaultConfig?.startsWith('field:') && (defaultConfig as FocusArea)) ||
+    'center';
+
+  if (Object.keys(entry.fields).includes(referenceFieldId)) {
+    return (entry?.fields?.[referenceFieldId] as FocusArea) || fallback;
+  }
+
+  if (value?.startsWith('field:')) {
+    return fallback;
+  }
+
+  return (value as FocusArea) || fallback;
 };
 
 export const getImageHelper = (options: PluginConfig) => {
@@ -125,36 +177,22 @@ export const getImageHelper = (options: PluginConfig) => {
 
   const mapAssetLink = async (
     transformContext: TransformContext,
-    runtimeContext: RuntimeContext,
+    _runtimeContext: RuntimeContext,
     content: MapAssetLink
   ): Promise<ProcessedImage> => {
-    const { asset, entry, fieldId } = transformContext;
+    const { asset } = transformContext;
     const { mimeType = '' } = content;
 
     // Get ratio from config
-    const defaultRatio = (entry?.fields?.ratio as number) ?? options?.ratios?.default;
-    const contentTypeDefaultRatio =
-      (options?.ratios?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']?.default as Ratios) ??
-      defaultRatio;
-
-    const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: contentTypeRatios } =
-      options?.ratios?.contentTypes ?? {};
-    const ratioConfig = contentTypeRatios?.fields?.[fieldId] ?? contentTypeDefaultRatio;
+    const ratioConfig = getRatioConfig(transformContext, options?.ratios);
 
     // Get focusArea from config
-    const defaultFocusArea =
-      (entry?.fields?.focus_area as FocusArea) ?? options?.focusAreas?.default ?? 'center';
-    const contentTypeDefaultFocusArea =
-      (options?.focusAreas?.[entry?.sys?.contentType?.sys?.id ?? 'unknown']
-        ?.default as FocusArea) ?? defaultFocusArea;
-    const { [entry?.sys?.contentType?.sys?.id ?? 'unknown']: focusAreaConfig } =
-      options?.focusAreas?.contentTypes ?? {};
-    const focusArea = focusAreaConfig?.fields?.[fieldId] ?? contentTypeDefaultFocusArea;
+    const focusArea = getFocusArea(transformContext, options?.focusAreas);
 
     if (mimeType.startsWith('image')) {
       const original = getImageData(asset, undefined, focusArea);
       const derivatives = Object.fromEntries(
-        Object.entries(ratioConfig || {}).map(([name, ratio]) => [
+        Object.entries(ratioConfig).map(([name, ratio]) => [
           name,
           getImageData(asset, ratio, focusArea),
         ])
