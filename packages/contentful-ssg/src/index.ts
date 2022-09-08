@@ -109,6 +109,16 @@ export const cleanupPrevData = (ctx: RuntimeContext, prev: RunResult) => {
   });
 };
 
+const hasDeletions = (ctx: RuntimeContext) =>
+  (ctx?.data?.deletedAssets?.length ?? 0) + (ctx?.data?.deletedEntries?.length ?? 0) > 0;
+
+const hasAdditions = (ctx: RuntimeContext) =>
+  (ctx?.data?.assets?.length ?? 0) + (ctx?.data?.entries?.length ?? 0) > 0;
+
+const isEmpty = (ctx: RuntimeContext) => {
+  return !hasDeletions(ctx) && !hasAdditions(ctx);
+};
+
 /**
  * Dump contentful objects to files
  * @param {Object} config
@@ -136,16 +146,17 @@ export const run = async (
       },
       {
         title: 'Localize data',
+        skip: (ctx) => isEmpty(ctx),
         task: async (ctx) => localize(ctx),
       },
       {
         title: 'Before Hook',
-        skip: (ctx) => !ctx.hooks.has('before'),
+        skip: (ctx) => !ctx.hooks.has('before') || isEmpty(ctx),
         task: async (ctx) => ctx.hooks.before(),
       },
       {
         title: 'Remove deleted files',
-        skip: (ctx) => (ctx.data.deletedEntries ?? []).length === 0,
+        skip: (ctx) => !hasDeletions(ctx),
         task: async (ctx) => {
           const { locales = [], deletedEntries = [] } = ctx.data;
           const tasks = locales.map((locale) => ({
@@ -189,11 +200,16 @@ export const run = async (
       },
       {
         title: 'Writing files',
+        skip: (ctx) => !hasAdditions(ctx),
         task: async (ctx) => {
           const { locales = [] } = ctx.data;
 
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
+            skip: (ctx: RuntimeContext) =>
+              (ctx.localized?.get(locale.code)?.entryMap?.size ?? 0) +
+                (ctx.localized?.get(locale.code)?.assetMap?.size ?? 0) ===
+              0,
             task: async () => {
               const data = ctx.localized.get(locale.code);
 
@@ -283,7 +299,7 @@ export const run = async (
       },
       {
         title: 'After Hook',
-        skip: (ctx) => !ctx.hooks.has('after'),
+        skip: (ctx) => !ctx.hooks.has('after') || isEmpty(ctx),
         task: async (ctx) => ctx.hooks.after(),
       },
       {

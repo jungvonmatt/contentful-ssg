@@ -118,6 +118,7 @@ export const hasSyncState = (config: Partial<ContentfulConfig>) => {
 
 export const getSyncState = async (config: Partial<ContentfulConfig>): Promise<RunResult> => {
   const file = getStateFile(config);
+
   if (existsSync(file)) {
     const data = await readFile(file);
     return deserialize(data);
