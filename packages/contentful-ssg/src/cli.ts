@@ -174,7 +174,7 @@ program
   .option('--url <url>', 'Webhook url.\nCan also be set via environment variable CSSG_WEBHOOK_URL')
   .option('--no-cache', "Don't cache sync data")
   .option('--poll', 'Use polling (usefull when ngrok tunnel is not an option)')
-  .option('--poll-intervall <intervall>', 'Change default intervall of 20000ms', '20000')
+  .option('--poll-intervall <intervall>', 'Change default intervall of 10000ms', '10000')
   .option(
     '--port <port>',
     'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT'
