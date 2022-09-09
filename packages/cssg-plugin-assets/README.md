@@ -144,15 +144,18 @@ plugins: [
       cacheFolder: '.cache',
       extraTypes: ['image/webp'],
       ratios: { default: { square: 1 / 1, portrait: 3 / 4, landscape: 16 / 9 } },
-      focusAreas: {
-        default: 'face',
-        contentTypes: {
-          c_media: {
-            mobile_src: 'field:mobile_focus_area',
-            desktop_src: 'field:desktop_focus_area',
+     focusAreas: {
+          default: 'face',
+          contentTypes: {
+            c_media: {
+              default: 'center',
+              fields: {
+                mobile_src: 'field:mobile_focus_area',
+                desktop_src: 'field:desktop_focus_area',
+              },
+            }
           },
         },
-      },
     },
   },
 ];
