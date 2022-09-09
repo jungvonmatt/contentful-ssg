@@ -20,8 +20,8 @@ You can specify global defaults for ratios and focus areas, defaults per content
       // Use center as default focus area
       default: 'center',
       contentTypes: {
-        'content_type_id': {
-          // Use center as default focus area for content_type_id
+        content_type_id: {
+          // Use top as default focus area for content_type_id
           default: 'top',
           // create overwrites per field
           fields: {
@@ -38,13 +38,13 @@ You can specify global defaults for ratios and focus areas, defaults per content
       default: {square: 1/1, landscape: 16/9},
       // Define overwrites per content-type
       contentTypes: {
-        'media-content-type': {
-          // default ratio for media-content-type should be rectangle ()
+       content_type_id: {
+          // default ratio forcontent_type_id should be rectangle ()
           default: {rectangle: 4/3},
           // create overwrites per field
           fields: {
-            // fieldId in this contentType is generated with original and square derivatives
-            fieldId: {square: 1/1},
+            // field_id in content_type_id is generated with original and square derivatives
+            field_id: {square: 1/1},
           }
         }
       }
