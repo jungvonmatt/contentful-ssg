@@ -7,10 +7,15 @@ import {
   getTransformContext,
 } from '@jungvonmatt/contentful-ssg/__test__/mock';
 
-import { EntryConfig, PluginConfig } from '../types.js';
+import { EntryConfig, FocusAreaConfig, PluginConfig } from '../types.js';
 
 import { getRatioConfig, getFocusArea } from './image.js';
 
+/**
+ * Get transformcontext with a mock entry andf fieldId media
+ * @param fields fields available in entry
+ * @returns
+ */
 const getTransformContextMock = async (fields: Record<string, string> = {}) => {
   const content = await getContent();
   const runtimeContext = getRuntimeContext();
@@ -26,126 +31,148 @@ const getTransformContextMock = async (fields: Record<string, string> = {}) => {
   return transformContext;
 };
 
+const getTestFocusArea = async (
+  test:
+    | {
+        fields?: Record<string, string>;
+        config?: FocusAreaConfig;
+      }
+    | undefined
+) => {
+  const transformContext = await getTransformContextMock(test?.fields ?? {});
+  return getFocusArea(transformContext, test?.config ?? {});
+};
+
 describe('getFocusArea', () => {
   test('default', async () => {
-    const transformContext = await getTransformContextMock();
-    const focusArea = getFocusArea(transformContext, {});
+    const focusArea = await getTestFocusArea({
+      config: {},
+      fields: {},
+    });
 
     expect(focusArea).toEqual('center');
   });
 
   test('backwards compatibility', async () => {
-    const transformContext = await getTransformContextMock({ focus_area: 'face' });
-    const focusArea = getFocusArea(transformContext, {});
+    const focusArea = await getTestFocusArea({
+      config: {},
+      fields: { focus_area: 'face' },
+    });
 
     expect(focusArea).toEqual('face');
   });
 
   test('media_focus_area field', async () => {
-    const transformContext = await getTransformContextMock({ media_focus_area: 'top' });
-    const focusArea = getFocusArea(transformContext, {});
+    const focusArea = await getTestFocusArea({
+      config: {},
+      fields: { media_focus_area: 'top' },
+    });
 
     expect(focusArea).toEqual('top');
   });
 
   test('configured field - default', async () => {
-    const transformContext = await getTransformContextMock({ reference: 'bottom' });
-    const focusArea = getFocusArea(transformContext, { default: 'field:reference' });
+    const focusArea = await getTestFocusArea({
+      config: { default: 'field:reference' },
+      fields: { reference: 'bottom' },
+    });
 
     expect(focusArea).toEqual('bottom');
   });
 
   test('configured field - content-type default', async () => {
-    const transformContext = await getTransformContextMock({ a: 'bottom', b: 'right' });
-    const focusArea = getFocusArea(transformContext, {
-      default: 'field:a',
-      contentTypes: { ct: { default: 'field:b' } },
+    const focusArea = await getTestFocusArea({
+      config: { default: 'field:a', contentTypes: { ct: { default: 'field:b' } } },
+      fields: { a: 'bottom', b: 'right' },
     });
 
     expect(focusArea).toEqual('right');
   });
 
   test('configured field - content-type fieldId', async () => {
-    const transformContext = await getTransformContextMock({
-      a: 'bottom',
-      b: 'right',
-      c: 'top_right',
-    });
-    const focusArea = getFocusArea(transformContext, {
-      default: 'field:a',
-      contentTypes: { ct: { default: 'field:b', fields: { media: 'field:c' } } },
+    const focusArea = await getTestFocusArea({
+      config: {
+        default: 'field:a',
+        contentTypes: { ct: { default: 'field:b', fields: { media: 'field:c' } } },
+      },
+      fields: { a: 'bottom', b: 'right', c: 'top_right' },
     });
 
     expect(focusArea).toEqual('top_right');
   });
 
   test('field by naming convention', async () => {
-    const transformContext = await getTransformContextMock({
-      a: 'bottom',
-      b: 'right',
-      media_focus_area: 'top_left',
-    });
-    const focusArea = getFocusArea(transformContext, {
-      default: 'field:a',
-      contentTypes: { ct: { default: 'field:b', fields: { media: 'top' } } },
+    const focusArea = await getTestFocusArea({
+      config: {
+        default: 'field:a',
+        contentTypes: { ct: { default: 'field:b', fields: { media: 'top' } } },
+      },
+      fields: { a: 'bottom', b: 'right', media_focus_area: 'top_left' },
     });
 
     expect(focusArea).toEqual('top_left');
   });
 
   test('config default', async () => {
-    const transformContext = await getTransformContextMock();
-    const focusArea = getFocusArea(transformContext, {
-      default: 'bottom',
+    const focusArea = await getTestFocusArea({
+      config: { default: 'bottom' },
+      fields: {},
     });
 
     expect(focusArea).toEqual('bottom');
   });
 
   test('config content-type default', async () => {
-    const transformContext = await getTransformContextMock();
-    const focusArea = getFocusArea(transformContext, {
-      default: 'top_left',
-      contentTypes: { ct: { default: 'top_right' } },
+    const focusArea = await getTestFocusArea({
+      config: { default: 'top_left', contentTypes: { ct: { default: 'top_right' } } },
+      fields: {},
     });
 
     expect(focusArea).toEqual('top_right');
   });
 
   test('config field', async () => {
-    const transformContext = await getTransformContextMock();
-    const focusArea = getFocusArea(transformContext, {
-      default: 'top_left',
-      contentTypes: { ct: { default: 'top_right', fields: { media: 'top' } } },
+    const focusArea = await getTestFocusArea({
+      config: {
+        default: 'top_left',
+        contentTypes: { ct: { default: 'top_right', fields: { media: 'top' } } },
+      },
+      fields: {},
     });
 
     expect(focusArea).toEqual('top');
   });
 
   test('config field fallback ct', async () => {
-    const transformContext = await getTransformContextMock();
-    const focusArea = getFocusArea(transformContext, {
-      default: 'top_left',
-      contentTypes: { ct: { default: 'top_right', fields: { media: 'field:b' } } },
+    const focusArea = await getTestFocusArea({
+      config: {
+        default: 'top_left',
+        contentTypes: { ct: { default: 'top_right', fields: { media: 'field:b' } } },
+      },
+      fields: {},
     });
 
     expect(focusArea).toEqual('top_right');
   });
 
   test('config field fallback default', async () => {
-    const transformContext = await getTransformContextMock();
-    const focusArea = getFocusArea(transformContext, {
-      default: 'top_left',
-      contentTypes: { ct: { default: 'field:a', fields: { media: 'field:b' } } },
+    const focusArea = await getTestFocusArea({
+      config: {
+        default: 'top_left',
+        contentTypes: { ct: { default: 'field:a', fields: { media: 'field:b' } } },
+      },
+      fields: {},
     });
 
     expect(focusArea).toEqual('top_left');
   });
 
   test('config field fallback center', async () => {
-    const transformContext = await getTransformContextMock();
-    const focusArea = getFocusArea(transformContext, {
-      contentTypes: { ct: { default: 'field:a', fields: { media: 'field:b' } } },
+    const focusArea = await getTestFocusArea({
+      config: {
+        contentTypes: { ct: { default: 'field:a', fields: { media: 'field:b' } } },
+      },
+      fields: {},
     });
 
     expect(focusArea).toEqual('center');
