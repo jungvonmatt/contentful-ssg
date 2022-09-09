@@ -34,6 +34,13 @@ describe('getFocusArea', () => {
     expect(focusArea).toEqual('center');
   });
 
+  test('backwards compatibility', async () => {
+    const transformContext = await getTransformContextMock({ focus_area: 'face' });
+    const focusArea = getFocusArea(transformContext, {});
+
+    expect(focusArea).toEqual('face');
+  });
+
   test('media_focus_area field', async () => {
     const transformContext = await getTransformContextMock({ media_focus_area: 'top' });
     const focusArea = getFocusArea(transformContext, {});

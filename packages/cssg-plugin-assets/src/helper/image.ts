@@ -53,6 +53,7 @@ export const getFocusArea = (
   const fallback =
     (!contentTypeDefaultConfig?.startsWith('field:') && (contentTypeDefaultConfig as FocusArea)) ||
     (!defaultConfig?.startsWith('field:') && (defaultConfig as FocusArea)) ||
+    (entry?.fields?.focus_area as FocusArea) ||
     'center';
 
   if (Object.keys(entry.fields).includes(referenceFieldId)) {
