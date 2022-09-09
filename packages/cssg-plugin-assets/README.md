@@ -27,7 +27,7 @@ You can specify global defaults for ratios and focus areas, defaults per content
           fields: {
             // Use the largest face detected as focus area for field_id in content_type_id
             field_id: 'face',
-            // use the value from field custom_focus_area in content_type_id
+            // Use the value from field custom_focus_area in content_type_id
             alt_field_id: 'field:custom_focus_area'
           }
         }
