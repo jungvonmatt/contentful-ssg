@@ -2,6 +2,7 @@ import { Asset, MapAssetLink, TransformContext } from '@jungvonmatt/contentful-s
 import { Plugin } from 'svgo';
 
 export type Ratios = Record<string, number>;
+export type FocusAreaReference = `field:${string}`;
 export type FocusArea =
   | 'center'
   | 'top'
@@ -15,27 +16,22 @@ export type FocusArea =
   | 'face'
   | 'faces';
 
-export type RatioConfig = {
-  default?: Ratios;
+export type EntryConfig<T = any> = {
+  default?: T;
   contentTypes?: Record<
     string,
     {
-      default?: Ratios;
-      fields?: Record<string, Ratios>;
+      default?: T;
+      fields?: Record<string, T>;
     }
   >;
 };
 
-export type FocusAreaConfig = {
-  default?: FocusArea;
-  contentTypes?: Record<
-    string,
-    {
-      default?: FocusArea;
-      fields?: Record<string, FocusArea>;
-    }
-  >;
-};
+export type EntryConfigKey = keyof Pick<PluginConfig, 'ratios' | 'focusAreas'>;
+
+export type RatioConfig = EntryConfig<Ratios>;
+
+export type FocusAreaConfig = EntryConfig<FocusArea | FocusAreaReference>;
 
 export type SizesCallback = (asset: Asset, ratio: number, focusArea: string) => number;
 
