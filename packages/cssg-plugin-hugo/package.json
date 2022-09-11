@@ -29,6 +29,6 @@
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "^1.9.0",
     "fs-extra": "^10.1.0",
-    "micromatch": "^4.0.4"
+    "micromatch": "^4.0.5"
   }
 }

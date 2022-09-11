@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import { run, cleanupPrevData } from './index.js';
 import { write } from './tasks/write.js';
 import { RunResult, RuntimeContext } from './types.js';
@@ -82,11 +82,11 @@ describe('Run', () => {
     });
 
     expect(output).toMatch(
-      `fieldTest: ${chalk.cyan(4)}(de) - ${chalk.cyan(4)}(en-US) - ${chalk.cyan(4)}(en-GB)`
+      `fieldTest: ${pico.cyan(4)}(de) - ${pico.cyan(4)}(en-US) - ${pico.cyan(4)}(en-GB)`
     );
-    expect(output).toMatch(`Saved ${chalk.green(12)} entries`);
-    expect(output).toMatch(`${chalk.cyan(0)} entries skipped due to validation issues`);
-    expect(output).toMatch(`${chalk.red(0)} errors`);
+    expect(output).toMatch(`Saved ${pico.green(12)} entries`);
+    expect(output).toMatch(`${pico.cyan(0)} entries skipped due to validation issues`);
+    expect(output).toMatch(`${pico.red(0)} errors`);
   });
 
   test('fails on exception before/after', async () => {
@@ -197,7 +197,7 @@ describe('Run', () => {
 
     cleanupPrevData(context, prev);
 
-    for (let node of context.data.deletedEntries) {
+    for (let node of context?.data?.deletedEntries ?? []) {
       expect(Object.keys(node)).toEqual(expect.arrayContaining(['sys', 'fields']));
       expect(Object.keys(node.sys)).toEqual(expect.arrayContaining(['contentType']));
       expect(node.sys.type).toEqual('DeletedEntry');

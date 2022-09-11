@@ -14,7 +14,7 @@ import path from 'path';
 import { createFakes } from './index.js';
 
 const env = dotenv.config();
-dotenvExpand(env);
+dotenvExpand.expand(env);
 
 type CommandArgs = {
   outputDirectory: string;

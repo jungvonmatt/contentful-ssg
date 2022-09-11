@@ -9,11 +9,11 @@ import { existsSync } from 'fs';
 export class FileManager {
   ignoreBase: string = process.cwd();
   ignore?: Ignore;
-  files: Set<string> = new Set();
+  files = new Set<string>();
   config: Config;
 
-  constructor(config: Config) {
-    this.config = config;
+  constructor(_config: Config) {
+    this.config = _config;
   }
 
   get count() {
@@ -55,7 +55,7 @@ export class FileManager {
   async writeFile(
     file: string,
     data: any,
-    options?: WriteFileOptions | BufferEncoding | string
+    options?: WriteFileOptions | BufferEncoding
   ): Promise<void> {
     await outputFile(file, data, options);
     if (this.files.has(resolve(file))) {

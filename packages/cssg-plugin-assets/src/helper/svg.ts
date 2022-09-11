@@ -1,7 +1,13 @@
-import { Asset, MapAssetLink, RuntimeContext, TransformContext } from '@jungvonmatt/contentful-ssg';
+import type {
+  Asset,
+  MapAssetLink,
+  RuntimeContext,
+  TransformContext,
+} from '@jungvonmatt/contentful-ssg';
 import type { PluginConfig, ProcessedSvg } from '../types.js';
 import { getAssetHelper } from './asset.js';
-import { optimize, OptimizedSvg, OptimizeOptions } from 'svgo';
+import type { OptimizedSvg, OptimizeOptions } from 'svgo';
+import { optimize } from 'svgo';
 
 export const getSvgHelper = (options: PluginConfig) => {
   const { fetchAsset, getLocalSrc, getAssetTimestamp } = getAssetHelper(options);

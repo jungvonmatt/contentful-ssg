@@ -131,7 +131,7 @@ describe('Hook Manager', () => {
           { mapEntryLink: (tc, rc, prev) => ({ ...prev, mapEntryLink: `plugin-5: ${tc.value}` }) },
           {
             mapDirectory: (tc, rc, prev) =>
-              prev.replace(tc.value, `plugin-6-directory: ${tc.value}`),
+              prev?.replace(tc.value, `plugin-6-directory: ${tc.value}`) ?? '',
           },
         ],
       },

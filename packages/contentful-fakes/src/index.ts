@@ -1,8 +1,9 @@
-import { ContentfulConfig, KeyValueMap } from '@jungvonmatt/contentful-ssg';
+import type { ContentfulConfig, KeyValueMap } from '@jungvonmatt/contentful-ssg';
 import { getEnvironment } from '@jungvonmatt/contentful-ssg/lib/contentful';
 import { getConfig } from '@jungvonmatt/contentful-ssg/lib/config';
 import { askMissing } from '@jungvonmatt/contentful-ssg/lib/ui';
-import { getMockData, ContentTypes } from './lib/faker.js';
+import type { ContentTypes } from './lib/faker.js';
+import { getMockData } from './lib/faker.js';
 
 export async function createFakes(
   contentTypeIds: string[]

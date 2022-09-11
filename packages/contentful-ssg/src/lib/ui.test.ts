@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import inquirer from 'inquirer';
 import { logInfo, logError, confirm } from './ui';
 
@@ -13,7 +13,7 @@ describe('Utils', () => {
     logInfo(text);
 
     // The first argument of the first call to the function was 'hello'
-    expect(console.log).toHaveBeenCalledWith(chalk.cyan(text));
+    expect(console.log).toHaveBeenCalledWith(pico.cyan(text));
   });
 
   test('logError', () => {
@@ -24,7 +24,7 @@ describe('Utils', () => {
     logError(error);
 
     // The first argument of the first call to the function was 'hello'
-    expect(console.error).toHaveBeenCalledWith(chalk.red('\nError:'), error.message);
+    expect(console.error).toHaveBeenCalledWith(pico.red('\nError:'), error.message);
     expect(console.log).toHaveBeenCalledWith(error.stack);
   });
 

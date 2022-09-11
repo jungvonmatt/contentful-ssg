@@ -1,4 +1,4 @@
-import { TransformContext, RuntimeContext, Config } from '../types';
+import type { TransformContext, RuntimeContext, Config } from '../types';
 import { getFilepath } from './write.js';
 
 export const remove = async (

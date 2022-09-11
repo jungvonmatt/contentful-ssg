@@ -1,7 +1,7 @@
 import type { QuestionCollection } from 'inquirer';
 import type { ContentfulConfig, Config } from '../types.js';
 import { resolve } from 'path';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import inquirer from 'inquirer';
 import { getApiKey, getEnvironments, getPreviewApiKey, getSpaces } from './contentful.js';
 
@@ -10,7 +10,7 @@ import { getApiKey, getEnvironments, getPreviewApiKey, getSpaces } from './conte
  * @param {String} str Info text
  */
 export const logInfo = (str: string) => {
-  console.log(chalk.cyan(str));
+  console.log(pico.cyan(str));
 };
 
 /**
@@ -19,7 +19,7 @@ export const logInfo = (str: string) => {
  */
 export const logError = (error: Error) => {
   const { message, stack } = error;
-  console.error(chalk.red('\nError:'), message);
+  console.error(pico.red('\nError:'), message);
   if (stack) {
     console.log(stack);
   }
@@ -52,7 +52,7 @@ const getPromts = (data: Partial<Config>): Questions => [
     type: 'list',
     name: 'spaceId',
     message: 'Space ID',
-    choices: async (answers) => {
+    async choices(answers) {
       const spaces = await getSpaces({ ...data, ...answers } as ContentfulConfig);
       return spaces.map((space) => ({
         name: `${space.name} (${space.sys.id})`,
@@ -67,7 +67,7 @@ const getPromts = (data: Partial<Config>): Questions => [
     type: 'list',
     name: 'environmentId',
     message: 'Environment Id',
-    choices: async (answers) => {
+    async choices(answers) {
       const environments = await getEnvironments({ ...data, ...answers } as ContentfulConfig);
       return environments.map((environment) => environment.sys.id);
     },

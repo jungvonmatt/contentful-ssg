@@ -7,7 +7,7 @@ import { serializeError, deserializeError } from 'serialize-error';
 
 import { ReplaySubject } from 'rxjs';
 import { deserialize as v8Deserialize, serialize as v8Serialize } from 'v8';
-import { ContentfulConfig, ObservableContext, RunResult } from '../types.js';
+import type { ContentfulConfig, ObservableContext, RunResult } from '../types.js';
 import { getObservableValues } from './observable.js';
 
 export const getCacheDir = (config: Partial<ContentfulConfig>) => {

@@ -1,4 +1,5 @@
-import { filter, count, Observable, takeUntil, timer } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { filter, count, takeUntil, timer } from 'rxjs';
 
 export const getObservableValues = async <T, U = Partial<T>>(
   observable$: Observable<T>,

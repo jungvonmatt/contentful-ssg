@@ -5,10 +5,15 @@ import { stringify, TYPE_YAML, TYPE_JSON, TYPE_MARKDOWN, TYPE_TOML } from '../co
 const { contains } = mm;
 
 const formatMapping = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '.md': TYPE_MARKDOWN,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '.json': TYPE_JSON,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '.yaml': TYPE_YAML,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '.yml': TYPE_YAML,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '.toml': TYPE_TOML,
 };
 

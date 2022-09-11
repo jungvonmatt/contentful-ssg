@@ -1,4 +1,4 @@
-import {
+import type {
   Hooks,
   KeyValueMap,
   PluginSource,
@@ -7,14 +7,14 @@ import {
 } from '@jungvonmatt/contentful-ssg';
 import { join, relative } from 'path';
 
-export interface TypeConfigEntry {
+export type TypeConfigEntry = {
   [x: string]: string;
   view: string;
   path: string;
-}
-export interface PluginConfig {
+};
+export type PluginConfig = {
   typeConfig: Record<string, TypeConfigEntry>;
-}
+};
 
 /**
  * Built-in fields carry special meaning that can affect various aspects of building your site.

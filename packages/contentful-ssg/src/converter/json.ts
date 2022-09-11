@@ -1,4 +1,4 @@
-import { KeyValueMap } from '../types';
+import type { KeyValueMap } from '../types';
 
 /**
  * Convert object to json

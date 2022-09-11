@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import Listr from 'listr';
 import { ReplaySubject } from 'rxjs';
 import { initializeCache } from './lib/cf-cache.js';
@@ -44,7 +44,7 @@ class CustomListrRenderer {
     for (const task of tasks) {
       task.subscribe((event) => {
         if (event.type === 'STATE' && task.isPending()) {
-          console.log(`${indent}  ${chalk.yellow('\u279E')} ${task.title}`);
+          console.log(`${indent}  ${pico.yellow('\u279E')} ${task.title}`);
         }
 
         if (event.type === 'SUBTASKS' && task.subtasks.length > 0) {
@@ -60,7 +60,7 @@ class CustomListrRenderer {
 
   end(err) {
     if (!err) {
-      console.log(`  ${chalk.green('✔')} all tasks done!`);
+      console.log(`  ${pico.green('✔')} all tasks done!`);
     }
   }
 }
@@ -129,7 +129,7 @@ export const run = async (
       },
       {
         title: 'Pulling data from contentful',
-        task: async (ctx) => {
+        async task(ctx) {
           await fetch(ctx, config);
           cleanupPrevData(ctx, prev);
         },
@@ -146,11 +146,11 @@ export const run = async (
       {
         title: 'Remove deleted files',
         skip: (ctx) => (ctx.data.deletedEntries ?? []).length === 0,
-        task: async (ctx) => {
+        async task(ctx) {
           const { locales = [], deletedEntries = [] } = ctx.data;
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
-            task: async () => {
+            async task() {
               const data = ctx.localized.get(locale.code);
 
               // Get observables from previous run
@@ -189,12 +189,12 @@ export const run = async (
       },
       {
         title: 'Writing files',
-        task: async (ctx) => {
+        async task(ctx) {
           const { locales = [] } = ctx.data;
 
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
-            task: async () => {
+            async task() {
               const data = ctx.localized.get(locale.code);
 
               // Only walk new entries
@@ -288,7 +288,7 @@ export const run = async (
       },
       {
         title: 'Cleanup',
-        skip: (ctx) => {
+        skip(ctx) {
           const cache = initializeCache(ctx.config);
           return cache.hasSyncToken();
         },

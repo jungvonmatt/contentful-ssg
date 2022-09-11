@@ -21,7 +21,7 @@ import {
   LINK_TYPE_ENTRY,
 } from '@jungvonmatt/contentful-ssg/lib/contentful';
 
-import { ContentFields, KeyValueMap, Control } from 'contentful-management/types';
+import type { ContentFields, KeyValueMap, Control } from 'contentful-management/types';
 
 import { faker } from '@faker-js/faker';
 import casual from 'casual';

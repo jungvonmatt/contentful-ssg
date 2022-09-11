@@ -102,9 +102,9 @@ const hookUpTransform = <Type = unknown>(
 export class HookManager {
   runtimeContext: RuntimeContext;
   config: Config;
-  constructor(runtimeContext: RuntimeContext, config: Config) {
-    this.runtimeContext = runtimeContext;
-    this.config = config;
+  constructor(_runtimeContext: RuntimeContext, _config: Config) {
+    this.runtimeContext = _runtimeContext;
+    this.config = _config;
   }
 
   has(key: keyof Hooks): boolean {

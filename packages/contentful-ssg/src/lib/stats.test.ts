@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import { writeFile } from 'fs/promises';
 import { ErrorEntry, Locale, TransformContext } from '../types.js';
 import { ValidationError } from './error.js';
@@ -41,11 +41,11 @@ describe('Stats', () => {
     const calls = (console.log as jest.Mock)?.mock?.calls ?? [];
     const message = calls.flat().join('\n');
 
-    expect(message).toMatch(`contentTypeId: ${chalk.cyan(1)}(de)`);
+    expect(message).toMatch(`contentTypeId: ${pico.cyan(1)}(de)`);
 
-    expect(message).toMatch(`Saved ${chalk.green(1)} entries`);
-    expect(message).toMatch(`${chalk.cyan(1)} entries skipped due to validation issues`);
-    expect(message).toMatch(`${chalk.red(1)} errors`);
+    expect(message).toMatch(`Saved ${pico.green(1)} entries`);
+    expect(message).toMatch(`${pico.cyan(1)} entries skipped due to validation issues`);
+    expect(message).toMatch(`${pico.red(1)} errors`);
     expect(message).toMatch(`Use --verbose to see actual errors`);
   });
   test('verbose', async () => {
@@ -65,11 +65,11 @@ describe('Stats', () => {
     const calls = (console.log as jest.Mock)?.mock?.calls ?? [];
     const message = calls.flat().join('\n');
 
-    expect(message).toMatch(`contentTypeId: ${chalk.cyan(1)}(de)`);
+    expect(message).toMatch(`contentTypeId: ${pico.cyan(1)}(de)`);
 
-    expect(message).toMatch(`Saved ${chalk.green(1)} entries`);
-    expect(message).toMatch(`${chalk.cyan(1)} entries skipped due to validation issues`);
-    expect(message).toMatch(`${chalk.red(1)} errors`);
+    expect(message).toMatch(`Saved ${pico.green(1)} entries`);
+    expect(message).toMatch(`${pico.cyan(1)} entries skipped due to validation issues`);
+    expect(message).toMatch(`${pico.red(1)} errors`);
     expect(message).toMatch(/See validation-errors-\d+\.log/);
     expect(message).toMatch(/See errors-\d+\.log/);
     expect(writeCalls[0][0]).toMatch(/validation-errors-\d+\.log/);

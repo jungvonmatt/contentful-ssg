@@ -1,6 +1,7 @@
-import { Asset, ContentType, Entry } from 'contentful';
-import express, { Response } from 'express';
-import { IncomingHttpHeaders } from 'http';
+import type { Asset, ContentType, Entry } from 'contentful';
+import type { Response } from 'express';
+import express from 'express';
+import type { IncomingHttpHeaders } from 'http';
 
 const app = express();
 app.disable('x-powered-by');
@@ -19,7 +20,8 @@ app.use(
 );
 
 declare module 'http' {
-  interface IncomingHttpHeaders {
+  // @ts-expect-error duplicate
+  type IncomingHttpHeaders = {
     'x-contentful-topic':
       | 'ContentManagement.ContentType.create'
       | 'ContentManagement.ContentType.save'
@@ -43,13 +45,13 @@ declare module 'http' {
       | 'ContentManagement.Asset.unpublish'
       | 'ContentManagement.Asset.delete';
     'X-Contentful-Webhook-Name': string;
-  }
+  };
 }
 
-interface ContentfulWebhookRequest {
+type ContentfulWebhookRequest = {
   headers: IncomingHttpHeaders;
   body: Entry<unknown> | Asset | ContentType;
-}
+};
 
 export const getApp = (callback: () => Promise<void>) => {
   app.get('/status', (_req, res: Response) => res.status(200).send('ok'));

@@ -1,8 +1,8 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import type { Config, KeyValueMap, RunResult, StatsEntry, TransformContext } from '../types.js';
-import { ValidationError } from './error.js';
+import type { ValidationError } from './error.js';
 import { getEntries, groupBy } from './object.js';
 import { getObservableCount } from './observable.js';
 
@@ -13,8 +13,8 @@ export class Stats {
   errors: StatsEntry[] = [];
   skipped: StatsEntry[] = [];
 
-  constructor(config: Config) {
-    this.config = config;
+  constructor(_config: Config) {
+    this.config = _config;
   }
 
   toEntry(context: TransformContext) {
@@ -51,9 +51,9 @@ export class Stats {
       .forEach(([key, entries]) => {
         const byLocale = groupBy<StatsEntry>(entries, 'locale');
         const counts = getEntries(byLocale)
-          .map(([locale, items]) => `${chalk.cyan(items.length)}(${locale})`)
+          .map(([locale, items]) => `${pico.cyan(items.length)}(${locale})`)
           .join(' - ');
-        console.log(`  ${chalk.green('✔')} ${key}: ${counts}`);
+        console.log(`  ${pico.green('✔')} ${key}: ${counts}`);
         return entries.length;
       });
 
@@ -77,16 +77,16 @@ export class Stats {
       const errorCount = errorCounts.reduce((result, count) => result + count, 0);
 
       console.log(
-        `  Sync cache contains ${chalk.green(successCount)} entries and ${chalk.red(
+        `  Sync cache contains ${pico.green(successCount)} entries and ${pico.red(
           errorCount
         )} errors`
       );
     }
 
-    console.log(`\n  Saved ${chalk.green(this.success.length)}${prev ? ' new' : ''} entries`);
+    console.log(`\n  Saved ${pico.green(this.success.length)}${prev ? ' new' : ''} entries`);
 
     console.log(
-      `  ${chalk.cyan(this.skipped.length)} entries skipped due to validation issues.`,
+      `  ${pico.cyan(this.skipped.length)} entries skipped due to validation issues.`,
       this.config.verbose && this.skipped.length
         ? `See ${filenameSkipped} for details.`
         : this.skipped.length
@@ -94,7 +94,7 @@ export class Stats {
         : ''
     );
     console.log(
-      `  ${chalk.red(this.errors.length)}${prev ? ' new' : ''} errors.`,
+      `  ${pico.red(this.errors.length)}${prev ? ' new' : ''} errors.`,
       this.config.verbose && this.errors.length
         ? `See ${filenameErrors} for details.`
         : this.errors.length

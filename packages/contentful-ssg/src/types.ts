@@ -38,7 +38,7 @@ export type RichTextConfig =
       runtimeContext: RuntimeContext
     ) => unknown);
 
-export interface ContentfulConfig {
+export type ContentfulConfig = {
   spaceId: string;
   environmentId: string;
   managementToken: string;
@@ -47,14 +47,14 @@ export interface ContentfulConfig {
   host?: string;
   preview?: boolean;
   sync?: boolean;
-}
+};
 
-export interface ContentfulRcConfig {
+export type ContentfulRcConfig = {
   managementToken: string;
   activeSpaceId: string;
   activeEnvironmentId: string;
   host: string;
-}
+};
 
 export type ConfigHook = (config: Config) => Config | Promise<Config>;
 
@@ -71,7 +71,7 @@ export type ValidateHook = (
   runtimeContext?: RuntimeContext
 ) => Promise<boolean> | boolean;
 
-export interface Hooks {
+export type Hooks = {
   config?: ConfigHook;
   before?: RuntimeHook;
   after?: RuntimeHook;
@@ -81,7 +81,7 @@ export interface Hooks {
   mapMetaFields?: TransformHook<KeyValueMap>;
   mapAssetLink?: TransformHook<KeyValueMap>;
   mapEntryLink?: TransformHook<KeyValueMap>;
-}
+};
 
 export type Config = Partial<ContentfulConfig> &
   Hooks & {
@@ -98,10 +98,10 @@ export type Config = Partial<ContentfulConfig> &
     validate?: ValidateHook;
   };
 
-export interface PluginInfo {
+export type PluginInfo = {
   options: KeyValueMap;
   resolve: string;
-}
+};
 
 export type PluginModule = {
   default?: PluginSource;
@@ -111,7 +111,7 @@ export type PluginSource = Hooks | ((options?: KeyValueMap) => Promise<Hooks> | 
 
 export type FieldSettings = KeyValueMap<KeyValueMap<Field>>;
 
-export interface ContentfulData {
+export type ContentfulData = {
   fieldSettings: FieldSettings;
   locales: Locale[];
   contentTypes: ContentType[];
@@ -119,27 +119,27 @@ export interface ContentfulData {
   assets: Asset[];
   deletedEntries?: Entry[];
   deletedAssets?: Asset[];
-}
+};
 
-export interface LocalizedContent {
+export type LocalizedContent = {
   [x: string]: any;
   assets: Asset[];
   entries: Entry[];
   assetMap: Map<string, Asset>;
   entryMap: Map<string, Entry>;
-}
+};
 
 export type StatsKey = string;
 
-export interface Converter {
+export type Converter = {
   parse: <T = KeyValueMap>(string: string) => T;
   stringify: <T = KeyValueMap>(obj: T) => string;
-}
+};
 
-export interface MarkdownConverter {
+export type MarkdownConverter = {
   parse: <T = KeyValueMap>(string: string) => T;
   stringify: <T = KeyValueMap>(obj: T, additional?: string) => string;
-}
+};
 
 type Entries<T> = Array<
   {
@@ -147,7 +147,7 @@ type Entries<T> = Array<
   }[keyof T]
 >;
 
-export interface RuntimeContext {
+export type RuntimeContext = {
   [x: string]: any;
   config: Config;
   defaultLocale: string;
@@ -202,7 +202,7 @@ export interface RuntimeContext {
     toml: Converter;
   };
   observables?: Record<string, ReplaySubject<ObservableContext>>;
-}
+};
 
 export type Task = ListrTaskObject<RuntimeContext>;
 
@@ -211,11 +211,11 @@ export type RunResult = {
   localized: Record<string, LocalizedContent>;
 };
 
-export interface TransformHelper {
+export type TransformHelper = {
   collectValues: <T>(key, options?: CollectOptions) => T[];
   collectParentValues: <T>(key, options?: CollectOptions) => T[];
   waitFor: (id: string, waitTimeout?: number) => Promise<ObservableContext>;
-}
+};
 
 export type TransformContext = LocalizedContent & {
   [x: string]: any;
@@ -239,15 +239,15 @@ export type ObservableContext = Readonly<
   }
 >;
 
-export interface StatsEntry extends KeyValueMap {
+export type StatsEntry = {
   id: string;
   contentTypeId: string;
   locale: string;
   message?: string;
   error?: Error;
-}
+} & KeyValueMap;
 
-export interface MapAssetLink {
+export type MapAssetLink = {
   mimeType: string;
   url: string;
   title: string;
@@ -255,15 +255,15 @@ export interface MapAssetLink {
   width?: number;
   height?: number;
   fileSize?: number;
-}
+};
 
 export type Link = EntryFields.Link<unknown>;
 
-export interface RichTextData {
+export type RichTextData = {
   target?: Link;
-}
+};
 
-export interface CollectOptions {
+export type CollectOptions = {
   reverse?: boolean;
   entry?: Entry;
   entryMap?: Map<string, Entry>;
@@ -271,26 +271,26 @@ export interface CollectOptions {
   getId?: (entry: Entry) => string;
   getNextId?: (entry: Entry) => string;
   getValue?: (entry: Entry) => any;
-}
+};
 
-export interface PagedGetOptions<T> {
+export type PagedGetOptions<T> = {
   method: string;
   skip?: number;
   aggregatedResponse?: CollectionProp<T>;
   query?: QueryOptions;
-}
+};
 
-export interface SyncOptions {
+export type SyncOptions = {
   initial?: boolean;
   nextSyncToken?: string;
   resolveLinks?: boolean;
-}
+};
 
-export interface ErrorEntry {
+export type ErrorEntry = {
   spaceId: string;
   environmentId: string;
   entryId: string;
   contentTypeId: string;
   locale: Locale;
   missingFields: string[];
-}
+};

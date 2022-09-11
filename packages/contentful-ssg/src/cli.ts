@@ -3,7 +3,7 @@
 
 /* eslint-env node */
 import exitHook from 'async-exit-hook';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
@@ -21,10 +21,10 @@ import { addWatchWebhook } from './lib/contentful.js';
 import { omitKeys } from './lib/object.js';
 import { askAll, askMissing, confirm, logError } from './lib/ui.js';
 import { getApp } from './server/index.js';
-import { Config, ContentfulConfig, RunResult } from './types.js';
+import type { Config, ContentfulConfig, RunResult } from './types.js';
 
 const env = dotenv.config();
-dotenvExpand(env);
+dotenvExpand.expand(env);
 
 const parseFetchArgs = (cmd): Partial<Config> => ({
   preview: cmd.preview as boolean,
@@ -134,16 +134,16 @@ program
       let writeFile = true;
       if (existsSync(filePath)) {
         writeFile = await confirm(
-          `Config file already exists. Overwrite?\n\n${chalk.reset(content)}`
+          `Config file already exists. Overwrite?\n\n${pico.reset(content)}`
         );
       } else {
-        writeFile = await confirm(`Please verify your settings:\n\n${chalk.reset(content)}`, true);
+        writeFile = await confirm(`Please verify your settings:\n\n${pico.reset(content)}`, true);
       }
 
       if (writeFile) {
         await outputFile(filePath, content);
         console.log(
-          `\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`
+          `\nConfiguration saved to ${pico.cyan(path.relative(process.cwd(), filePath))}`
         );
       }
     })
@@ -220,7 +220,7 @@ program
       console.log();
 
       const server = app.listen(port, () => {
-        console.log(`  Internal server listening on port :${chalk.cyan(port)}`);
+        console.log(`  Internal server listening on port :${pico.cyan(port)}`);
       });
 
       const stopServer = async () =>
@@ -236,7 +236,7 @@ program
 
       const url =
         process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
-      console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
+      console.log(`  Listening for hooks on ${pico.cyan(url)}`);
       const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
       exitHook((cb) => {

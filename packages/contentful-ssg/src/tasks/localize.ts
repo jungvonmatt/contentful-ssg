@@ -9,7 +9,7 @@ import { convertToMap, getContentTypeId } from '../lib/contentful.js';
  * @param {Array} locales Array of contentful locale objects
  * @returns {Array} E.g. ['en-US', 'en-GB', 'de-DE']
  */
-export const getLocaleList = (code: string | null, locales: Locale[] = []): string[] => {
+export const getLocaleList = (code: string | undefined, locales: Locale[] = []): string[] => {
   const locale = locales.find((locale) => locale.code === code);
   return locale ? [locale.code, ...getLocaleList(locale.fallbackCode, locales)] : [];
 };
@@ -74,7 +74,7 @@ export const localize = async (context: RuntimeContext) => {
   return new Listr(
     locales.map((locale) => ({
       title: `${locale.code}`,
-      task: async () => {
+      async task() {
         const localizedAssets = await mapAsync(assets, async (asset) =>
           localizeEntry<Asset>(asset, locale.code, { locales, contentTypes, fieldSettings })
         );

@@ -1,6 +1,7 @@
 import { register } from '@swc-node/register/register';
-import chalk from 'chalk';
-import { cosmiconfig, Loader } from 'cosmiconfig';
+import pico from 'picocolors';
+import type { Loader } from 'cosmiconfig';
+import { cosmiconfig } from 'cosmiconfig';
 import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
 import mergeOptionsModule from 'merge-options';
 import { dirname, isAbsolute, resolve } from 'path';
@@ -22,7 +23,7 @@ const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
   register({ format: 'esm', extensions: ['.ts', '.tsx', '.mts'] });
 
   const require = createRequire();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const configModule = require(filePath);
   return configModule.default || configModule;
 };
@@ -72,11 +73,11 @@ const resolvePlugin = async (
     return pluginHooks;
   } catch (error: unknown) {
     if (verbose) {
-      console.error(chalk.red(`Plugin "${pluginName} threw the following error:`));
+      console.error(pico.red(`Plugin "${pluginName} threw the following error:`));
       console.error(error);
     } else {
       console.error(
-        chalk.red(
+        pico.red(
           `There was a problem loading plugin "${pluginName}". Perhaps you need to install its package?\nUse --verbose to see actual error.`
         )
       );
@@ -99,6 +100,7 @@ const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
       `${moduleName}.config.js`,
     ],
     loaders: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       '.ts': typescriptLoader,
     },
   });

@@ -1,10 +1,10 @@
-import { Asset } from '@jungvonmatt/contentful-ssg';
+import type { Asset } from '@jungvonmatt/contentful-ssg';
 import { Presets, SingleBar } from 'cli-progress';
 import { existsSync, promises } from 'fs';
 import got from 'got';
 import mkdirp from 'mkdirp';
 import { basename, dirname, extname as pathExtname, join } from 'path';
-import { PluginConfig } from '../types.js';
+import type { PluginConfig } from '../types.js';
 import { getDownloadQueue } from './queue.js';
 
 type DownloadEntry = {

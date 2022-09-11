@@ -1,5 +1,5 @@
-import { Asset, MapAssetLink, TransformContext } from '@jungvonmatt/contentful-ssg';
-import { Plugin } from 'svgo';
+import type { Asset, MapAssetLink, TransformContext } from '@jungvonmatt/contentful-ssg';
+import type { Plugin } from 'svgo';
 
 export type Ratios = Record<string, number>;
 export type FocusAreaReference = `field:${string}`;
@@ -37,7 +37,7 @@ export type SizesCallback = (asset: Asset, ratio: number, focusArea: string) => 
 
 type SvgPluginCallback = (transformContext: TransformContext) => Promise<Plugin[]>;
 
-export interface PluginConfig {
+export type PluginConfig = {
   sizes?: Array<number | SizesCallback>;
   rootDir?: string;
   assetBase?: string;
@@ -54,7 +54,7 @@ export interface PluginConfig {
   posterPosition?: string;
   posterScale?: string;
   svgoPlugins?: SvgPluginCallback | Plugin[];
-}
+};
 
 export type ProcessedAsset = MapAssetLink & {
   src: string;
