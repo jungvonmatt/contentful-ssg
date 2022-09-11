@@ -20,29 +20,31 @@ You can specify global defaults for ratios and focus areas, defaults per content
       // Use center as default focus area
       default: 'center',
       contentTypes: {
-        'media-content-type': {
-          // Use center as default focus area for media-content-type
+        content_type_id: {
+          // Use top as default focus area for content_type_id
           default: 'top',
-          // create overwrites per field
+          // Create overwrites per field
           fields: {
-            // Use the largest face detected as focus area for fieldId in media-content-type
-            fieldId: 'face',
+            // Use the largest face detected as focus area for field_id in content_type_id
+            field_id: 'face',
+            // Use the value from field custom_focus_area in content_type_id
+            alt_field_id: 'field:custom_focus_area'
           }
         }
       }
     },
     ratios: {
-      // square and landscape derivatives when nothing else is specified. The 'original' ratio is always available.
+      // Square and landscape derivatives when nothing else is specified. The 'original' ratio is always available.
       default: {square: 1/1, landscape: 16/9},
       // Define overwrites per content-type
       contentTypes: {
-        'media-content-type': {
-          // default ratio for media-content-type should be rectangle ()
+       content_type_id: {
+          // Default ratio forcontent_type_id should be rectangle ()
           default: {rectangle: 4/3},
-          // create overwrites per field
+          // Create overwrites per field
           fields: {
-            // fieldId in this contentType is generated with original and square derivatives
-            fieldId: {square: 1/1},
+            // field_id in content_type_id is generated with original and square derivatives
+            field_id: {square: 1/1},
           }
         }
       }
@@ -111,7 +113,6 @@ plugins: [
 
 ## Options
 
-
 | Name                 | Type       | Default                        | Description                                                                                                                                                                  |
 | -------------------- | ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | download             | `boolean`  | `false`                        | Download assets to bypass the contentful cdn on your production site.                                                                                                        |
@@ -143,7 +144,18 @@ plugins: [
       cacheFolder: '.cache',
       extraTypes: ['image/webp'],
       ratios: { default: { square: 1 / 1, portrait: 3 / 4, landscape: 16 / 9 } },
-      focusAreas: { default: 'face' },
+     focusAreas: {
+          default: 'face',
+          contentTypes: {
+            c_media: {
+              default: 'center',
+              fields: {
+                mobile_src: 'field:mobile_focus_area',
+                desktop_src: 'field:desktop_focus_area',
+              },
+            }
+          },
+        },
     },
   },
 ];
