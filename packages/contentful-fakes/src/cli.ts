@@ -4,7 +4,7 @@
 import { stringify } from '@jungvonmatt/contentful-ssg/converter';
 import { forEachAsync } from '@jungvonmatt/contentful-ssg/lib/array';
 import { confirm, logError } from '@jungvonmatt/contentful-ssg/lib/ui';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
@@ -68,7 +68,7 @@ program
       if (!Object.keys(fakes).length) {
         console.log('No files generated.');
         console.log(
-          `No content models found for: ${chalk.cyan(contentTypes.join(chalk.white(', ')))}`
+          `No content models found for: ${pico.cyan(contentTypes.join(pico.white(', ')))}`
         );
       }
 
@@ -77,14 +77,14 @@ program
         const dir = path.join(outputDirectory, contentTypeId);
         const filenameDefault = path.join(dir, `default.${format}`);
         if (existsSync(filenameDefault) && no) {
-          console.log(chalk.yellow(`  skipped: ${filenameDefault}`));
+          console.log(pico.yellow(`  skipped: ${filenameDefault}`));
         } else if (
           !existsSync(filenameDefault) ||
           yes ||
           (await confirm(`Overwrite file: ${filenameDefault}`))
         ) {
           await outputFile(filenameDefault, stringify(defaultData, format));
-          console.log(chalk.green(`    added: ${filenameDefault}`));
+          console.log(pico.green(`    added: ${filenameDefault}`));
         }
       });
     })
