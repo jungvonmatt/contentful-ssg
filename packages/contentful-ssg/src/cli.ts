@@ -173,6 +173,8 @@ program
   .option('-v, --verbose', 'Verbose output')
   .option('--url <url>', 'Webhook url.\nCan also be set via environment variable CSSG_WEBHOOK_URL')
   .option('--no-cache', "Don't cache sync data")
+  .option('--poll', 'Use polling (usefull when ngrok tunnel is not an option)')
+  .option('--poll-intervall <intervall>', 'Change default intervall of 10000ms', '10000')
   .option(
     '--port <port>',
     'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT'
@@ -184,7 +186,7 @@ program
       const verified = await askMissing(config);
       const useCache = Boolean(cmd?.cache ?? true);
       const cache = initializeCache(verified);
-      // Await resetSync();
+
       let prev: RunResult;
       if (useCache && cache.hasSyncState()) {
         prev = await cache.getSyncState();
@@ -197,58 +199,90 @@ program
         await cache.setSyncState(prev);
       }
 
-      let port = await getPort({ port: 1314 });
-
-      if (process.env.CSSG_WEBHOOK_URL || cmd.url) {
-        const url = new URL(process.env.CSSG_WEBHOOK_URL || cmd.url);
-        if (url.port) {
-          port = parseInt(url.port, 10);
-        } else {
-          port = url.protocol === 'https:' ? 443 : 80;
+      // Handle cache on exit
+      exitHook(async (cb: () => void) => {
+        try {
+          await Promise.all([
+            !useCache && cache.reset(),
+            useCache && prev && cache.setSyncState(prev),
+          ]);
+        } catch (error: unknown) {
+          console.error('\nError:', error);
+        } finally {
+          cb();
         }
-      }
-
-      if (process.env.CSSG_WEBHOOK_PORT || cmd.port) {
-        port = parseInt(process.env.CSSG_WEBHOOK_PORT || cmd.port, 10);
-      }
-
-      const app = getApp(async () => {
-        prev = await run({ ...verified, sync: true }, prev);
-        await cache.setSyncState(prev);
       });
 
-      console.log();
-
-      const server = app.listen(port, () => {
-        console.log(`  Internal server listening on port :${chalk.cyan(port)}`);
-      });
-
-      const stopServer = async () =>
-        new Promise((resolve, reject) => {
-          server.close((err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(true);
+      if (cmd.poll) {
+        const poll = () => {
+          setTimeout(async () => {
+            prev = await run({ ...verified, sync: true }, prev);
+            if (useCache) {
+              await cache.setSyncState(prev);
             }
-          });
+
+            poll();
+          }, parseInt(cmd.pollIntervall, 10));
+        };
+
+        poll();
+      } else {
+        let port = await getPort({ port: 1314 });
+
+        if (process.env.CSSG_WEBHOOK_URL || cmd.url) {
+          const url = new URL(process.env.CSSG_WEBHOOK_URL || cmd.url);
+          if (url.port) {
+            port = parseInt(url.port, 10);
+          } else {
+            port = url.protocol === 'https:' ? 443 : 80;
+          }
+        }
+
+        if (process.env.CSSG_WEBHOOK_PORT || cmd.port) {
+          port = parseInt(process.env.CSSG_WEBHOOK_PORT || cmd.port, 10);
+        }
+
+        const app = getApp(async () => {
+          prev = await run({ ...verified, sync: true }, prev);
+          await cache.setSyncState(prev);
         });
 
-      const url =
-        process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
-      console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
-      const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
+        console.log();
 
-      exitHook((cb) => {
-        Promise.allSettled([webhook.delete(), stopServer(), !useCache && cache.reset()])
-          .then(() => {
-            cb();
-          })
-          .catch((err) => {
-            console.log('error:', err.message);
-            cb();
+        const server = app.listen(port, () => {
+          console.log(`  Internal server listening on port :${chalk.cyan(port)}`);
+        });
+
+        const stopServer = async () =>
+          new Promise((resolve, reject) => {
+            server.close((err) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(true);
+              }
+            });
           });
-      });
+
+        const url =
+          process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
+        console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
+        const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
+
+        // Remove webhook & stop server on exit
+        exitHook(async (cb: () => void) => {
+          try {
+            const results = await Promise.allSettled([webhook.delete(), stopServer()]);
+            results.forEach((result) => {
+              if (result.status === 'rejected') {
+                console.error('\nError:', result?.reason?.message ?? result?.reason);
+              }
+            });
+          } finally {
+            cb();
+          }
+        });
+      }
     })
   );
 
