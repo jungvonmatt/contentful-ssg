@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.9.0...v1.10.0) (2022-09-15)
+
+
+### Features
+
+* **asset-config:** allow reference field configs & configs by naming convention ([#51](https://github.com/jungvonmatt/contentful-ssg/issues/51)) ([9fc0275](https://github.com/jungvonmatt/contentful-ssg/commit/9fc0275757d3dd87322d79882a443d1fbbbd0852))
+* **cli:** adds poll alternative to watch mode ([#50](https://github.com/jungvonmatt/contentful-ssg/issues/50)) ([626b70f](https://github.com/jungvonmatt/contentful-ssg/commit/626b70fca6a2b9debfffb90030a752f7d515131b))
+
+
+
+
+
 # [1.9.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.8.2...v1.9.0) (2022-06-30)
 
 
