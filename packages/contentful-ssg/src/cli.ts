@@ -186,7 +186,7 @@ program
       const verified = await askMissing(config);
       const useCache = Boolean(cmd?.cache ?? true);
       const cache = initializeCache(verified);
-      // Await resetSync();
+
       let prev: RunResult;
       if (useCache && cache.hasSyncState()) {
         prev = await cache.getSyncState();
@@ -198,6 +198,20 @@ program
       if (useCache) {
         await cache.setSyncState(prev);
       }
+
+      // Handle cache on exit
+      exitHook(async (cb: () => void) => {
+        try {
+          await Promise.all([
+            !useCache && cache.reset(),
+            useCache && prev && cache.setSyncState(prev),
+          ]);
+        } catch (error: unknown) {
+          console.error('\nError:', error);
+        } finally {
+          cb();
+        }
+      });
 
       if (cmd.poll) {
         const poll = () => {
@@ -212,20 +226,6 @@ program
         };
 
         poll();
-
-        exitHook((cb) => {
-          Promise.allSettled([
-            !useCache && cache.reset(),
-            useCache && prev && cache.setSyncState(prev),
-          ])
-            .then(() => {
-              cb();
-            })
-            .catch((err) => {
-              console.log('error:', err.message);
-              cb();
-            });
-        });
       } else {
         let port = await getPort({ port: 1314 });
 
@@ -269,20 +269,18 @@ program
         console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
         const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
-        exitHook((cb) => {
-          Promise.allSettled([
-            webhook.delete(),
-            stopServer(),
-            !useCache && cache.reset(),
-            useCache && prev && cache.setSyncState(prev),
-          ])
-            .then(() => {
-              cb();
-            })
-            .catch((err) => {
-              console.log('error:', err.message);
-              cb();
+        // Remove webhook & stop server on exit
+        exitHook(async (cb: () => void) => {
+          try {
+            const results = await Promise.allSettled([webhook.delete(), stopServer()]);
+            results.forEach((result) => {
+              if (result.status === 'rejected') {
+                console.error('\nError:', result?.reason?.message ?? result?.reason);
+              }
             });
+          } finally {
+            cb();
+          }
         });
       }
     })
