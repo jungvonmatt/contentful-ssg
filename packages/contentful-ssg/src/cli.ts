@@ -154,15 +154,26 @@ program
   .description('Fetch content objects')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
+  .option('--sync', 'cache sync data')
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
       const cache = initializeCache(config);
-      await cache.reset();
 
-      return run(verified);
+      let prev: RunResult;
+      if (cmd.sync && cache.hasSyncState()) {
+        prev = await cache.getSyncState();
+      } else if (!cmd.sync) {
+        await cache.reset();
+      }
+
+      prev = await run({ ...verified, sync: Boolean(cmd.sync) }, prev);
+
+      if (cmd.sync) {
+        await cache.setSyncState(prev);
+      }
     })
   );
 
