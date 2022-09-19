@@ -1,7 +1,7 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
 import type { Observable, ReplaySubject } from 'rxjs';
-import type { QueryOptions, CollectionProp } from 'contentful-management/types';
+import type { QueryOptions } from 'contentful-management/types';
 
 import type {
   EntryFields,
@@ -10,6 +10,8 @@ import type {
   Field,
   Entry as ContentfulEntry,
   ContentType as ContentfulContentType,
+  EntryCollection as ContentfulEntryCollection,
+  ContentfulCollection as ContentfulContentfulCollection,
 } from 'contentful';
 
 import type { ListrTaskObject } from 'listr';
@@ -26,6 +28,15 @@ export type ContentType = ContentfulContentType;
 export type Asset = ContentfulAsset;
 export type Entry = Omit<ContentfulEntry<KeyValueMap>, 'update'>;
 export type Node = Entry | Asset;
+
+export interface EntryCollection extends ContentfulEntryCollection<KeyValueMap> {
+  includes?: {
+    Entry?: Entry[];
+    Asset?: Asset[];
+  };
+}
+
+export type ContentfulCollection<T> = ContentfulContentfulCollection<T>;
 
 export type ContentfulRichtextOptions = Options;
 export type FormatObject = KeyValueMap<string[]>;
@@ -47,6 +58,7 @@ export interface ContentfulConfig {
   host?: string;
   preview?: boolean;
   sync?: boolean;
+  query?: QueryOptions;
 }
 
 export interface ContentfulRcConfig {
@@ -273,11 +285,14 @@ export interface CollectOptions {
   getValue?: (entry: Entry) => any;
 }
 
+export type CollectionResponse<T> = EntryCollection | ContentfulCollection<T>;
+
 export interface PagedGetOptions<T> {
   method: string;
   skip?: number;
-  aggregatedResponse?: CollectionProp<T>;
+  aggregatedResponse?: CollectionResponse<T>;
   query?: QueryOptions;
+  include?: number;
 }
 
 export interface SyncOptions {

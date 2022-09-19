@@ -7,7 +7,14 @@ import {
   isEntry,
   isEntryLink,
 } from '../lib/contentful.js';
-import type { MapAssetLink, Node, RuntimeContext, TransformContext } from '../types.js';
+import type {
+  Asset,
+  Entry,
+  MapAssetLink,
+  Node,
+  RuntimeContext,
+  TransformContext,
+} from '../types.js';
 
 /**
  * Convert contentful entry to export format (link)
@@ -82,7 +89,7 @@ export const mapReferenceField = async (
     return hooks.mapAssetLink(
       {
         ...transformContext,
-        asset,
+        asset: asset || (fieldContent as Asset),
         id: getContentId(fieldContent),
         contentTypeId: getContentTypeId(fieldContent),
       },
@@ -109,12 +116,13 @@ export const mapReferenceField = async (
 
   if (isEntry(fieldContent)) {
     const entry = transformContext.entryMap.get(getContentId(fieldContent));
+
     return hooks.mapEntryLink(
       {
         ...transformContext,
         id: getContentId(fieldContent),
         contentTypeId: getContentTypeId(fieldContent),
-        entry,
+        entry: entry || (fieldContent as Entry),
       },
       mapEntryLink
     );

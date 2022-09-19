@@ -5,6 +5,7 @@
 import exitHook from 'async-exit-hook';
 import chalk from 'chalk';
 import { Command } from 'commander';
+import { QueryOptions } from 'contentful-management/types.js';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { existsSync } from 'fs';
@@ -26,10 +27,25 @@ import { Config, ContentfulConfig, RunResult } from './types.js';
 const env = dotenv.config();
 dotenvExpand(env);
 
-const parseFetchArgs = (cmd): Partial<Config> => ({
-  preview: cmd.preview as boolean,
-  verbose: cmd.verbose as boolean,
-  ignoreErrors: cmd.ignoreErrors as boolean,
+const parseQuery = (query: string): QueryOptions => {
+  if (!query) {
+    return {};
+  }
+
+  const params = new URLSearchParams(query);
+  return Object.fromEntries(params.entries());
+};
+
+const parseFetchArgs = (cmd: {
+  preview: boolean;
+  verbose: boolean;
+  ignoreErrors: boolean;
+  query: string;
+}): Partial<Config> => ({
+  preview: cmd.preview,
+  verbose: cmd.verbose,
+  ignoreErrors: cmd.ignoreErrors,
+  query: parseQuery(cmd.query),
 });
 
 type CommandError = Error & {
@@ -155,12 +171,21 @@ program
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
   .option('--sync', 'cache sync data')
+  .option('--query <query>', 'Query used to fetch contentful entries')
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
       const config = await getConfig(parseFetchArgs(cmd || {}));
       const verified = await askMissing(config);
       const cache = initializeCache(config);
+
+      if (cmd.sync && cmd.query) {
+        console.log(
+          chalk.red(
+            '\nCustom Contentful queries are not supported when using sync. Query argument will be ignored.\n'
+          )
+        );
+      }
 
       let prev: RunResult;
       if (cmd.sync && cache.hasSyncState()) {

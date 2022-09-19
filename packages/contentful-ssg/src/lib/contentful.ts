@@ -8,13 +8,7 @@ import type {
 import contentful from 'contentful';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
 import contentfulManagement from 'contentful-management';
-import type {
-  ApiKey,
-  CollectionProp,
-  CreateWebhooksProps,
-  QueryOptions,
-  Space,
-} from 'contentful-management/types';
+import type { ApiKey, CreateWebhooksProps, QueryOptions, Space } from 'contentful-management/types';
 import { createHash } from 'crypto';
 import { hostname } from 'os';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,6 +22,9 @@ import type {
   Node,
   PagedGetOptions,
   SyncOptions,
+  CollectionResponse,
+  EntryCollection,
+  ContentfulCollection,
 } from '../types.js';
 import { initializeCache } from './cf-cache.js';
 
@@ -303,10 +300,11 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
  * - getEntries
  * - getAssets
  */
-const pagedGet = async <T>(
+
+const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCollection<T>>(
   apiClient,
   { method, skip = 0, aggregatedResponse = null, query = null }: PagedGetOptions<T>
-): Promise<CollectionProp<T>> => {
+): Promise<R> => {
   const fullQuery: QueryOptions = {
     skip,
     limit: MAX_ALLOWED_LIMIT,
@@ -317,10 +315,26 @@ const pagedGet = async <T>(
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const response = (await apiClient[method](fullQuery)) as CollectionProp<T>;
+  const response = (await apiClient[method](fullQuery)) as CollectionResponse<T>;
 
   if (aggregatedResponse) {
-    aggregatedResponse.items = aggregatedResponse.items.concat(response.items);
+    aggregatedResponse.items = [
+      ...aggregatedResponse.items,
+      ...response.items,
+    ] as CollectionResponse<T>['items'];
+
+    if ((response as EntryCollection).includes) {
+      (aggregatedResponse as EntryCollection).includes = {
+        Entry: [
+          ...((aggregatedResponse as EntryCollection)?.includes?.Entry ?? []),
+          ...((response as EntryCollection).includes?.Entry ?? []),
+        ],
+        Asset: [
+          ...((aggregatedResponse as EntryCollection)?.includes?.Asset ?? []),
+          ...((response as EntryCollection).includes?.Asset ?? []),
+        ],
+      };
+    }
   } else {
     aggregatedResponse = response;
   }
@@ -334,7 +348,7 @@ const pagedGet = async <T>(
     });
   }
 
-  return aggregatedResponse;
+  return aggregatedResponse as R;
 };
 
 /**
@@ -386,14 +400,23 @@ export const getContent = async (options: ContentfulConfig) => {
     return { entries, assets, deletedEntries, deletedAssets, contentTypes, locales };
   }
 
-  const { items: entries } = await pagedGet<Entry>(apiClient, {
+  // EntryCollections can have linked entries/assets included:
+  // https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/links
+  const { items: entries, includes } = await pagedGet<Entry, EntryCollection>(apiClient, {
     method: 'getEntries',
+    query: options?.query ?? null,
   });
+
   const { items: assets } = await pagedGet<Asset>(apiClient, {
     method: 'getAssets',
   });
 
-  return { entries, assets, contentTypes, locales };
+  return {
+    entries: [...entries, ...(includes?.Entry ?? [])],
+    assets: [...assets, ...(includes?.Asset ?? [])],
+    contentTypes,
+    locales,
+  };
 };
 
 export const getEntriesLinkedToEntry = async (options: ContentfulConfig, id: string) => {
