@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.10.0...v1.11.0) (2022-09-19)
+
+
+### Features
+
+* **cli:** adds sync flag to fetch command ([#53](https://github.com/jungvonmatt/contentful-ssg/issues/53)) ([8a1f353](https://github.com/jungvonmatt/contentful-ssg/commit/8a1f35368c3942ac5302be303d900af15e0c9fe4))
+* **contentful:** allow custom queries when fetching entries from contentful ([#54](https://github.com/jungvonmatt/contentful-ssg/issues/54)) ([17089c2](https://github.com/jungvonmatt/contentful-ssg/commit/17089c2ab8af425429abcc00d5d58b7e1c06b019))
+
+
+
+
+
 # [1.10.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.9.0...v1.10.0) (2022-09-15)
 
 
