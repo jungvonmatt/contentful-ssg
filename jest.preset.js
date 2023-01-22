@@ -11,7 +11,7 @@ export default {
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },
-  transformIgnorePatterns: ['node_modules/(?!(serialize-error))'],
+  transformIgnorePatterns: ['node_modules/(?!(serialize-error)|(exit-hook))'],
   preset: 'ts-jest/presets/js-with-ts-esm',
   moduleDirectories: ['node_modules', `${__dirname}/packages`],
   coverageReporters: ['text', 'clover', 'json', 'lcov'],

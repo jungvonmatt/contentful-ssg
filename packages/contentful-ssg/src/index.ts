@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import Listr from 'listr';
+import { gracefulExit } from 'exit-hook';
 import { ReplaySubject } from 'rxjs';
 import { initializeCache } from './lib/cf-cache.js';
 import { getContentId, getContentTypeId } from './lib/contentful.js';
@@ -319,7 +320,7 @@ export const run = async (
   console.log('\n  -------------------------------------------');
 
   if (!ctx.config.sync && ctx.stats.errors?.length && !config.ignoreErrors) {
-    process.exit(1);
+    gracefulExit(1);
   }
 
   return prev;

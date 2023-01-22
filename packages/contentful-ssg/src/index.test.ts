@@ -1,8 +1,11 @@
 import chalk from 'chalk';
 import { run, cleanupPrevData } from './index.js';
+import { gracefulExit } from 'exit-hook';
 import { write } from './tasks/write.js';
 import { RunResult, RuntimeContext } from './types.js';
 import { getContent } from './__test__/mock.js';
+
+const mockedGracefulExit = <jest.Mock<typeof gracefulExit>>gracefulExit;
 
 jest.mock('./lib/contentful.js', () => {
   const originalModule = jest.requireActual('./lib/contentful.js');
@@ -26,6 +29,10 @@ jest.mock('./lib/file-manager.js', () => ({
       count: 1,
     };
   },
+}));
+
+jest.mock('exit-hook', () => ({
+  gracefulExit: jest.fn(),
 }));
 
 describe('Run', () => {
@@ -112,7 +119,8 @@ describe('Run', () => {
 
   test('fails on transform exception', async () => {
     console.log = jest.fn();
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation((number) => {
+
+    mockedGracefulExit.mockImplementation((number) => {
       throw new Error('process.exit: ' + number);
     });
 
@@ -125,13 +133,14 @@ describe('Run', () => {
       });
     }).rejects.toThrowError();
 
-    expect(mockExit).toHaveBeenCalledWith(1);
-    mockExit.mockRestore();
+    expect(mockedGracefulExit).toHaveBeenCalledWith(1);
+    mockedGracefulExit.mockRestore();
   });
 
   test('does not fail on transform exception with ignoreErrors option', async () => {
     console.log = jest.fn();
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation((number) => {
+
+    mockedGracefulExit.mockImplementation((number) => {
       throw new Error('process.exit: ' + number);
     });
 
@@ -143,13 +152,13 @@ describe('Run', () => {
       },
     });
 
-    expect(mockExit).toBeCalledTimes(0);
-    mockExit.mockRestore();
+    expect(mockedGracefulExit).toBeCalledTimes(0);
+    mockedGracefulExit.mockRestore();
   });
 
   test('does not fail on transform exception in sync mode', async () => {
     console.log = jest.fn();
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation((number) => {
+    mockedGracefulExit.mockImplementation((number) => {
       throw new Error('process.exit: ' + number);
     });
 
@@ -161,8 +170,8 @@ describe('Run', () => {
       },
     });
 
-    expect(mockExit).toBeCalledTimes(0);
-    mockExit.mockRestore();
+    expect(mockedGracefulExit).toBeCalledTimes(0);
+    mockedGracefulExit.mockRestore();
   });
 
   test('cleanupPrevData', async () => {
