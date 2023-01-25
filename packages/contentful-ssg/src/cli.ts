@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 /* eslint-env node */
-import exitHook from 'async-exit-hook';
+import { asyncExitHook, gracefulExit } from 'exit-hook';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { QueryOptions } from 'contentful-management/types.js';
@@ -60,14 +60,16 @@ const errorHandler = (error: CommandError, silence: boolean) => {
     });
   }
 
-  process.exit(1);
+  gracefulExit(1);
 };
 
 const actionRunner =
   (fn, log = true) =>
   (...args) =>
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    fn(...args).catch((error) => errorHandler(error, !log));
+    fn(...args).catch((error) => {
+      errorHandler(error, !log);
+    });
 const program = new Command();
 program
   .command('init')
@@ -236,18 +238,21 @@ program
       }
 
       // Handle cache on exit
-      exitHook(async (cb: () => void) => {
-        try {
-          await Promise.all([
-            !useCache && cache.reset(),
-            useCache && prev && cache.setSyncState(prev),
-          ]);
-        } catch (error: unknown) {
-          console.error('\nError:', error);
-        } finally {
-          cb();
+      asyncExitHook(
+        async () => {
+          try {
+            await Promise.all([
+              !useCache && cache.reset(),
+              useCache && prev && cache.setSyncState(prev),
+            ]);
+          } catch (error: unknown) {
+            console.error('\nError:', error);
+          }
+        },
+        {
+          minimumWait: 2000,
         }
-      });
+      );
 
       if (cmd.poll) {
         const poll = () => {
@@ -306,18 +311,23 @@ program
         const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
         // Remove webhook & stop server on exit
-        exitHook(async (cb: () => void) => {
-          try {
-            const results = await Promise.allSettled([webhook.delete(), stopServer()]);
-            results.forEach((result) => {
-              if (result.status === 'rejected') {
-                console.error('\nError:', result?.reason?.message ?? result?.reason);
-              }
-            });
-          } finally {
-            cb();
+        asyncExitHook(
+          async () => {
+            try {
+              const results = await Promise.allSettled([webhook.delete(), stopServer()]);
+              results.forEach((result) => {
+                if (result.status === 'rejected') {
+                  console.error('\nError:', result?.reason?.message ?? result?.reason);
+                }
+              });
+            } catch (error: unknown) {
+              console.error('\nError:', error);
+            }
+          },
+          {
+            minimumWait: 2000,
           }
-        });
+        );
       }
     })
   );

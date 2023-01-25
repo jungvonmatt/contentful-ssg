@@ -1,5 +1,6 @@
 import { register } from '@swc-node/register/register';
 import chalk from 'chalk';
+import { gracefulExit } from 'exit-hook';
 import { cosmiconfig, Loader } from 'cosmiconfig';
 import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
 import mergeOptionsModule from 'merge-options';
@@ -82,7 +83,7 @@ const resolvePlugin = async (
       );
     }
 
-    process.exit(1);
+    gracefulExit(1);
   }
 };
 

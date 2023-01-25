@@ -4,6 +4,7 @@
 import { stringify } from '@jungvonmatt/contentful-ssg/converter';
 import { forEachAsync } from '@jungvonmatt/contentful-ssg/lib/array';
 import { confirm, logError } from '@jungvonmatt/contentful-ssg/lib/ui';
+import { gracefulExit } from 'exit-hook';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
@@ -38,14 +39,16 @@ const errorHandler = (error: CommandError, silence: boolean) => {
     });
   }
 
-  process.exit(1);
+  gracefulExit(1);
 };
 
 const actionRunner =
   (fn, log = true) =>
   (...args) =>
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-    fn(...args).catch((error) => errorHandler(error, !log));
+    fn(...args).catch((error) => {
+      errorHandler(error, !log);
+    });
 const program = new Command();
 
 program
