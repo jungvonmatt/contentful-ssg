@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.11.0...v1.11.1) (2023-02-14)
+
+
+### Bug Fixes
+
+* **core:** fix ERR_PACKAGE_PATH_NOT_EXPORTED from [@swc-node](https://github.com/swc-node) ([0c1b224](https://github.com/jungvonmatt/contentful-ssg/commit/0c1b2240331b28d4ced315354ac66d7c1b790546))
+
+
+
+
+
 # [1.11.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.10.0...v1.11.0) (2022-09-19)
 
 
