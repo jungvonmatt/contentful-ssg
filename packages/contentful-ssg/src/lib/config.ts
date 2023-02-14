@@ -1,4 +1,4 @@
-import { register } from '@swc-node/register/register';
+import swcRegister from '@swc-node/register';
 import chalk from 'chalk';
 import { gracefulExit } from 'exit-hook';
 import { cosmiconfig, Loader } from 'cosmiconfig';
@@ -19,7 +19,11 @@ import { reduceAsync } from './array.js';
 import { createRequire } from './create-require.js';
 import { isObject, removeEmpty } from './object.js';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const { register } = swcRegister;
+
 const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   register({ format: 'esm', extensions: ['.ts', '.tsx', '.mts'] });
 
   const require = createRequire();
