@@ -1,5 +1,6 @@
-import swcRegister from '@swc-node/register';
+import vm from 'vm';
 import chalk from 'chalk';
+import { transformSync, Options } from '@swc/core';
 import { gracefulExit } from 'exit-hook';
 import { cosmiconfig, Loader } from 'cosmiconfig';
 import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
@@ -14,23 +15,82 @@ import type {
   KeyValueMap,
   PluginInfo,
   PluginModule,
+  SandboxContext,
 } from '../types.js';
 import { reduceAsync } from './array.js';
 import { createRequire } from './create-require.js';
 import { isObject, removeEmpty } from './object.js';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const { register } = swcRegister;
+const getContext = (filename: string): vm.Context => {
+  const module: NodeModule = {
+    exports: {},
+    isPreloading: false,
+    require: createRequire(dirname(filename)),
+    id: '',
+    filename,
+    loaded: false,
+    parent: undefined,
+    children: [],
+    path: dirname(filename),
+    paths: [dirname(filename)],
+  };
 
-const typescriptLoader: Loader = async (filePath: string): Promise<any> => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  register({ format: 'esm', extensions: ['.ts', '.tsx', '.mts'] });
+  const sandbox: SandboxContext = {
+    module,
+    exports: {},
+    process: { env: process.env },
+    require: module.require,
+    __dirname: dirname(filename),
+    __filename: filename,
+  };
+  vm.createContext(sandbox);
 
-  const require = createRequire();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-  const configModule = require(filePath);
-  return configModule.default || configModule;
+  return sandbox;
 };
+
+const getLoader =
+  (syntax: Options['jsc']['parser']['syntax']) => (filename: string, content: string) => {
+    const context = getContext(filename);
+    const script = transformSync(content, {
+      isModule: /\s(export|import)\s/.test(content),
+      module: {
+        type: 'commonjs',
+      },
+      cwd: dirname(filename),
+      jsc: {
+        parser: {
+          syntax,
+          dynamicImport: true,
+        },
+      },
+    });
+
+    const vmScript = new vm.Script(script.code);
+
+    try {
+      vmScript.runInContext(context, { filename, timeout: 10000 });
+    } catch (error: unknown) {
+      console.log(error);
+    }
+
+    // Handle module (even if the transpiled code should be commonjs exports)
+    if (Object.keys(context.module.exports).length > 0) {
+      const result = (context.module.exports.default || context.module.exports) as Config;
+      return { ...result };
+    }
+
+    // Handle commonjs export
+    if (Object.keys(context.exports).length > 0) {
+      const result = (context.exports.default || context.exports) as Config;
+
+      return { ...result };
+    }
+
+    return {};
+  };
+
+const typescriptLoader: Loader = getLoader('typescript');
+const ecmascriptLoader: Loader = getLoader('ecmascript');
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
@@ -102,9 +162,14 @@ const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
       `.${moduleName}rc.js`,
       `${moduleName}.config.ts`,
       `${moduleName}.config.js`,
+      `${moduleName}.config.cjs`,
+      `${moduleName}.config.mjs`,
     ],
     loaders: {
       '.ts': typescriptLoader,
+      '.js': ecmascriptLoader,
+      '.cjs': ecmascriptLoader,
+      '.mjs': ecmascriptLoader,
     },
   });
 
@@ -172,6 +237,7 @@ export const getConfig = async (args: Partial<Config> = {}): Promise<Config> => 
   try {
     // Get configuration from contentful-ssg rc file
     const configFile = await loadConfig('contentful-ssg');
+
     if (configFile && !configFile.isEmpty) {
       configFileOptions = configFile.config as Partial<Config>;
       args.rootDir = dirname(configFile.filepath);

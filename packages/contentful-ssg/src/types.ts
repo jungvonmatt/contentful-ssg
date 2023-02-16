@@ -309,3 +309,12 @@ export interface ErrorEntry {
   locale: Locale;
   missingFields: string[];
 }
+
+export type SandboxContext = {
+  module?: NodeModule;
+  exports: Record<string, any>;
+  process: { env: NodeJS.ProcessEnv };
+  require: NodeRequire;
+  __dirname: string;
+  __filename: string;
+};
