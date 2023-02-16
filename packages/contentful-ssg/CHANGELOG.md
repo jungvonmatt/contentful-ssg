@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.11.2...v1.11.3) (2023-02-16)
+
+
+### Bug Fixes
+
+* **deps:** moves @swc/core to dependencies ([2158577](https://github.com/jungvonmatt/contentful-ssg/commit/2158577ba35024e4443d4366c9b7341adcbaef13))
+
+
+
+
+
 ## [1.11.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.11.1...v1.11.2) (2023-02-16)
 
 
