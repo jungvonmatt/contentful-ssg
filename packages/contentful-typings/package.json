@@ -1,0 +1,48 @@
+{
+  "name": "@jungvonmatt/contentful-typings",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "type": "module",
+  "typings": "./dist/types.d.ts",
+  "bin": {
+    "contentful-fakes": "./dist/cli.js"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "test": "jest",
+    "lint": "eslint --color src --fix --ext .ts",
+    "precompile": "npm run clean",
+    "compile": "tsc --build",
+    "postcompile": "chmod +x ./dist/cli.js",
+    "watch": "tsc --build --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "dependencies": {
+    "@jungvonmatt/contentful-ssg": "^1.11.3",
+    "commander": "^10.0.0",
+    "contentful": "^9.3.3",
+    "contentful-management": "^10.30.0",
+    "contentful-typescript-codegen": "^3.4.0",
+    "dotenv": "^16.0.3",
+    "dotenv-expand": "^10.0.0",
+    "fs-extra": "^11.1.0",
+    "picocolors": "^1.0.0",
+    "prettier": "^2.8.4"
+  }
+}
