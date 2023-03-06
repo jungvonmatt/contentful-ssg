@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "./dist/index.js",
   "type": "module",
-  "typings": "./dist/types.d.ts",
+  "exports": "./dist/index.js",
   "bin": {
     "contentful-fakes": "./dist/cli.js"
   },
