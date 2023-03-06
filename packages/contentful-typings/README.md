@@ -3,6 +3,7 @@
 # JvM Contentful typings generator
 
 Generate typescript definitions based on your Contentful content models.
+It's mainly a wrapper around [`contentful-typescript-codegen`](https://www.npmjs.com/package/contentful-typescript-codegen)
 
 ## Getting started
 
