@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-grow",
-  "version": "1.11.3",
+  "version": "1.12.0",
   "description": "Contentful-ssg plugin for grow",
   "type": "module",
   "main": "dist/index.js",
@@ -33,7 +33,7 @@
     "test": "test"
   },
   "dependencies": {
-    "@jungvonmatt/contentful-ssg": "^1.11.3"
+    "@jungvonmatt/contentful-ssg": "^1.12.0"
   },
   "devDependencies": {
     "jest": "^27.3.0",
