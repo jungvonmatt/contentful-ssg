@@ -97,6 +97,7 @@
     "merge-options": "^3.0.4",
     "micromatch": "^4.0.4",
     "ngrok": "^4.3.1",
+    "pirates": "^4.0.5",
     "prettier": "^2.4.1",
     "read-pkg-up": "^9.0.0",
     "rxjs": "^7.5.5",
