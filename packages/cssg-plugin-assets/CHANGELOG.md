@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.2...v1.12.3) (2023-03-06)
+
+**Note:** Version bump only for package @jungvonmatt/cssg-plugin-assets
+
+
+
+
+
 # [1.12.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.11.3...v1.12.0) (2023-03-06)
 
 **Note:** Version bump only for package @jungvonmatt/cssg-plugin-assets

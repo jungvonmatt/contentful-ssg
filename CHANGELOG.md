@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.2...v1.12.3) (2023-03-06)
+
+
+### Bug Fixes
+
+* **contentful-ssg:** adds missing pirates dependency ([d8778fa](https://github.com/jungvonmatt/contentful-ssg/commit/d8778faa02f3ca2f29d449b624bb78f81025f839))
+
+
+
+
+
 ## [1.12.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.1...v1.12.2) (2023-03-06)
 
 
