@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+/* eslint-env node */
 import { outputFile } from 'fs-extra';
 import pico from 'picocolors';
 import { logError } from '@jungvonmatt/contentful-ssg/lib/ui';
