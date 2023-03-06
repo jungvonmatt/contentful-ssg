@@ -5,7 +5,7 @@
   "type": "module",
   "exports": "./dist/index.js",
   "bin": {
-    "contentful-fakes": "./dist/cli.js"
+    "contentful-typings": "./dist/cli.js"
   },
   "files": [
     "src",
