@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.1...v1.12.2) (2023-03-06)
+
+
+### Bug Fixes
+
+* **contentful-typings:** adds shebang to cli & min node version ([4423318](https://github.com/jungvonmatt/contentful-ssg/commit/4423318cdf162984e0dc8238327193c2cb7ec2b5))
+
+
+
+
+
 ## [1.12.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.0...v1.12.1) (2023-03-06)
 
 
