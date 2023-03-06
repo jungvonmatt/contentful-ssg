@@ -301,7 +301,7 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
  * - getAssets
  */
 
-const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCollection<T>>(
+export const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCollection<T>>(
   apiClient,
   { method, skip = 0, aggregatedResponse = null, query = null }: PagedGetOptions<T>
 ): Promise<R> => {
