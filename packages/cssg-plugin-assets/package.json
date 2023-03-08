@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-assets",
-  "version": "1.12.3",
+  "version": "1.12.4",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
