@@ -70,7 +70,6 @@ export const getVideoHelper = (options: PluginConfig) => {
   };
 
   const generatePosterImages = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const bar = new SingleBar(
       {
         format:
@@ -80,7 +79,7 @@ export const getVideoHelper = (options: PluginConfig) => {
     );
     let progress = 0;
     // Start the progress bar with a total value of 200 and start value of 0
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
     bar.start(queue.size, 0);
 
     // Ffmpeg wasm can't process more than one file at a time
@@ -91,14 +90,13 @@ export const getVideoHelper = (options: PluginConfig) => {
         // eslint-disable-next-line no-await-in-loop
         await generatePosterImage(src, dest);
         progress++;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
         bar.update(progress);
       } catch (error: unknown) {
         console.log(error);
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     bar.stop();
     return true;
   };
