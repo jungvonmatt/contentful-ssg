@@ -3,7 +3,7 @@
 # JvM Contentful typings generator
 
 Generate typescript definitions based on your Contentful content models.
-It's mainly a wrapper around [`contentful-typescript-codegen`](https://www.npmjs.com/package/contentful-typescript-codegen)
+It's mainly a wrapper around [`cf-content-types-generator`](https://www.npmjs.com/package/cf-content-types-generator)
 
 ## Getting started
 
@@ -33,6 +33,10 @@ npx contentful-typings generate [options]
 
 ```
   -o, --output <filepath>  Specify output file (default: "@types/contentful.d.ts")
+  -l, --localized          Add localized types
+  -d, --jsdoc              Add JSDoc comments
+  -g, --typeguard          Add type guards
+  -h, --help               display help for command
 ```
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-typings

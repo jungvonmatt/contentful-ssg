@@ -15,6 +15,9 @@ expand(env);
 
 type CommandArgs = {
   output: string;
+  typeguard: boolean;
+  jsdoc: boolean;
+  localized: boolean;
 };
 
 type CommandError = Error & {
@@ -46,13 +49,20 @@ program
   .command('generate')
   .description('Generate typescript definitions for contentful content types.')
   .option('-o, --output <filepath>', 'Specify output file', '@types/contentful.d.ts')
+  .option('-l, --localized', 'Add localized types')
+  .option('-d, --jsdoc', 'Add JSDoc comments')
+  .option('-g, --typeguard ', 'Add type guards')
   .action(
     actionRunner(async (cmd: CommandArgs) => {
       const output: string = cmd?.output ?? '';
-      const typings = await generateTypings();
+      const typings = await generateTypings({
+        typeguard: cmd.typeguard,
+        jsdoc: cmd.jsdoc,
+        localized: cmd.localized,
+      });
 
       await outputFile(output, typings);
-      console.log(pico.green(`    added: ${output}`));
+      console.log(pico.green(`  added: ${output}`));
     })
   );
 
