@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.5](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.4...v1.12.5) (2023-03-09)
+
+
+### Bug Fixes
+
+* **contentful-typings:** fix renderers ([#58](https://github.com/jungvonmatt/contentful-ssg/issues/58)) ([47b18a7](https://github.com/jungvonmatt/contentful-ssg/commit/47b18a7080d7b32529d9d12d9da8f7b8a8bcf2b6))
+
+
+
+
+
 ## [1.12.4](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.3...v1.12.4) (2023-03-08)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg-project
