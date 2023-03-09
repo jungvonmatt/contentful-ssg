@@ -21,12 +21,30 @@ type Options = {
   typeguard?: boolean;
 };
 
+const moduleName = (name: string) => `${camelcase(name, { pascalCase: true })}`;
+const moduleFieldsName = (name: string) => `${moduleName(name)}Fields`;
+const context: RenderContext = { ...createDefaultContext(), moduleName, moduleFieldsName };
+
+class CustomTypeGuardRenderer extends TypeGuardRenderer {
+  public createContext(): RenderContext {
+    return context;
+  }
+}
+
+class CustomJsDocRenderer extends JsDocRenderer {
+  public createContext(): RenderContext {
+    return context;
+  }
+}
+class CustomLocalizedContentTypeRenderer extends LocalizedContentTypeRenderer {
+  public createContext(): RenderContext {
+    return context;
+  }
+}
+
 class CustomContentTypeRenderer extends DefaultContentTypeRenderer {
   public createContext(): RenderContext {
-    const moduleName = (name: string) => `${camelcase(name, { pascalCase: true })}`;
-    const moduleFieldsName = (name: string) => `${moduleName(name)}Fields`;
-
-    return { ...createDefaultContext(), moduleName, moduleFieldsName };
+    return context;
   }
 }
 
@@ -46,15 +64,15 @@ export const generateTypings = async (options: Options = {}) => {
 
   const renderers: ContentTypeRenderer[] = [new CustomContentTypeRenderer()];
   if (options.localized) {
-    renderers.push(new LocalizedContentTypeRenderer());
+    renderers.push(new CustomLocalizedContentTypeRenderer());
   }
 
   if (options.jsdoc) {
-    renderers.push(new JsDocRenderer());
+    renderers.push(new CustomJsDocRenderer());
   }
 
   if (options.typeguard) {
-    renderers.push(new TypeGuardRenderer());
+    renderers.push(new CustomTypeGuardRenderer());
   }
 
   const builder = new CFDefinitionsBuilder(renderers);
