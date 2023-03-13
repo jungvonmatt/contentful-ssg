@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.6](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.5...v1.12.6) (2023-03-13)
+
+**Note:** Version bump only for package @jungvonmatt/contentful-typings
+
+
+
+
+
 ## [1.12.5](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.4...v1.12.5) (2023-03-09)
 
 
