@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.6...v1.13.0) (2023-05-12)
+
+### Features
+
+- **contentful-typings:** adapt new contentful skeleton types ([#61](https://github.com/jungvonmatt/contentful-ssg/issues/61)) ([3ea21a6](https://github.com/jungvonmatt/contentful-ssg/commit/3ea21a6c2bff7aeb9c9f01365afcc4d3653d573b))
+
 ## [1.13.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.13.0...v1.13.1) (2023-05-12)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-typings
