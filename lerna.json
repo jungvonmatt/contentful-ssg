@@ -1,5 +1,5 @@
 {
-  "version": "1.13.1",
+  "version": "1.12.6",
   "packages": ["packages/*"],
   "useWorkspaces": true,
   "command": {
