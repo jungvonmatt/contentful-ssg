@@ -39,15 +39,17 @@
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "^1.12.3",
     "camelcase": "^7.0.1",
-    "cf-content-types-generator": "^2.9.1",
+    "cf-content-types-generator": "^2.12.2",
     "commander": "^10.0.0",
-    "contentful": "^9.3.3",
+    "contentful": "^10.2.0",
     "contentful-management": "^10.30.0",
     "dotenv": "^16.0.3",
     "dotenv-expand": "^10.0.0",
     "fs-extra": "^11.1.0",
     "picocolors": "^1.0.0",
-    "prettier": "^2.8.4"
+    "prettier": "^2.8.4",
+    "read-pkg-up": "^9.1.0",
+    "semiver": "^1.1.0"
   },
   "devDependencies": {
     "ts-morph": "^17.0.1"
