@@ -53,5 +53,6 @@
   },
   "devDependencies": {
     "ts-morph": "^17.0.1"
-  }
+  },
+  "gitHead": "489dc63f510bc9481fd1e2d38db352dcdb8c0ca9"
 }
