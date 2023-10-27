@@ -54,7 +54,7 @@
     "@ffmpeg/core": "^0.10.0",
     "@ffmpeg/ffmpeg": "^0.10.1",
     "cli-progress": "^3.9.1",
-    "contentful": "^9.1.4",
+    "contentful": "^10.4.0",
     "got": "^11.8.3",
     "mkdirp": "^1.0.4",
     "svgo": "^2.8.0"
