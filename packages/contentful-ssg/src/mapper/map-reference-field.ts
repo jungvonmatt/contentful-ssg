@@ -1,4 +1,4 @@
-import type { EntryFields } from 'contentful';
+import type { EntryFields, EntrySkeletonType } from 'contentful';
 import {
   getContentId,
   getContentTypeId,
@@ -61,7 +61,7 @@ export const mapAssetLink = (transformContext: TransformContext): MapAssetLink =
  * @param {*} options
  */
 export const mapReferenceField = async (
-  fieldContent: EntryFields.Link<unknown> | Node,
+  fieldContent: EntryFields.EntryLink<EntrySkeletonType> | Node,
   transformContext: TransformContext,
   runtimeContext: RuntimeContext
 ) => {

@@ -5,7 +5,7 @@ import type {
   Node as RichTextNode,
   TopLevelBlock,
 } from '@contentful/rich-text-types';
-import type { EntryFields } from 'contentful';
+import type { EntryFields, EntrySkeletonType } from 'contentful';
 import type { Config, RichTextData, RuntimeContext, TransformContext } from '../types.js';
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { mapReferenceField } from './map-reference-field.js';
@@ -17,7 +17,11 @@ export const mapRichTextDataNode = (
 ) => {
   const { target } = node || {};
   if (target) {
-    return mapReferenceField(target as EntryFields.Link<unknown>, transformContext, runtimeContext);
+    return mapReferenceField(
+      target as EntryFields.EntryLink<EntrySkeletonType>,
+      transformContext,
+      runtimeContext
+    );
   }
 
   return node;

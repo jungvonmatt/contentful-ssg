@@ -2,7 +2,9 @@
 import type {
   ContentfulClientApi,
   CreateClientParams,
+  DeletedEntry,
   EntryFields,
+  EntrySkeletonType,
   SyncCollection,
 } from 'contentful';
 import contentful from 'contentful';
@@ -28,7 +30,9 @@ import type {
 } from '../types.js';
 import { initializeCache } from './cf-cache.js';
 
-let client: ContentfulClientApi;
+type ClientApi = ContentfulClientApi<undefined>;
+
+let client: ClientApi;
 let managementClient: ContentfulManagementApi;
 
 export const FIELD_TYPE_SYMBOL = 'Symbol';
@@ -52,8 +56,21 @@ export const MAX_ALLOWED_LIMIT = 1000;
  * @param {Object} node Contentful entry
  * @returns {String}
  */
-export const getContentTypeId = <T extends Node | EntryFields.Link<unknown>>(node: T): string =>
-  node?.sys?.contentType?.sys?.id ?? 'unknown';
+export const getContentTypeId = <
+  T extends Node | EntryFields.EntryLink<EntrySkeletonType> | DeletedEntry
+>(
+  node: T
+): string => {
+  if (node?.sys?.type === 'Asset') {
+    return 'asset';
+  }
+
+  if (node?.sys?.type === 'DeletedEntry') {
+    return 'unknown';
+  }
+
+  return node?.sys?.contentType?.sys?.id ?? 'unknown';
+};
 
 /**
  * Get environment id id from entry
@@ -68,7 +85,9 @@ export const getEnvironmentId = <T extends Node>(node: T): string =>
  * @param {Object} node Contentful entry
  * @returns {String}
  */
-export const getContentId = <T extends Node | ContentType | EntryFields.Link<unknown>>(
+export const getContentId = <
+  T extends Node | ContentType | EntryFields.Link<EntrySkeletonType> | DeletedEntry
+>(
   node: T
 ): string => node?.sys?.id ?? 'unknown';
 
@@ -77,7 +96,7 @@ export const getContentId = <T extends Node | ContentType | EntryFields.Link<unk
  * @param {Object} options
  * @returns {*}
  */
-const getClient = (options: ContentfulConfig): ContentfulClientApi => {
+const getClient = (options: ContentfulConfig): ClientApi => {
   const { accessToken, previewAccessToken, spaceId, environmentId, preview } = options || {};
 
   if (client) {
@@ -356,7 +375,16 @@ export const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCo
  * @param apiClient Contentful API client
  * @returns Promise for the collection resulting of a sync operation
  */
-const sync = async (apiClient, config: ContentfulConfig): Promise<SyncCollection> => {
+
+type SyncCollectionClean = Omit<SyncCollection<EntrySkeletonType>, 'entries' | 'assets'> & {
+  entries: Entry[];
+  assets: Asset[];
+};
+
+const sync = async (
+  apiClient: ClientApi,
+  config: ContentfulConfig
+): Promise<SyncCollectionClean> => {
   const cache = initializeCache(config);
   const options: SyncOptions = { initial: true };
   if (cache.hasSyncToken()) {
@@ -364,8 +392,7 @@ const sync = async (apiClient, config: ContentfulConfig): Promise<SyncCollection
     delete options.initial;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const response: SyncCollection = (await apiClient.sync(options)) as SyncCollection;
+  const response: SyncCollectionClean = (await apiClient.sync(options)) as SyncCollectionClean;
   if (response.nextSyncToken) {
     await cache.setSyncToken(response.nextSyncToken);
   }

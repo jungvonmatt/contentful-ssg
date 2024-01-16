@@ -7,11 +7,14 @@ import type {
   EntryFields,
   Locale as ContentfulLocale,
   Asset as ContentfulAsset,
-  Field,
+  ContentTypeField,
   Entry as ContentfulEntry,
   ContentType as ContentfulContentType,
   EntryCollection as ContentfulEntryCollection,
   ContentfulCollection as ContentfulContentfulCollection,
+  EntrySkeletonType,
+  DeletedEntry,
+  DeletedAsset,
 } from 'contentful';
 
 import type { ListrTaskObject } from 'listr';
@@ -19,17 +22,42 @@ import type { FileManager } from './lib/file-manager.js';
 import type { Stats } from './lib/stats.js';
 import type { HookManager } from './lib/hook-manager.js';
 
+export type Field = ContentTypeField;
+
 export type { Ignore } from 'ignore';
 
 export type KeyValueMap<T = any> = Record<string, T>;
 
+export type Asset = ContentfulAsset<undefined>;
+
+// Export interface Asset {
+//   sys: EntrySys;
+//   fields: {
+//     title: string;
+//     description: string;
+//     file: {
+//       url: string;
+//       details: {
+//         size: number;
+//         image?: {
+//           width: number;
+//           height: number;
+//         };
+//       };
+//       fileName: string;
+//       contentType: string;
+//     };
+//   };
+//   metadata: Metadata;
+// }
+
 export type Locale = ContentfulLocale;
 export type ContentType = ContentfulContentType;
-export type Asset = ContentfulAsset;
-export type Entry = Omit<ContentfulEntry<KeyValueMap>, 'update'>;
+// Wxport type Asset = ContentfulAsset;
+export type Entry = ContentfulEntry<EntrySkeletonType, undefined>;
 export type Node = Entry | Asset;
 
-export interface EntryCollection extends ContentfulEntryCollection<KeyValueMap> {
+export interface EntryCollection extends ContentfulEntryCollection<EntrySkeletonType, undefined> {
   includes?: {
     Entry?: Entry[];
     Asset?: Asset[];
@@ -129,8 +157,8 @@ export interface ContentfulData {
   contentTypes: ContentType[];
   entries: Entry[];
   assets: Asset[];
-  deletedEntries?: Entry[];
-  deletedAssets?: Asset[];
+  deletedEntries?: DeletedEntry[];
+  deletedAssets?: DeletedAsset[];
 }
 
 export interface LocalizedContent {
@@ -163,7 +191,7 @@ export interface RuntimeContext {
   [x: string]: any;
   config: Config;
   defaultLocale: string;
-  data: ContentfulData;
+  data: Partial<ContentfulData>;
   localized: Map<string, LocalizedContent>;
   fileManager: FileManager;
   stats: Stats;
@@ -269,7 +297,7 @@ export interface MapAssetLink {
   fileSize?: number;
 }
 
-export type Link = EntryFields.Link<unknown>;
+export type Link = EntryFields.Link<EntrySkeletonType>;
 
 export interface RichTextData {
   target?: Link;
@@ -296,7 +324,7 @@ export interface PagedGetOptions<T> {
 }
 
 export interface SyncOptions {
-  initial?: boolean;
+  initial?: true;
   nextSyncToken?: string;
   resolveLinks?: boolean;
 }

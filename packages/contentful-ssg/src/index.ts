@@ -183,7 +183,7 @@ export const run = async (
                   ...data,
                   id,
                   contentTypeId,
-                  entry,
+                  entry: entry as unknown as Entry,
                   locale,
                   observable,
                   utils,

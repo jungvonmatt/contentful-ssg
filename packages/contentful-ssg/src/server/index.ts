@@ -1,4 +1,4 @@
-import { Asset, ContentType, Entry } from 'contentful';
+import { Asset, ContentType, Entry, EntrySkeletonType } from 'contentful';
 import express, { Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
 
@@ -48,7 +48,7 @@ declare module 'http' {
 
 interface ContentfulWebhookRequest {
   headers: IncomingHttpHeaders;
-  body: Entry<unknown> | Asset | ContentType;
+  body: Entry<EntrySkeletonType, undefined> | Asset | ContentType;
 }
 
 export const getApp = (callback: () => Promise<void>) => {

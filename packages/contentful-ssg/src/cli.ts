@@ -25,7 +25,7 @@ import { getApp } from './server/index.js';
 import { Config, ContentfulConfig, RunResult } from './types.js';
 
 const env = dotenv.config();
-dotenvExpand(env);
+dotenvExpand.expand(env);
 
 const parseQuery = (query: string): QueryOptions => {
   if (!query) {
