@@ -66,6 +66,32 @@ jest.mock('contentful', () => {
           deletedEntries: [{ sys: { id: 'entry-2' } }],
           deletedAssets: [],
         }),
+      withAllLocales: {
+        getLocales: jest.fn().mockResolvedValue({ items: Array(2) }),
+        getContentTypes: jest.fn().mockResolvedValue({ items: Array(3) }),
+        getAssets: jest.fn().mockResolvedValue({ items: Array(4) }),
+        getEntries: jest
+          .fn()
+          .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
+          .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
+          .mockResolvedValue({ items: Array(4), total: 2004 }),
+        sync: jest
+          .fn()
+          .mockResolvedValueOnce({
+            nextSyncToken: 'sync-token',
+            entries: Array(5),
+            assets: Array(3),
+            deletedEntries: [{ sys: { id: 'entry' } }],
+            deletedAssets: [{ sys: { id: 'asset' } }],
+          })
+          .mockResolvedValueOnce({
+            nextSyncToken: 'sync-token-2',
+            entries: [],
+            assets: [],
+            deletedEntries: [{ sys: { id: 'entry-2' } }],
+            deletedAssets: [],
+          }),
+      },
     }),
   };
 });

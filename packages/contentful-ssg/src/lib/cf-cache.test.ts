@@ -1,5 +1,5 @@
 import { ReplaySubject } from 'rxjs';
-import { Config, Locale, ObservableContext, RunResult } from '../types.js';
+import { Asset, Config, Entry, Locale, ObservableContext, RunResult } from '../types.js';
 import { getContent } from '../__test__/mock.js';
 import { getObservableCount } from './observable.js';
 import { getCacheDir, initializeCache } from './cf-cache.js';
@@ -57,7 +57,12 @@ test('syncState', async () => {
 
   const state: RunResult = {
     localized: {
-      en: { entries, assets, entryMap, assetMap },
+      en: {
+        entries: entries as Entry[],
+        assets: assets as Asset[],
+        entryMap: entryMap as Map<string, Entry>,
+        assetMap: assetMap as Map<string, Asset>,
+      },
     },
     observables: {
       en: subject$,

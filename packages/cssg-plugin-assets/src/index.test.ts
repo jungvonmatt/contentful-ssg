@@ -1,5 +1,4 @@
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import { Asset } from '@jungvonmatt/contentful-ssg';
 import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
 import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
 import {
@@ -49,7 +48,7 @@ const getMockData = async (type) => {
   const runtimeContext = getRuntimeContext();
   const entry = localizeEntry(content.entry, 'en-US', runtimeContext.data);
   const asset = localizeEntry(
-    content.assets.find((asset) => asset?.fields?.file?.['en-US']?.contentType === type) as Asset,
+    content.assets.find((asset) => asset?.fields?.file?.['en-US']?.contentType === type)!,
     'en-US',
     runtimeContext.data
   );

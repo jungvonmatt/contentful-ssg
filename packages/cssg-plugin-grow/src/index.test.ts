@@ -8,6 +8,7 @@ import {
 } from '@jungvonmatt/contentful-ssg/__test__/mock';
 import { HookManager } from '@jungvonmatt/contentful-ssg/lib/hook-manager';
 import { Hooks, Config, RuntimeContext } from '@jungvonmatt/contentful-ssg';
+import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize.js';
 
 const directory = process.cwd();
 
@@ -33,9 +34,10 @@ describe('Grow Plugin', () => {
 
   test('mapGrowLink (doc)', async () => {
     const { mapEntryLink } = await getPluginSource({ test: { view: '', path: '' } });
-    const { entry } = await getContent();
+    const { entry: entryRaw } = await getContent();
+    const entry = localizeEntry(entryRaw, 'en-US', runtimeContext.data);
     const entryMap = new Map([[entry.sys.id, entry]]);
-    const value = await mapEntryLink(
+    const value = await mapEntryLink?.(
       getTransformContext({
         entry,
         entryMap,
@@ -51,9 +53,10 @@ describe('Grow Plugin', () => {
 
   test('mapGrowLink (yaml)', async () => {
     const { mapEntryLink } = await getPluginSource({});
-    const { entry } = await getContent();
+    const { entry: entryRaw } = await getContent();
+    const entry = localizeEntry(entryRaw, 'en-US', runtimeContext.data);
     const entryMap = new Map([[entry.sys.id, entry]]);
-    const value = await mapEntryLink(
+    const value = await mapEntryLink?.(
       getTransformContext({
         entry,
         entryMap,
@@ -69,9 +72,10 @@ describe('Grow Plugin', () => {
 
   test('mapGrowLink (invalid)', async () => {
     const { mapEntryLink } = await getPluginSource({});
-    const { entry } = await getContent();
+    const { entry: entryRaw } = await getContent();
+    const entry = localizeEntry(entryRaw, 'en-US', runtimeContext.data);
     const entryMap = new Map();
-    const value = await mapEntryLink(
+    const value = await mapEntryLink?.(
       getTransformContext({
         entry,
         entryMap,

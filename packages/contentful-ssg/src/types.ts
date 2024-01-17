@@ -1,34 +1,34 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
-import type { Observable, ReplaySubject } from 'rxjs';
 import type { QueryOptions } from 'contentful-management/types';
+import type { Observable, ReplaySubject } from 'rxjs';
 
 import type {
-  EntryFields,
-  Locale as ContentfulLocale,
-  Asset as ContentfulAsset,
   ContentTypeField,
-  Entry as ContentfulEntry,
+  Asset as ContentfulAsset,
   ContentType as ContentfulContentType,
-  EntryCollection as ContentfulEntryCollection,
   ContentfulCollection as ContentfulContentfulCollection,
-  EntrySkeletonType,
-  DeletedEntry,
+  Entry as ContentfulEntry,
+  EntryCollection as ContentfulEntryCollection,
+  Locale as ContentfulLocale,
   DeletedAsset,
+  DeletedEntry,
+  EntryFields,
+  EntrySkeletonType,
+  LocaleCode,
+  ResolvedField,
 } from 'contentful';
 
 import type { ListrTaskObject } from 'listr';
 import type { FileManager } from './lib/file-manager.js';
-import type { Stats } from './lib/stats.js';
 import type { HookManager } from './lib/hook-manager.js';
+import type { Stats } from './lib/stats.js';
 
 export type Field = ContentTypeField;
 
 export type { Ignore } from 'ignore';
 
 export type KeyValueMap<T = any> = Record<string, T>;
-
-export type Asset = ContentfulAsset<undefined>;
 
 // Export interface Asset {
 //   sys: EntrySys;
@@ -53,14 +53,37 @@ export type Asset = ContentfulAsset<undefined>;
 
 export type Locale = ContentfulLocale;
 export type ContentType = ContentfulContentType;
-// Wxport type Asset = ContentfulAsset;
+
+export type EntryRaw = ContentfulEntry<EntrySkeletonType, 'WITH_ALL_LOCALES'>;
+export type AssetRaw = ContentfulAsset<'WITH_ALL_LOCALES'>;
+export type NodeRaw = EntryRaw | AssetRaw;
+
+export type Asset = ContentfulAsset<undefined>;
 export type Entry = ContentfulEntry<EntrySkeletonType, undefined>;
+
 export type Node = Entry | Asset;
 
-export interface EntryCollection extends ContentfulEntryCollection<EntrySkeletonType, undefined> {
+export type EntryFieldRaw = {
+  [FieldName in keyof EntrySkeletonType['fields']]: {
+    [LocaleName in LocaleCode]?: ResolvedField<
+      EntrySkeletonType['fields'][FieldName],
+      'WITH_ALL_LOCALES'
+    >;
+  };
+};
+
+export type EntryField = {
+  [FieldName in keyof EntrySkeletonType['fields']]: ResolvedField<
+    EntrySkeletonType['fields'][FieldName],
+    undefined
+  >;
+};
+
+export interface EntryCollection
+  extends ContentfulEntryCollection<EntrySkeletonType, 'WITH_ALL_LOCALES'> {
   includes?: {
-    Entry?: Entry[];
-    Asset?: Asset[];
+    Entry?: EntryRaw[];
+    Asset?: AssetRaw[];
   };
 }
 
@@ -155,8 +178,8 @@ export interface ContentfulData {
   fieldSettings: FieldSettings;
   locales: Locale[];
   contentTypes: ContentType[];
-  entries: Entry[];
-  assets: Asset[];
+  entries: EntryRaw[];
+  assets: AssetRaw[];
   deletedEntries?: DeletedEntry[];
   deletedAssets?: DeletedAsset[];
 }
