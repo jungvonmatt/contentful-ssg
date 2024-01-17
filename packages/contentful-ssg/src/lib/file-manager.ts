@@ -9,7 +9,8 @@ import { existsSync } from 'fs';
 export class FileManager {
   ignoreBase: string = process.cwd();
   ignore?: Ignore;
-  files: Set<string> = new Set();
+  files = new Set<string>();
+  // eslint-disable-next-line @typescript-eslint/parameter-properties
   config: Config;
 
   constructor(config: Config) {
@@ -22,7 +23,7 @@ export class FileManager {
 
   get ignoredFiles() {
     return [...this.files].filter(
-      (file) => !this.ignore || this.ignore.ignores(relative(this.ignoreBase, file))
+      (file) => !this.ignore || this.ignore.ignores(relative(this.ignoreBase, file)),
     );
   }
 
@@ -44,7 +45,7 @@ export class FileManager {
     ];
 
     const globPattern = directories.map((directory) =>
-      resolve(this.config.rootDir || '', directory, '**/*.*')
+      resolve(this.config.rootDir || '', directory, '**/*.*'),
     );
     // Create set of existing files
     const existing = await globby(globPattern);
@@ -52,11 +53,7 @@ export class FileManager {
     this.files = new Set(existing.map((file) => resolve(file)));
   }
 
-  async writeFile(
-    file: string,
-    data: any,
-    options?: WriteFileOptions | BufferEncoding | string
-  ): Promise<void> {
+  async writeFile(file: string, data: string, options?: WriteFileOptions): Promise<void> {
     await outputFile(file, data, options);
     if (this.files.has(resolve(file))) {
       this.files.delete(resolve(file));
@@ -90,7 +87,7 @@ export class FileManager {
     let fileNames = await readdir(directory);
     if (fileNames.length > 0) {
       const recursiveRemovalPromises = fileNames.map(async (fileName) =>
-        this.removeEmptyDirectories(join(directory, fileName))
+        this.removeEmptyDirectories(join(directory, fileName)),
       );
       await Promise.all(recursiveRemovalPromises);
 

@@ -85,7 +85,7 @@ program
 
       const filePath = path.join(
         process.cwd(),
-        `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`
+        `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`,
       );
       const prettierOptions = await prettier.resolveConfig(filePath);
       if (verified.directory?.startsWith('/')) {
@@ -93,7 +93,7 @@ program
       }
 
       const environmentKeys: Array<keyof ContentfulConfig> = Object.keys(
-        environmentConfig
+        environmentConfig,
       ) as Array<keyof ContentfulConfig>;
 
       // Update .env file
@@ -103,19 +103,19 @@ program
           .replace(/(CONTENTFUL_SPACE_ID\s*=\s*['"]?)[^'"]*(['"]?)/, `$1${verified.spaceId}$2`)
           .replace(
             /(CONTENTFUL_ENVIRONMENT_ID\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.environmentId}$2`
+            `$1${verified.environmentId}$2`,
           )
           .replace(
             /(CONTENTFUL_MANAGEMENT_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.managementToken}$2`
+            `$1${verified.managementToken}$2`,
           )
           .replace(
             /(CONTENTFUL_PREVIEW_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.previewAccessToken}$2`
+            `$1${verified.previewAccessToken}$2`,
           )
           .replace(
             /(CONTENTFUL_DELIVERY_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.accessToken}$2`
+            `$1${verified.accessToken}$2`,
           );
 
         await outputFile('.env', nextEnvSource);
@@ -129,21 +129,21 @@ program
         'resolvedPlugins',
         'host',
         'managementToken',
-        ...environmentKeys
+        ...environmentKeys,
       );
 
       let content = '';
       if (useTypescript) {
-        content = prettier.format(
+        content = await prettier.format(
           `import {Config} from '@jungvonmatt/contentful-ssg';
         export default <Config>${JSON.stringify(cleanedConfig)}`,
           {
             parser: 'typescript',
             ...prettierOptions,
-          }
+          },
         );
       } else {
-        content = prettier.format(`module.exports = ${JSON.stringify(cleanedConfig)}`, {
+        content = await prettier.format(`module.exports = ${JSON.stringify(cleanedConfig)}`, {
           parser: 'babel',
           ...prettierOptions,
         });
@@ -152,7 +152,7 @@ program
       let writeFile = true;
       if (existsSync(filePath)) {
         writeFile = await confirm(
-          `Config file already exists. Overwrite?\n\n${chalk.reset(content)}`
+          `Config file already exists. Overwrite?\n\n${chalk.reset(content)}`,
         );
       } else {
         writeFile = await confirm(`Please verify your settings:\n\n${chalk.reset(content)}`, true);
@@ -161,10 +161,10 @@ program
       if (writeFile) {
         await outputFile(filePath, content);
         console.log(
-          `\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`
+          `\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`,
         );
       }
-    })
+    }),
   );
 
 program
@@ -184,8 +184,8 @@ program
       if (cmd.sync && cmd.query) {
         console.log(
           chalk.red(
-            '\nCustom Contentful queries are not supported when using sync. Query argument will be ignored.\n'
-          )
+            '\nCustom Contentful queries are not supported when using sync. Query argument will be ignored.\n',
+          ),
         );
       }
 
@@ -201,7 +201,7 @@ program
       if (cmd.sync) {
         await cache.setSyncState(prev);
       }
-    })
+    }),
   );
 
 program
@@ -215,7 +215,7 @@ program
   .option('--poll-intervall <intervall>', 'Change default intervall of 10000ms', '10000')
   .option(
     '--port <port>',
-    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT'
+    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT',
   )
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
@@ -250,20 +250,23 @@ program
           }
         },
         {
-          minimumWait: 2000,
-        }
+          wait: 2000,
+        },
       );
 
       if (cmd.poll) {
         const poll = () => {
-          setTimeout(async () => {
-            prev = await run({ ...verified, sync: true }, prev);
-            if (useCache) {
-              await cache.setSyncState(prev);
-            }
+          setTimeout(
+            async () => {
+              prev = await run({ ...verified, sync: true }, prev);
+              if (useCache) {
+                await cache.setSyncState(prev);
+              }
 
-            poll();
-          }, parseInt(cmd.pollIntervall, 10));
+              poll();
+            },
+            parseInt(cmd.pollIntervall, 10),
+          );
         };
 
         poll();
@@ -325,11 +328,11 @@ program
             }
           },
           {
-            minimumWait: 2000,
-          }
+            wait: 2000,
+          },
         );
       }
-    })
+    }),
   );
 
 program.parse(process.argv);
