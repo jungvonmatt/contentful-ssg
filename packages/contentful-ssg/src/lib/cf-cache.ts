@@ -7,7 +7,7 @@ import { serializeError, deserializeError } from 'serialize-error';
 
 import { ReplaySubject } from 'rxjs';
 import { deserialize as v8Deserialize, serialize as v8Serialize } from 'v8';
-import { ContentfulConfig, ObservableContext, RunResult } from '../types.js';
+import { type ContentfulConfig, type ObservableContext, type RunResult } from '../types.js';
 import { getObservableValues } from './observable.js';
 
 export const getCacheDir = (config: Partial<ContentfulConfig>) => {
@@ -16,7 +16,6 @@ export const getCacheDir = (config: Partial<ContentfulConfig>) => {
 
   const name = `contentful-ssg/sync-${spaceId}-${environmentId}`;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const dir: string = findCacheDir({ name }) || path.join(process.cwd(), '.cache', name);
 
   return dir;
@@ -60,7 +59,7 @@ const serialize = async (data: RunResult) => {
       });
 
       return [locale, values];
-    })
+    }),
   );
 
   return v8Serialize({ localized, observableEntries });
@@ -87,7 +86,7 @@ const deserialize = async (buffer: Buffer): Promise<RunResult> => {
         });
 
         return [locale, subject$];
-      })
+      }),
     );
 
     return {
@@ -137,7 +136,7 @@ export const reset = async (config: Partial<ContentfulConfig>) => {
 
 export const initializeCache = (config: Partial<ContentfulConfig>) => {
   return {
-    async setSyncToken(token) {
+    async setSyncToken(token: string) {
       return setSyncToken(token, config);
     },
 

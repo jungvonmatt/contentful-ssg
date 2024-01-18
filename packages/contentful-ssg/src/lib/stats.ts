@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import type { Config, KeyValueMap, RunResult, StatsEntry, TransformContext } from '../types.js';
-import { ValidationError } from './error.js';
+import { type ValidationError } from './error.js';
 import { getEntries, groupBy } from './object.js';
 import { getObservableCount } from './observable.js';
 
@@ -65,12 +65,12 @@ export class Stats {
       const successCounts = await Promise.all(
         Object.entries(prev.observables).map(async ([, observable]) => {
           return getObservableCount(observable, (ctx) => !ctx.error);
-        })
+        }),
       );
       const errorCounts = await Promise.all(
         Object.entries(prev.observables).map(async ([, observable]) => {
           return getObservableCount(observable, (ctx) => Boolean(ctx.error));
-        })
+        }),
       );
 
       const successCount = successCounts.reduce((result, count) => result + count, 0);
@@ -78,8 +78,8 @@ export class Stats {
 
       console.log(
         `  Sync cache contains ${chalk.green(successCount)} entries and ${chalk.red(
-          errorCount
-        )} errors`
+          errorCount,
+        )} errors`,
       );
     }
 
@@ -90,16 +90,16 @@ export class Stats {
       this.config.verbose && this.skipped.length
         ? `See ${filenameSkipped} for details.`
         : this.skipped.length
-        ? 'Use --verbose to see actual errors.'
-        : ''
+          ? 'Use --verbose to see actual errors.'
+          : '',
     );
     console.log(
       `  ${chalk.red(this.errors.length)}${prev ? ' new' : ''} errors.`,
       this.config.verbose && this.errors.length
         ? `See ${filenameErrors} for details.`
         : this.errors.length
-        ? 'Use --verbose to see actual errors.'
-        : ''
+          ? 'Use --verbose to see actual errors.'
+          : '',
     );
 
     if (this.config.verbose && this.skipped.length) {
@@ -109,12 +109,12 @@ export class Stats {
           this.skipped.map((item) => ({
             ...item,
             error: JSON.parse(
-              JSON.stringify(item.error, Object.getOwnPropertyNames(item.error))
+              JSON.stringify(item.error, Object.getOwnPropertyNames(item.error)),
             ) as KeyValueMap,
           })),
           null,
-          '   '
-        )
+          '   ',
+        ),
       );
     }
 
@@ -125,12 +125,12 @@ export class Stats {
           this.errors.map((item) => ({
             ...item,
             error: JSON.parse(
-              JSON.stringify(item.error, Object.getOwnPropertyNames(item.error))
+              JSON.stringify(item.error, Object.getOwnPropertyNames(item.error)),
             ) as KeyValueMap,
           })),
           null,
-          '   '
-        )
+          '   ',
+        ),
       );
     }
   }

@@ -10,7 +10,7 @@ export class FileManager {
   ignoreBase: string = process.cwd();
   ignore?: Ignore;
   files = new Set<string>();
-  // eslint-disable-next-line @typescript-eslint/parameter-properties
+
   config: Config;
 
   constructor(config: Config) {

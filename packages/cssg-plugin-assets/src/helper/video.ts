@@ -53,12 +53,12 @@ export const getVideoHelper = (options: PluginConfig) => {
         '1',
         '-f',
         'image2',
-        ffmpegDest
+        ffmpegDest,
       );
       await promises.writeFile(
         cachedDestPath,
         // eslint-disable-next-line new-cap
-        ffmpeg.FS('readFile', ffmpegDest)
+        ffmpeg.FS('readFile', ffmpegDest),
       );
     }
 
@@ -75,7 +75,7 @@ export const getVideoHelper = (options: PluginConfig) => {
         format:
           '    ➞ Generating poster images: [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}',
       },
-      Presets.legacy
+      Presets.legacy,
     );
     let progress = 0;
     // Start the progress bar with a total value of 200 and start value of 0
@@ -104,7 +104,7 @@ export const getVideoHelper = (options: PluginConfig) => {
   const mapAssetLink = async (
     transformContext: TransformContext,
     runtimeContext: RuntimeContext,
-    content: MapAssetLink
+    content: MapAssetLink,
   ): Promise<ProcessedVideo> => {
     const { asset } = transformContext;
     const { sys } = asset || {};

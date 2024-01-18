@@ -1,11 +1,12 @@
-import { Asset } from '@jungvonmatt/contentful-ssg';
+import { type Asset } from '@jungvonmatt/contentful-ssg';
 import { Presets, SingleBar } from 'cli-progress';
 import { existsSync, promises } from 'fs';
 import got from 'got';
 import mkdirp from 'mkdirp';
 import { basename, dirname, extname as pathExtname, join } from 'path';
-import { PluginConfig } from '../types.js';
+import { type PluginConfig } from '../types.js';
 import { getDownloadQueue } from './queue.js';
+import { type AssetSys } from 'contentful';
 
 type DownloadEntry = {
   src: string;
@@ -15,10 +16,9 @@ type DownloadEntry = {
 const queue = getDownloadQueue<DownloadEntry>();
 
 export const getAssetHelper = (options: PluginConfig) => {
-  const getAssetTimestamp = (sys: Asset['sys']) =>
-    Date.parse(sys?.updatedAt || sys?.createdAt) || 0;
+  const getAssetTimestamp = (sys: AssetSys) => Date.parse(sys?.updatedAt || sys?.createdAt) || 0;
 
-  const getFileTimestamp = async (file) => {
+  const getFileTimestamp = async (file: string) => {
     if (existsSync(file)) {
       const { mtime } = await promises.stat(file);
       return Date.parse(mtime.toISOString());
@@ -27,7 +27,7 @@ export const getAssetHelper = (options: PluginConfig) => {
     return 0;
   };
 
-  const getLocalPath = (src: string, sys, addToQueue = true) => {
+  const getLocalPath = (src: string, sys: AssetSys, addToQueue = true) => {
     const url = new URL(src);
     const { searchParams, pathname } = url;
     const extname = pathExtname(pathname);
@@ -52,7 +52,7 @@ export const getAssetHelper = (options: PluginConfig) => {
     return join(options.assetBase, assetId, file);
   };
 
-  const getLocalSrc = (src, sys, addToQueue = true) => {
+  const getLocalSrc = (src: string, sys: AssetSys, addToQueue = true) => {
     const localPath = getLocalPath(src, sys, addToQueue);
     if (process.env.HUGO_BASEURL) {
       return join('/', process.env.HUGO_BASEURL, localPath);
@@ -61,10 +61,10 @@ export const getAssetHelper = (options: PluginConfig) => {
     return localPath;
   };
 
-  const fetchAsset = async (src, timestamp) => {
+  const fetchAsset = async (src: string, timestamp: number) => {
     const url = new URL(src);
 
-    const filepath = getLocalPath(src, {}, false);
+    const filepath = getLocalPath(src, {} as AssetSys, false);
     const cacheFile = join(options.cachePath, filepath);
     const file = join(options.assetPath, filepath);
 
@@ -98,7 +98,7 @@ export const getAssetHelper = (options: PluginConfig) => {
   const fetchAssets = async () => {
     const bar = new SingleBar(
       { format: '    ➞ Fetching files: [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}' },
-      Presets.legacy
+      Presets.legacy,
     );
     let progress = 0;
     // Start the progress bar with a total value of 200 and start value of 0
@@ -115,7 +115,7 @@ export const getAssetHelper = (options: PluginConfig) => {
         } catch (error: unknown) {
           console.log(error);
         }
-      })
+      }),
     );
 
     bar.stop();

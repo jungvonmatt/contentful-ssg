@@ -1,5 +1,5 @@
 import { dirname } from 'path';
-import { transform, transformSync, Options } from '@swc/core';
+import { transform, transformSync, type Options } from '@swc/core';
 import { addHook } from 'pirates';
 import { createRequire as moduleCreateRequire } from 'module';
 
@@ -23,7 +23,7 @@ export function compile(sourcecode: string, filename: string, async?: false): st
 export function compile(
   sourcecode: string,
   filename: string,
-  async?: boolean
+  async?: boolean,
 ): string | Promise<string>;
 
 export function compile(sourcecode: string, filename: string, async = false) {

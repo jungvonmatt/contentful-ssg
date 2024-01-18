@@ -1,6 +1,6 @@
-import { Asset, ContentType, Entry, EntrySkeletonType } from 'contentful';
-import express, { Response } from 'express';
-import { IncomingHttpHeaders } from 'http';
+import { type Asset, type ContentType, type Entry, type EntrySkeletonType } from 'contentful';
+import express, { type Response } from 'express';
+import { type IncomingHttpHeaders } from 'http';
 
 const app = express();
 app.disable('x-powered-by');
@@ -15,7 +15,7 @@ app.use(
       'application/x-www-form-urlencoded',
       'application/x-www-form-urlencoded; charset=utf-8',
     ],
-  })
+  }),
 );
 
 declare module 'http' {
@@ -46,10 +46,10 @@ declare module 'http' {
   }
 }
 
-interface ContentfulWebhookRequest {
+type ContentfulWebhookRequest = {
   headers: IncomingHttpHeaders;
   body: Entry<EntrySkeletonType, undefined> | Asset | ContentType;
-}
+};
 
 export const getApp = (callback: () => Promise<void>) => {
   app.get('/status', (_req, res: Response) => res.status(200).send('ok'));

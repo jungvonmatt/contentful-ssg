@@ -21,7 +21,7 @@ import {
   LINK_TYPE_ENTRY,
 } from '@jungvonmatt/contentful-ssg/lib/contentful';
 
-import { ContentFields, KeyValueMap, Control } from 'contentful-management/types';
+import { type ContentFields, type KeyValueMap, type Control } from 'contentful-management/types';
 
 import { faker } from '@faker-js/faker';
 import casual from 'casual';
@@ -37,7 +37,7 @@ export type ContentTypes = Record<string, FieldInfo[]>;
 
 export const getMockData = async (contentTypes: ContentTypes): Promise<KeyValueMap> => {
   const dataEntries = await Promise.all(
-    Object.entries(contentTypes).map(async ([name, fields]) => [name, await createData(fields)])
+    Object.entries(contentTypes).map(async ([name, fields]) => [name, await createData(fields)]),
   );
 
   return Object.fromEntries(dataEntries);
@@ -79,7 +79,7 @@ export const createData = async (fields: FieldInfo[]): Promise<KeyValueMap> => {
         default:
           return [id, undefined];
       }
-    })
+    }),
   );
 
   return Object.fromEntries(entries);
@@ -416,8 +416,8 @@ export const getArrayFake = async (field: FieldInfo): Promise<unknown[]> => {
           getSymbolFake({
             ...field,
             settings: { ...field.settings.items, id: field.settings.id },
-          })
-        )
+          }),
+        ),
     );
   }
 
@@ -429,8 +429,8 @@ export const getArrayFake = async (field: FieldInfo): Promise<unknown[]> => {
           getTextFake({
             ...field,
             settings: { ...field.settings.items, id: field.settings.id },
-          })
-        )
+          }),
+        ),
     );
   }
 
@@ -441,7 +441,7 @@ export const getArrayFake = async (field: FieldInfo): Promise<unknown[]> => {
     return Promise.all(
       Array(count)
         .fill('')
-        .map(async () => getAssetFake())
+        .map(async () => getAssetFake()),
     );
   }
 
@@ -456,8 +456,8 @@ export const getArrayFake = async (field: FieldInfo): Promise<unknown[]> => {
           getEntryScheme({
             ...field,
             settings: { ...field.settings.items, id: field.settings.id },
-          })
-        )
+          }),
+        ),
     );
   }
 };

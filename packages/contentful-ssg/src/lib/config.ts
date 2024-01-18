@@ -1,8 +1,8 @@
 import vm from 'vm';
 import chalk from 'chalk';
-import { transformSync, Options } from '@swc/core';
+import { transformSync, type Options } from '@swc/core';
 import { gracefulExit } from 'exit-hook';
-import { cosmiconfig, Loader } from 'cosmiconfig';
+import { cosmiconfig, type Loader } from 'cosmiconfig';
 import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
 import mergeOptionsModule from 'merge-options';
 import { dirname, isAbsolute, resolve } from 'path';
@@ -74,14 +74,16 @@ const getLoader =
     }
 
     // Handle module (even if the transpiled code should be commonjs exports)
-    if (Object.keys(context.module.exports).length > 0) {
-      const result = (context.module.exports.default || context.module.exports) as Config;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    if (Object.keys(context?.module?.exports).length > 0) {
+      const result = (context.module.exports?.default ?? context.module.exports) as Config;
       return { ...result };
     }
 
     // Handle commonjs export
-    if (Object.keys(context.exports).length > 0) {
-      const result = (context.exports.default || context.exports) as Config;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    if (Object.keys(context?.exports ?? {}).length > 0) {
+      const result = (context.exports?.default ?? context.exports) as Config;
 
       return { ...result };
     }
@@ -97,7 +99,7 @@ const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
 
 const resolvePlugin = async (
   plugin: string | [string, KeyValueMap] | PluginInfo,
-  config: Partial<Config>
+  config: Partial<Config>,
 ): Promise<Hooks> => {
   let pluginName: string;
   let pluginOptions: KeyValueMap;
@@ -142,8 +144,8 @@ const resolvePlugin = async (
     } else {
       console.error(
         chalk.red(
-          `There was a problem loading plugin "${pluginName}". Perhaps you need to install its package?\nUse --verbose to see actual error.`
-        )
+          `There was a problem loading plugin "${pluginName}". Perhaps you need to install its package?\nUse --verbose to see actual error.`,
+        ),
       );
     }
 
@@ -179,13 +181,13 @@ const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
 export const getEnvironmentConfig = (strict = true): ContentfulConfig =>
   removeEmpty(
     {
-      spaceId: process.env.CONTENTFUL_SPACE_ID!,
-      environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID!,
-      managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
-      previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN!,
-      accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN!,
+      spaceId: process.env.CONTENTFUL_SPACE_ID,
+      environmentId: process.env.CONTENTFUL_ENVIRONMENT_ID,
+      managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
+      previewAccessToken: process.env.CONTENTFUL_PREVIEW_TOKEN,
+      accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN,
     },
-    strict
+    strict,
   );
 
 /**
@@ -219,7 +221,7 @@ export const getConfig = async (args: Partial<Config> = {}): Promise<Config> => 
           environmentId: activeEnvironmentId,
           host,
         },
-        false
+        false,
       );
     }
   } catch (error: unknown) {
@@ -261,13 +263,13 @@ export const getConfig = async (args: Partial<Config> = {}): Promise<Config> => 
     contentfulCliOptions,
     environmentOptions,
     configFileOptions,
-    args || {}
+    args || {},
   ) as Config;
 
   const resolvedPlugins = [
     ...result.resolvedPlugins,
     ...(await Promise.all(
-      (result.plugins || []).map(async (plugin) => resolvePlugin(plugin, result))
+      (result.plugins || []).map(async (plugin) => resolvePlugin(plugin, result)),
     )),
   ];
 
@@ -279,7 +281,7 @@ export const getConfig = async (args: Partial<Config> = {}): Promise<Config> => 
       const hook = hooks.config;
       return hook(prev);
     },
-    result
+    result,
   );
 
   return { ...hookedConfig, ...result, resolvedPlugins };

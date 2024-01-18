@@ -1,5 +1,9 @@
 import { pascalCase } from 'change-case';
-import { createDefaultContext, createV10Context, RenderContext } from 'cf-content-types-generator';
+import {
+  createDefaultContext,
+  createV10Context,
+  type RenderContext,
+} from 'cf-content-types-generator';
 
 export const moduleName = (name: string) => `${pascalCase(name)}`;
 export const moduleFieldsName = (name: string) => `${moduleName(name)}Fields`;

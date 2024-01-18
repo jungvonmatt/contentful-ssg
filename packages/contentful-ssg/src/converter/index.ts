@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-import { KeyValueMap } from '../types.js';
+import { type KeyValueMap } from '../types.js';
 import { stringify as stringifyJson, parse as parseJson } from './json.js';
 import { stringify as stringifyMarkdown, parse as parseMarkdown } from './markdown.js';
 import { stringify as stringifyToml, parse as parseToml } from './toml.js';

@@ -12,5 +12,10 @@ module.exports = {
   env: {
     node: true,
     jest: true,
-  }
+  },
+  rules: {
+    '@typescript-eslint/prefer-nullish-coalescing': 0,
+    '@typescript-eslint/naming-convention': 0,
+    '@typescript-eslint/parameter-properties': 0,
+  },
 };

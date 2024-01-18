@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call */
 
 /* eslint-env node */
 import { asyncExitHook, gracefulExit } from 'exit-hook';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { QueryOptions } from 'contentful-management/types.js';
+import { type QueryOptions } from 'contentful-management/types.js';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { existsSync } from 'fs';
@@ -22,7 +22,7 @@ import { addWatchWebhook } from './lib/contentful.js';
 import { omitKeys } from './lib/object.js';
 import { askAll, askMissing, confirm, logError } from './lib/ui.js';
 import { getApp } from './server/index.js';
-import { Config, ContentfulConfig, RunResult } from './types.js';
+import { type Config, type ContentfulConfig, type RunResult } from './types.js';
 
 const env = dotenv.config();
 dotenvExpand.expand(env);

@@ -20,7 +20,7 @@ import { mapRichTextField } from './map-rich-text-field.js';
 export const mapField = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ): Promise<unknown> => {
   const { fieldSettings, fieldContent } = transformContext;
   const { type, items } = fieldSettings || {};
@@ -32,7 +32,7 @@ export const mapField = async (
       return mapReferenceField(
         fieldContent as EntryFields.EntryLink<EntrySkeletonType> | Asset | Entry,
         transformContext,
-        runtimeContext
+        runtimeContext,
       );
     case FIELD_TYPE_RICHTEXT:
       return mapRichTextField(fieldContent as Document, transformContext, runtimeContext, config);
@@ -46,9 +46,9 @@ export const mapField = async (
               fieldContent: content,
             },
             runtimeContext,
-            config
-          )
-        )
+            config,
+          ),
+        ),
       );
 
     default:

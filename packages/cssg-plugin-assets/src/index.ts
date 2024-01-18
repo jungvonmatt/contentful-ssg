@@ -65,7 +65,7 @@ export default (pluginOptions?: PluginConfig) => {
   const mapAssetLink = async (
     transformContext: TransformContext,
     runtimeContext: RuntimeContext,
-    defaultValue: MapAssetLink
+    defaultValue: MapAssetLink,
   ): Promise<ProcessedAsset | ProcessedSvg | ProcessedImage | ProcessedVideo> => {
     const { download } = options;
     const { asset } = transformContext;

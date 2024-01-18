@@ -4,7 +4,6 @@ import { ReplaySubject, map, distinct, filter } from 'rxjs';
 import dlv from 'dlv';
 import { WrappedError } from './error.js';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const DEFAULT_WAIT_TIMEOUT = 20000;
 
 export const collectValues =
@@ -19,8 +18,11 @@ export const collectValues =
     } = options || {};
 
     const params = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       getId: (item) => dlv(item, 'sys.id') as string,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       getNextId: (item) => dlv(item, 'fields.parent.sys.id') as string,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       getValue: (item) => dlv(item, key) as unknown,
       reverse: true,
       ...(options || {}),
@@ -47,7 +49,7 @@ export const collectParentValues =
 export const collect = <T = unknown>(
   entry: Entry,
   entryMap: Map<string, Entry>,
-  options: CollectOptions
+  options: CollectOptions,
 ): T[] => {
   const { getNextId, getValue, reverse } = options;
 
@@ -94,7 +96,7 @@ const cyclicErrorObservable = waitForSubject
  * Wait for entry to be transformed
  */
 export const waitFor = (
-  transformContext: Pick<TransformContext, 'entry' | 'observable' | 'entryMap'>
+  transformContext: Pick<TransformContext, 'entry' | 'observable' | 'entryMap'>,
 ) => {
   const sourceEntry = transformContext.entry;
   const sourceId = getContentId(sourceEntry);
@@ -120,8 +122,8 @@ Entry ${source} waiting for ${source}.`);
         reject(
           new Error(
             `Exceeded timeout of ${waitTimeout} ms while waiting for entry ${id} to complete.
-Entry ${source} waiting for ${dest}.`
-          )
+Entry ${source} waiting for ${dest}.`,
+          ),
         );
       }, waitTimeout);
 
@@ -142,7 +144,9 @@ Entry ${source} waiting for ${dest}.`
             clearTimeout(timeout);
             const deps = v?.[sourceId] ?? [];
             reject(
-              new Error(`Found cyclic dependency in ${source}: ${[sourceId, ...deps].join(' -> ')}`)
+              new Error(
+                `Found cyclic dependency in ${source}: ${[sourceId, ...deps].join(' -> ')}`,
+              ),
             );
           });
       } else {

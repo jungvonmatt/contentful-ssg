@@ -1,12 +1,12 @@
 function series<T, U>(
   reducer: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U | Promise<U>,
-  initialValue?: U
+  initialValue?: U,
 ) {
   return async (iterable: T[]) =>
     iterable.reduce(
       async (chain, value, key) =>
         chain.then(async (results) => reducer(results, value, key, iterable)),
-      Promise.resolve(initialValue)
+      Promise.resolve(initialValue),
     );
 }
 
@@ -17,7 +17,7 @@ function series<T, U>(
  */
 export async function mapAsync<T, U>(
   iterable: T[],
-  callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>
+  callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>,
 ): Promise<U[]> {
   const result: U[] = [];
   const promises = iterable.map(async (item, index, array) => callback(item, index, array));
@@ -36,7 +36,7 @@ export async function mapAsync<T, U>(
  */
 export async function forEachAsync<T>(
   iterable: T[],
-  callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>
+  callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>,
 ) {
   for (const index of iterable.keys()) {
     await callback(iterable[index], index, iterable); /* eslint-disable-line no-await-in-loop */
@@ -50,7 +50,7 @@ export async function forEachAsync<T>(
  */
 export async function filterAsync<T>(
   iterable: T[],
-  callback: (value: T, index?: number, array?: T[]) => boolean | Promise<boolean>
+  callback: (value: T, index?: number, array?: T[]) => boolean | Promise<boolean>,
 ): Promise<T[]> {
   return Promise.resolve(iterable).then(async (array) =>
     array.reduce(
@@ -59,8 +59,8 @@ export async function filterAsync<T>(
           const active = await callback(value, key, iterable);
           return active ? [...results, value] : results;
         }),
-      Promise.resolve([])
-    )
+      Promise.resolve([]),
+    ),
   );
 }
 
@@ -76,9 +76,9 @@ export async function reduceAsync<T, U>(
     previousValue: U,
     currentValue: T,
     currentIndex?: number,
-    array?: T[]
+    array?: T[],
   ) => U | Promise<U>,
-  initialValue?: U
+  initialValue?: U,
 ): Promise<U> {
   return Promise.resolve(iterable).then(series(callback, initialValue));
 }

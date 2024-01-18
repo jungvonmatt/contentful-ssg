@@ -52,15 +52,15 @@ export default (args) => {
           ([locale, contentfulData]) => {
             const entryMap = contentfulData?.entryMap ?? new Map();
             const settingsEntries = Array.from(entryMap.values()).filter(
-              (entry) => (entry?.sys?.contentType?.sys?.id ?? 'unknown') === options.typeIdSettings
+              (entry) => (entry?.sys?.contentType?.sys?.id ?? 'unknown') === options.typeIdSettings,
             );
             const settingsFields = settingsEntries
               .map((entry) => entry?.fields ?? {})
               .reduce((result, fields) => ({ ...result, ...fields }), {});
 
             return [locale, settingsFields];
-          }
-        )
+          },
+        ),
       );
     }
 
@@ -71,7 +71,7 @@ export default (args) => {
     const { contentTypeId } = transformContext;
     const [type = TYPE_DATA] =
       Object.entries(options?.typeConfig ?? {}).find(([, pattern]) =>
-        mm.isMatch(contentTypeId, pattern)
+        mm.isMatch(contentTypeId, pattern),
       ) || [];
 
     return type;
@@ -170,7 +170,7 @@ export default (args) => {
       const subentries = menu?.fields?.[options.fieldIdMenuEntries] ?? [];
 
       const collected = await Promise.all(
-        subentries.flatMap((node) => getChildnodesManual(node, depth - 1, [...ids, id]))
+        subentries.flatMap((node) => getChildnodesManual(node, depth - 1, [...ids, id])),
       );
 
       return [
@@ -202,19 +202,19 @@ export default (args) => {
       }
 
       const childnodes = [...entryMap.values()].filter(
-        (entry) => (entry?.fields?.[options.fieldIdParent]?.sys?.id ?? '') === id
+        (entry) => (entry?.fields?.[options.fieldIdParent]?.sys?.id ?? '') === id,
       );
 
       // Filter childnodes based on hide_in_menu field
       const filtered = childnodes.filter(
-        (entry) => !(entry?.fields?.[options.fieldIdMenuHide] ?? false)
+        (entry) => !(entry?.fields?.[options.fieldIdMenuHide] ?? false),
       );
 
       // Sort based on menuPos field
       const sorted = [...filtered].sort(
         (a, b) =>
           (a?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER) -
-          (b?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER)
+          (b?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER),
       );
 
       return Array.from(
@@ -234,7 +234,7 @@ export default (args) => {
               },
             })),
           ...sorted.flatMap((node) => getChildnodesRecursive(node, depth - 1)),
-        ])
+        ]),
       )
         .map((a) => a.value)
         .filter((v) => v);
@@ -301,7 +301,7 @@ export default (args) => {
                 ? { contentDir: `content/${hugoLocaleCode(locale)}`, ...localeConfig }
                 : localeConfig,
             ];
-          })
+          }),
         );
         await outputFile(dst, converter.yaml.stringify(languageConfig));
       }
@@ -319,7 +319,7 @@ export default (args) => {
             return nodes;
           }, new Set());
           return [localeCode, { ...contentfulData, sectionIds }];
-        })
+        }),
       );
 
       return { ...runtimeContext, helper, localized: enhancedLocalized };
@@ -414,12 +414,12 @@ export default (args) => {
           ? path.join(
               ...(slugs || []).filter((v) => v),
               `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.${hugoLocaleCode(
-                locale
-              )}.md`
+                locale,
+              )}.md`,
             )
           : path.join(
               ...(slugs || []).filter((v) => v),
-              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`
+              `${collectEntry?.fields?.[options.fieldIdSlug] ?? 'unknown'}.md`,
             );
       }
 
@@ -494,7 +494,7 @@ export default (args) => {
             : {};
 
           return outputFile(dictionaryPath, yaml.stringify({ ...oldContent, ...translations }));
-        })
+        }),
       );
 
       const menus = runtimeContext?.menus ?? {};
@@ -503,7 +503,7 @@ export default (args) => {
           const file = `config/_default/menus.${localeCode}.yaml`;
           const data = yaml.stringify(menuData);
           return outputFile(file, data);
-        })
+        }),
       );
     },
   };

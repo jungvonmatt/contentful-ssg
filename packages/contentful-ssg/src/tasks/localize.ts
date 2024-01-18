@@ -21,7 +21,7 @@ import { convertToMap, getContentTypeId } from '../lib/contentful.js';
  * @param {Array} locales Array of contentful locale objects
  * @returns {Array} E.g. ['en-US', 'en-GB', 'de-DE']
  */
-export const getLocaleList = (code: string | null, locales: Locale[] = []): string[] => {
+export const getLocaleList = (code: string | undefined, locales: Locale[] = []): string[] => {
   const locale = locales.find((locale) => locale.code === code);
   return locale ? [locale.code, ...getLocaleList(locale.fallbackCode, locales)] : [];
 };
@@ -53,11 +53,11 @@ export const localizeField = <T extends EntryFieldRaw>(
  */
 export const localizeEntry = <
   T extends EntryRaw | AssetRaw,
-  R extends T extends EntryRaw ? Entry : Asset
+  R extends T extends EntryRaw ? Entry : Asset,
 >(
   node: T,
   code: string,
-  data: Partial<ContentfulData>
+  data: Partial<ContentfulData>,
 ): R => {
   const { locales, fieldSettings } = data;
 
@@ -75,8 +75,8 @@ export const localizeEntry = <
       Object.entries(fields).map(([key, field]) =>
         isLocalized(key)
           ? [key, localizeField(field, ...localeCodes)]
-          : [key, localizeField(field, defaultCode)]
-      )
+          : [key, localizeField(field, defaultCode)],
+      ),
     ),
   } as unknown as R;
 };
@@ -92,20 +92,20 @@ export const localize = async (context: RuntimeContext) => {
   return new Listr(
     locales.map((locale) => ({
       title: `${locale.code}`,
-      task: async () => {
+      async task() {
         const localizedAssets = await mapAsync(assets, async (asset) =>
           localizeEntry<AssetRaw, Asset>(asset, locale.code, {
             locales,
             contentTypes,
             fieldSettings,
-          })
+          }),
         );
         const localizedEntries = await mapAsync(entries, async (entry) =>
           localizeEntry<EntryRaw, Entry>(entry, locale.code, {
             locales,
             contentTypes,
             fieldSettings,
-          })
+          }),
         );
 
         context.localized.set(locale.code, {
@@ -116,6 +116,6 @@ export const localize = async (context: RuntimeContext) => {
         });
       },
     })),
-    { concurrent: true }
+    { concurrent: true },
   );
 };

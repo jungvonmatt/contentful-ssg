@@ -52,7 +52,7 @@ const getPromts = (data: Partial<Config>): Questions => [
     type: 'list',
     name: 'spaceId',
     message: 'Space ID',
-    choices: async (answers) => {
+    async choices(answers) {
       const spaces = await getSpaces({ ...data, ...answers } as ContentfulConfig);
       return spaces.map((space) => ({
         name: `${space.name} (${space.sys.id})`,
@@ -67,7 +67,7 @@ const getPromts = (data: Partial<Config>): Questions => [
     type: 'list',
     name: 'environmentId',
     message: 'Environment Id',
-    choices: async (answers) => {
+    async choices(answers) {
       const environments = await getEnvironments({ ...data, ...answers } as ContentfulConfig);
       return environments.map((environment) => environment.sys.id);
     },
@@ -82,7 +82,7 @@ const getPromts = (data: Partial<Config>): Questions => [
     when(answers) {
       return Boolean(answers.spaceId) || Boolean(data.spaceId);
     },
-    async default(answers) {
+    async default(answers: ContentfulConfig) {
       return data.accessToken || getApiKey({ ...data, ...answers });
     },
   },
@@ -93,7 +93,7 @@ const getPromts = (data: Partial<Config>): Questions => [
     when(answers) {
       return Boolean(answers.spaceId) || Boolean(data.spaceId);
     },
-    async default(answers) {
+    async default(answers: ContentfulConfig) {
       return data.previewAccessToken || getPreviewApiKey({ ...data, ...answers });
     },
   },
@@ -120,7 +120,7 @@ export const askAll = async (data: Partial<Config> = {}): Promise<Config> => {
 export const askMissing = async (data: Partial<Config> = {}): Promise<Config> => {
   const missing = Array.prototype.filter.call(
     getPromts(data),
-    ({ name }) => !data[name]
+    ({ name }) => !data[name],
   ) as Questions;
   const answers = await inquirer.prompt(missing);
 

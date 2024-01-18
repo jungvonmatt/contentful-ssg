@@ -1,10 +1,10 @@
 /* _eslint-disable @typescript-eslint/no-unsafe-call */
 import path from 'node:path';
-import { ContentfulConfig, ContentType } from '@jungvonmatt/contentful-ssg';
+import { type ContentfulConfig, type ContentType } from '@jungvonmatt/contentful-ssg';
 import { getConfig } from '@jungvonmatt/contentful-ssg/lib/config';
 import { getEnvironment, pagedGet } from '@jungvonmatt/contentful-ssg/lib/contentful';
 import { askMissing } from '@jungvonmatt/contentful-ssg/lib/ui';
-import { CFDefinitionsBuilder, ContentTypeRenderer } from 'cf-content-types-generator';
+import { CFDefinitionsBuilder, type ContentTypeRenderer } from 'cf-content-types-generator';
 import { readPackageUp } from 'read-pkg-up';
 import semiver from 'semiver';
 
@@ -31,6 +31,7 @@ const isLegacyVersion = async (dir?: string) => {
     // New skeleton types were released in contentful v10.0.0-beta-v10.33
     if (
       packageJson.name === 'contentful' &&
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       semiver(packageJson.version, '10.0.0-beta-v10.33') < 0
     ) {
       return true;
@@ -45,7 +46,7 @@ export const generateTypings = async (options: Options = {}) => {
     await getConfig({
       previewAccessToken: '-',
       accessToken: '-',
-    })
+    }),
   );
 
   const client = await getEnvironment(contentfulConfig as ContentfulConfig);

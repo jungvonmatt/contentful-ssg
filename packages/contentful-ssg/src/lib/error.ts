@@ -1,4 +1,4 @@
-import { ErrorEntry } from '../types';
+import { type ErrorEntry } from '../types';
 
 export class ValidationError extends Error {
   missingFields: string[];

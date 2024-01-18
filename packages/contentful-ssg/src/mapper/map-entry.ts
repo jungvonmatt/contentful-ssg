@@ -13,7 +13,7 @@ import { mapMetaFields } from './map-meta-fields.js';
 export const mapEntry = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
   const { spaceId } = runtimeContext.config;
   const { environmentId } = runtimeContext.config;
@@ -34,16 +34,17 @@ export const mapEntry = async (
           fieldSettings: settings[fieldId],
         },
         runtimeContext,
-        config
+        config,
       );
 
       return [fieldId, value];
-    })
+    }),
   );
 
   // Filter undefined values & convert back to object
   const fields = removeEmpty<KeyValueMap>(
-    Object.fromEntries(data.filter(([, value]) => typeof value !== 'undefined'))
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    Object.fromEntries(data.filter(([, value]) => typeof value !== 'undefined')),
   );
 
   const result = { ...sys, ...fields };
@@ -58,7 +59,7 @@ export const mapEntry = async (
   if (typeof config.validate === 'function') {
     valid = await config.validate(
       { ...transformContext, requiredFields, missingFields, content: result },
-      runtimeContext
+      runtimeContext,
     );
   }
 

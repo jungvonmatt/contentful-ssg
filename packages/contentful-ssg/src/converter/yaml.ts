@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import yaml from 'js-yaml';
-import { KeyValueMap } from '../types';
+import { type KeyValueMap } from '../types';
 
 const getPredicate = (type: string) => (data) =>
   typeof data === 'string' && data.startsWith(`${type} `);
@@ -27,7 +25,7 @@ const growYamlTypes = growYamlConstructors.map(
       predicate: getPredicate(type),
       represent: getRepresent(type),
       construct: getConstruct(type),
-    })
+    }),
 );
 
 /**

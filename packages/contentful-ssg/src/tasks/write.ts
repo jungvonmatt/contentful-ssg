@@ -15,7 +15,7 @@ const formatMapping = {
 export const getFormat = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
   const directory = await getDirectory(transformContext, runtimeContext, config);
   let format = TYPE_YAML;
@@ -34,13 +34,13 @@ export const getFormat = async (
 const getDirectory = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
   const { contentTypeId } = transformContext;
 
   const contentTypeDirectory = await runtimeContext.hooks.mapDirectory(
     transformContext,
-    contentTypeId
+    contentTypeId,
   );
   return join(config.directory || process.cwd(), contentTypeDirectory);
 };
@@ -48,7 +48,7 @@ const getDirectory = async (
 export const getFilepath = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
   const { id, locale } = transformContext;
 
@@ -60,7 +60,7 @@ export const getFilepath = async (
 
   const filename = await runtimeContext.hooks.mapFilename(
     transformContext,
-    `${id}${localeAddon}.${format}`
+    `${id}${localeAddon}.${format}`,
   );
 
   return join(directory, filename);
@@ -69,13 +69,14 @@ export const getFilepath = async (
 export const write = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
   const { content: data } = transformContext;
 
   const format = await getFormat(transformContext, runtimeContext, config);
   const filepath = await getFilepath(transformContext, runtimeContext, config);
   const ext = extname(filepath);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const content = stringify(data, formatMapping?.[ext] ?? format);
 
   await runtimeContext.fileManager.writeFile(filepath, content);

@@ -1,5 +1,5 @@
-import TOML, { JsonMap } from '@iarna/toml';
-import { KeyValueMap } from '../types';
+import TOML, { type JsonMap } from '@iarna/toml';
+import { type KeyValueMap } from '../types';
 
 /**
  * Convert object to toml

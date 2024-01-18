@@ -1,11 +1,11 @@
 import {
   TypeGuardRenderer as TypeGuardRendererOriginal,
   V10TypeGuardRenderer as V10TypeGuardRendererOriginal,
-  RenderContext,
-  CFContentType,
+  type RenderContext,
+  type CFContentType,
   renderTypeGeneric,
 } from 'cf-content-types-generator';
-import { SourceFile } from 'ts-morph';
+import { type SourceFile } from 'ts-morph';
 import { context, v10context, moduleName } from './context.js';
 
 export class TypeGuardRenderer extends TypeGuardRendererOriginal {
@@ -62,7 +62,7 @@ export class V10TypeGuardRenderer extends V10TypeGuardRendererOriginal {
       name: renderTypeGeneric(
         `is${entryInterfaceName}`,
         'Modifiers extends ChainModifiers',
-        'Locales extends LocaleCode'
+        'Locales extends LocaleCode',
       ),
       returnType: `entry is ${renderTypeGeneric(entryInterfaceName, 'Modifiers', 'Locales')}`,
       parameters: [
