@@ -37,13 +37,14 @@
   },
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
+    "@faker-js/faker": "^8.3.1",
     "@jungvonmatt/contentful-ssg": "^1.12.3",
-    "camelcase": "^7.0.1",
-    "cf-content-types-generator": "^2.12.2",
+    "cf-content-types-generator": "^2.13.1",
+    "change-case": "^5.4.2",
     "commander": "^11.1.0",
     "contentful": "^10.2.0",
     "contentful-management": "^11.12.1",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
     "fs-extra": "^11.1.0",
     "picocolors": "^1.0.0",
@@ -52,6 +53,7 @@
     "semiver": "^1.1.0"
   },
   "devDependencies": {
-    "ts-morph": "^17.0.1"
+    "@types/chance": "^1.1.6",
+    "ts-morph": "^19.0.0"
   }
 }
