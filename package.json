@@ -21,7 +21,7 @@
     "compile": "turbo run compile",
     "start": "lerna run start",
     "lint": "turbo run lint",
-    "test": "turbo run test",
+    "test": "turbo run test --concurrency=1",
     "test:ci": "turbo run lint && jest",
     "prepare": "husky install"
   },
