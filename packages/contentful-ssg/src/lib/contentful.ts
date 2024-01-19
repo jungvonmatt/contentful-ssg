@@ -328,7 +328,6 @@ export const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCo
     skip,
     limit: MAX_ALLOWED_LIMIT,
     order: 'sys.createdAt,sys.id',
-    locale: '*',
     include: 0,
     ...(query || {}),
   };
