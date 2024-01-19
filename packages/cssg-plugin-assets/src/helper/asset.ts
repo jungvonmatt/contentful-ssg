@@ -1,4 +1,3 @@
-import { type Asset } from '@jungvonmatt/contentful-ssg';
 import { Presets, SingleBar } from 'cli-progress';
 import { existsSync, promises } from 'fs';
 import got from 'got';

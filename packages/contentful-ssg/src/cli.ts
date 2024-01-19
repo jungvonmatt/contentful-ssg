@@ -257,13 +257,15 @@ program
       if (cmd.poll) {
         const poll = () => {
           setTimeout(
-            async () => {
-              prev = await run({ ...verified, sync: true }, prev);
-              if (useCache) {
-                await cache.setSyncState(prev);
-              }
+            () => {
+              (async () => {
+                prev = await run({ ...verified, sync: true }, prev);
+                if (useCache) {
+                  await cache.setSyncState(prev);
+                }
 
-              poll();
+                poll();
+              })();
             },
             parseInt(cmd.pollIntervall, 10),
           );

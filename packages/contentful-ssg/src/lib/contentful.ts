@@ -375,14 +375,7 @@ export const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCo
  * @param apiClient Contentful API client
  * @returns Promise for the collection resulting of a sync operation
  */
-
-// type SyncCollectionClean = Omit<SyncCollection<EntrySkeletonType>, 'entries' | 'assets'> & {
-//   entries: EntryRaw[];
-//   assets: AssetRaw[];
-// };
-
 type SyncCollection = ContentfulSyncCollection<EntrySkeletonType, 'WITH_ALL_LOCALES'>;
-
 const sync = async (apiClient: ClientApi, config: ContentfulConfig): Promise<SyncCollection> => {
   const cache = initializeCache(config);
   const options: SyncOptions = { initial: true };
