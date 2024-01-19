@@ -1,7 +1,9 @@
 /** @type {import('jest').Config} */
 export default {
-  maxConcurrency: 2,
+  maxConcurrency: 1,
   maxWorkers: '50%',
+  workerIdleMemoryLimit: '512MB',
+  coverageProvider: 'v8',
   collectCoverage: true,
   coverageReporters: ['text', 'clover', 'json', 'lcov'],
   testResultsProcessor: 'jest-sonar-reporter',
