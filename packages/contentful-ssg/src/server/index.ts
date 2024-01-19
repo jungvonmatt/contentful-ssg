@@ -19,6 +19,7 @@ app.use(
 );
 
 declare module 'http' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface IncomingHttpHeaders {
     'x-contentful-topic':
       | 'ContentManagement.ContentType.create'

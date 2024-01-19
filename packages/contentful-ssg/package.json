@@ -55,7 +55,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint --color src --ext .ts",
+    "lint": "eslint --color src --fix --ext .ts",
     "test": "jest",
     "precompile": "npm run clean",
     "compile": "tsc --build",
