@@ -12,7 +12,7 @@ import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
 import { readFile } from 'fs/promises';
 import getPort from 'get-port';
-import ngrok from 'ngrok';
+import localtunnel from 'localtunnel';
 import path from 'path';
 import prettier from 'prettier';
 import { run } from './index.js';
@@ -310,8 +310,16 @@ program
             });
           });
 
-        const url =
-          process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
+        let url = process.env.CSSG_WEBHOOK_URL || (cmd.url as string);
+        let tunnel: Awaited<ReturnType<typeof localtunnel>>;
+        if (!url) {
+          tunnel = (await localtunnel({ port })) as {
+            url: string;
+            close: () => Promise<void>;
+          };
+          url = tunnel.url as string;
+        }
+
         console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
         const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
@@ -319,7 +327,11 @@ program
         asyncExitHook(
           async () => {
             try {
-              const results = await Promise.allSettled([webhook.delete(), stopServer()]);
+              const results = await Promise.allSettled([
+                webhook.delete(),
+                stopServer(),
+                tunnel?.close(),
+              ]);
               results.forEach((result) => {
                 if (result.status === 'rejected') {
                   console.error('\nError:', result?.reason?.message ?? result?.reason);

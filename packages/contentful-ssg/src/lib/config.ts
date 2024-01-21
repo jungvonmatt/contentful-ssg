@@ -155,6 +155,7 @@ const resolvePlugin = async (
 
 const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
   const explorer = cosmiconfig(moduleName, {
+    searchStrategy: 'global',
     searchPlaces: [
       'package.json',
       `.${moduleName}rc`,
