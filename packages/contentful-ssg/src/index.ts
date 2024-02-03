@@ -35,7 +35,6 @@ class CustomListrRenderer {
     this._tasks = tasks;
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   static get nonTTY() {
     return false;
   }
@@ -91,7 +90,7 @@ export const cleanupPrevData = (ctx: RuntimeContext, prev: RunResult) => {
         if (prev.localized?.[locale.code]?.entryMap.has(entry.sys.id)) {
           prev.localized?.[locale.code]?.entryMap.delete(entry.sys.id);
           prev.localized[locale.code].entries = Array.from(
-            prev.localized?.[locale.code]?.entryMap.values()
+            prev.localized?.[locale.code]?.entryMap.values(),
           );
         }
       });
@@ -102,7 +101,7 @@ export const cleanupPrevData = (ctx: RuntimeContext, prev: RunResult) => {
         if (prev.localized?.[locale.code]?.assetMap.has(asset.sys.id)) {
           prev.localized?.[locale.code]?.assetMap.delete(asset.sys.id);
           prev.localized[locale.code].assets = Array.from(
-            prev.localized?.[locale.code]?.assetMap.values()
+            prev.localized?.[locale.code]?.assetMap.values(),
           );
         }
       });
@@ -129,7 +128,7 @@ export const run = async (
   prev: RunResult = {
     observables: {},
     localized: {},
-  }
+  },
 ): Promise<RunResult> => {
   const hasPrev = Object.values(prev.localized).length > 0;
   const tasks = new Listr<RuntimeContext>(
@@ -140,7 +139,7 @@ export const run = async (
       },
       {
         title: 'Pulling data from contentful',
-        task: async (ctx) => {
+        async task(ctx) {
           await fetch(ctx, config);
           cleanupPrevData(ctx, prev);
         },
@@ -158,11 +157,11 @@ export const run = async (
       {
         title: 'Remove deleted files',
         skip: (ctx) => !hasDeletions(ctx),
-        task: async (ctx) => {
+        async task(ctx) {
           const { locales = [], deletedEntries = [] } = ctx.data;
           const tasks = locales.map((locale) => ({
             title: `${locale.code}`,
-            task: async () => {
+            async task() {
               const data = ctx.localized.get(locale.code);
 
               // Get observables from previous run
@@ -183,7 +182,7 @@ export const run = async (
                   ...data,
                   id,
                   contentTypeId,
-                  entry,
+                  entry: entry as unknown as Entry,
                   locale,
                   observable,
                   utils,
@@ -202,7 +201,7 @@ export const run = async (
       {
         title: 'Writing files',
         skip: (ctx) => !hasAdditions(ctx),
-        task: async (ctx) => {
+        async task(ctx) {
           const { locales = [] } = ctx.data;
 
           const tasks = locales.map((locale) => ({
@@ -211,7 +210,7 @@ export const run = async (
               (ctx.localized?.get(locale.code)?.entryMap?.size ?? 0) +
                 (ctx.localized?.get(locale.code)?.assetMap?.size ?? 0) ===
               0,
-            task: async () => {
+            async task() {
               const data = ctx.localized.get(locale.code);
 
               // Only walk new entries
@@ -305,14 +304,14 @@ export const run = async (
       },
       {
         title: 'Cleanup',
-        skip: (ctx) => {
+        skip(ctx) {
           const cache = initializeCache(ctx.config);
           return cache.hasSyncToken();
         },
         task: async (ctx) => ctx.fileManager.cleanup(),
       },
     ],
-    { renderer: CustomListrRenderer }
+    { renderer: CustomListrRenderer },
   );
 
   const ctx = await tasks.run();

@@ -40,7 +40,7 @@ const actionRunner =
   (fn, log = true) =>
   (...args) =>
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-    fn(...args).catch((error) => {
+    fn(...args).catch((error: CommandError) => {
       errorHandler(error, !log);
     });
 
@@ -66,7 +66,7 @@ program
 
       await outputFile(output, typings);
       console.log(pico.green(`  added: ${output}`));
-    })
+    }),
   );
 
 program.parse(process.argv);

@@ -1,17 +1,17 @@
-import { ContentfulConfig, KeyValueMap } from '@jungvonmatt/contentful-ssg';
+import { type ContentfulConfig, type KeyValueMap } from '@jungvonmatt/contentful-ssg';
 import { getEnvironment } from '@jungvonmatt/contentful-ssg/lib/contentful';
 import { getConfig } from '@jungvonmatt/contentful-ssg/lib/config';
 import { askMissing } from '@jungvonmatt/contentful-ssg/lib/ui';
-import { getMockData, ContentTypes } from './lib/faker.js';
+import { getMockData, type ContentTypes } from './lib/faker.js';
 
 export async function createFakes(
-  contentTypeIds: string[]
+  contentTypeIds: string[],
 ): Promise<Record<string, KeyValueMap[]>> {
   const contentfulConfig = (await askMissing(
     await getConfig({
       previewAccessToken: '-',
       accessToken: '-',
-    })
+    }),
   )) as ContentfulConfig;
   const environment = await getEnvironment(contentfulConfig);
   const { items: contentTypes } = await environment.getContentTypes();
@@ -20,7 +20,7 @@ export async function createFakes(
   const interfaces: ContentTypes = Object.fromEntries(
     items
       .filter(
-        (item) => !contentTypeIds.length || contentTypeIds.includes(item.sys.contentType.sys.id)
+        (item) => !contentTypeIds.length || contentTypeIds.includes(item.sys.contentType.sys.id),
       )
       .map((item) => {
         const { id } = item.sys.contentType.sys;
@@ -33,7 +33,7 @@ export async function createFakes(
           return { interface: control, settings: fieldSettings };
         });
         return [id, fields];
-      })
+      }),
   );
 
   const data = await getMockData(interfaces);
@@ -42,13 +42,14 @@ export async function createFakes(
     Object.entries(interfaces).map(([contentTypeId, fields]) => {
       const { [contentTypeId]: fakeData = {} } = data;
       const required = Object.fromEntries(
-        fields.map((field) => [field.settings.id, field.settings.required])
+        fields.map((field) => [field.settings.id, field.settings.required]),
       );
 
       const minData = Object.fromEntries(
-        Object.entries(fakeData).filter(([fieldId]) => required?.[fieldId])
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        Object.entries(fakeData).filter(([fieldId]) => required?.[fieldId]),
       );
       return [contentTypeId, [fakeData, minData]];
-    })
+    }),
   );
 }

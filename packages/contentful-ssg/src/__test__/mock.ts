@@ -11,11 +11,11 @@ import { HookManager } from '../lib/hook-manager.js';
 import type {
   ContentType,
   Locale,
-  Asset,
-  Entry,
   Config,
   RuntimeContext,
   TransformContext,
+  AssetRaw,
+  EntryRaw,
 } from '../types.js';
 
 const cache = new Map();
@@ -39,8 +39,8 @@ export const readFixtureSync = (file) => {
 };
 
 export const getContent = async () => {
-  const assets = (await readFixture('assets.json')) as Asset[];
-  const entries = (await readFixture('entries.json')) as Entry[];
+  const assets = (await readFixture('assets.json')) as AssetRaw[];
+  const entries = (await readFixture('entries.json')) as EntryRaw[];
   const locales = (await readFixture('locales.json')) as Locale[];
   const contentTypes = (await readFixture('content_types.json')) as ContentType[];
 
@@ -86,8 +86,8 @@ export const getConfig = (fixture: Partial<Config> = {}): Config => ({
 });
 
 export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): RuntimeContext => {
-  const assets = readFixtureSync('assets.json') as Asset[];
-  const entries = readFixtureSync('entries.json') as Entry[];
+  const assets = readFixtureSync('assets.json') as AssetRaw[];
+  const entries = readFixtureSync('entries.json') as EntryRaw[];
   const locales = readFixtureSync('locales.json') as Locale[];
   const contentTypes = readFixtureSync('content_types.json') as ContentType[];
 

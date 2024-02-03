@@ -1,5 +1,5 @@
 import matter from 'gray-matter';
-import { KeyValueMap } from '../types.js';
+import { type KeyValueMap } from '../types.js';
 import { stringify as stringifyYaml, parse as parseYaml } from './yaml.js';
 
 /**

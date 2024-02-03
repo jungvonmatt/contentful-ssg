@@ -1,18 +1,18 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call */
 
 /* eslint-env node */
 import { asyncExitHook, gracefulExit } from 'exit-hook';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { QueryOptions } from 'contentful-management/types.js';
+import { type QueryOptions } from 'contentful-management/types.js';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
 import { readFile } from 'fs/promises';
 import getPort from 'get-port';
-import ngrok from 'ngrok';
+import localtunnel from 'localtunnel';
 import path from 'path';
 import prettier from 'prettier';
 import { run } from './index.js';
@@ -22,10 +22,10 @@ import { addWatchWebhook } from './lib/contentful.js';
 import { omitKeys } from './lib/object.js';
 import { askAll, askMissing, confirm, logError } from './lib/ui.js';
 import { getApp } from './server/index.js';
-import { Config, ContentfulConfig, RunResult } from './types.js';
+import { type Config, type ContentfulConfig, type RunResult } from './types.js';
 
 const env = dotenv.config();
-dotenvExpand(env);
+dotenvExpand.expand(env);
 
 const parseQuery = (query: string): QueryOptions => {
   if (!query) {
@@ -85,7 +85,7 @@ program
 
       const filePath = path.join(
         process.cwd(),
-        `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`
+        `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`,
       );
       const prettierOptions = await prettier.resolveConfig(filePath);
       if (verified.directory?.startsWith('/')) {
@@ -93,7 +93,7 @@ program
       }
 
       const environmentKeys: Array<keyof ContentfulConfig> = Object.keys(
-        environmentConfig
+        environmentConfig,
       ) as Array<keyof ContentfulConfig>;
 
       // Update .env file
@@ -103,19 +103,19 @@ program
           .replace(/(CONTENTFUL_SPACE_ID\s*=\s*['"]?)[^'"]*(['"]?)/, `$1${verified.spaceId}$2`)
           .replace(
             /(CONTENTFUL_ENVIRONMENT_ID\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.environmentId}$2`
+            `$1${verified.environmentId}$2`,
           )
           .replace(
             /(CONTENTFUL_MANAGEMENT_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.managementToken}$2`
+            `$1${verified.managementToken}$2`,
           )
           .replace(
             /(CONTENTFUL_PREVIEW_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.previewAccessToken}$2`
+            `$1${verified.previewAccessToken}$2`,
           )
           .replace(
             /(CONTENTFUL_DELIVERY_TOKEN\s*=\s*['"]?)[^'"]*(['"]?)/,
-            `$1${verified.accessToken}$2`
+            `$1${verified.accessToken}$2`,
           );
 
         await outputFile('.env', nextEnvSource);
@@ -129,21 +129,21 @@ program
         'resolvedPlugins',
         'host',
         'managementToken',
-        ...environmentKeys
+        ...environmentKeys,
       );
 
       let content = '';
       if (useTypescript) {
-        content = prettier.format(
+        content = await prettier.format(
           `import {Config} from '@jungvonmatt/contentful-ssg';
         export default <Config>${JSON.stringify(cleanedConfig)}`,
           {
             parser: 'typescript',
             ...prettierOptions,
-          }
+          },
         );
       } else {
-        content = prettier.format(`module.exports = ${JSON.stringify(cleanedConfig)}`, {
+        content = await prettier.format(`module.exports = ${JSON.stringify(cleanedConfig)}`, {
           parser: 'babel',
           ...prettierOptions,
         });
@@ -152,7 +152,7 @@ program
       let writeFile = true;
       if (existsSync(filePath)) {
         writeFile = await confirm(
-          `Config file already exists. Overwrite?\n\n${chalk.reset(content)}`
+          `Config file already exists. Overwrite?\n\n${chalk.reset(content)}`,
         );
       } else {
         writeFile = await confirm(`Please verify your settings:\n\n${chalk.reset(content)}`, true);
@@ -161,10 +161,10 @@ program
       if (writeFile) {
         await outputFile(filePath, content);
         console.log(
-          `\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`
+          `\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`,
         );
       }
-    })
+    }),
   );
 
 program
@@ -184,8 +184,8 @@ program
       if (cmd.sync && cmd.query) {
         console.log(
           chalk.red(
-            '\nCustom Contentful queries are not supported when using sync. Query argument will be ignored.\n'
-          )
+            '\nCustom Contentful queries are not supported when using sync. Query argument will be ignored.\n',
+          ),
         );
       }
 
@@ -201,7 +201,7 @@ program
       if (cmd.sync) {
         await cache.setSyncState(prev);
       }
-    })
+    }),
   );
 
 program
@@ -215,7 +215,7 @@ program
   .option('--poll-intervall <intervall>', 'Change default intervall of 10000ms', '10000')
   .option(
     '--port <port>',
-    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT'
+    'Overwrite internal listener port. Useful for running the watcher in an environment with a single public port and a proxy configuration.\nCan also be set via environment variable CSSG_WEBHOOK_PORT',
   )
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
@@ -250,20 +250,25 @@ program
           }
         },
         {
-          minimumWait: 2000,
-        }
+          wait: 2000,
+        },
       );
 
       if (cmd.poll) {
         const poll = () => {
-          setTimeout(async () => {
-            prev = await run({ ...verified, sync: true }, prev);
-            if (useCache) {
-              await cache.setSyncState(prev);
-            }
+          setTimeout(
+            () => {
+              (async () => {
+                prev = await run({ ...verified, sync: true }, prev);
+                if (useCache) {
+                  await cache.setSyncState(prev);
+                }
 
-            poll();
-          }, parseInt(cmd.pollIntervall, 10));
+                poll();
+              })();
+            },
+            parseInt(cmd.pollIntervall, 10),
+          );
         };
 
         poll();
@@ -305,8 +310,16 @@ program
             });
           });
 
-        const url =
-          process.env.CSSG_WEBHOOK_URL || (cmd.url as string) || (await ngrok.connect(port));
+        let url = process.env.CSSG_WEBHOOK_URL || (cmd.url as string);
+        let tunnel: Awaited<ReturnType<typeof localtunnel>>;
+        if (!url) {
+          tunnel = (await localtunnel({ port })) as {
+            url: string;
+            close: () => Promise<void>;
+          };
+          url = tunnel.url as string;
+        }
+
         console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
         const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
 
@@ -314,7 +327,11 @@ program
         asyncExitHook(
           async () => {
             try {
-              const results = await Promise.allSettled([webhook.delete(), stopServer()]);
+              const results = await Promise.allSettled([
+                webhook.delete(),
+                stopServer(),
+                tunnel?.close(),
+              ]);
               results.forEach((result) => {
                 if (result.status === 'rejected') {
                   console.error('\nError:', result?.reason?.message ?? result?.reason);
@@ -325,11 +342,11 @@ program
             }
           },
           {
-            minimumWait: 2000,
-          }
+            wait: 2000,
+          },
         );
       }
-    })
+    }),
   );
 
 program.parse(process.argv);

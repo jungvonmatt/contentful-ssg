@@ -1,5 +1,4 @@
 import { MARKS, BLOCKS, INLINES } from '@contentful/rich-text-types';
-import { Field } from 'contentful';
 import {
   FIELD_TYPE_SYMBOL,
   FIELD_TYPE_INTEGER,
@@ -21,7 +20,7 @@ import {
 } from '../lib/contentful.js';
 import { HookManager } from '../lib/hook-manager.js';
 import { localizeEntry } from '../tasks/localize.js';
-import { Config, RuntimeContext } from '../types.js';
+import { Config, Field, RuntimeContext } from '../types.js';
 import {
   getRuntimeContext,
   getConfig,

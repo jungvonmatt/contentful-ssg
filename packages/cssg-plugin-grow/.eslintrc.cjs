@@ -1,17 +1,25 @@
 module.exports = {
   root: true,
   plugins: ['prettier'],
-  extends: ['xo', 'xo-typescript/space','plugin:prettier/recommended'],
+  extends: ['xo', 'xo-typescript/space', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: ['./tsconfig.json'],
     tsconfigRootDir: __dirname,
-    extraFileExtensions: [".cjs"]
+    extraFileExtensions: ['.cjs'],
   },
-  ignorePatterns: ['**/jest.config.js', '**/*.cjs','src/**/*.test.ts', 'src/__test__/*',"src/**/*.test.ts"],
+  ignorePatterns: [
+    '**/jest.config.js',
+    '**/*.cjs',
+    'src/**/*.test.ts',
+    'src/__test__/*',
+    'src/**/*.test.ts',
+  ],
   env: {
     node: true,
     jest: true,
   },
+  rules: {
+    '@typescript-eslint/prefer-nullish-coalescing': 0,
+  },
 };
-

@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import type { Locale } from '../types.js';
+import type { EntryFieldRaw, Locale } from '../types.js';
 import { getContent } from '../__test__/mock.js';
 import { getContentId, getFieldSettings } from '../lib/contentful.js';
 
@@ -29,19 +29,19 @@ describe('Localize', () => {
   });
 
   test('localizeField', async () => {
-    const field = { b: 'b', c: 'c' };
+    const field: EntryFieldRaw = { b: { b: 'b' }, c: { c: 'c' } };
 
-    expect(localizeField(field, ...['a', 'b', 'c'])).toEqual('b');
-    expect(localizeField(field, ...['a', 'c'])).toEqual('c');
-    expect(localizeField(field, 'b')).toEqual('b');
-    expect(localizeField(field, 'c')).toEqual('c');
+    expect(localizeField(field, ...['a', 'b', 'c'])).toEqual({ b: 'b' });
+    expect(localizeField(field, ...['a', 'c'])).toEqual({ c: 'c' });
+    expect(localizeField(field, 'b')).toEqual({ b: 'b' });
+    expect(localizeField(field, 'c')).toEqual({ c: 'c' });
     expect(localizeField(field, ...['a'])).toBeUndefined();
   });
 
   test('Localize entry', async () => {
     const { entries, assets, contentTypes, locales } = await getContent();
     const fieldSettings = getFieldSettings(contentTypes);
-    const entry = entries.find((entry) => getContentId(entry) === '34O95Y8gLXd3jPozdy7gmd');
+    const entry = entries.find((entry) => getContentId(entry) === '34O95Y8gLXd3jPozdy7gmd')!;
 
     const { fields: fieldsDe } = localizeEntry(entry, 'de', { fieldSettings, locales });
     expect(fieldsDe.shortText).toEqual('Short Text (DE)');
@@ -59,7 +59,7 @@ describe('Localize', () => {
   test('Localize asset', async () => {
     const { entries, assets, contentTypes, locales } = await getContent();
     const fieldSettings = getFieldSettings(contentTypes);
-    const asset = assets.find((asset) => getContentId(asset) === '3t1t8PDynjpXbAzv6zOVQq');
+    const asset = assets.find((asset) => getContentId(asset) === '3t1t8PDynjpXbAzv6zOVQq')!;
 
     const { fields } = localizeEntry(asset, 'en-US', { fieldSettings, locales });
 

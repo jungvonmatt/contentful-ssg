@@ -1,8 +1,8 @@
-import { filter, count, Observable, takeUntil, timer } from 'rxjs';
+import { filter, count, type Observable, takeUntil, timer } from 'rxjs';
 
 export const getObservableValues = async <T, U = Partial<T>>(
   observable$: Observable<T>,
-  cb: (value: T) => U = (value) => value as unknown as U
+  cb: (value: T) => U = (value) => value as unknown as U,
 ): Promise<U[]> => {
   const terminator$ = timer(1);
   const data: U[] = [];
@@ -17,7 +17,7 @@ export const getObservableValues = async <T, U = Partial<T>>(
 
 export const getObservableCount = async <T>(
   observable$: Observable<T>,
-  filterFn: (value: T) => boolean = () => true
+  filterFn: (value: T) => boolean = () => true,
 ): Promise<number> => {
   let result = 0;
   const terminator$ = timer(1);

@@ -1,6 +1,6 @@
 import {
   LocalizedContentTypeRenderer as LocalizedContentTypeRendererOriginal,
-  RenderContext,
+  type RenderContext,
 } from 'cf-content-types-generator';
 import { context } from './context.js';
 

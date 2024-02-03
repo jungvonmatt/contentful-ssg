@@ -15,7 +15,7 @@ import path from 'path';
 import { createFakes } from './index.js';
 
 const env = dotenv.config();
-dotenvExpand(env);
+dotenvExpand.expand(env);
 
 type CommandArgs = {
   outputDirectory: string;
@@ -46,7 +46,7 @@ const actionRunner =
   (fn, log = true) =>
   (...args) =>
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-    fn(...args).catch((error) => {
+    fn(...args).catch((error: CommandError) => {
       errorHandler(error, !log);
     });
 const program = new Command();
@@ -71,7 +71,7 @@ program
       if (!Object.keys(fakes).length) {
         console.log('No files generated.');
         console.log(
-          `No content models found for: ${chalk.cyan(contentTypes.join(chalk.white(', ')))}`
+          `No content models found for: ${chalk.cyan(contentTypes.join(chalk.white(', ')))}`,
         );
       }
 
@@ -90,7 +90,7 @@ program
           console.log(chalk.green(`    added: ${filenameDefault}`));
         }
       });
-    })
+    }),
   );
 
 program.parse(process.argv);

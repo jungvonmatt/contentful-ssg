@@ -1,4 +1,4 @@
-import { TransformContext } from '../types.js';
+import { type TransformContext } from '../types.js';
 
 /**
  * Map meta fields object

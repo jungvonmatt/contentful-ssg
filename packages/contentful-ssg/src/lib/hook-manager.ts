@@ -16,7 +16,7 @@ const resolveValue = (something: any, ...args: any[]): unknown =>
 const hookUpRuntime = (
   name: keyof Pick<Hooks, 'before' | 'after'>,
   options: Config,
-  defaultValue?: any
+  defaultValue?: any,
 ): RuntimeHook => {
   const { [name]: configHook } = options;
 
@@ -31,14 +31,14 @@ const hookUpRuntime = (
 
     const initialValue = (await resolveValue(
       defaultValue,
-      runtimeContext
+      runtimeContext,
     )) as Partial<RuntimeContext>;
 
     const value = (await reduceAsync(
       hooks || [],
       async (prev: Partial<RuntimeContext>, hook: RuntimeHook) =>
         hook({ ...runtimeContext, ...(prev || {}) }),
-      initialValue || {}
+      initialValue || {},
     )) as RuntimeContext;
 
     if (typeof configHook === 'function') {
@@ -53,7 +53,7 @@ const hookUpRuntime = (
 const hookUpTransform = <Type = unknown>(
   name: keyof Omit<Hooks, 'before' | 'after'>,
   options: Config,
-  defaultValue?: any
+  defaultValue?: any,
 ): TransformHook<Type> => {
   const { [name]: configHook } = options;
 
@@ -63,7 +63,7 @@ const hookUpTransform = <Type = unknown>(
 
   return async (
     transformContext: TransformContext,
-    runtimeContext: RuntimeContext
+    runtimeContext: RuntimeContext,
   ): Promise<Type> => {
     if (hooks.length === 0 && !defaultValue && !configHook) {
       return;
@@ -72,7 +72,7 @@ const hookUpTransform = <Type = unknown>(
     const initialValue = (await resolveValue(
       defaultValue,
       transformContext,
-      runtimeContext
+      runtimeContext,
     )) as Type;
 
     const value = await reduceAsync(
@@ -84,7 +84,7 @@ const hookUpTransform = <Type = unknown>(
 
         return hook(transformContext, runtimeContext, prev);
       },
-      initialValue
+      initialValue,
     );
 
     if (name === 'transform') {

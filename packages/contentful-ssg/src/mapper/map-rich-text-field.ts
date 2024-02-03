@@ -5,19 +5,23 @@ import type {
   Node as RichTextNode,
   TopLevelBlock,
 } from '@contentful/rich-text-types';
-import type { EntryFields } from 'contentful';
+import type { EntryFields, EntrySkeletonType } from 'contentful';
 import type { Config, RichTextData, RuntimeContext, TransformContext } from '../types.js';
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { mapReferenceField } from './map-reference-field.js';
 
-export const mapRichTextDataNode = (
+export const mapRichTextDataNode = async (
   node: RichTextData,
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) => {
   const { target } = node || {};
   if (target) {
-    return mapReferenceField(target as EntryFields.Link<unknown>, transformContext, runtimeContext);
+    return mapReferenceField(
+      target as EntryFields.EntryLink<EntrySkeletonType>,
+      transformContext,
+      runtimeContext,
+    );
   }
 
   return node;
@@ -26,10 +30,10 @@ export const mapRichTextDataNode = (
 export const mapRichTextContentNode = async (
   nodes: TopLevelBlock[],
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) =>
   Promise.all(
-    (nodes || []).map(async (node) => mapRichTextNodes(node, transformContext, runtimeContext))
+    (nodes || []).map(async (node) => mapRichTextNodes(node, transformContext, runtimeContext)),
   );
 
 export const mapRichTextMarks = (nodes: Mark[] = []) => (nodes || []).map((node) => node.type);
@@ -37,7 +41,7 @@ export const mapRichTextMarks = (nodes: Mark[] = []) => (nodes || []).map((node)
 export const mapRichTextNodes = async (
   node: RichTextNode,
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) => {
   const fieldContent: Record<string, any> = {};
   if (typeof node === 'undefined') {
@@ -51,7 +55,7 @@ export const mapRichTextNodes = async (
         fieldContent[field] = await mapRichTextDataNode(
           subNode as RichTextData,
           transformContext,
-          runtimeContext
+          runtimeContext,
         );
         break;
       }
@@ -61,7 +65,7 @@ export const mapRichTextNodes = async (
         fieldContent[field] = await mapRichTextContentNode(
           subNode as TopLevelBlock[],
           transformContext,
-          runtimeContext
+          runtimeContext,
         );
         break;
       }
@@ -91,7 +95,7 @@ export const mapRichTextField = (
   fieldContent: Document,
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ) => {
   const { richTextRenderer = {} } = config || {};
 

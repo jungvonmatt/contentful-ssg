@@ -1,4 +1,4 @@
-import type { EntryFields } from 'contentful';
+import type { EntryFields, EntrySkeletonType } from 'contentful';
 import {
   getContentId,
   getContentTypeId,
@@ -61,9 +61,9 @@ export const mapAssetLink = (transformContext: TransformContext): MapAssetLink =
  * @param {*} options
  */
 export const mapReferenceField = async (
-  fieldContent: EntryFields.Link<unknown> | Node,
+  fieldContent: EntryFields.EntryLink<EntrySkeletonType> | Node,
   transformContext: TransformContext,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) => {
   const { hooks } = runtimeContext;
 
@@ -80,7 +80,7 @@ export const mapReferenceField = async (
         id: getContentId(asset),
         contentTypeId: getContentTypeId(asset),
       },
-      mapAssetLink
+      mapAssetLink,
     );
   }
 
@@ -93,7 +93,7 @@ export const mapReferenceField = async (
         id: getContentId(fieldContent),
         contentTypeId: getContentTypeId(fieldContent),
       },
-      mapAssetLink
+      mapAssetLink,
     );
   }
 
@@ -110,7 +110,7 @@ export const mapReferenceField = async (
         contentTypeId: getContentTypeId(entry),
         entry,
       },
-      mapEntryLink
+      mapEntryLink,
     );
   }
 
@@ -124,7 +124,7 @@ export const mapReferenceField = async (
         contentTypeId: getContentTypeId(fieldContent),
         entry: entry || (fieldContent as Entry),
       },
-      mapEntryLink
+      mapEntryLink,
     );
   }
 };

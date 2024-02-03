@@ -1,40 +1,90 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
-import type { Observable, ReplaySubject } from 'rxjs';
 import type { QueryOptions } from 'contentful-management/types';
+import type { Observable, ReplaySubject } from 'rxjs';
 
 import type {
-  EntryFields,
-  Locale as ContentfulLocale,
+  ContentTypeField,
   Asset as ContentfulAsset,
-  Field,
-  Entry as ContentfulEntry,
   ContentType as ContentfulContentType,
-  EntryCollection as ContentfulEntryCollection,
   ContentfulCollection as ContentfulContentfulCollection,
+  Entry as ContentfulEntry,
+  EntryCollection as ContentfulEntryCollection,
+  Locale as ContentfulLocale,
+  DeletedAsset,
+  DeletedEntry,
+  EntryFields,
+  EntrySkeletonType,
+  LocaleCode,
+  ResolvedField,
 } from 'contentful';
 
 import type { ListrTaskObject } from 'listr';
 import type { FileManager } from './lib/file-manager.js';
-import type { Stats } from './lib/stats.js';
 import type { HookManager } from './lib/hook-manager.js';
+import type { Stats } from './lib/stats.js';
+
+export type Field = ContentTypeField;
 
 export type { Ignore } from 'ignore';
 
 export type KeyValueMap<T = any> = Record<string, T>;
 
+// Export interface Asset {
+//   sys: EntrySys;
+//   fields: {
+//     title: string;
+//     description: string;
+//     file: {
+//       url: string;
+//       details: {
+//         size: number;
+//         image?: {
+//           width: number;
+//           height: number;
+//         };
+//       };
+//       fileName: string;
+//       contentType: string;
+//     };
+//   };
+//   metadata: Metadata;
+// }
+
 export type Locale = ContentfulLocale;
 export type ContentType = ContentfulContentType;
-export type Asset = ContentfulAsset;
-export type Entry = Omit<ContentfulEntry<KeyValueMap>, 'update'>;
+
+export type EntryRaw = ContentfulEntry<EntrySkeletonType, 'WITH_ALL_LOCALES'>;
+export type AssetRaw = ContentfulAsset<'WITH_ALL_LOCALES'>;
+export type NodeRaw = EntryRaw | AssetRaw;
+
+export type Asset = ContentfulAsset<undefined>;
+export type Entry = ContentfulEntry<EntrySkeletonType, undefined>;
+
 export type Node = Entry | Asset;
 
-export interface EntryCollection extends ContentfulEntryCollection<KeyValueMap> {
-  includes?: {
-    Entry?: Entry[];
-    Asset?: Asset[];
+export type EntryFieldRaw = {
+  [FieldName in keyof EntrySkeletonType['fields']]: {
+    [LocaleName in LocaleCode]?: ResolvedField<
+      EntrySkeletonType['fields'][FieldName],
+      'WITH_ALL_LOCALES'
+    >;
   };
-}
+};
+
+export type EntryField = {
+  [FieldName in keyof EntrySkeletonType['fields']]: ResolvedField<
+    EntrySkeletonType['fields'][FieldName],
+    undefined
+  >;
+};
+
+export type EntryCollection = {
+  includes?: {
+    Entry?: EntryRaw[];
+    Asset?: AssetRaw[];
+  };
+} & ContentfulEntryCollection<EntrySkeletonType, 'WITH_ALL_LOCALES'>;
 
 export type ContentfulCollection<T> = ContentfulContentfulCollection<T>;
 
@@ -46,10 +96,10 @@ export type RichTextConfig =
   | ((
       document: Document,
       transformContext: TransformContext,
-      runtimeContext: RuntimeContext
+      runtimeContext: RuntimeContext,
     ) => unknown);
 
-export interface ContentfulConfig {
+export type ContentfulConfig = {
   spaceId: string;
   environmentId: string;
   managementToken: string;
@@ -59,31 +109,31 @@ export interface ContentfulConfig {
   preview?: boolean;
   sync?: boolean;
   query?: QueryOptions;
-}
+};
 
-export interface ContentfulRcConfig {
+export type ContentfulRcConfig = {
   managementToken: string;
   activeSpaceId: string;
   activeEnvironmentId: string;
   host: string;
-}
+};
 
 export type ConfigHook = (config: Config) => Config | Promise<Config>;
 
 export type RuntimeHook = (
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ) => Promise<Partial<RuntimeContext>> | Partial<RuntimeContext> | void;
 export type TransformHook<T> = (
   transformContext: TransformContext,
   runtimeContext?: RuntimeContext,
-  prev?: T
+  prev?: T,
 ) => Promise<T> | T;
 export type ValidateHook = (
   transformContext: TransformContext,
-  runtimeContext?: RuntimeContext
+  runtimeContext?: RuntimeContext,
 ) => Promise<boolean> | boolean;
 
-export interface Hooks {
+export type Hooks = {
   config?: ConfigHook;
   before?: RuntimeHook;
   after?: RuntimeHook;
@@ -93,7 +143,7 @@ export interface Hooks {
   mapMetaFields?: TransformHook<KeyValueMap>;
   mapAssetLink?: TransformHook<KeyValueMap>;
   mapEntryLink?: TransformHook<KeyValueMap>;
-}
+};
 
 export type Config = Partial<ContentfulConfig> &
   Hooks & {
@@ -110,10 +160,10 @@ export type Config = Partial<ContentfulConfig> &
     validate?: ValidateHook;
   };
 
-export interface PluginInfo {
+export type PluginInfo = {
   options: KeyValueMap;
   resolve: string;
-}
+};
 
 export type PluginModule = {
   default?: PluginSource;
@@ -123,35 +173,35 @@ export type PluginSource = Hooks | ((options?: KeyValueMap) => Promise<Hooks> | 
 
 export type FieldSettings = KeyValueMap<KeyValueMap<Field>>;
 
-export interface ContentfulData {
+export type ContentfulData = {
   fieldSettings: FieldSettings;
   locales: Locale[];
   contentTypes: ContentType[];
-  entries: Entry[];
-  assets: Asset[];
-  deletedEntries?: Entry[];
-  deletedAssets?: Asset[];
-}
+  entries: EntryRaw[];
+  assets: AssetRaw[];
+  deletedEntries?: DeletedEntry[];
+  deletedAssets?: DeletedAsset[];
+};
 
-export interface LocalizedContent {
+export type LocalizedContent = {
   [x: string]: any;
   assets: Asset[];
   entries: Entry[];
   assetMap: Map<string, Asset>;
   entryMap: Map<string, Entry>;
-}
+};
 
 export type StatsKey = string;
 
-export interface Converter {
+export type Converter = {
   parse: <T = KeyValueMap>(string: string) => T;
   stringify: <T = KeyValueMap>(obj: T) => string;
-}
+};
 
-export interface MarkdownConverter {
+export type MarkdownConverter = {
   parse: <T = KeyValueMap>(string: string) => T;
   stringify: <T = KeyValueMap>(obj: T, additional?: string) => string;
-}
+};
 
 type Entries<T> = Array<
   {
@@ -159,11 +209,11 @@ type Entries<T> = Array<
   }[keyof T]
 >;
 
-export interface RuntimeContext {
+export type RuntimeContext = {
   [x: string]: any;
   config: Config;
   defaultLocale: string;
-  data: ContentfulData;
+  data: Partial<ContentfulData>;
   localized: Map<string, LocalizedContent>;
   fileManager: FileManager;
   stats: Stats;
@@ -173,15 +223,15 @@ export interface RuntimeContext {
     array: {
       mapAsync: <T, U>(
         iterable: T[],
-        callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>
+        callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>,
       ) => Promise<U[]>;
       forEachAsync: <T>(
         iterable: T[],
-        callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>
+        callback: (value: T, index?: number, iterable?: T[]) => void | Promise<void>,
       ) => Promise<void>;
       filterAsync: <T>(
         iterable: T[],
-        callback: (value: T, index?: number, array?: T[]) => boolean | Promise<boolean>
+        callback: (value: T, index?: number, array?: T[]) => boolean | Promise<boolean>,
       ) => Promise<T[]>;
       reduceAsync: <T, U>(
         iterable: T[],
@@ -189,9 +239,9 @@ export interface RuntimeContext {
           previousValue: U,
           currentValue: T,
           currentIndex?: number,
-          array?: T[]
+          array?: T[],
         ) => U | Promise<U>,
-        initialValue?: U
+        initialValue?: U,
       ) => Promise<U>;
     };
     object: {
@@ -203,7 +253,7 @@ export interface RuntimeContext {
       snakeCaseKeys: <T>(iterable: T) => T;
       groupBy: <T extends Record<string, unknown>, K extends keyof T>(
         array: T[],
-        key: K
+        key: K,
       ) => Record<string, unknown>;
     };
   };
@@ -214,7 +264,7 @@ export interface RuntimeContext {
     toml: Converter;
   };
   observables?: Record<string, ReplaySubject<ObservableContext>>;
-}
+};
 
 export type Task = ListrTaskObject<RuntimeContext>;
 
@@ -223,11 +273,11 @@ export type RunResult = {
   localized: Record<string, LocalizedContent>;
 };
 
-export interface TransformHelper {
+export type TransformHelper = {
   collectValues: <T>(key, options?: CollectOptions) => T[];
   collectParentValues: <T>(key, options?: CollectOptions) => T[];
   waitFor: (id: string, waitTimeout?: number) => Promise<ObservableContext>;
-}
+};
 
 export type TransformContext = LocalizedContent & {
   [x: string]: any;
@@ -251,15 +301,15 @@ export type ObservableContext = Readonly<
   }
 >;
 
-export interface StatsEntry extends KeyValueMap {
+export type StatsEntry = {
   id: string;
   contentTypeId: string;
   locale: string;
   message?: string;
   error?: Error;
-}
+} & KeyValueMap;
 
-export interface MapAssetLink {
+export type MapAssetLink = {
   mimeType: string;
   url: string;
   title: string;
@@ -267,15 +317,15 @@ export interface MapAssetLink {
   width?: number;
   height?: number;
   fileSize?: number;
-}
+};
 
-export type Link = EntryFields.Link<unknown>;
+export type Link = EntryFields.Link<EntrySkeletonType>;
 
-export interface RichTextData {
+export type RichTextData = {
   target?: Link;
-}
+};
 
-export interface CollectOptions {
+export type CollectOptions = {
   reverse?: boolean;
   entry?: Entry;
   entryMap?: Map<string, Entry>;
@@ -283,32 +333,32 @@ export interface CollectOptions {
   getId?: (entry: Entry) => string;
   getNextId?: (entry: Entry) => string;
   getValue?: (entry: Entry) => any;
-}
+};
 
 export type CollectionResponse<T> = EntryCollection | ContentfulCollection<T>;
 
-export interface PagedGetOptions<T> {
+export type PagedGetOptions<T> = {
   method: string;
   skip?: number;
   aggregatedResponse?: CollectionResponse<T>;
   query?: QueryOptions;
   include?: number;
-}
+};
 
-export interface SyncOptions {
-  initial?: boolean;
+export type SyncOptions = {
+  initial?: true;
   nextSyncToken?: string;
   resolveLinks?: boolean;
-}
+};
 
-export interface ErrorEntry {
+export type ErrorEntry = {
   spaceId: string;
   environmentId: string;
   entryId: string;
   contentTypeId: string;
   locale: Locale;
   missingFields: string[];
-}
+};
 
 export type SandboxContext = {
   module?: NodeModule;

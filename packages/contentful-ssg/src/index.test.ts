@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { run, cleanupPrevData } from './index.js';
 import { gracefulExit } from 'exit-hook';
 import { write } from './tasks/write.js';
-import { RunResult, RuntimeContext } from './types.js';
+import { Asset, Entry, RunResult, RuntimeContext } from './types.js';
 import { getContent } from './__test__/mock.js';
 
 const mockedGracefulExit = <jest.Mock<typeof gracefulExit>>gracefulExit;
@@ -184,10 +184,10 @@ describe('Run', () => {
       observables: {},
       localized: {
         [locale.code]: {
-          assets: mockData.assets,
-          entries: mockData.entries,
-          assetMap: mockData.assetMap,
-          entryMap: mockData.entryMap,
+          assets: mockData.assets as Asset[],
+          entries: mockData.entries as Entry[],
+          assetMap: mockData.assetMap as Map<string, Asset>,
+          entryMap: mockData.entryMap as Map<string, Entry>,
         },
       },
     };
@@ -206,7 +206,7 @@ describe('Run', () => {
 
     cleanupPrevData(context, prev);
 
-    for (let node of context.data.deletedEntries) {
+    for (let node of context?.data?.deletedEntries ?? []) {
       expect(Object.keys(node)).toEqual(expect.arrayContaining(['sys', 'fields']));
       expect(Object.keys(node.sys)).toEqual(expect.arrayContaining(['contentType']));
       expect(node.sys.type).toEqual('DeletedEntry');

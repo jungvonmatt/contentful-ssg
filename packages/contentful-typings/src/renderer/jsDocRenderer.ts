@@ -1,4 +1,7 @@
-import { JsDocRenderer as JsDocRendererOriginal, RenderContext } from 'cf-content-types-generator';
+import {
+  JsDocRenderer as JsDocRendererOriginal,
+  type RenderContext,
+} from 'cf-content-types-generator';
 import { context } from './context.js';
 
 export class JsDocRenderer extends JsDocRendererOriginal {

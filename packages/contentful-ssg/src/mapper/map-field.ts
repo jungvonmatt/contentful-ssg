@@ -1,5 +1,5 @@
 import type { Document } from '@contentful/rich-text-types';
-import type { EntryFields } from 'contentful';
+import type { EntryFields, EntrySkeletonType } from 'contentful';
 import {
   FIELD_TYPE_ARRAY,
   FIELD_TYPE_DATE,
@@ -20,7 +20,7 @@ import { mapRichTextField } from './map-rich-text-field.js';
 export const mapField = async (
   transformContext: TransformContext,
   runtimeContext: RuntimeContext,
-  config: Config
+  config: Config,
 ): Promise<unknown> => {
   const { fieldSettings, fieldContent } = transformContext;
   const { type, items } = fieldSettings || {};
@@ -30,15 +30,15 @@ export const mapField = async (
       return mapDateField(fieldContent as EntryFields.Date);
     case FIELD_TYPE_LINK:
       return mapReferenceField(
-        fieldContent as EntryFields.Link<unknown> | Asset | Entry,
+        fieldContent as EntryFields.EntryLink<EntrySkeletonType> | Asset | Entry,
         transformContext,
-        runtimeContext
+        runtimeContext,
       );
     case FIELD_TYPE_RICHTEXT:
       return mapRichTextField(fieldContent as Document, transformContext, runtimeContext, config);
     case FIELD_TYPE_ARRAY:
       return Promise.all(
-        ((fieldContent || []) as EntryFields.Array).map(async (content) =>
+        ((fieldContent || []) as EntryFields.Array<any>).map(async (content) =>
           mapField(
             {
               ...transformContext,
@@ -46,9 +46,9 @@ export const mapField = async (
               fieldContent: content,
             },
             runtimeContext,
-            config
-          )
-        )
+            config,
+          ),
+        ),
       );
 
     default:

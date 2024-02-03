@@ -24,7 +24,7 @@ const maxMegaPixels = {
 
 export const getRatioConfig = (
   transformContext: TransformContext,
-  config: RatioConfig | undefined
+  config: RatioConfig | undefined,
 ): Ratios => {
   const { entry, fieldId } = transformContext;
   const contentTypeId = entry?.sys?.contentType?.sys?.id ?? 'default';
@@ -38,7 +38,7 @@ export const getRatioConfig = (
 
 export const getFocusArea = (
   transformContext: TransformContext,
-  config: FocusAreaConfig | undefined
+  config: FocusAreaConfig | undefined,
 ): FocusArea => {
   const { entry, fieldId } = transformContext;
   const contentTypeId = entry?.sys?.contentType?.sys?.id ?? 'default';
@@ -107,9 +107,9 @@ export const getImageHelper = (options: PluginConfig) => {
             (w) =>
               w <= width &&
               w <= contentfulMaxWidth &&
-              (!ratio || (w / ratio <= contentfulMaxWidth && w / ratio <= height))
+              (!ratio || (w / ratio <= contentfulMaxWidth && w / ratio <= height)),
           )
-          .map((w) => Math.round(w))
+          .map((w) => Math.round(w)),
       ),
     ];
 
@@ -148,7 +148,7 @@ export const getImageHelper = (options: PluginConfig) => {
               width: w,
             })),
         ];
-      })
+      }),
     );
 
     const [assetFile] = sources[mimeType];
@@ -179,7 +179,7 @@ export const getImageHelper = (options: PluginConfig) => {
   const mapAssetLink = async (
     transformContext: TransformContext,
     _runtimeContext: RuntimeContext,
-    content: MapAssetLink
+    content: MapAssetLink,
   ): Promise<ProcessedImage> => {
     const { asset } = transformContext;
     const { mimeType = '' } = content;
@@ -196,7 +196,7 @@ export const getImageHelper = (options: PluginConfig) => {
         Object.entries(ratioConfig).map(([name, ratio]) => [
           name,
           getImageData(asset, ratio, focusArea),
-        ])
+        ]),
       );
 
       const result: ProcessedImage = {

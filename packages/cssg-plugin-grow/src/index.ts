@@ -1,20 +1,20 @@
 import {
-  Hooks,
-  KeyValueMap,
-  PluginSource,
-  RuntimeContext,
-  TransformContext,
+  type Hooks,
+  type KeyValueMap,
+  type PluginSource,
+  type RuntimeContext,
+  type TransformContext,
 } from '@jungvonmatt/contentful-ssg';
 import { join, relative } from 'path';
 
-export interface TypeConfigEntry {
+export type TypeConfigEntry = {
   [x: string]: string;
   view: string;
   path: string;
-}
-export interface PluginConfig {
+};
+export type PluginConfig = {
   typeConfig: Record<string, TypeConfigEntry>;
-}
+};
 
 /**
  * Built-in fields carry special meaning that can affect various aspects of building your site.
@@ -38,18 +38,18 @@ const buildInFields = [
 
 const getContentTypeDirectory = async (
   contentTypeId: string,
-  runtimeContext: RuntimeContext
+  runtimeContext: RuntimeContext,
 ): Promise<string> => {
   const contentTypeDirectory = await runtimeContext.hooks.mapDirectory(
     { contentTypeId } as TransformContext,
-    contentTypeId
+    contentTypeId,
   );
 
   return join(runtimeContext.config.directory || process.cwd(), contentTypeDirectory);
 };
 
 const plugin = (
-  options: PluginConfig
+  options: PluginConfig,
 ): Required<Pick<Hooks, 'after' | 'transform' | 'mapEntryLink'>> => ({
   /**
    * Map document links to other yaml documents
@@ -59,7 +59,7 @@ const plugin = (
    */
   async mapEntryLink(
     transformContext: TransformContext,
-    runtimeContext?: RuntimeContext
+    runtimeContext?: RuntimeContext,
   ): Promise<string | undefined> {
     const { entry, contentTypeId, entryMap, locale } = transformContext;
     const id = entry?.sys?.id ?? '';
@@ -83,7 +83,7 @@ const plugin = (
    */
   async transform(
     transformContext: TransformContext,
-    runtimeContext: RuntimeContext
+    runtimeContext: RuntimeContext,
   ): Promise<KeyValueMap> {
     const content = runtimeContext.helper.object.snakeCaseKeys(transformContext?.content ?? {});
     const { entry, contentTypeId } = transformContext;
@@ -104,7 +104,7 @@ const plugin = (
         }
 
         return [key, value];
-      })
+      }),
     );
   },
 
@@ -127,7 +127,7 @@ const plugin = (
         } catch (error: unknown) {
           console.log(error);
         }
-      }
+      },
     );
 
     return Promise.all(promises);

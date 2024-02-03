@@ -1,7 +1,7 @@
 import {
   DefaultContentTypeRenderer as DefaultContentTypeRendererOriginal,
   V10ContentTypeRenderer as V10ContentTypeRendererOriginal,
-  RenderContext,
+  type RenderContext,
 } from 'cf-content-types-generator';
 import { context, v10context } from './context.js';
 

@@ -1,5 +1,5 @@
 import dlv from 'dlv';
-import { snakeCase } from 'snake-case';
+import { snakeCase } from 'change-case';
 
 type Entries<T> = Array<
   {
@@ -59,7 +59,7 @@ export const removeEmpty = <T>(iterable: T, strict = true): T => {
   return fromEntries(
     getEntries(iterable)
       .filter(([, v]) => v !== null && v !== undefined && (strict || Boolean(v)))
-      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
+      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v]),
   );
 };
 
@@ -79,7 +79,7 @@ export const snakeCaseKeys = <T>(iterable: T): T => {
       getEntries(iterable).map(([key, value]) => [
         snakeCase(key as string),
         snakeCaseKeys(value),
-      ]) as Entries<T>
+      ]) as Entries<T>,
     );
   }
 
@@ -95,7 +95,7 @@ export const snakeCaseKeys = <T>(iterable: T): T => {
  */
 export const groupBy = <T extends Record<string, unknown>>(
   array: T[],
-  key: keyof T
+  key: keyof T,
 ): Record<string, T[]> =>
   array.reduce((acc, value) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
