@@ -1,7 +1,6 @@
 {
   "version": "1.13.0",
   "packages": ["packages/*"],
-  "useWorkspaces": true,
   "command": {
     "bootstrap": {
       "hoist": true
