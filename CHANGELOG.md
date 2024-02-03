@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.13.0...v1.14.0) (2024-02-03)
+
+**Note:** Version bump only for package @jungvonmatt/contentful-ssg-project
+
 # [1.13.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.12.6...v1.13.0) (2023-05-12)
 
 ### Features
