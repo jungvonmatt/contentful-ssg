@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.0...v1.14.1) (2024-04-08)
+
+### Bug Fixes
+
+- **contentful-typings:** adds missing exit-hook dependency ([c9b911f](https://github.com/jungvonmatt/contentful-ssg/commit/c9b911fda3cc0407106d2534785a3b087d3d8b1f))
+
 # [1.14.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.13.0...v1.14.0) (2024-02-03)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-ssg-project
