@@ -46,6 +46,7 @@
     "contentful-management": "^11.12.1",
     "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
+    "exit-hook": "^4.0.0",
     "fs-extra": "^11.1.0",
     "picocolors": "^1.0.0",
     "prettier": "^3.2.4",
