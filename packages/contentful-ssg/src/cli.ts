@@ -12,7 +12,7 @@ import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
 import { readFile } from 'fs/promises';
 import getPort from 'get-port';
-import localtunnel from 'localtunnel';
+import localtunnel from '@security-patched/localtunnel';
 import path from 'path';
 import prettier from 'prettier';
 import { run } from './index.js';
