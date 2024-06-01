@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.1...v1.14.2) (2024-06-01)
+
+### Bug Fixes
+
+- **chore:** install missing tar dependency ([8aba017](https://github.com/jungvonmatt/contentful-ssg/commit/8aba017c376fb1d93709644cd3b16c3177a45a0d))
+- **chore:** revert: use lerna@8.1.2 while waiting for a fix ([997598a](https://github.com/jungvonmatt/contentful-ssg/commit/997598ace3f1d6131c4d06d13051017e5b2fcf45)), closes [lerna/lerna#4005](https://github.com/lerna/lerna/issues/4005)
+- **sec:** patch localtunnel ([#74](https://github.com/jungvonmatt/contentful-ssg/issues/74)) ([640e7e5](https://github.com/jungvonmatt/contentful-ssg/commit/640e7e578f3772bfe81f1500accfc1685b449a30))
+
 ## [1.14.1](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.0...v1.14.1) (2024-04-08)
 
 ### Bug Fixes
