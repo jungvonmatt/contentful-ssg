@@ -286,12 +286,10 @@ export default (args) => {
             const { code, name: languageName } = locale;
 
             const languageCode = code;
-            const [languageNameShort] = languageCode.split('-');
 
             const localeConfig = {
               languageCode,
               languageName,
-              languageNameShort,
               weight: locale.default ? 1 : 2,
             };
 
