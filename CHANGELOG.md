@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.2...v1.14.3) (2024-06-24)
+
+### Bug Fixes
+
+- remove deprecated custom lang param ([#75](https://github.com/jungvonmatt/contentful-ssg/issues/75)) ([a2bd437](https://github.com/jungvonmatt/contentful-ssg/commit/a2bd4373c0035b25bb81bf8bb212ce9f570030c0)), closes [#62](https://github.com/jungvonmatt/contentful-ssg/issues/62)
+
 ## [1.14.2](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.1...v1.14.2) (2024-06-01)
 
 ### Bug Fixes
