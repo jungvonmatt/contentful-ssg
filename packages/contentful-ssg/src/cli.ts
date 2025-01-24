@@ -2,26 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call */
 
 /* eslint-env node */
-import { asyncExitHook, gracefulExit } from 'exit-hook';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { type QueryOptions } from 'contentful-management/types.js';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
+import { asyncExitHook, gracefulExit } from 'exit-hook';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
 import { readFile } from 'fs/promises';
-import getPort from 'get-port';
-import localtunnel from '@security-patched/localtunnel';
 import path from 'path';
 import prettier from 'prettier';
 import { run } from './index.js';
 import { initializeCache } from './lib/cf-cache.js';
 import { getConfig, getEnvironmentConfig } from './lib/config.js';
-import { addWatchWebhook } from './lib/contentful.js';
 import { omitKeys } from './lib/object.js';
 import { askAll, askMissing, confirm, logError } from './lib/ui.js';
-import { getApp } from './server/index.js';
 import { type Config, type ContentfulConfig, type RunResult } from './types.js';
 
 const env = dotenv.config();
@@ -273,78 +269,83 @@ program
 
         poll();
       } else {
-        let port = await getPort({ port: 1314 });
-
-        if (process.env.CSSG_WEBHOOK_URL || cmd.url) {
-          const url = new URL(process.env.CSSG_WEBHOOK_URL || cmd.url);
-          if (url.port) {
-            port = parseInt(url.port, 10);
-          } else {
-            port = url.protocol === 'https:' ? 443 : 80;
-          }
-        }
-
-        if (process.env.CSSG_WEBHOOK_PORT || cmd.port) {
-          port = parseInt(process.env.CSSG_WEBHOOK_PORT || cmd.port, 10);
-        }
-
-        const app = getApp(async () => {
-          prev = await run({ ...verified, sync: true }, prev);
-          await cache.setSyncState(prev);
-        });
-
-        console.log();
-
-        const server = app.listen(port, () => {
-          console.log(`  Internal server listening on port :${chalk.cyan(port)}`);
-        });
-
-        const stopServer = async () =>
-          new Promise((resolve, reject) => {
-            server.close((err) => {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(true);
-              }
-            });
-          });
-
-        let url = process.env.CSSG_WEBHOOK_URL || (cmd.url as string);
-        let tunnel: Awaited<ReturnType<typeof localtunnel>>;
-        if (!url) {
-          tunnel = (await localtunnel({ port })) as {
-            url: string;
-            close: () => Promise<void>;
-          };
-          url = tunnel.url as string;
-        }
-
-        console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
-        const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
-
-        // Remove webhook & stop server on exit
-        asyncExitHook(
-          async () => {
-            try {
-              const results = await Promise.allSettled([
-                webhook.delete(),
-                stopServer(),
-                tunnel?.close(),
-              ]);
-              results.forEach((result) => {
-                if (result.status === 'rejected') {
-                  console.error('\nError:', result?.reason?.message ?? result?.reason);
-                }
-              });
-            } catch (error: unknown) {
-              console.error('\nError:', error);
-            }
-          },
-          {
-            wait: 2000,
-          },
+        console.log(
+          chalk.red(
+            '\nLocal tunneling has been disabled due to security issues with the used package.\nPlease use "--poll" instead',
+          ),
         );
+        // Let port = await getPort({ port: 1314 });
+
+        // if (process.env.CSSG_WEBHOOK_URL || cmd.url) {
+        //   const url = new URL(process.env.CSSG_WEBHOOK_URL || cmd.url);
+        //   if (url.port) {
+        //     port = parseInt(url.port, 10);
+        //   } else {
+        //     port = url.protocol === 'https:' ? 443 : 80;
+        //   }
+        // }
+
+        // if (process.env.CSSG_WEBHOOK_PORT || cmd.port) {
+        //   port = parseInt(process.env.CSSG_WEBHOOK_PORT || cmd.port, 10);
+        // }
+
+        // const app = getApp(async () => {
+        //   prev = await run({ ...verified, sync: true }, prev);
+        //   await cache.setSyncState(prev);
+        // });
+
+        // console.log();
+
+        // const server = app.listen(port, () => {
+        //   console.log(`  Internal server listening on port :${chalk.cyan(port)}`);
+        // });
+
+        // const stopServer = async () =>
+        //   new Promise((resolve, reject) => {
+        //     server.close((err) => {
+        //       if (err) {
+        //         reject(err);
+        //       } else {
+        //         resolve(true);
+        //       }
+        //     });
+        //   });
+
+        // let url = process.env.CSSG_WEBHOOK_URL || (cmd.url as string);
+        // let tunnel: Awaited<ReturnType<typeof localtunnel>>;
+        // if (!url) {
+        //   tunnel = (await localtunnel({ port })) as {
+        //     url: string;
+        //     close: () => Promise<void>;
+        //   };
+        //   url = tunnel.url as string;
+        // }
+
+        // console.log(`  Listening for hooks on ${chalk.cyan(url)}`);
+        // const webhook = await addWatchWebhook(verified as ContentfulConfig, url);
+
+        // // Remove webhook & stop server on exit
+        // asyncExitHook(
+        //   async () => {
+        //     try {
+        //       const results = await Promise.allSettled([
+        //         webhook.delete(),
+        //         stopServer(),
+        //         tunnel?.close(),
+        //       ]);
+        //       results.forEach((result) => {
+        //         if (result.status === 'rejected') {
+        //           console.error('\nError:', result?.reason?.message ?? result?.reason);
+        //         }
+        //       });
+        //     } catch (error: unknown) {
+        //       console.error('\nError:', error);
+        //     }
+        //   },
+        //   {
+        //     wait: 2000,
+        //   },
+        // );
       }
     }),
   );
