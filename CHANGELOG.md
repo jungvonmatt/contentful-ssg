@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.3...v2.0.0) (2025-01-24)
+
+### Bug Fixes
+
+- **cli:** removed tunnel due to sec issues with localtunnel ([f93fb0d](https://github.com/jungvonmatt/contentful-ssg/commit/f93fb0d3e529d5f2f3f72a4090e69338219eaa2e))
+
+### BREAKING CHANGES
+
+- **cli:** watch mode only works with poll mode
+
 ## [1.14.3](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.2...v1.14.3) (2024-06-24)
 
 ### Bug Fixes
