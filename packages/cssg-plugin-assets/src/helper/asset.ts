@@ -81,7 +81,7 @@ export const getAssetHelper = (options: PluginConfig) => {
       try {
         const response = got(url);
         buffer = await response.buffer();
-        await promises.writeFile(cacheFile, buffer);
+        await promises.writeFile(cacheFile, new Uint8Array(buffer));
       } catch {
         console.log('Error downloading image:', url);
       }

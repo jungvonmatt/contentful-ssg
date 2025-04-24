@@ -72,7 +72,9 @@ type CachedRunResult = {
 
 const deserialize = async (buffer: Buffer): Promise<RunResult> => {
   try {
-    const { localized, observableEntries } = v8Deserialize(buffer) as CachedRunResult;
+    const { localized, observableEntries } = v8Deserialize(
+      new Uint8Array(buffer),
+    ) as CachedRunResult;
 
     const observables = Object.fromEntries(
       observableEntries.map(([locale, data]) => {
@@ -106,7 +108,7 @@ export const setSyncState = async (state: RunResult, config: Partial<ContentfulC
   const data = await serialize(state);
   const file = getStateFile(config);
 
-  return outputFile(file, data);
+  return outputFile(file, new Uint8Array(data));
 };
 
 export const hasSyncState = (config: Partial<ContentfulConfig>) => {
