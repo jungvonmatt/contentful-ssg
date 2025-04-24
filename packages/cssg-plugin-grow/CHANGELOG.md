@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/jungvonmatt/contentful-ssg/compare/v2.0.0...v2.0.1) (2025-04-24)
+
+**Note:** Version bump only for package @jungvonmatt/cssg-plugin-grow
+
 # [2.0.0](https://github.com/jungvonmatt/contentful-ssg/compare/v1.14.3...v2.0.0) (2025-01-24)
 
 **Note:** Version bump only for package @jungvonmatt/cssg-plugin-grow
