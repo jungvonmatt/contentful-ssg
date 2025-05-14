@@ -6,11 +6,15 @@ import { getMockData, type ContentTypes } from './lib/faker.js';
 
 export async function createFakes(
   contentTypeIds: string[],
+  moduleName?: string,
+  configFile?: string,
 ): Promise<Record<string, KeyValueMap[]>> {
   const contentfulConfig = (await askMissing(
     await getConfig({
       previewAccessToken: '-',
       accessToken: '-',
+      moduleName,
+      configFile,
     }),
   )) as ContentfulConfig;
   const environment = await getEnvironment(contentfulConfig);

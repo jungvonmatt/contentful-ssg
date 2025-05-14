@@ -19,6 +19,8 @@ type CommandArgs = {
   jsdoc?: boolean;
   localized?: boolean;
   legacy?: boolean;
+  moduleName?: string;
+  config?: string;
 };
 
 type CommandError = Error & {
@@ -49,6 +51,11 @@ const program = new Command();
 program
   .command('generate')
   .description('Generate typescript definitions for contentful content types.')
+  .option('-m, --module-name <moduleName>', 'Use different config name. Defaults to contentful-ssg')
+  .option(
+    '--config <configFile>',
+    'Use this configuration, overriding other config options if present',
+  )
   .option('-o, --output <filepath>', 'Specify output file', '@types/contentful.ts')
   .option('-l, --localized', 'Add localized types')
   .option('-d, --jsdoc', 'Add JSDoc comments')
@@ -62,6 +69,8 @@ program
         jsdoc: cmd.jsdoc,
         localized: cmd.localized,
         legacy: cmd.legacy,
+        moduleName: cmd?.moduleName || undefined,
+        configFile: cmd?.config || undefined,
       });
 
       await outputFile(output, typings);

@@ -153,21 +153,23 @@ const resolvePlugin = async (
   }
 };
 
-const loadConfig = async (moduleName: string): Promise<CosmiconfigResult> => {
+const loadConfig = async (moduleName: string, configFile?: string): Promise<CosmiconfigResult> => {
   const explorer = cosmiconfig(moduleName, {
     searchStrategy: 'global',
-    searchPlaces: [
-      'package.json',
-      `.${moduleName}rc`,
-      `.${moduleName}rc.json`,
-      `.${moduleName}rc.yaml`,
-      `.${moduleName}rc.yml`,
-      `.${moduleName}rc.js`,
-      `${moduleName}.config.ts`,
-      `${moduleName}.config.js`,
-      `${moduleName}.config.cjs`,
-      `${moduleName}.config.mjs`,
-    ],
+    searchPlaces: configFile
+      ? [configFile]
+      : [
+          'package.json',
+          `.${moduleName}rc`,
+          `.${moduleName}rc.json`,
+          `.${moduleName}rc.yaml`,
+          `.${moduleName}rc.yml`,
+          `.${moduleName}rc.js`,
+          `${moduleName}.config.ts`,
+          `${moduleName}.config.js`,
+          `${moduleName}.config.cjs`,
+          `${moduleName}.config.mjs`,
+        ].filter(Boolean),
     loaders: {
       '.ts': typescriptLoader,
       '.js': ecmascriptLoader,
@@ -195,7 +197,9 @@ export const getEnvironmentConfig = (strict = true): ContentfulConfig =>
  * Get configuration
  * @param {Object} args
  */
-export const getConfig = async (args: Partial<Config> = {}): Promise<Config> => {
+export const getConfig = async (
+  args: Partial<Config> & { moduleName?: string; configFile?: string } = {},
+): Promise<Config> => {
   const defaultOptions: Config = {
     environmentId: 'master',
     host: 'api.contentful.com',
@@ -239,7 +243,7 @@ export const getConfig = async (args: Partial<Config> = {}): Promise<Config> => 
   args.rootDir = process.cwd();
   try {
     // Get configuration from contentful-ssg rc file
-    const configFile = await loadConfig('contentful-ssg');
+    const configFile = await loadConfig(args?.moduleName || 'contentful-ssg', args.configFile);
 
     if (configFile && !configFile.isEmpty) {
       configFileOptions = configFile.config as Partial<Config>;

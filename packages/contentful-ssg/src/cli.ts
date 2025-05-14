@@ -37,11 +37,15 @@ const parseFetchArgs = (cmd: {
   verbose: boolean;
   ignoreErrors: boolean;
   query: string;
-}): Partial<Config> => ({
+  moduleName?: string;
+  config?: string;
+}): Partial<Config> & { moduleName?: string; configFile?: string } => ({
   preview: cmd.preview,
   verbose: cmd.verbose,
   ignoreErrors: cmd.ignoreErrors,
   query: parseQuery(cmd.query),
+  moduleName: cmd?.moduleName || undefined,
+  configFile: cmd?.config,
 });
 
 type CommandError = Error & {
@@ -71,18 +75,24 @@ program
   .command('init')
   .description('Initialize contentful-ssg')
   .option('--typescript', 'Initialize typescript config')
+  .option(
+    '--config <configFile>',
+    'Use this configuration, overriding other config options if present',
+  )
+  .option('-m, --module-name <moduleName>', 'Use different config name. Defaults to contentful-ssg')
   .action(
-    actionRunner(async (cmd) => {
+    actionRunner(async (cmd: { typescript?: boolean; moduleName?: string; config?: string }) => {
       const useTypescript = Boolean(cmd?.typescript ?? false);
-      const config = await getConfig();
+      const moduleName = cmd?.moduleName || 'contentful-ssg';
+      const configFile = cmd?.config;
+      const config = await getConfig({ moduleName, configFile });
       const verified = await askAll(config);
 
       const environmentConfig = getEnvironmentConfig();
 
-      const filePath = path.join(
-        process.cwd(),
-        `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`,
-      );
+      const filePath =
+        configFile ||
+        path.join(process.cwd(), `${moduleName}.config.${useTypescript ? 'ts' : 'js'}`);
       const prettierOptions = await prettier.resolveConfig(filePath);
       if (verified.directory?.startsWith('/')) {
         verified.directory = path.relative(process.cwd(), verified.directory);
@@ -129,7 +139,7 @@ program
       );
 
       let content = '';
-      if (useTypescript) {
+      if (useTypescript || filePath.endsWith('.ts')) {
         content = await prettier.format(
           `import {Config} from '@jungvonmatt/contentful-ssg';
         export default <Config>${JSON.stringify(cleanedConfig)}`,
@@ -138,27 +148,32 @@ program
             ...prettierOptions,
           },
         );
-      } else {
+      } else if (filePath.endsWith('.js')) {
         content = await prettier.format(`module.exports = ${JSON.stringify(cleanedConfig)}`, {
           parser: 'babel',
           ...prettierOptions,
         });
       }
 
-      let writeFile = true;
-      if (existsSync(filePath)) {
-        writeFile = await confirm(
-          `Config file already exists. Overwrite?\n\n${chalk.reset(content)}`,
-        );
-      } else {
-        writeFile = await confirm(`Please verify your settings:\n\n${chalk.reset(content)}`, true);
-      }
+      if (filePath.endsWith('.js') || filePath.endsWith('.ts')) {
+        let writeFile = true;
+        if (existsSync(filePath)) {
+          writeFile = await confirm(
+            `Config file already exists. Overwrite?\n\n${chalk.reset(content)}`,
+          );
+        } else {
+          writeFile = await confirm(
+            `Please verify your settings:\n\n${chalk.reset(content)}`,
+            true,
+          );
+        }
 
-      if (writeFile) {
-        await outputFile(filePath, content);
-        console.log(
-          `\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`,
-        );
+        if (writeFile) {
+          await outputFile(filePath, content);
+          console.log(
+            `\nConfiguration saved to ${chalk.cyan(path.relative(process.cwd(), filePath))}`,
+          );
+        }
       }
     }),
   );
@@ -166,8 +181,13 @@ program
 program
   .command('fetch')
   .description('Fetch content objects')
+  .option('-m, --module-name <moduleName>', 'Use different config name. Defaults to contentful-ssg')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
+  .option(
+    '--config <configFile>',
+    'Use this configuration, overriding other config options if present',
+  )
   .option('--sync', 'cache sync data')
   .option('--query <query>', 'Query used to fetch contentful entries')
   .option('--ignore-errors', 'No error return code when transform has errors')
@@ -203,8 +223,13 @@ program
 program
   .command('watch')
   .description('Fetch content objects && watch for changes')
+  .option('-m, --module-name <moduleName>', 'Use different config name. Defaults to contentful-ssg')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
+  .option(
+    '--config <configFile>',
+    'Use this configuration, overriding other config options if present',
+  )
   .option('--url <url>', 'Webhook url.\nCan also be set via environment variable CSSG_WEBHOOK_URL')
   .option('--no-cache', "Don't cache sync data")
   .option('--poll', 'Use polling (usefull when ngrok tunnel is not an option)')

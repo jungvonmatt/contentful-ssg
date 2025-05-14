@@ -21,6 +21,8 @@ type CommandArgs = {
   outputDirectory: string;
   extension: string;
   contentType: string[];
+  moduleName?: string;
+  config?: string;
   env: string;
   verbose: boolean;
   yes: boolean;
@@ -55,8 +57,13 @@ program
   .command('create')
   .description('Create fake objects')
   .option('-c, --content-type <content-type...>', 'Specify content-types')
+  .option('-m, --module-name <moduleName>', 'Use different config name. Defaults to contentful-ssg')
   .option('-e, --extension <extension>', 'Specify output format', 'yaml')
   .option('-o, --output-directory <directory>', 'Specify output directory', 'data')
+  .option(
+    '--config <configFile>',
+    'Use this configuration, overriding other config options if present',
+  )
   .option('--yes', 'Overwrite')
   .option('--no', 'Skip')
   .action(
@@ -66,7 +73,7 @@ program
       const no: boolean = cmd?.no ?? false;
       const format: string = cmd?.extension ?? '';
       const outputDirectory: string = cmd?.outputDirectory ?? '';
-      const fakes = await createFakes(contentTypes);
+      const fakes = await createFakes(contentTypes, cmd.moduleName, cmd.config);
       console.log();
       if (!Object.keys(fakes).length) {
         console.log('No files generated.');

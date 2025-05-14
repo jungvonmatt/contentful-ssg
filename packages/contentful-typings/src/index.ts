@@ -22,6 +22,8 @@ type Options = {
   jsdoc?: boolean;
   typeguard?: boolean;
   legacy?: boolean;
+  moduleName?: string;
+  configFile?: string;
 };
 
 const isLegacyVersion = async (dir?: string) => {
@@ -46,6 +48,8 @@ export const generateTypings = async (options: Options = {}) => {
     await getConfig({
       previewAccessToken: '-',
       accessToken: '-',
+      moduleName: options.moduleName || undefined,
+      configFile: options.configFile || undefined,
     }),
   );
 
