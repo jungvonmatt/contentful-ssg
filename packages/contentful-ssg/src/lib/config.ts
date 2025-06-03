@@ -1,101 +1,20 @@
-import vm from 'vm';
 import chalk from 'chalk';
-import { transformSync, type Options } from '@swc/core';
 import { gracefulExit } from 'exit-hook';
-import { cosmiconfig, type Loader } from 'cosmiconfig';
-import type { CosmiconfigResult } from 'cosmiconfig/dist/types';
-import mergeOptionsModule from 'merge-options';
-import { dirname, isAbsolute, resolve } from 'path';
+import { resolve } from 'path';
 import slash from 'slash';
 import type {
   Config,
   ContentfulConfig,
-  ContentfulRcConfig,
   Hooks,
   KeyValueMap,
   PluginInfo,
   PluginModule,
-  SandboxContext,
 } from '../types.js';
 import { reduceAsync } from './array.js';
 import { createRequire } from './create-require.js';
 import { isObject, removeEmpty } from './object.js';
 
-const getContext = (filename: string): vm.Context => {
-  const module: NodeModule = {
-    exports: {},
-    isPreloading: false,
-    require: createRequire(dirname(filename)),
-    id: '',
-    filename,
-    loaded: false,
-    parent: undefined,
-    children: [],
-    path: dirname(filename),
-    paths: [dirname(filename)],
-  };
-
-  const sandbox: SandboxContext = {
-    module,
-    exports: {},
-    process: { env: process.env },
-    require: module.require,
-    __dirname: dirname(filename),
-    __filename: filename,
-  };
-  vm.createContext(sandbox);
-
-  return sandbox;
-};
-
-const getLoader =
-  (syntax: Options['jsc']['parser']['syntax']) => (filename: string, content: string) => {
-    const context = getContext(filename);
-    const script = transformSync(content, {
-      isModule: /\s(export|import)\s/.test(content),
-      module: {
-        type: 'commonjs',
-      },
-      cwd: dirname(filename),
-      jsc: {
-        parser: {
-          syntax,
-          dynamicImport: true,
-        },
-      },
-    });
-
-    const vmScript = new vm.Script(script.code);
-
-    try {
-      vmScript.runInContext(context, { filename, timeout: 10000 });
-    } catch (error: unknown) {
-      console.log(error);
-    }
-
-    // Handle module (even if the transpiled code should be commonjs exports)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    if (Object.keys(context?.module?.exports).length > 0) {
-      const result = (context.module.exports?.default ?? context.module.exports) as Config;
-      return { ...result };
-    }
-
-    // Handle commonjs export
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    if (Object.keys(context?.exports ?? {}).length > 0) {
-      const result = (context.exports?.default ?? context.exports) as Config;
-
-      return { ...result };
-    }
-
-    return {};
-  };
-
-const typescriptLoader: Loader = getLoader('typescript');
-const ecmascriptLoader: Loader = getLoader('ecmascript');
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const mergeOptions = mergeOptionsModule.bind({ ignoreUndefined: true });
+import { getPromts, loadContentfulConfig } from '@jungvonmatt/contentful-config';
 
 const resolvePlugin = async (
   plugin: string | [string, KeyValueMap] | PluginInfo,
@@ -153,34 +72,6 @@ const resolvePlugin = async (
   }
 };
 
-const loadConfig = async (moduleName: string, configFile?: string): Promise<CosmiconfigResult> => {
-  const explorer = cosmiconfig(moduleName, {
-    searchStrategy: 'global',
-    searchPlaces: configFile
-      ? [configFile]
-      : [
-          'package.json',
-          `.${moduleName}rc`,
-          `.${moduleName}rc.json`,
-          `.${moduleName}rc.yaml`,
-          `.${moduleName}rc.yml`,
-          `.${moduleName}rc.js`,
-          `${moduleName}.config.ts`,
-          `${moduleName}.config.js`,
-          `${moduleName}.config.cjs`,
-          `${moduleName}.config.mjs`,
-        ].filter(Boolean),
-    loaders: {
-      '.ts': typescriptLoader,
-      '.js': ecmascriptLoader,
-      '.cjs': ecmascriptLoader,
-      '.mjs': ecmascriptLoader,
-    },
-  });
-
-  return explorer.search();
-};
-
 export const getEnvironmentConfig = (strict = true): ContentfulConfig =>
   removeEmpty(
     {
@@ -193,92 +84,44 @@ export const getEnvironmentConfig = (strict = true): ContentfulConfig =>
     strict,
   );
 
+export const ALL_PROMPTS = getPromts({}).map((p) => p.name);
+
 /**
  * Get configuration
  * @param {Object} args
  */
 export const getConfig = async (
-  args: Partial<Config> & { moduleName?: string; configFile?: string } = {},
+  args: Partial<Config> & { configFile?: string; cwd?: string } = {},
+  required: Array<Exclude<keyof Config, number | symbol>> = ALL_PROMPTS as Array<
+    Exclude<keyof Config, number | symbol>
+  >,
 ): Promise<Config> => {
-  const defaultOptions: Config = {
-    environmentId: 'master',
-    host: 'api.contentful.com',
-    directory: resolve(process.cwd(), 'content'),
-    managedDirectories: [],
-    plugins: [],
-    resolvedPlugins: [],
-  };
+  const { configFile, cwd, ...overrides } = args;
 
-  const environmentOptions = getEnvironmentConfig(false);
-  let contentfulCliOptions: Partial<ContentfulConfig> = {};
+  const loaderResult = await loadContentfulConfig<Config>('contentful-ssg', {
+    overrides,
+    required,
+    defaultConfig: {
+      environmentId: 'master',
+      host: 'api.contentful.com',
+      directory: resolve(process.cwd(), 'content'),
+      managedDirectories: [],
+      plugins: [],
+      resolvedPlugins: [],
+    },
+  });
 
-  try {
-    // Get configuration from contentful rc file (created by the contentful cli command)
-    const contentfulConfig = await loadConfig('contentful');
-    if (contentfulConfig && !contentfulConfig.isEmpty) {
-      const { managementToken, activeSpaceId, activeEnvironmentId, host } =
-        contentfulConfig.config as ContentfulRcConfig;
-
-      contentfulCliOptions = removeEmpty(
-        {
-          spaceId: activeSpaceId,
-          managementToken,
-          environmentId: activeEnvironmentId,
-          host,
-        },
-        false,
-      );
-    }
-  } catch (error: unknown) {
-    if (typeof error === 'string') {
-      console.log('Error (Contentful):', error);
-    } else if (error instanceof Error) {
-      console.log('Error (Contentful):', error.message);
-    } else {
-      console.log(error);
-    }
-  }
-
-  let configFileOptions: Partial<Config> = {};
-  args.rootDir = process.cwd();
-  try {
-    // Get configuration from contentful-ssg rc file
-    const configFile = await loadConfig(args?.moduleName || 'contentful-ssg', args.configFile);
-
-    if (configFile && !configFile.isEmpty) {
-      configFileOptions = configFile.config as Partial<Config>;
-      args.rootDir = dirname(configFile.filepath);
-      if (configFileOptions.directory && !isAbsolute(configFileOptions.directory)) {
-        configFileOptions.directory = resolve(args.rootDir, configFileOptions.directory);
-      }
-    }
-  } catch (error: unknown) {
-    if (typeof error === 'string') {
-      console.log('Error:', error);
-    } else if (error instanceof Error) {
-      console.log('Error:', error.message);
-    } else {
-      console.log(error);
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const result = mergeOptions(
-    defaultOptions,
-    contentfulCliOptions,
-    environmentOptions,
-    configFileOptions,
-    args || {},
-  ) as Config;
+  const { config } = loaderResult;
+  config.directory = resolve(cwd || process.cwd(), config.directory);
 
   const resolvedPlugins = [
-    ...result.resolvedPlugins,
+    ...config.resolvedPlugins,
     ...(await Promise.all(
-      (result.plugins || []).map(async (plugin) => resolvePlugin(plugin, result)),
+      (config.plugins || []).map(async (plugin) => resolvePlugin(plugin, config)),
     )),
   ];
 
-  result.managedDirectories = [...result.managedDirectories, result.directory];
+  config.managedDirectories = [...config.managedDirectories, config.directory];
 
   const hookedConfig = await reduceAsync(
     resolvedPlugins.filter((plugin) => typeof plugin.config === 'function'),
@@ -286,8 +129,8 @@ export const getConfig = async (
       const hook = hooks.config;
       return hook(prev);
     },
-    result,
+    config,
   );
 
-  return { ...hookedConfig, ...result, resolvedPlugins };
+  return { ...hookedConfig, ...config, resolvedPlugins };
 };

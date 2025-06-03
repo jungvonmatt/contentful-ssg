@@ -1,9 +1,8 @@
 /* _eslint-disable @typescript-eslint/no-unsafe-call */
 import path from 'node:path';
 import { type ContentfulConfig, type ContentType } from '@jungvonmatt/contentful-ssg';
-import { getConfig } from '@jungvonmatt/contentful-ssg/lib/config';
+import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 import { getEnvironment, pagedGet } from '@jungvonmatt/contentful-ssg/lib/contentful';
-import { askMissing } from '@jungvonmatt/contentful-ssg/lib/ui';
 import { CFDefinitionsBuilder, type ContentTypeRenderer } from 'cf-content-types-generator';
 import { readPackageUp } from 'read-pkg-up';
 import semiver from 'semiver';
@@ -22,7 +21,7 @@ type Options = {
   jsdoc?: boolean;
   typeguard?: boolean;
   legacy?: boolean;
-  moduleName?: string;
+  cwd?: string;
   configFile?: string;
 };
 
@@ -44,16 +43,13 @@ const isLegacyVersion = async (dir?: string) => {
 };
 
 export const generateTypings = async (options: Options = {}) => {
-  const contentfulConfig = await askMissing(
-    await getConfig({
-      previewAccessToken: '-',
-      accessToken: '-',
-      moduleName: options.moduleName || undefined,
-      configFile: options.configFile || undefined,
-    }),
-  );
+  const loaderResult = await loadContentfulConfig<ContentfulConfig>('contentful-ssg', {
+    configFile: options?.configFile,
+    cwd: options?.cwd,
+    required: ['managementToken', 'environmentId', 'spaceId'],
+  });
 
-  const client = await getEnvironment(contentfulConfig as ContentfulConfig);
+  const client = await getEnvironment(loaderResult.config);
 
   const { items: contentTypes } = await pagedGet<ContentType>(client, {
     method: 'getContentTypes',
