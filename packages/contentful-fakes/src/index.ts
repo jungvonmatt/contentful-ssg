@@ -6,11 +6,12 @@ import { getMockData, type ContentTypes } from './lib/faker.js';
 export async function createFakes(
   contentTypeIds: string[],
   configFile?: string,
-  cwd: string = process.cwd(),
+  cwd?: string,
 ): Promise<Record<string, KeyValueMap[]>> {
   const loaderResult = await loadContentfulConfig<ContentfulConfig>('contentful-ssg', {
     configFile,
     required: ['managementToken', 'environmentId', 'spaceId'],
+    cwd,
   });
 
   const environment = await getEnvironment(loaderResult.config);

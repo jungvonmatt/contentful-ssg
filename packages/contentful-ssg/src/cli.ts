@@ -177,7 +177,6 @@ program
 program
   .command('fetch')
   .description('Fetch content objects')
-  .option('-m, --module-name <moduleName>', 'Use different config name. Defaults to contentful-ssg')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
   .option(
@@ -219,7 +218,6 @@ program
 program
   .command('watch')
   .description('Fetch content objects && watch for changes')
-  .option('-m, --module-name <moduleName>', 'Use different config name. Defaults to contentful-ssg')
   .option('-p, --preview', 'Fetch with preview mode')
   .option('-v, --verbose', 'Verbose output')
   .option(

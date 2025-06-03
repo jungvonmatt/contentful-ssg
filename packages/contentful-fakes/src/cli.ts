@@ -21,8 +21,8 @@ type CommandArgs = {
   outputDirectory: string;
   extension: string;
   contentType: string[];
-  moduleName?: string;
   config?: string;
+  cwd?: string;
   env: string;
   verbose: boolean;
   yes: boolean;
@@ -73,7 +73,7 @@ program
       const no: boolean = cmd?.no ?? false;
       const format: string = cmd?.extension ?? '';
       const outputDirectory: string = cmd?.outputDirectory ?? '';
-      const fakes = await createFakes(contentTypes, cmd.moduleName, cmd.config);
+      const fakes = await createFakes(contentTypes, cmd.config, cmd.cwd);
       console.log();
       if (!Object.keys(fakes).length) {
         console.log('No files generated.');

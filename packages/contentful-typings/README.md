@@ -36,8 +36,9 @@ npx contentful-typings generate [options]
   -l, --localized                 Add localized types
   -d, --jsdoc                     Add JSDoc comments
   -g, --typeguard                 Add type guards
-  -h, --help                      display help for command
   --config <configuration file>   Use this configuration, overriding other config options if present
+  --cwd <directory>               Working directory. Defaults to process.cwd()
+  -h, --help                      display help for command
 ```
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-typings
