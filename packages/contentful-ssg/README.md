@@ -32,6 +32,7 @@ npx cssg init
 Initializes contentful-ssg and stores the config values in the `contentful-ssg.config.js` file.
 
 Contentful SSG ships with built in typescript support. Add `--typescript` to generate a typescript configuration file.
+Use the `--config <configuration file>` argument to use a different configuration.
 
 ```bash
 npx cssg init --typescript

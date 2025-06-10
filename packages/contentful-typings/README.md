@@ -32,11 +32,13 @@ npx contentful-typings generate [options]
 #### options
 
 ```
-  -o, --output <filepath>  Specify output file (default: "@types/contentful.d.ts")
-  -l, --localized          Add localized types
-  -d, --jsdoc              Add JSDoc comments
-  -g, --typeguard          Add type guards
-  -h, --help               display help for command
+  -o, --output <filepath>         Specify output file (default: "@types/contentful.d.ts")
+  -l, --localized                 Add localized types
+  -d, --jsdoc                     Add JSDoc comments
+  -g, --typeguard                 Add type guards
+  --config <configuration file>   Use this configuration, overriding other config options if present
+  --cwd <directory>               Working directory. Defaults to process.cwd()
+  -h, --help                      display help for command
 ```
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-typings

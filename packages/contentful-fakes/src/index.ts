@@ -1,19 +1,20 @@
 import { type ContentfulConfig, type KeyValueMap } from '@jungvonmatt/contentful-ssg';
 import { getEnvironment } from '@jungvonmatt/contentful-ssg/lib/contentful';
-import { getConfig } from '@jungvonmatt/contentful-ssg/lib/config';
-import { askMissing } from '@jungvonmatt/contentful-ssg/lib/ui';
+import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 import { getMockData, type ContentTypes } from './lib/faker.js';
 
 export async function createFakes(
   contentTypeIds: string[],
+  configFile?: string,
+  cwd?: string,
 ): Promise<Record<string, KeyValueMap[]>> {
-  const contentfulConfig = (await askMissing(
-    await getConfig({
-      previewAccessToken: '-',
-      accessToken: '-',
-    }),
-  )) as ContentfulConfig;
-  const environment = await getEnvironment(contentfulConfig);
+  const loaderResult = await loadContentfulConfig<ContentfulConfig>('contentful', {
+    configFile,
+    required: ['managementToken', 'environmentId', 'spaceId'],
+    cwd,
+  });
+
+  const environment = await getEnvironment(loaderResult.config);
   const { items: contentTypes } = await environment.getContentTypes();
   const { items } = await environment.getEditorInterfaces();
 

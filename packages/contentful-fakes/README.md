@@ -34,6 +34,8 @@ npx contentful-fakes create [options]
   -c, --content-type` `<content-type...>  Specify content-types
   -e, --extension <extension>           Specify output format (default: "yaml")
   -o, --output-directory <directory>    Specify output directory (default: "data")
+  --config <configuration file>         Use this configuration, overriding other config options if present
+  --cwd <directory>                     Working directory. Defaults to process.cwd()
 ```
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-fakes
