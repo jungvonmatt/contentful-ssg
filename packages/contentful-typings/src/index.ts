@@ -43,7 +43,7 @@ const isLegacyVersion = async (dir?: string) => {
 };
 
 export const generateTypings = async (options: Options = {}) => {
-  const loaderResult = await loadContentfulConfig<ContentfulConfig>('contentful-ssg', {
+  const loaderResult = await loadContentfulConfig<ContentfulConfig>('contentful', {
     configFile: options?.configFile,
     cwd: options?.cwd,
     required: ['managementToken', 'environmentId', 'spaceId'],

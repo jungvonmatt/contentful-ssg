@@ -8,7 +8,7 @@ export async function createFakes(
   configFile?: string,
   cwd?: string,
 ): Promise<Record<string, KeyValueMap[]>> {
-  const loaderResult = await loadContentfulConfig<ContentfulConfig>('contentful-ssg', {
+  const loaderResult = await loadContentfulConfig<ContentfulConfig>('contentful', {
     configFile,
     required: ['managementToken', 'environmentId', 'spaceId'],
     cwd,
