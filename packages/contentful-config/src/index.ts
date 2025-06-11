@@ -101,7 +101,7 @@ type LoadContentfulConfigOptions<T extends Record<string, any> = ContentfulOptio
 >;
 
 const mergePrompts = <T extends Record<string, any>>(options: LoadContentfulConfigOptions<T>) => {
-  const prompts = options.prompts;
+  const { prompts } = options;
   if (prompts === false) {
     return false;
   }
