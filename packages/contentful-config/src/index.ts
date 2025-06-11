@@ -1,4 +1,6 @@
 import { homedir } from 'node-homedir';
+import { packageUp } from 'package-up';
+import { dirname } from 'pathe';
 import type { LoadConfigOptions } from '@jungvonmatt/config-loader';
 import {
   type ContentfulOptions,
@@ -98,6 +100,26 @@ type LoadContentfulConfigOptions<T extends Record<string, any> = ContentfulOptio
   'name'
 >;
 
+const mergePrompts = <T extends Record<string, any>>(options: LoadContentfulConfigOptions<T>) => {
+  const prompts = options.prompts;
+  if (prompts === false) {
+    return false;
+  }
+
+  const result: LoadContentfulConfigOptions<T>['prompts'] = (data) => {
+    const defaultPrompts = getPromts(data);
+    const optionPrompts = Array.isArray(prompts) ? prompts : (prompts?.(data) ?? undefined);
+
+    if (Array.isArray(optionPrompts)) {
+      return [...defaultPrompts, ...optionPrompts];
+    }
+
+    return [...defaultPrompts];
+  };
+
+  return result;
+};
+
 export const loadContentfulConfig = async <T extends Record<string, any> = ContentfulOptions>(
   name: string,
   options: LoadContentfulConfigOptions<T> = {},
@@ -111,8 +133,12 @@ export const loadContentfulConfig = async <T extends Record<string, any> = Conte
     cwd: homedir(),
   });
 
+  const packageJson = await packageUp();
+  const packageDir = packageJson ? dirname(packageJson) : undefined;
+
   const result = await loadConfig<T>({
     ...options,
+    cwd: options?.cwd || packageDir || process.cwd(),
     name,
     defaultConfig: {
       environmentId: 'master',
@@ -131,7 +157,7 @@ export const loadContentfulConfig = async <T extends Record<string, any> = Conte
       CONTENTFUL_HOST: 'host',
       ...options?.envMap,
     } as const,
-    prompts: getPromts,
+    prompts: mergePrompts<T>(options),
   });
 
   return { ...result, config: result.config as T };
