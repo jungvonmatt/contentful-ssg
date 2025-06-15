@@ -6,11 +6,26 @@ import {
   type ContentfulOptions,
   getApiKey,
   getEnvironments,
+  getOrganizations,
   getPreviewApiKey,
   getSpaces,
 } from './contentful.js';
 
-export const getPromts = (data: Partial<ContentfulOptions>) => {
+type EnquirerContext<T extends Record<string, any> = ContentfulOptions> = {
+  enquirer: {
+    options: Record<string, unknown>;
+    answers: Partial<T>;
+  };
+  choices: Array<{
+    message?: string;
+    name: string;
+    value?: string;
+  }>;
+};
+
+export type { ResolvedConfig } from '@jungvonmatt/config-loader';
+
+export const getPrompts = (data: Partial<ContentfulOptions> = {}) => {
   return [
     {
       type: 'input',
@@ -20,31 +35,94 @@ export const getPromts = (data: Partial<ContentfulOptions>) => {
     },
     {
       type: 'select',
-      name: 'spaceId',
-      message: 'Space ID',
-      choices: async (answers: Partial<ContentfulOptions>) => {
-        const token = data.managementToken || answers.managementToken;
-        if (token) {
-          const spaces = await getSpaces({ accessToken: token });
-          return spaces.map((space) => ({
-            name: `${space.name} (${space.sys.id})`,
-            value: space.sys.id,
+      name: 'host',
+      message: 'API Base URL',
+      initial: data.host,
+      choices: ['api.contentful.com', 'api.eu.contentful.com'],
+    },
+    {
+      type: 'select',
+      name: 'organizationId',
+      message: 'Organization',
+      async choices(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
+        const managementToken = answers?.managementToken || data?.managementToken;
+        const host = answers?.host || data?.host;
+        if (managementToken) {
+          const organizations = await getOrganizations({ managementToken, host });
+          return organizations.map((organization) => ({
+            message: `${organization.name}`,
+            name: organization.sys.id,
+            value: organization.sys.id,
           }));
         }
 
         return [];
       },
+      async skip(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
+        const managementToken = answers?.managementToken || data?.managementToken;
+        const host = answers?.host || data?.host;
+        if (managementToken) {
+          const organizations = await getOrganizations({ managementToken, host });
+          return organizations.length <= 1;
+        }
+
+        return true;
+      },
+      async initial(this: EnquirerContext) {
+        return this.choices?.[0]?.value;
+      },
+      format(this: EnquirerContext, value: string) {
+        const choice = this.choices?.find((choice) => choice.value === value);
+        const name = choice?.message || value;
+        return name;
+      },
+    },
+    {
+      type: 'select',
+      name: 'spaceId',
+      message: 'Space ID',
+      async choices(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
+        const managementToken = answers?.managementToken || data?.managementToken;
+        const host = answers?.host || data?.host;
+        if (managementToken) {
+          const spaces = await getSpaces({ managementToken, host });
+          return spaces
+            .filter(
+              (space) =>
+                !answers?.organizationId ||
+                space.sys.organization.sys.id === answers?.organizationId,
+            )
+            .map((space) => ({
+              message: `${space.name} (${space.sys.id})`,
+              name: space.sys.id,
+              value: space.sys.id,
+            }));
+        }
+
+        return [];
+      },
       initial: data?.spaceId ?? data?.activeSpaceId,
+      format(this: EnquirerContext, value: string) {
+        const choice = this.choices?.find((choice) => choice.value === value);
+        const name = choice?.message || value;
+        return name;
+      },
     },
     {
       type: 'select',
       name: 'environmentId',
       message: 'Environment ID',
-      choices: async (answers: Partial<ContentfulOptions>) => {
-        const token = data.managementToken || answers.managementToken;
-        const spaceId = answers.spaceId || data.spaceId;
-        if (token && spaceId) {
-          const environments = await getEnvironments({ accessToken: token, spaceId });
+      async choices(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
+        const managementToken = answers?.managementToken || data?.managementToken;
+        const host = answers?.host || data?.host;
+        const spaceId = answers?.spaceId || data.spaceId;
+
+        if (managementToken && spaceId) {
+          const environments = await getEnvironments({ managementToken, spaceId, host });
           return environments.map((environment) => environment.sys.id);
         }
 
@@ -56,18 +134,21 @@ export const getPromts = (data: Partial<ContentfulOptions>) => {
       type: 'input',
       name: 'accessToken',
       message: 'Content Delivery API - access token',
-      skip(answers: Partial<ContentfulOptions>) {
-        return !answers.spaceId && !data.spaceId;
+      skip(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
+        return !answers?.spaceId && !data.spaceId;
       },
-      initial: async (answers: Partial<ContentfulOptions>) => {
+      async initial(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
         if (data.accessToken) {
           return typeof data.accessToken === 'function' ? data.accessToken() : data.accessToken;
         }
 
-        const token = data.managementToken || answers.managementToken;
-        const spaceId = answers.spaceId || data.spaceId;
-        if (token && spaceId) {
-          return getApiKey({ accessToken: token, spaceId });
+        const managementToken = answers?.managementToken || data?.managementToken;
+        const host = answers?.host || data?.host;
+        const spaceId = answers?.spaceId || data.spaceId;
+        if (managementToken && spaceId) {
+          return getApiKey({ managementToken, spaceId, host });
         }
       },
     },
@@ -75,20 +156,23 @@ export const getPromts = (data: Partial<ContentfulOptions>) => {
       type: 'input',
       name: 'previewAccessToken',
       message: 'Content Preview API - access token',
-      skip(answers: Partial<ContentfulOptions>) {
-        return !answers.spaceId && !data.spaceId;
+      skip(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
+        return !answers?.spaceId && !data.spaceId;
       },
-      initial: async (answers: Partial<ContentfulOptions>) => {
+      async initial(this: EnquirerContext) {
+        const answers = this?.enquirer?.answers;
         if (data.previewAccessToken) {
           return typeof data.previewAccessToken === 'function'
             ? data.previewAccessToken()
             : data.previewAccessToken;
         }
 
-        const token = data.managementToken || answers.managementToken;
-        const spaceId = answers.spaceId || data.spaceId;
-        if (token && spaceId) {
-          return getPreviewApiKey({ accessToken: token, spaceId });
+        const managementToken = answers?.managementToken || data?.managementToken;
+        const host = answers?.host || data?.host;
+        const spaceId = answers?.spaceId || data.spaceId;
+        if (managementToken && spaceId) {
+          return getPreviewApiKey({ managementToken, spaceId, host });
         }
       },
     },
@@ -107,11 +191,15 @@ const mergePrompts = <T extends Record<string, any>>(options: LoadContentfulConf
   }
 
   const result: LoadContentfulConfigOptions<T>['prompts'] = (data) => {
-    const defaultPrompts = getPromts(data);
+    const defaultPrompts = getPrompts(data);
     const optionPrompts = Array.isArray(prompts) ? prompts : (prompts?.(data) ?? undefined);
 
     if (Array.isArray(optionPrompts)) {
-      return [...defaultPrompts, ...optionPrompts];
+      // Add all default prompts which are not present in prompts passed via options
+      return [
+        ...defaultPrompts.filter((dp) => !optionPrompts.some((op) => op.name === dp.name)),
+        ...optionPrompts,
+      ];
     }
 
     return [...defaultPrompts];
@@ -136,8 +224,28 @@ export const loadContentfulConfig = async <T extends Record<string, any> = Conte
   const packageJson = await packageUp();
   const packageDir = packageJson ? dirname(packageJson) : undefined;
 
+  type RequiredKey = Exclude<keyof T, number | symbol>;
+  const required = async (data: T) => {
+    const originalRequired =
+      typeof options.required === 'function' ? await options.required(data) : options.required;
+
+    // When we already have a spaceId or spaceId is not required we simply return the original required option
+    if ('spaceId' in data || !originalRequired?.includes('spaceId' as RequiredKey)) {
+      return originalRequired;
+    }
+
+    // Otherwise we add organizationId to make the spaceId selection less cluttered
+    const index = originalRequired?.indexOf('spaceId' as RequiredKey) ?? -1;
+    return [
+      ...originalRequired.slice(0, index),
+      'organizationId',
+      ...originalRequired.slice(index),
+    ] as RequiredKey[];
+  };
+
   const result = await loadConfig<T>({
     ...options,
+    required,
     cwd: options?.cwd || packageDir || process.cwd(),
     name,
     defaultConfig: {

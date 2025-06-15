@@ -15,9 +15,9 @@ import path from 'path';
 import prettier from 'prettier';
 import { run } from './index.js';
 import { initializeCache } from './lib/cf-cache.js';
-import { getConfig, getEnvironmentConfig } from './lib/config.js';
+import { ALL_PROMPTS, getConfig } from './lib/config.js';
 import { omitKeys } from './lib/object.js';
-import { askAll, askMissing, confirm, logError } from './lib/ui.js';
+import { confirm, logError } from './lib/ui.js';
 import { type Config, type ContentfulConfig, type RunResult } from './types.js';
 
 const env = dotenv.config();
@@ -85,9 +85,16 @@ program
       const useTypescript = Boolean(cmd?.typescript ?? false);
       const cwd = cmd?.cwd ?? process.cwd();
       const configFile = cmd?.config;
-      const config = await getConfig({ cwd, configFile });
+      const r = await getConfig(
+        { cwd, configFile },
+        {
+          prompt: ALL_PROMPTS,
+        },
+      );
 
-      const environmentConfig = getEnvironmentConfig();
+      const { config } = r;
+
+      const environmentConfig = r.layers.find((layer) => layer.type === 'env')?.config;
 
       const filePath =
         configFile || path.join(cwd, `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`);
@@ -97,7 +104,7 @@ program
       }
 
       const environmentKeys: Array<keyof ContentfulConfig> = Object.keys(
-        environmentConfig,
+        environmentConfig || {},
       ) as Array<keyof ContentfulConfig>;
 
       // Update .env file
@@ -189,7 +196,8 @@ program
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
-      const config = await getConfig(parseFetchArgs(cmd || {}));
+      const r = await getConfig(parseFetchArgs(cmd || {}));
+      const { config } = r;
       const cache = initializeCache(config);
 
       if (cmd.sync && cmd.query) {
@@ -236,7 +244,8 @@ program
   .option('--ignore-errors', 'No error return code when transform has errors')
   .action(
     actionRunner(async (cmd) => {
-      const config = await getConfig(parseFetchArgs(cmd || {}));
+      const r = await getConfig(parseFetchArgs(cmd || {}));
+      const { config } = r;
       const useCache = Boolean(cmd?.cache ?? true);
       const cache = initializeCache(config);
 

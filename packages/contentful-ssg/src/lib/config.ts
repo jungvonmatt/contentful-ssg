@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { gracefulExit } from 'exit-hook';
-import { resolve } from 'path';
+import { resolve, dirname } from 'path';
 import slash from 'slash';
 import type {
   Config,
@@ -14,7 +14,11 @@ import { reduceAsync } from './array.js';
 import { createRequire } from './create-require.js';
 import { isObject, removeEmpty } from './object.js';
 
-import { getPromts, loadContentfulConfig } from '@jungvonmatt/contentful-config';
+import {
+  getPrompts,
+  loadContentfulConfig,
+  type ResolvedConfig,
+} from '@jungvonmatt/contentful-config';
 
 const resolvePlugin = async (
   plugin: string | [string, KeyValueMap] | PluginInfo,
@@ -84,7 +88,9 @@ export const getEnvironmentConfig = (strict = true): ContentfulConfig =>
     strict,
   );
 
-export const ALL_PROMPTS = getPromts({}).map((p) => p.name);
+export const ALL_PROMPTS = getPrompts().map((p) => p.name) as Array<
+  Exclude<keyof Config, number | symbol>
+>;
 
 /**
  * Get configuration
@@ -92,15 +98,19 @@ export const ALL_PROMPTS = getPromts({}).map((p) => p.name);
  */
 export const getConfig = async (
   args: Partial<Config> & { configFile?: string; cwd?: string } = {},
-  required: Array<Exclude<keyof Config, number | symbol>> = ALL_PROMPTS as Array<
-    Exclude<keyof Config, number | symbol>
-  >,
-): Promise<Config> => {
+  options?: {
+    required?: Array<Exclude<keyof Config, number | symbol>>;
+    prompt?: Array<Exclude<keyof Config, number | symbol>>;
+  },
+): Promise<ResolvedConfig<Config>> => {
   const { configFile, cwd, ...overrides } = args;
+  const required = options?.required ?? [];
+  const prompt = options?.prompt ?? [];
 
   const loaderResult = await loadContentfulConfig<Config>('contentful-ssg', {
     overrides,
     required,
+    prompt,
     defaultConfig: {
       environmentId: 'master',
       host: 'api.contentful.com',
@@ -111,7 +121,8 @@ export const getConfig = async (
     },
   });
 
-  const { config } = loaderResult;
+  const { config, filepath } = loaderResult;
+  config.rootDir = overrides.rootDir || dirname(filepath) || cwd || process.cwd();
   config.directory = resolve(cwd || process.cwd(), config.directory);
 
   const resolvedPlugins = [
@@ -132,5 +143,5 @@ export const getConfig = async (
     config,
   );
 
-  return { ...hookedConfig, ...config, resolvedPlugins };
+  return { ...loaderResult, config: { ...hookedConfig, ...config, resolvedPlugins } };
 };

@@ -17,6 +17,7 @@ import type {
   AssetRaw,
   EntryRaw,
 } from '../types.js';
+import { ResolvedConfig } from '@jungvonmatt/contentful-config/dist/index.js';
 
 const cache = new Map();
 
@@ -79,10 +80,15 @@ export const getContent = async () => {
   };
 };
 
-export const getConfig = (fixture: Partial<Config> = {}): Config => ({
-  directory: 'test',
-  plugins: [],
-  ...fixture,
+export const getConfig = (fixture: Partial<Config> = {}): ResolvedConfig<Config> => ({
+  config: {
+    directory: 'test',
+    plugins: [],
+    ...fixture,
+  },
+  filepath: undefined,
+  missing: [],
+  layers: [],
 });
 
 export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): RuntimeContext => {
@@ -95,7 +101,7 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
   const { code: defaultLocale } = locales.find((locale) => locale.default) || locales[0];
 
   const result = {
-    config: getConfig(),
+    config: getConfig().config,
     localized: new Map(),
     data: {
       assets,
@@ -125,4 +131,4 @@ export const getTransformContext = (fixture: Partial<TransformContext> = {}): Tr
     assetMap: new Map(),
     entryMap: new Map(),
     ...fixture,
-  } as TransformContext);
+  }) as TransformContext;

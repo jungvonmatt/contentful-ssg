@@ -11,7 +11,7 @@ describe('write', () => {
   test('write json file with format passed as string', async () => {
     const config = getConfig({
       format: 'json',
-    });
+    }).config;
     const runtimeContext = getRuntimeContext();
     const transformContext = getTransformContext({
       id: 'id',
@@ -32,7 +32,7 @@ describe('write', () => {
   test('write json file with format passed as object', async () => {
     const config = getConfig({
       format: { json: ['test'], md: ['/content'] },
-    });
+    }).config;
     const runtimeContext = getRuntimeContext();
     const transformContext = getTransformContext({
       id: 'id',
@@ -53,7 +53,7 @@ describe('write', () => {
   test('write yaml file as default', async () => {
     const config = getConfig({
       format: { json: ['none'], md: ['/content'] },
-    });
+    }).config;
     const runtimeContext = getRuntimeContext();
     const transformContext = getTransformContext({
       id: 'id',
@@ -74,7 +74,7 @@ describe('write', () => {
   test('write json file with format passed function', async () => {
     const config = getConfig({
       format: () => 'toml',
-    });
+    }).config;
     const runtimeContext = getRuntimeContext();
     const transformContext = getTransformContext({
       id: 'id',
