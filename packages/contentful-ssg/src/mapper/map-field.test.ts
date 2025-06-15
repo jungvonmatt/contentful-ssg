@@ -31,7 +31,7 @@ import { mapField } from './map-field.js';
 
 describe('Mapper - mapField', () => {
   const runtimeContext = getRuntimeContext();
-  const config = getConfig();
+  const config = getConfig().config;
   test('Symbol', async () => {
     const value = await mapField(
       getTransformContext({
@@ -39,7 +39,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_SYMBOL } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual('Symbol');
   });
@@ -50,7 +50,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_INTEGER } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual(1);
   });
@@ -61,7 +61,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_NUMBER } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual(1.3);
   });
@@ -72,7 +72,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_ARRAY, items: { type: FIELD_TYPE_SYMBOL } } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual(['Symbol 1', 'Symbol 2', 'Symbol 3']);
   });
@@ -83,7 +83,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_TEXT } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual('__Long text__\n');
   });
@@ -97,7 +97,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_RICHTEXT } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual(expected);
   });
@@ -109,7 +109,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_DATE } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual(new Date('2021-01-14T12:00').toISOString());
   });
@@ -121,7 +121,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_DATE } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual('2021-01-14');
   });
@@ -137,7 +137,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_LOCATION } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual(location);
   });
@@ -149,7 +149,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_BOOLEAN } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
 
     const valueFalse = await mapField(
@@ -158,7 +158,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_BOOLEAN } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(valueTrue).toEqual(true);
     expect(valueFalse).toEqual(false);
@@ -172,7 +172,7 @@ describe('Mapper - mapField', () => {
         fieldSettings: { type: FIELD_TYPE_OBJECT } as Field,
       }),
       runtimeContext,
-      config
+      config,
     );
     expect(value).toEqual(data);
   });
@@ -183,7 +183,7 @@ describe('Mapper - mapField', () => {
     const contentTypes = await readFixture('content_types.json');
     const fieldSettings = getFieldSettings(contentTypes);
     const translatedAssets = await assets.map((asset) =>
-      localizeEntry(asset, 'en-GB', { fieldSettings, locales })
+      localizeEntry(asset, 'en-GB', { fieldSettings, locales }),
     );
 
     const [asset] = translatedAssets;
@@ -213,7 +213,7 @@ describe('Mapper - mapField', () => {
         assetMap: convertToMap(translatedAssets),
       }),
       runtimeContext,
-      config
+      config,
     );
 
     expect(value).toEqual(expected);
@@ -225,7 +225,7 @@ describe('Mapper - mapField', () => {
     const contentTypes = await readFixture('content_types.json');
     const fieldSettings = getFieldSettings(contentTypes);
     const translatedAssets = await assets.map((asset) =>
-      localizeEntry(asset, 'en-GB', { fieldSettings, locales })
+      localizeEntry(asset, 'en-GB', { fieldSettings, locales }),
     );
 
     const [asset] = translatedAssets;
@@ -261,7 +261,7 @@ describe('Mapper - mapField', () => {
         entryMap: new Map(),
       }),
       runtimeContext,
-      config
+      config,
     );
 
     expect(value).toEqual([expected, expected]);
@@ -286,7 +286,7 @@ describe('Mapper - mapField', () => {
         entryMap: new Map(),
       }),
       runtimeContext,
-      config
+      config,
     );
 
     expect(value).toEqual(undefined);
@@ -316,7 +316,7 @@ describe('Mapper - mapField', () => {
         entryMap: convertToMap(entries),
       }),
       runtimeContext,
-      config
+      config,
     );
 
     expect(value).toEqual(expected);
@@ -344,7 +344,7 @@ describe('Mapper - mapField', () => {
         entryMap: new Map(),
       }),
       runtimeContext,
-      config
+      config,
     );
 
     expect(value).toEqual(undefined);
@@ -378,7 +378,7 @@ describe('Mapper - mapField', () => {
         entryMap: convertToMap(entries),
       }),
       runtimeContext,
-      config
+      config,
     );
 
     expect(value).toEqual([data, data]);
@@ -387,7 +387,7 @@ describe('Mapper - mapField', () => {
 
 describe('Mapper hooks', () => {
   const runtimeContext = getRuntimeContext();
-  const config = getConfig();
+  const config = getConfig().config;
 
   const getHookedRuntime = (configMock: Partial<Config> = {}): RuntimeContext => ({
     ...runtimeContext,
@@ -415,7 +415,7 @@ describe('Mapper hooks', () => {
       getHookedRuntime({
         mapEntryLink: (transformContext) => ({ id: transformContext.id, custom: true }),
       }),
-      config
+      config,
     );
 
     expect(value).toEqual({ id: getContentId(entry), custom: true });
@@ -441,7 +441,7 @@ describe('Mapper hooks', () => {
       getHookedRuntime({
         mapAssetLink: (transformContext) => ({ id: transformContext.id, custom: true }),
       }),
-      config
+      config,
     );
 
     expect(value).toEqual({ id: getContentId(asset), custom: true });
@@ -473,7 +473,7 @@ describe('Mapper hooks', () => {
               `<asset-link>${node.data.target.sys.id}</asset-link>`,
           },
         },
-      }
+      },
     );
 
     expect(value).toEqual(expected);
@@ -488,7 +488,7 @@ describe('Mapper hooks', () => {
         fieldSettings: { type: FIELD_TYPE_RICHTEXT } as Field,
       }),
       runtimeContext,
-      { ...config, richTextRenderer: () => '<h1>CUSTOM</h1>' }
+      { ...config, richTextRenderer: () => '<h1>CUSTOM</h1>' },
     );
 
     expect(value).toEqual('<h1>CUSTOM</h1>');
@@ -507,7 +507,7 @@ describe('Mapper hooks', () => {
         assetMap: convertToMap(assets),
       }),
       runtimeContext,
-      { ...config, richTextRenderer: false }
+      { ...config, richTextRenderer: false },
     );
 
     expect(value).toEqual({

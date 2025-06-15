@@ -7,21 +7,21 @@ import { mapEntry } from './map-entry.js';
 import { mapMetaFields } from './map-meta-fields.js';
 
 describe('Mapper - mapEntry', () => {
-  const config = getConfig();
+  const config = getConfig().config;
   const runtimeContext = getRuntimeContext();
 
   const assets = runtimeContext.data.assets.map((asset) =>
     localizeEntry(asset, 'en-GB', {
       locales: runtimeContext.data.locales,
       fieldSettings: runtimeContext.data.fieldSettings,
-    })
+    }),
   );
 
   const entries = runtimeContext.data.entries.map((entry) =>
     localizeEntry(entry, 'en-GB', {
       locales: runtimeContext.data.locales,
       fieldSettings: runtimeContext.data.fieldSettings,
-    })
+    }),
   );
   const [entry] = entries;
   const transformContext = getTransformContext({
@@ -98,7 +98,7 @@ describe('Mapper - mapEntry', () => {
     const result = await mapEntry(
       transformContext,
       { ...runtimeContext, hooks: new HookManager(runtimeContext, config) },
-      config
+      config,
     );
 
     expect(result).toEqual({
@@ -181,7 +181,7 @@ describe('Mapper - mapEntry', () => {
     }).rejects.toThrowError(/ValidationError/);
 
     const requiredFieldMissing = !validateContext.requiredFields.every((key) =>
-      Object.keys(validateContext.content).includes(key)
+      Object.keys(validateContext.content).includes(key),
     );
 
     expect(validateContext.entry.sys.id).toEqual('34O95Y8gLXd3jPozdy7gmd');

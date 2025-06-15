@@ -47,7 +47,7 @@ export const confirm = async (message: string, defaultValue?: boolean) => {
 
 type Questions = QuestionCollection<Config>;
 
-const getPromts = (data: Partial<Config>): Questions => [
+const getPrompts = (data: Partial<Config>): Questions => [
   {
     type: 'list',
     name: 'spaceId',
@@ -106,7 +106,7 @@ const getPromts = (data: Partial<Config>): Questions => [
  */
 export const askAll = async (data: Partial<Config> = {}): Promise<Config> => {
   console.log('Please verify the following options');
-  const answers = await inquirer.prompt(getPromts(data));
+  const answers = await inquirer.prompt(getPrompts(data));
   answers.directory = resolve(process.cwd(), answers.directory || data.directory);
 
   return { ...data, ...answers };
@@ -119,7 +119,7 @@ export const askAll = async (data: Partial<Config> = {}): Promise<Config> => {
  */
 export const askMissing = async (data: Partial<Config> = {}): Promise<Config> => {
   const missing = Array.prototype.filter.call(
-    getPromts(data),
+    getPrompts(data),
     ({ name }) => !data[name],
   ) as Questions;
   const answers = await inquirer.prompt(missing);

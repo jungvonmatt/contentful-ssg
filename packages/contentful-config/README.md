@@ -37,7 +37,7 @@ console.log(config.managementToken); // Content Management API Token
 ```js
 import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 
-// If required values are not found in configuration files or 
+// If required values are not found in configuration files or
 // environment variables, an interactive prompt will be displayed
 const { config } = await loadContentfulConfig('myapp', {
   required: ['spaceId', 'accessToken']

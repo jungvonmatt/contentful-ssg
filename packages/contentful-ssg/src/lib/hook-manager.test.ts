@@ -3,7 +3,7 @@ import { getRuntimeContext, getTransformContext, getConfig } from '../__test__/m
 import { HookManager } from './hook-manager';
 
 const getInstance = (overwrite: Partial<Config> = {}, context: Partial<RuntimeContext> = {}) => {
-  const config = getConfig(overwrite);
+  const config = getConfig(overwrite).config;
   const runtimeContext = getRuntimeContext({ config, ...context });
 
   return new HookManager(runtimeContext, config);
@@ -42,7 +42,7 @@ describe('Hook Manager', () => {
           { before: hook(4), after: hook(9) },
         ],
       },
-      { test: [0] }
+      { test: [0] },
     );
 
     const ctxBefore = await hooks.before();
@@ -69,7 +69,7 @@ describe('Hook Manager', () => {
           { before: hook(4), after: hook(8) },
         ],
       },
-      { test: [0] }
+      { test: [0] },
     );
 
     const ctxBefore = await hooks.before();
@@ -98,7 +98,7 @@ describe('Hook Manager', () => {
           { transform: syncHook('plugin5') },
         ],
       },
-      {}
+      {},
     );
 
     const result = await hooks.transform(transformContext, {});
@@ -131,11 +131,11 @@ describe('Hook Manager', () => {
           { mapEntryLink: (tc, rc, prev) => ({ ...prev, mapEntryLink: `plugin-5: ${tc.value}` }) },
           {
             mapDirectory: (tc, rc, prev) =>
-              prev.replace(tc.value, `plugin-6-directory: ${tc.value}`),
+              prev?.replace(tc.value, `plugin-6-directory: ${tc.value}`) ?? '',
           },
         ],
       },
-      {}
+      {},
     );
 
     transformContext.value = 'tc-value';
@@ -145,7 +145,7 @@ describe('Hook Manager', () => {
     const mapMetaFields = await hooks.mapMetaFields(transformContext, () => ({ initial: true }));
     const mapAssetLink = await hooks.mapAssetLink(transformContext, { initial: true });
     const mapEntryLink = await hooks.mapEntryLink(transformContext, async () =>
-      Promise.resolve({ initial: true })
+      Promise.resolve({ initial: true }),
     );
 
     expect(mapDirectory).toEqual('wrapped-plugin-1-directory: plugin-6-directory: tc-value');
