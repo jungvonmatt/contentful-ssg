@@ -15,7 +15,7 @@ import path from 'path';
 import prettier from 'prettier';
 import { run } from './index.js';
 import { initializeCache } from './lib/cf-cache.js';
-import { ALL_PROMPTS, getConfig, getEnvironmentConfig } from './lib/config.js';
+import { ALL_PROMPTS, getConfig } from './lib/config.js';
 import { omitKeys } from './lib/object.js';
 import { confirm, logError } from './lib/ui.js';
 import { type Config, type ContentfulConfig, type RunResult } from './types.js';
