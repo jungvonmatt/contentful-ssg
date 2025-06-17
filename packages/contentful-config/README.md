@@ -2,7 +2,7 @@
 
 # JvM Contentful config loader
 
-Tool for loading and managing Contentful configurations with support for environment variables and interactive prompts.
+Tool for loading and managing Contentful configurations with support for environment variables and interactive prompts.\
 Based on [`@jungvonmatt/config-loader`](https://github.com/jungvonmatt/config-loader) and [`c12`](https://github.com/unjs/c12)
 
 ## Getting started
