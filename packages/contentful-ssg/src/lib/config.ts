@@ -111,7 +111,7 @@ export const getConfig = async (
     overrides,
     required,
     prompt,
-    defaultConfig: {
+    defaults: {
       environmentId: 'master',
       host: 'api.contentful.com',
       directory: resolve(process.cwd(), 'content'),

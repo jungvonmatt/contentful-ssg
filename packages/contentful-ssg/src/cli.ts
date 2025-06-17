@@ -94,7 +94,7 @@ program
 
       const { config } = r;
 
-      const environmentConfig = r.layers.find((layer) => layer.type === 'env')?.config;
+      const environmentConfig = r.layers.find((layer) => layer?.meta?.type === 'env')?.config;
 
       const filePath =
         configFile || path.join(cwd, `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`);

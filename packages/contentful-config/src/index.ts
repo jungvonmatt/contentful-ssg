@@ -1,7 +1,7 @@
 import { homedir } from 'node-homedir';
 import { packageUp } from 'package-up';
 import { dirname } from 'pathe';
-import type { LoadConfigOptions } from '@jungvonmatt/config-loader';
+import type { LoadConfigOptions, ResolvedConfig } from '@jungvonmatt/config-loader';
 import {
   type ContentfulOptions,
   getApiKey,
@@ -211,7 +211,7 @@ const mergePrompts = <T extends Record<string, any>>(options: LoadContentfulConf
 export const loadContentfulConfig = async <T extends Record<string, any> = ContentfulOptions>(
   name: string,
   options: LoadContentfulConfigOptions<T> = {},
-) => {
+): Promise<ResolvedConfig<T>> => {
   const { loadConfig } = await import('@jungvonmatt/config-loader');
 
   // Load global contentful config stored in a .contentfulrc.json file in the home directory
@@ -248,11 +248,11 @@ export const loadContentfulConfig = async <T extends Record<string, any> = Conte
     required,
     cwd: options?.cwd || packageDir || process.cwd(),
     name,
-    defaultConfig: {
+    defaults: {
       environmentId: 'master',
       host: 'api.contentful.com',
       ...contentfulCliOptions.config,
-      ...options?.defaultConfig,
+      ...options?.defaults,
     },
     envMap: {
       CONTENTFUL_SPACE_ID: 'spaceId',
