@@ -10,8 +10,7 @@ Fast and highly and customizable Contentful exporter for static site generators.
 ## Packages
 
 #### CLI 
-- [`contentful-ssg`](packages/contentful-ssg)\
-  [![NPM version][contentful-ssg-npm-image]][contentful-ssg-npm-url]
+- [`contentful-ssg`](packages/contentful-ssg)
 
 #### Plugins
 
