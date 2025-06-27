@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.5](https://github.com/jungvonmatt/contentful-ssg/compare/v3.0.4...v3.0.5) (2025-06-27)
+
+### Bug Fixes
+
+- **config:** bump @jungvonmatt/config-loader ([20639d2](https://github.com/jungvonmatt/contentful-ssg/commit/20639d216f278c849e4cdc69d26a5da5dbcdeae9))
+
 ## [3.0.3](https://github.com/jungvonmatt/contentful-ssg/compare/v3.0.2...v3.0.3) (2025-06-17)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-config
