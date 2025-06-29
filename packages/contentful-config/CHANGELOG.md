@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.6](https://github.com/jungvonmatt/contentful-ssg/compare/v3.0.5...v3.0.6) (2025-06-29)
+
+### Bug Fixes
+
+- **config:** disable skip on async select due to bug in enquirer ([45a2932](https://github.com/jungvonmatt/contentful-ssg/commit/45a29327a8091f948f7aeee3143d80f9645fe1e5))
+
 ## [3.0.5](https://github.com/jungvonmatt/contentful-ssg/compare/v3.0.4...v3.0.5) (2025-06-27)
 
 ### Bug Fixes
