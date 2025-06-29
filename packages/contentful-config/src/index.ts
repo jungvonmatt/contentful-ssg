@@ -59,17 +59,19 @@ export const getPrompts = (data: Partial<ContentfulOptions> = {}) => {
 
         return [];
       },
-      async skip(this: EnquirerContext) {
-        const answers = this?.enquirer?.answers;
-        const managementToken = answers?.managementToken || data?.managementToken;
-        const host = answers?.host || data?.host;
-        if (managementToken) {
-          const organizations = await getOrganizations({ managementToken, host });
-          return organizations.length <= 1;
-        }
+      // Produces an error in enquirer skip with async choices does not work
+      // disabling for now
+      // async skip(this: EnquirerContext) {
+      //   const answers = this?.enquirer?.answers;
+      //   const managementToken = answers?.managementToken || data?.managementToken;
+      //   const host = answers?.host || data?.host;
+      //   if (managementToken) {
+      //     const organizations = await getOrganizations({ managementToken, host });
+      //     return organizations.length <= 1;
+      //   }
 
-        return true;
-      },
+      //   return true;
+      // },
       async initial(this: EnquirerContext) {
         return this.choices?.[0]?.value;
       },
