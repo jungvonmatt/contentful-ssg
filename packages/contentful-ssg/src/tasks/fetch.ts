@@ -13,10 +13,10 @@ export const fetch = async (context: RuntimeContext, config: Config) => {
   // Add entries linked to deleted assets & entries to the list of changed entries
   const additionalEntriesPromise = [
     ...(content?.deletedEntries?.map(async (entry) =>
-      getEntriesLinkedToEntry(config as ContentfulConfig, entry.sys.id)
+      getEntriesLinkedToEntry(config as ContentfulConfig, entry.sys.id),
     ) ?? []),
     ...(content?.deletedAssets?.map(async (asset) =>
-      getEntriesLinkedToAsset(config as ContentfulConfig, asset.sys.id)
+      getEntriesLinkedToAsset(config as ContentfulConfig, asset.sys.id),
     ) ?? []),
   ];
 

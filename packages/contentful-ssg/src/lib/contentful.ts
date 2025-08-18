@@ -57,9 +57,9 @@ export const MAX_ALLOWED_LIMIT = 1000;
  * @returns {String}
  */
 export const getContentTypeId = <
-  T extends Node | NodeRaw | EntryFields.EntryLink<EntrySkeletonType> | DeletedEntry
+  T extends Node | NodeRaw | EntryFields.EntryLink<EntrySkeletonType> | DeletedEntry,
 >(
-  node: T
+  node: T,
 ): string => {
   if (node?.sys?.type === 'Asset') {
     return 'asset';
@@ -86,9 +86,9 @@ export const getEnvironmentId = <T extends Node | NodeRaw>(node: T): string =>
  * @returns {String}
  */
 export const getContentId = <
-  T extends Node | NodeRaw | ContentType | EntryFields.Link<EntrySkeletonType> | DeletedEntry
+  T extends Node | NodeRaw | ContentType | EntryFields.Link<EntrySkeletonType> | DeletedEntry,
 >(
-  node: T
+  node: T,
 ): string => node?.sys?.id ?? 'unknown';
 
 /**
@@ -237,7 +237,7 @@ export const getWebhooks = async (options: ContentfulConfig) => {
 export const addWebhook = async (
   options: ContentfulConfig,
   id: string,
-  data: CreateWebhooksProps
+  data: CreateWebhooksProps,
 ) => {
   const space = await getSpace(options);
 
@@ -322,7 +322,7 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
 
 export const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCollection<T>>(
   apiClient,
-  { method, skip = 0, aggregatedResponse = null, query = null }: PagedGetOptions<T>
+  { method, skip = 0, aggregatedResponse = null, query = null }: PagedGetOptions<T>,
 ): Promise<R> => {
   const fullQuery: QueryOptions = {
     skip,
@@ -514,7 +514,7 @@ export const getFieldSettings = (contentTypes: ContentType[]): FieldSettings =>
     const id = getContentId(contentType);
     const fields = contentType.fields.reduce(
       (fields, field) => ({ ...fields, [field.id]: field }),
-      {}
+      {},
     );
     return { ...res, [id]: fields };
   }, {});
