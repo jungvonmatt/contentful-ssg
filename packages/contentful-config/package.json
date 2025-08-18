@@ -37,7 +37,7 @@
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@jungvonmatt/config-loader": "^0.5.2",
-    "contentful-management": "^11.12.1",
+    "contentful-management": "^11.54.4",
     "node-homedir": "^2.0.0",
     "package-up": "^5.0.0",
     "pathe": "^2.0.3",
