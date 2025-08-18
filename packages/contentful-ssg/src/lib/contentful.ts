@@ -8,7 +8,7 @@ import type {
 } from 'contentful';
 import { createClient } from 'contentful';
 import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
-import { createClient as createManagementClient } from 'contentful-management';
+import contentfulManagement from 'contentful-management';
 import type { ApiKey, CreateWebhooksProps, QueryOptions, Space } from 'contentful-management/types';
 import { createHash } from 'crypto';
 import { hostname } from 'os';
@@ -129,7 +129,7 @@ const getManagementClient = (options: ContentfulConfig): ContentfulManagementApi
   }
 
   if (managementToken) {
-    return createManagementClient({
+    return contentfulManagement.createClient({
       accessToken: managementToken,
     });
   }
