@@ -1,4 +1,4 @@
-import type { QuestionCollection } from 'inquirer';
+import type { DistinctQuestion } from 'inquirer';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
@@ -29,15 +29,13 @@ export const logError = (error: Error) => {
  * @returns {Boolean} Confirm value
  */
 export const confirm = async (message: string, defaultValue?: boolean) => {
-  const question: QuestionCollection<{ value: boolean }> = [
-    {
-      type: 'confirm',
-      name: 'value',
-      message,
-      default: Boolean(defaultValue),
-    },
-  ];
-  const answers = await inquirer.prompt(question);
+  const question: DistinctQuestion<{ value: boolean }> = {
+    type: 'confirm',
+    name: 'value',
+    message,
+    default: Boolean(defaultValue),
+  };
+  const answers = await inquirer.prompt([question]);
 
   return Boolean(answers.value);
 };

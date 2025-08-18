@@ -11,7 +11,7 @@
     "url": "https://github.com/jungvonmatt/contentful-ssg"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20"
   },
   "scripts": {
     "clean": "lerna run clean",
@@ -40,8 +40,6 @@
     "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "check-dependency-version-consistency": "^4.1.0",
-    "commitizen": "^4.3.1",
-    "cz-conventional-changelog": "^3.3.0",
     "eslint-config-xo-typescript": "^1.0.1",
     "eslint-plugin-prettier": "^5.2.6",
     "git-cz": "^4.9.0",
@@ -63,9 +61,6 @@
     "validate-commit-msg": {
       "types": "conventional-commit-types",
       "helpMessage": "Use \"npm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
-    },
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
     }
   },
   "jestSonar": {
