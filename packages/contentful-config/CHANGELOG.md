@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](https://github.com/jungvonmatt/contentful-ssg/compare/v4.0.0...v4.0.1) (2025-09-03)
+
+### Bug Fixes
+
+- **config:** bump dependencies ([109bd94](https://github.com/jungvonmatt/contentful-ssg/commit/109bd94026cb8368408000495194274a2c813d56))
+
 # [4.0.0](https://github.com/jungvonmatt/contentful-ssg/compare/v3.0.6...v4.0.0) (2025-08-18)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-config
