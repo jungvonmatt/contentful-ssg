@@ -1,5 +1,6 @@
 /* _eslint-disable @typescript-eslint/no-unsafe-call */
 import path from 'node:path';
+import pico from 'picocolors';
 import { type ContentfulConfig, type ContentType } from '@jungvonmatt/contentful-ssg';
 import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 import { getEnvironment, pagedGet } from '@jungvonmatt/contentful-ssg/lib/contentful';
@@ -50,6 +51,10 @@ export const generateTypings = async (options: Options = {}) => {
   });
 
   const client = await getEnvironment(loaderResult.config);
+
+  console.log(
+    `Generating typescript definitions for: ${pico.gray('spaces/')}${pico.green(loaderResult.config.spaceId)}${pico.gray('/environments/')}${pico.green(loaderResult.config.environmentId)}`,
+  );
 
   const { items: contentTypes } = await pagedGet<ContentType>(client, {
     method: 'getContentTypes',
