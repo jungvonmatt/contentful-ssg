@@ -5,8 +5,6 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { type QueryOptions } from 'contentful-management/types.js';
-import dotenv from 'dotenv';
-import dotenvExpand from 'dotenv-expand';
 import { asyncExitHook, gracefulExit } from 'exit-hook';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
@@ -19,9 +17,6 @@ import { ALL_PROMPTS, getConfig } from './lib/config.js';
 import { omitKeys } from './lib/object.js';
 import { confirm, logError } from './lib/ui.js';
 import { type Config, type ContentfulConfig, type RunResult } from './types.js';
-
-const env = dotenv.config();
-dotenvExpand.expand(env);
 
 const parseQuery = (query: string): QueryOptions => {
   if (!query) {

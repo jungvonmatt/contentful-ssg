@@ -6,12 +6,7 @@ import pico from 'picocolors';
 import { logError } from '@jungvonmatt/contentful-ssg/lib/ui';
 import { gracefulExit } from 'exit-hook';
 import { Command } from 'commander';
-import dotenv from 'dotenv';
-import { expand } from 'dotenv-expand';
 import { generateTypings } from './index.js';
-
-const env = dotenv.config();
-expand(env);
 
 type CommandArgs = {
   output: string;

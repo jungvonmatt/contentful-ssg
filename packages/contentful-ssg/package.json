@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-ssg",
-  "version": "4.0.1",
+  "version": "3.0.6",
   "description": "",
   "repository": {
     "type": "git",
@@ -72,7 +72,7 @@
     "@contentful/rich-text-html-renderer": "^16.3.0",
     "@contentful/rich-text-types": "^16.3.0",
     "@iarna/toml": "^2.2.5",
-    "@jungvonmatt/contentful-config": "^4.0.1",
+    "@jungvonmatt/contentful-config": "*",
     "@swc/core": "^1.3.104",
     "chalk": "^5.3.0",
     "change-case": "^5.4.2",
@@ -80,8 +80,6 @@
     "contentful": "^11.7.15",
     "contentful-management": "^11.54.4",
     "dlv": "^1.1.3",
-    "dotenv": "^16.3.1",
-    "dotenv-expand": "^10.0.0",
     "esbuild": "^0.25.3",
     "exit-hook": "^4.0.0",
     "express": "^4.18.2",
@@ -136,7 +134,7 @@
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": "^14.13.1 || >=16.0.0"
+    "node": ">=20"
   },
   "ts-node": {
     "compilerOptions": {

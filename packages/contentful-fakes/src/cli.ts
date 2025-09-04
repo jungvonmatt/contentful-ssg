@@ -7,15 +7,10 @@ import { confirm, logError } from '@jungvonmatt/contentful-ssg/lib/ui';
 import { gracefulExit } from 'exit-hook';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import dotenv from 'dotenv';
-import dotenvExpand from 'dotenv-expand';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
 import path from 'path';
 import { createFakes } from './index.js';
-
-const env = dotenv.config();
-dotenvExpand.expand(env);
 
 type CommandArgs = {
   outputDirectory: string;
