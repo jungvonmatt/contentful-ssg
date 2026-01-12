@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-typings",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "main": "./dist/index.js",
   "type": "module",
   "exports": "./dist/index.js",
@@ -39,8 +39,8 @@
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
-    "@jungvonmatt/contentful-config": "*",
-    "@jungvonmatt/contentful-ssg": "^4.0.2",
+    "@jungvonmatt/contentful-config": "^4.0.3",
+    "@jungvonmatt/contentful-ssg": "^4.0.3",
     "cf-content-types-generator": "^2.16.0",
     "change-case": "^5.4.2",
     "commander": "^11.1.0",
