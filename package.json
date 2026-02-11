@@ -10,13 +10,14 @@
     "type": "git",
     "url": "https://github.com/jungvonmatt/contentful-ssg"
   },
+  "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "clean": "lerna run clean",
     "commit": "cz",
-    "prepublishOnly": "npm run test:ci",
+    "prepublishOnly": "pnpm run test:ci",
     "release": "lerna version --no-private --conventional-commits --create-release github --yes && lerna publish from-git --yes",
     "compile": "turbo run compile",
     "start": "lerna run start",
@@ -25,9 +26,6 @@
     "test:ci": "turbo run lint && jest",
     "prepare": "husky"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "lint-staged": {
     "packages/**/{src,test}/**/*.ts": [
       "prettier --write"
@@ -60,7 +58,7 @@
   "config": {
     "validate-commit-msg": {
       "types": "conventional-commit-types",
-      "helpMessage": "Use \"npm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
+      "helpMessage": "Use \"pnpm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
     }
   },
   "jestSonar": {

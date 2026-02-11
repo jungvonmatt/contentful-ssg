@@ -14,7 +14,7 @@ export default {
       tsconfig: '<rootDir>/tsconfig.json',
     }]
   },
-  transformIgnorePatterns: ['node_modules/(?!(serialize-error)|(exit-hook)|(chalk)|(find-cache-dir)|(pkg-dir)|(find-up)|(locate-path)|(p-locate)|(p-limit)|(yocto-queue)|(path-exists)|(change-case))'],
+  transformIgnorePatterns: ['node_modules/(?!(\\.pnpm)|(serialize-error)|(exit-hook)|(chalk)|(find-cache-dir)|(pkg-dir)|(find-up)|(locate-path)|(p-locate)|(p-limit)|(yocto-queue)|(path-exists)|(change-case))'],
   preset: 'ts-jest/presets/js-with-ts-esm',
   moduleDirectories: ['node_modules', `${__dirname}/packages`],
   coverageReporters: ['text', 'clover', 'json', 'lcov'],

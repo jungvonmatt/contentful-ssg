@@ -22,7 +22,7 @@
     "clean": "rimraf ./dist",
     "test": "jest",
     "lint": "eslint --color src --fix --ext .ts",
-    "precompile": "npm run clean",
+    "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "postcompile": "chmod +x ./dist/cli.js",
     "watch": "tsc --build --watch"

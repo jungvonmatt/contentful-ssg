@@ -1,5 +1,5 @@
 import { type Asset, type ContentType, type Entry, type EntrySkeletonType } from 'contentful';
-import express, { type Response } from 'express';
+import express, { type Express, type Response } from 'express';
 import { type IncomingHttpHeaders } from 'http';
 
 const app = express();
@@ -52,7 +52,7 @@ type ContentfulWebhookRequest = {
   body: Entry<EntrySkeletonType, undefined> | Asset | ContentType;
 };
 
-export const getApp = (callback: () => Promise<void>) => {
+export const getApp = (callback: () => Promise<void>): Express => {
   app.get('/status', (_req, res: Response) => res.status(200).send('ok'));
 
   app.get('/', async (_req, res: Response) => {
