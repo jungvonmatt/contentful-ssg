@@ -9,8 +9,8 @@ const ENV_MAP: Record<string, string> = {
   spaceId: 'CONTENTFUL_SPACE_ID',
   environmentId: 'CONTENTFUL_ENVIRONMENT_ID',
   managementToken: 'CONTENTFUL_MANAGEMENT_TOKEN',
-  previewAccessToken: 'CONTENTFUL_PREVIEW_ACCESS_TOKEN',
-  accessToken: 'CONTENTFUL_DELIVERY_ACCESS_TOKEN',
+  previewAccessToken: 'CONTENTFUL_PREVIEW_TOKEN',
+  accessToken: 'CONTENTFUL_DELIVERY_TOKEN',
   host: 'CONTENTFUL_HOST',
 };
 
