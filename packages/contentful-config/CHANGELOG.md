@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.0...v4.1.1) (2026-02-11)
+
+### Bug Fixes
+
+* rename env name for tokens ([0af9c42](https://github.com/jungvonmatt/contentful-ssg/commit/0af9c42da7902bfcd07c7ee50f3d5c4d11205f45))
+
 # [4.1.0](https://github.com/jungvonmatt/contentful-ssg/compare/v4.0.3...v4.1.0) (2026-02-11)
 
 ### Features
