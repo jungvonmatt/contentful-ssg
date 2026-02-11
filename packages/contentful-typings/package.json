@@ -39,22 +39,22 @@
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
-    "@jungvonmatt/contentful-config": "^4.0.3",
-    "@jungvonmatt/contentful-ssg": "^4.0.3",
-    "cf-content-types-generator": "^2.16.0",
-    "change-case": "^5.4.2",
-    "commander": "^11.1.0",
-    "contentful": "^11.7.15",
-    "contentful-management": "^11.54.4",
-    "exit-hook": "^4.0.0",
+    "@jungvonmatt/contentful-config": "catalog:",
+    "@jungvonmatt/contentful-ssg": "catalog:",
+    "cf-content-types-generator": "catalog:",
+    "change-case": "catalog:",
+    "commander": "catalog:",
+    "contentful": "catalog:",
+    "contentful-management": "catalog:",
+    "exit-hook": "catalog:",
     "fs-extra": "^11.1.0",
-    "picocolors": "^1.0.0",
+    "picocolors": "catalog:",
     "prettier": "^3.2.4",
-    "read-pkg-up": "^11.0.0",
-    "semiver": "^1.1.0"
+    "read-pkg-up": "catalog:",
+    "semiver": "catalog:"
   },
   "devDependencies": {
     "@types/chance": "^1.1.6",
-    "ts-morph": "^23.0.0"
+    "ts-morph": "catalog:"
   }
 }

@@ -4,6 +4,264 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@changesets/cli':
+      specifier: ^2.29.2
+      version: 2.29.8
+    '@commitlint/cli':
+      specifier: ^18.6.0
+      version: 18.6.1
+    '@commitlint/config-conventional':
+      specifier: ^18.6.0
+      version: 18.6.3
+    '@contentful/rich-text-html-renderer':
+      specifier: ^16.3.0
+      version: 16.6.10
+    '@contentful/rich-text-types':
+      specifier: ^16.3.0
+      version: 16.8.5
+    '@ffmpeg/core':
+      specifier: ^0.10.0
+      version: 0.10.0
+    '@ffmpeg/ffmpeg':
+      specifier: ^0.10.1
+      version: 0.10.1
+    '@iarna/toml':
+      specifier: ^2.2.5
+      version: 2.2.5
+    '@jungvonmatt/config-loader':
+      specifier: ^0.6.0
+      version: 0.6.1
+    '@jungvonmatt/contentful-config':
+      specifier: ^4.0.3
+      version: 4.0.3
+    '@jungvonmatt/contentful-ssg':
+      specifier: ^4.0.3
+      version: 4.0.3
+    '@swc/core':
+      specifier: ^1.3.104
+      version: 1.15.11
+    '@swc/jest':
+      specifier: ^0.2.29
+      version: 0.2.39
+    '@types/dlv':
+      specifier: ^1.1.4
+      version: 1.1.5
+    '@types/express':
+      specifier: ^4.17.21
+      version: 4.17.25
+    '@types/fs-extra':
+      specifier: ^11.0.4
+      version: 11.0.4
+    '@types/inquirer':
+      specifier: ^9.0.7
+      version: 9.0.9
+    '@types/js-yaml':
+      specifier: ^4.0.4
+      version: 4.0.9
+    '@types/listr':
+      specifier: ^0.14.9
+      version: 0.14.10
+    '@types/micromatch':
+      specifier: ^4.0.6
+      version: 4.0.10
+    '@types/node':
+      specifier: ^20.11.5
+      version: 20.19.33
+    '@types/svgo':
+      specifier: ^2.6.3
+      version: 2.6.4
+    '@typescript-eslint/parser':
+      specifier: ^6.19.0
+      version: 6.21.0
+    casual:
+      specifier: ^1.6.2
+      version: 1.6.2
+    cf-content-types-generator:
+      specifier: ^2.16.0
+      version: 2.16.1
+    chalk:
+      specifier: ^5.3.0
+      version: 5.6.2
+    change-case:
+      specifier: ^5.4.2
+      version: 5.4.4
+    check-dependency-version-consistency:
+      specifier: ^4.1.0
+      version: 4.1.1
+    cli-progress:
+      specifier: ^3.9.1
+      version: 3.12.0
+    commander:
+      specifier: ^11.1.0
+      version: 11.1.0
+    contentful:
+      specifier: ^11.7.15
+      version: 11.10.3
+    contentful-management:
+      specifier: ^11.54.4
+      version: 11.69.1
+    dlv:
+      specifier: ^1.1.3
+      version: 1.1.3
+    esbuild:
+      specifier: ^0.25.3
+      version: 0.25.12
+    eslint:
+      specifier: ^8.56.0
+      version: 8.57.1
+    eslint-config-prettier:
+      specifier: ^9.1.0
+      version: 9.1.2
+    eslint-config-xo:
+      specifier: ^0.43.1
+      version: 0.43.1
+    eslint-config-xo-space:
+      specifier: ^0.30.0
+      version: 0.30.0
+    eslint-config-xo-typescript:
+      specifier: ^1.0.1
+      version: 1.0.1
+    eslint-import-resolver-typescript:
+      specifier: ^3.6.1
+      version: 3.10.1
+    eslint-plugin-import:
+      specifier: ^2.29.1
+      version: 2.32.0
+    exit-hook:
+      specifier: ^4.0.0
+      version: 4.0.0
+    express:
+      specifier: ^4.18.2
+      version: 4.22.1
+    find-cache-dir:
+      specifier: ^5.0.0
+      version: 5.0.0
+    find-up:
+      specifier: ^7.0.0
+      version: 7.0.0
+    get-port:
+      specifier: ^7.0.0
+      version: 7.1.0
+    git-cz:
+      specifier: ^4.9.0
+      version: 4.9.0
+    globby:
+      specifier: ^14.0.0
+      version: 14.1.0
+    got:
+      specifier: ^11.8.3
+      version: 11.8.6
+    gray-matter:
+      specifier: ^4.0.3
+      version: 4.0.3
+    husky:
+      specifier: ^9.1.7
+      version: 9.1.7
+    inquirer:
+      specifier: ^12.9.3
+      version: 12.11.1
+    jest:
+      specifier: ^29.7.0
+      version: 29.7.0
+    jest-esm-transformer:
+      specifier: ^1.0.0
+      version: 1.0.0
+    jest-sonar:
+      specifier: ^0.2.16
+      version: 0.2.16
+    jest-sonar-reporter:
+      specifier: ^2.0.0
+      version: 2.0.0
+    js-yaml:
+      specifier: ^4.1.0
+      version: 4.1.1
+    lerna:
+      specifier: ^8.1.2
+      version: 8.2.4
+    lint-staged:
+      specifier: ^15.5.1
+      version: 15.5.2
+    listr:
+      specifier: ^0.14.3
+      version: 0.14.3
+    merge-options:
+      specifier: ^3.0.4
+      version: 3.0.4
+    micromatch:
+      specifier: ^4.0.5
+      version: 4.0.8
+    mkdirp:
+      specifier: ^1.0.4
+      version: 1.0.4
+    node-homedir:
+      specifier: ^2.0.0
+      version: 2.0.0
+    package-up:
+      specifier: ^5.0.0
+      version: 5.0.0
+    pathe:
+      specifier: ^2.0.3
+      version: 2.0.3
+    picocolors:
+      specifier: ^1.0.0
+      version: 1.1.1
+    pirates:
+      specifier: ^4.0.6
+      version: 4.0.7
+    pkg-dir:
+      specifier: ^8.0.0
+      version: 8.0.0
+    randexp:
+      specifier: ^0.5.3
+      version: 0.5.3
+    read-pkg-up:
+      specifier: ^11.0.0
+      version: 11.0.0
+    rimraf:
+      specifier: ^5.0.5
+      version: 5.0.10
+    rxjs:
+      specifier: ^7.8.1
+      version: 7.8.2
+    semiver:
+      specifier: ^1.1.0
+      version: 1.1.0
+    serialize-error:
+      specifier: ^11.0.3
+      version: 11.0.3
+    serializr:
+      specifier: ^3.0.2
+      version: 3.0.5
+    slash:
+      specifier: ^5.1.0
+      version: 5.1.0
+    supertest:
+      specifier: ^6.3.4
+      version: 6.3.4
+    svgo:
+      specifier: ^2.8.0
+      version: 2.8.0
+    tar:
+      specifier: ^7.4.3
+      version: 7.5.7
+    tempy:
+      specifier: ^3.1.0
+      version: 3.2.0
+    ts-morph:
+      specifier: ^23.0.0
+      version: 23.0.0
+    ts-node:
+      specifier: ^10.9.2
+      version: 10.9.2
+    turbo:
+      specifier: ^1.12.2
+      version: 1.13.4
+    uuid:
+      specifier: ^9.0.1
+      version: 9.0.1
+
 importers:
 
   .:
@@ -12,17 +270,17 @@ importers:
         specifier: ^11.3.0
         version: 11.3.3
       tar:
-        specifier: ^7.4.3
+        specifier: 'catalog:'
         version: 7.5.7
     devDependencies:
       '@changesets/cli':
-        specifier: ^2.29.2
+        specifier: 'catalog:'
         version: 2.29.8(@types/node@20.19.33)
       '@commitlint/cli':
-        specifier: ^18.6.0
+        specifier: 'catalog:'
         version: 18.6.1(@types/node@20.19.33)(typescript@5.9.3)
       '@commitlint/config-conventional':
-        specifier: ^18.6.0
+        specifier: 'catalog:'
         version: 18.6.3
       '@types/jest':
         specifier: ^29.5.14
@@ -31,52 +289,52 @@ importers:
         specifier: ^6.20.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       check-dependency-version-consistency:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.1
       eslint-config-xo-typescript:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3))(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       eslint-plugin-prettier:
         specifier: ^5.2.6
         version: 5.5.5(eslint-config-prettier@9.1.2(eslint@8.57.1))(eslint@8.57.1)(prettier@3.8.1)
       git-cz:
-        specifier: ^4.9.0
+        specifier: 'catalog:'
         version: 4.9.0
       husky:
-        specifier: ^9.1.7
+        specifier: 'catalog:'
         version: 9.1.7
       jest:
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3))
       jest-esm-transformer:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       jest-sonar:
-        specifier: ^0.2.16
+        specifier: 'catalog:'
         version: 0.2.16
       jest-sonar-reporter:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0
       lerna:
-        specifier: ^8.1.2
+        specifier: 'catalog:'
         version: 8.2.4(@swc/core@1.15.11)(@types/node@20.19.33)(encoding@0.1.13)
       lint-staged:
-        specifier: ^15.5.1
+        specifier: 'catalog:'
         version: 15.5.2
       prettier:
         specifier: ^3.5.3
         version: 3.8.1
       supertest:
-        specifier: ^6.3.4
+        specifier: 'catalog:'
         version: 6.3.4
       ts-jest:
         specifier: ^29.3.2
         version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.25.12)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)))(typescript@5.9.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 'catalog:'
         version: 10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)
       turbo:
-        specifier: ^1.12.2
+        specifier: 'catalog:'
         version: 1.13.4
       typescript:
         specifier: ^5.8.3
@@ -85,19 +343,19 @@ importers:
   packages/contentful-config:
     dependencies:
       '@jungvonmatt/config-loader':
-        specifier: ^0.6.0
+        specifier: 'catalog:'
         version: 0.6.1
       contentful-management:
-        specifier: ^11.54.4
+        specifier: 'catalog:'
         version: 11.69.1
       node-homedir:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0
       package-up:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.0.0
       pathe:
-        specifier: ^2.0.3
+        specifier: 'catalog:'
         version: 2.0.3
       type-fest:
         specifier: ^4.41.0
@@ -109,216 +367,216 @@ importers:
         specifier: ^7.3.0
         version: 7.6.0
       '@jungvonmatt/contentful-config':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3
       '@jungvonmatt/contentful-ssg':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3(@types/node@20.19.33)
       casual:
-        specifier: ^1.6.2
+        specifier: 'catalog:'
         version: 1.6.2
       chalk:
-        specifier: ^5.3.0
+        specifier: 'catalog:'
         version: 5.6.2
       exit-hook:
-        specifier: ^4.0.0
+        specifier: 'catalog:'
         version: 4.0.0
       fs-extra:
         specifier: ^11.1.0
         version: 11.3.3
       randexp:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
     devDependencies:
       '@types/chance':
         specifier: ^1.1.3
         version: 1.1.7
       contentful-management:
-        specifier: ^11.54.4
+        specifier: 'catalog:'
         version: 11.69.1
 
   packages/contentful-ssg:
     dependencies:
       '@contentful/rich-text-html-renderer':
-        specifier: ^16.3.0
+        specifier: 'catalog:'
         version: 16.6.10
       '@contentful/rich-text-types':
-        specifier: ^16.3.0
+        specifier: 'catalog:'
         version: 16.8.5
       '@iarna/toml':
-        specifier: ^2.2.5
+        specifier: 'catalog:'
         version: 2.2.5
       '@jungvonmatt/contentful-config':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3
       '@swc/core':
-        specifier: ^1.3.104
+        specifier: 'catalog:'
         version: 1.15.11
       chalk:
-        specifier: ^5.3.0
+        specifier: 'catalog:'
         version: 5.6.2
       change-case:
-        specifier: ^5.4.2
+        specifier: 'catalog:'
         version: 5.4.4
       commander:
-        specifier: ^11.1.0
+        specifier: 'catalog:'
         version: 11.1.0
       contentful:
-        specifier: ^11.7.15
+        specifier: 'catalog:'
         version: 11.10.3
       contentful-management:
-        specifier: ^11.54.4
+        specifier: 'catalog:'
         version: 11.69.1
       dlv:
-        specifier: ^1.1.3
+        specifier: 'catalog:'
         version: 1.1.3
       esbuild:
-        specifier: ^0.25.3
+        specifier: 'catalog:'
         version: 0.25.12
       exit-hook:
-        specifier: ^4.0.0
+        specifier: 'catalog:'
         version: 4.0.0
       express:
-        specifier: ^4.18.2
+        specifier: 'catalog:'
         version: 4.22.1
       find-cache-dir:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.0.0
       find-up:
-        specifier: ^7.0.0
+        specifier: 'catalog:'
         version: 7.0.0
       fs-extra:
         specifier: ^11.1.0
         version: 11.3.3
       get-port:
-        specifier: ^7.0.0
+        specifier: 'catalog:'
         version: 7.1.0
       globby:
-        specifier: ^14.0.0
+        specifier: 'catalog:'
         version: 14.1.0
       gray-matter:
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3
       inquirer:
-        specifier: ^12.9.3
+        specifier: 'catalog:'
         version: 12.11.1(@types/node@20.19.33)
       js-yaml:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.1
       listr:
-        specifier: ^0.14.3
+        specifier: 'catalog:'
         version: 0.14.3
       merge-options:
-        specifier: ^3.0.4
+        specifier: 'catalog:'
         version: 3.0.4
       micromatch:
-        specifier: ^4.0.5
+        specifier: 'catalog:'
         version: 4.0.8
       pirates:
-        specifier: ^4.0.6
+        specifier: 'catalog:'
         version: 4.0.7
       prettier:
         specifier: ^3.2.4
         version: 3.8.1
       read-pkg-up:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       rxjs:
-        specifier: ^7.8.1
+        specifier: 'catalog:'
         version: 7.8.2
       serialize-error:
-        specifier: ^11.0.3
+        specifier: 'catalog:'
         version: 11.0.3
       serializr:
-        specifier: ^3.0.2
+        specifier: 'catalog:'
         version: 3.0.5
       slash:
-        specifier: ^5.1.0
+        specifier: 'catalog:'
         version: 5.1.0
       tempy:
-        specifier: ^3.1.0
+        specifier: 'catalog:'
         version: 3.2.0
       type-fest:
         specifier: ^4.9.0
         version: 4.41.0
       uuid:
-        specifier: ^9.0.1
+        specifier: 'catalog:'
         version: 9.0.1
     devDependencies:
       '@swc/jest':
-        specifier: ^0.2.29
+        specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11)
       '@types/dlv':
-        specifier: ^1.1.4
+        specifier: 'catalog:'
         version: 1.1.5
       '@types/express':
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.25
       '@types/fs-extra':
-        specifier: ^11.0.4
+        specifier: 'catalog:'
         version: 11.0.4
       '@types/inquirer':
-        specifier: ^9.0.7
+        specifier: 'catalog:'
         version: 9.0.9
       '@types/jest':
         specifier: ^29.5.11
         version: 29.5.14
       '@types/js-yaml':
-        specifier: ^4.0.4
+        specifier: 'catalog:'
         version: 4.0.9
       '@types/listr':
-        specifier: ^0.14.9
+        specifier: 'catalog:'
         version: 0.14.10
       '@types/micromatch':
-        specifier: ^4.0.6
+        specifier: 'catalog:'
         version: 4.0.10
       '@types/node':
-        specifier: ^20.11.5
+        specifier: 'catalog:'
         version: 20.19.33
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.19.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       '@typescript-eslint/parser':
-        specifier: ^6.19.0
+        specifier: 'catalog:'
         version: 6.21.0(eslint@8.57.1)(typescript@5.9.3)
       eslint:
-        specifier: ^8.56.0
+        specifier: 'catalog:'
         version: 8.57.1
       eslint-config-prettier:
-        specifier: ^9.1.0
+        specifier: 'catalog:'
         version: 9.1.2(eslint@8.57.1)
       eslint-config-xo:
-        specifier: ^0.43.1
+        specifier: 'catalog:'
         version: 0.43.1(eslint@8.57.1)
       eslint-config-xo-typescript:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3))(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       eslint-import-resolver-typescript:
-        specifier: ^3.6.1
+        specifier: 'catalog:'
         version: 3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1)
       eslint-plugin-import:
-        specifier: ^2.29.1
+        specifier: 'catalog:'
         version: 2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       eslint-plugin-prettier:
         specifier: ^5.1.3
         version: 5.5.5(eslint-config-prettier@9.1.2(eslint@8.57.1))(eslint@8.57.1)(prettier@3.8.1)
       jest:
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3))
       pkg-dir:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       rimraf:
-        specifier: ^5.0.5
+        specifier: 'catalog:'
         version: 5.0.10
       supertest:
-        specifier: ^6.3.4
+        specifier: 'catalog:'
         version: 6.3.4
       ts-jest:
         specifier: ^29.1.1
         version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.25.12)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)))(typescript@5.9.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 'catalog:'
         version: 10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)
       typescript:
         specifier: ^5.3.3
@@ -330,114 +588,114 @@ importers:
         specifier: ^8.3.1
         version: 8.4.1
       '@jungvonmatt/contentful-config':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3
       '@jungvonmatt/contentful-ssg':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3(@types/node@20.19.33)
       cf-content-types-generator:
-        specifier: ^2.16.0
+        specifier: 'catalog:'
         version: 2.16.1
       change-case:
-        specifier: ^5.4.2
+        specifier: 'catalog:'
         version: 5.4.4
       commander:
-        specifier: ^11.1.0
+        specifier: 'catalog:'
         version: 11.1.0
       contentful:
-        specifier: ^11.7.15
+        specifier: 'catalog:'
         version: 11.10.3
       contentful-management:
-        specifier: ^11.54.4
+        specifier: 'catalog:'
         version: 11.69.1
       exit-hook:
-        specifier: ^4.0.0
+        specifier: 'catalog:'
         version: 4.0.0
       fs-extra:
         specifier: ^11.1.0
         version: 11.3.3
       picocolors:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.1.1
       prettier:
         specifier: ^3.2.4
         version: 3.8.1
       read-pkg-up:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       semiver:
-        specifier: ^1.1.0
+        specifier: 'catalog:'
         version: 1.1.0
     devDependencies:
       '@types/chance':
         specifier: ^1.1.6
         version: 1.1.7
       ts-morph:
-        specifier: ^23.0.0
+        specifier: 'catalog:'
         version: 23.0.0
 
   packages/cssg-plugin-assets:
     dependencies:
       '@ffmpeg/core':
-        specifier: ^0.10.0
+        specifier: 'catalog:'
         version: 0.10.0
       '@ffmpeg/ffmpeg':
-        specifier: ^0.10.1
+        specifier: 'catalog:'
         version: 0.10.1(encoding@0.1.13)
       cli-progress:
-        specifier: ^3.9.1
+        specifier: 'catalog:'
         version: 3.12.0
       contentful:
-        specifier: ^11.7.15
+        specifier: 'catalog:'
         version: 11.10.3
       got:
-        specifier: ^11.8.3
+        specifier: 'catalog:'
         version: 11.8.6
       mkdirp:
-        specifier: ^1.0.4
+        specifier: 'catalog:'
         version: 1.0.4
       svgo:
-        specifier: ^2.8.0
+        specifier: 'catalog:'
         version: 2.8.0
     devDependencies:
       '@jungvonmatt/contentful-ssg':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3(@types/node@20.19.33)
       '@types/svgo':
-        specifier: ^2.6.3
+        specifier: 'catalog:'
         version: 2.6.4
       eslint:
-        specifier: ^8.56.0
+        specifier: 'catalog:'
         version: 8.57.1
       eslint-config-xo:
-        specifier: ^0.43.1
+        specifier: 'catalog:'
         version: 0.43.1(eslint@8.57.1)
       eslint-config-xo-space:
-        specifier: ^0.30.0
+        specifier: 'catalog:'
         version: 0.30.0(eslint@8.57.1)
       eslint-config-xo-typescript:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3))(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       eslint-import-resolver-typescript:
-        specifier: ^3.6.1
+        specifier: 'catalog:'
         version: 3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1)
       eslint-plugin-import:
-        specifier: ^2.29.1
+        specifier: 'catalog:'
         version: 2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       fs-extra:
         specifier: ^11.1.0
         version: 11.3.3
       jest:
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3))
       rimraf:
-        specifier: ^5.0.5
+        specifier: 'catalog:'
         version: 5.0.10
       ts-jest:
         specifier: ^29.1.1
         version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.25.12)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)))(typescript@5.9.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 'catalog:'
         version: 10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)
       typescript:
         specifier: ^5.3.3
@@ -446,20 +704,20 @@ importers:
   packages/cssg-plugin-grow:
     dependencies:
       '@jungvonmatt/contentful-ssg':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3(@types/node@20.19.33)
     devDependencies:
       jest:
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3))
       rimraf:
-        specifier: ^5.0.5
+        specifier: 'catalog:'
         version: 5.0.10
       ts-jest:
         specifier: ^29.1.1
         version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.25.12)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.33)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)))(typescript@5.9.3)
       ts-node:
-        specifier: ^10.9.2
+        specifier: 'catalog:'
         version: 10.9.2(@swc/core@1.15.11)(@types/node@20.19.33)(typescript@5.9.3)
       typescript:
         specifier: ^5.3.3
@@ -468,13 +726,13 @@ importers:
   packages/cssg-plugin-hugo:
     dependencies:
       '@jungvonmatt/contentful-ssg':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.0.3(@types/node@20.19.33)
       fs-extra:
         specifier: ^11.1.0
         version: 11.3.3
       micromatch:
-        specifier: ^4.0.5
+        specifier: 'catalog:'
         version: 4.0.8
 
 packages:
@@ -9385,7 +9643,7 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
       parse-json: 5.2.0
     optionalDependencies:
       typescript: 5.9.3
@@ -9983,9 +10241,9 @@ snapshots:
   execa@5.0.0:
     dependencies:
       cross-spawn: 7.0.6
-      get-stream: 6.0.0
+      get-stream: 6.0.1
       human-signals: 2.1.0
-      is-stream: 2.0.0
+      is-stream: 2.0.1
       merge-stream: 2.0.0
       npm-run-path: 4.0.1
       onetime: 5.1.2
@@ -11033,7 +11291,7 @@ snapshots:
 
   jest-diff@29.7.0:
     dependencies:
-      chalk: 4.1.0
+      chalk: 4.1.2
       diff-sequences: 29.6.3
       jest-get-type: 29.6.3
       pretty-format: 29.7.0
@@ -11882,7 +12140,7 @@ snapshots:
       array-differ: 3.0.0
       array-union: 2.1.0
       arrify: 2.0.1
-      minimatch: 3.0.5
+      minimatch: 3.1.2
 
   mute-stream@0.0.8: {}
 
@@ -12029,7 +12287,7 @@ snapshots:
       '@yarnpkg/parsers': 3.0.2
       '@zkochan/js-yaml': 0.0.7
       axios: 1.13.5
-      chalk: 4.1.0
+      chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
       cliui: 8.0.1
@@ -12160,9 +12418,9 @@ snapshots:
   ora@5.3.0:
     dependencies:
       bl: 4.1.0
-      chalk: 4.1.0
+      chalk: 4.1.2
       cli-cursor: 3.1.0
-      cli-spinners: 2.6.1
+      cli-spinners: 2.9.2
       is-interactive: 1.0.0
       log-symbols: 4.1.0
       strip-ansi: 6.0.1

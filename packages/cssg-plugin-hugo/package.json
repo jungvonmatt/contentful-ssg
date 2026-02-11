@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
-    "@jungvonmatt/contentful-ssg": "^4.0.3",
+    "@jungvonmatt/contentful-ssg": "catalog:",
     "fs-extra": "^11.1.0",
-    "micromatch": "^4.0.5"
+    "micromatch": "catalog:"
   }
 }

@@ -33,13 +33,13 @@
     "test": "test"
   },
   "dependencies": {
-    "@jungvonmatt/contentful-ssg": "^4.0.3"
+    "@jungvonmatt/contentful-ssg": "catalog:"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "rimraf": "^5.0.5",
+    "jest": "catalog:",
+    "rimraf": "catalog:",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.2",
+    "ts-node": "catalog:",
     "typescript": "^5.3.3"
   },
   "ts-node": {
