@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/jungvonmatt/contentful-ssg/compare/v4.0.3...v4.1.0) (2026-02-11)
+
+### Features
+
+* adds contentful-config cli ([85fbaf9](https://github.com/jungvonmatt/contentful-ssg/commit/85fbaf9a96f1f078bcd14f257adcf6876f7ce0d3))
+
 ## [4.0.3](https://github.com/jungvonmatt/contentful-ssg/compare/v4.0.2...v4.0.3) (2026-01-12)
 
 ### Bug Fixes
