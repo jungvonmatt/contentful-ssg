@@ -63,7 +63,8 @@ catalog:
   jest-sonar: ^0.2.16
   jest-sonar-reporter: ^2.0.0
   js-yaml: ^4.1.0
-  lerna: ^8.1.2
+  "@lerna-lite/cli": ^4.11.2
+  "@lerna-lite/publish": ^4.11.2
   lint-staged: ^15.5.1
   listr: ^0.14.3
   merge-options: ^3.0.4

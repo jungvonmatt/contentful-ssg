@@ -1,11 +1,9 @@
 {
+  "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
   "version": "4.0.3",
   "npmClient": "pnpm",
   "packages": ["packages/*"],
   "command": {
-    "bootstrap": {
-      "hoist": true
-    },
     "version": {
       "allowBranch": "main",
       "conventionalCommits": true,
