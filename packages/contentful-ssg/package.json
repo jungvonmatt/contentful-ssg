@@ -89,6 +89,7 @@
     "get-port": "catalog:",
     "globby": "catalog:",
     "gray-matter": "catalog:",
+    "ignore": "^5.3.2",
     "inquirer": "catalog:",
     "js-yaml": "catalog:",
     "listr": "catalog:",

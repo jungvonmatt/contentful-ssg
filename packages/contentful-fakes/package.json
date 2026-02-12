@@ -45,12 +45,15 @@
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "casual": "catalog:",
     "chalk": "catalog:",
+    "commander": "catalog:",
     "exit-hook": "catalog:",
     "fs-extra": "^11.1.0",
     "randexp": "catalog:"
   },
   "devDependencies": {
     "@types/chance": "^1.1.3",
-    "contentful-management": "catalog:"
+    "@types/fs-extra": "catalog:",
+    "contentful-management": "catalog:",
+    "rimraf": "catalog:"
   }
 }

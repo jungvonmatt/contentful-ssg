@@ -55,6 +55,8 @@
   },
   "devDependencies": {
     "@types/chance": "^1.1.6",
+    "@types/fs-extra": "catalog:",
+    "rimraf": "catalog:",
     "ts-morph": "catalog:"
   }
 }

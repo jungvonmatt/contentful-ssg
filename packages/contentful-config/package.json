@@ -45,6 +45,7 @@
     "type-fest": "^4.41.0"
   },
   "devDependencies": {
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "rimraf": "catalog:"
   }
 }
