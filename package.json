@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "turbo run clean",
     "commit": "cz",
-    "prepublishOnly": "pnpm run test:ci",
+    "prerelease": "pnpm run test:ci",
     "release": "lerna version --no-private --conventional-commits --create-release github --yes && lerna publish from-git --yes",
     "compile": "turbo run compile",
     "start": "turbo run start",
