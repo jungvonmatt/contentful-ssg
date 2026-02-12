@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.1...v4.1.2) (2026-02-12)
+
+### Bug Fixes
+
+* expose organization id in config-cli ([497d739](https://github.com/jungvonmatt/contentful-ssg/commit/497d7397347d38a996c3ff1e0dcc8cc77684878f))
+* resolve typescript deprecation warnings ([0ad646c](https://github.com/jungvonmatt/contentful-ssg/commit/0ad646c94addc2248b7a833b8bad3824098868df))
+* updates release workflow ([8764e66](https://github.com/jungvonmatt/contentful-ssg/commit/8764e66d79098c3e42955435dd47ec9f7a7acbae))
+* updates workflow file ([d87b41b](https://github.com/jungvonmatt/contentful-ssg/commit/d87b41ba8ade89fb6878a0a23bb78d38f5b453e0))
+* use workspace versions for internal deps ([38e767b](https://github.com/jungvonmatt/contentful-ssg/commit/38e767b171c9d082a31c2455c6ca3798d2f88d45))
+
 ## [4.1.1](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.0...v4.1.1) (2026-02-11)
 
 ### Bug Fixes

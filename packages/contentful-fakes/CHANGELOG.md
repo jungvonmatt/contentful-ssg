@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.1...v4.1.2) (2026-02-12)
+
+### Bug Fixes
+
+* use workspace versions for internal deps ([38e767b](https://github.com/jungvonmatt/contentful-ssg/commit/38e767b171c9d082a31c2455c6ca3798d2f88d45))
+
 ## [4.1.1](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.0...v4.1.1) (2026-02-11)
 
 **Note:** Version bump only for package @jungvonmatt/contentful-fakes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.1...v4.1.2) (2026-02-12)
+
+### Bug Fixes
+
+* expose organization id in config-cli ([497d739](https://github.com/jungvonmatt/contentful-ssg/commit/497d7397347d38a996c3ff1e0dcc8cc77684878f))
+
 ## [4.1.1](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.0...v4.1.1) (2026-02-11)
 
 ### Bug Fixes
