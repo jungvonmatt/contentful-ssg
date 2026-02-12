@@ -4,7 +4,7 @@
     "rootDir": ".",
     "sourceMap": true,
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
@@ -14,9 +14,8 @@
     "lib": ["dom", "dom.iterable", "es2020", "esnext"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
     "paths": {
-      "@jungvonmatt/*": ["packages/*"]
+      "@jungvonmatt/*": ["./packages/*"]
     },
     "strict": false,
     "esModuleInterop": true,
