@@ -7,6 +7,7 @@ import { loadContentfulConfig } from './index.js';
 
 const ENV_MAP: Record<string, string> = {
   spaceId: 'CONTENTFUL_SPACE_ID',
+  organizationId: 'CONTENTFUL_ORGANIZATION_ID',
   environmentId: 'CONTENTFUL_ENVIRONMENT_ID',
   managementToken: 'CONTENTFUL_MANAGEMENT_TOKEN',
   previewAccessToken: 'CONTENTFUL_PREVIEW_TOKEN',
