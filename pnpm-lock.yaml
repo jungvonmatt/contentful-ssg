@@ -370,6 +370,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.33
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
       rimraf:
         specifier: 'catalog:'
         version: 5.0.10
@@ -413,6 +416,9 @@ importers:
       contentful-management:
         specifier: 'catalog:'
         version: 11.69.1
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
       rimraf:
         specifier: 'catalog:'
         version: 5.0.10
@@ -658,6 +664,9 @@ importers:
       '@types/fs-extra':
         specifier: 'catalog:'
         version: 11.0.4
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
       rimraf:
         specifier: 'catalog:'
         version: 5.0.10
@@ -741,6 +750,9 @@ importers:
         specifier: workspace:*
         version: link:../contentful-ssg
     devDependencies:
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
       jest:
         specifier: 'catalog:'
         version: 29.7.0(@types/node@22.19.11)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@22.19.11)(typescript@5.9.3))
@@ -768,6 +780,10 @@ importers:
       micromatch:
         specifier: 'catalog:'
         version: 4.0.8
+    devDependencies:
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
 
 packages:
 

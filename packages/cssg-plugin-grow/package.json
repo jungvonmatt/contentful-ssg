@@ -36,6 +36,7 @@
     "@jungvonmatt/contentful-ssg": "workspace:*"
   },
   "devDependencies": {
+    "eslint": "catalog:",
     "jest": "catalog:",
     "rimraf": "catalog:",
     "ts-jest": "^29.1.1",

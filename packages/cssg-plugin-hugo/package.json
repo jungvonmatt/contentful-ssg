@@ -30,5 +30,8 @@
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "fs-extra": "^11.1.0",
     "micromatch": "catalog:"
+  },
+  "devDependencies": {
+    "eslint": "catalog:"
   }
 }
