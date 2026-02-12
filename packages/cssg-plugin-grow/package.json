@@ -33,7 +33,7 @@
     "test": "test"
   },
   "dependencies": {
-    "@jungvonmatt/contentful-ssg": "^4.1.1"
+    "@jungvonmatt/contentful-ssg": "workspace:*"
   },
   "devDependencies": {
     "jest": "catalog:",

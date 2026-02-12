@@ -33,12 +33,6 @@ catalogs:
     '@jungvonmatt/config-loader':
       specifier: ^0.6.0
       version: 0.6.1
-    '@jungvonmatt/contentful-config':
-      specifier: ^4.0.3
-      version: 4.0.3
-    '@jungvonmatt/contentful-ssg':
-      specifier: ^4.0.3
-      version: 4.0.3
     '@lerna-lite/cli':
       specifier: ^4.11.2
       version: 4.11.2
@@ -380,11 +374,11 @@ importers:
         specifier: ^7.3.0
         version: 7.6.0
       '@jungvonmatt/contentful-config':
-        specifier: 'catalog:'
-        version: 4.0.3
+        specifier: workspace:*
+        version: link:../contentful-config
       '@jungvonmatt/contentful-ssg':
-        specifier: 'catalog:'
-        version: 4.0.3(@types/node@22.19.11)
+        specifier: workspace:*
+        version: link:../contentful-ssg
       casual:
         specifier: 'catalog:'
         version: 1.6.2
@@ -420,8 +414,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.5
       '@jungvonmatt/contentful-config':
-        specifier: 'catalog:'
-        version: 4.0.3
+        specifier: workspace:*
+        version: link:../contentful-config
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -601,11 +595,11 @@ importers:
         specifier: ^8.3.1
         version: 8.4.1
       '@jungvonmatt/contentful-config':
-        specifier: 'catalog:'
-        version: 4.0.3
+        specifier: workspace:*
+        version: link:../contentful-config
       '@jungvonmatt/contentful-ssg':
-        specifier: 'catalog:'
-        version: 4.0.3(@types/node@22.19.11)
+        specifier: workspace:*
+        version: link:../contentful-ssg
       cf-content-types-generator:
         specifier: 'catalog:'
         version: 2.16.1
@@ -672,8 +666,8 @@ importers:
         version: 2.8.0
     devDependencies:
       '@jungvonmatt/contentful-ssg':
-        specifier: 'catalog:'
-        version: 4.0.3(@types/node@22.19.11)
+        specifier: workspace:*
+        version: link:../contentful-ssg
       '@types/svgo':
         specifier: 'catalog:'
         version: 2.6.4
@@ -717,8 +711,8 @@ importers:
   packages/cssg-plugin-grow:
     dependencies:
       '@jungvonmatt/contentful-ssg':
-        specifier: 'catalog:'
-        version: 4.0.3(@types/node@22.19.11)
+        specifier: workspace:*
+        version: link:../contentful-ssg
     devDependencies:
       jest:
         specifier: 'catalog:'
@@ -739,8 +733,8 @@ importers:
   packages/cssg-plugin-hugo:
     dependencies:
       '@jungvonmatt/contentful-ssg':
-        specifier: 'catalog:'
-        version: 4.0.3(@types/node@22.19.11)
+        specifier: workspace:*
+        version: link:../contentful-ssg
       fs-extra:
         specifier: ^11.1.0
         version: 11.3.3
@@ -1602,15 +1596,6 @@ packages:
 
   '@jungvonmatt/config-loader@0.6.1':
     resolution: {integrity: sha512-cCuFwdL9siiaEbqZiJs1NWyBpE5UV6AQoItgEVfgjMwZ9iRvy8Ne2TMePaead0l08T+bYH+Xpliu4wydyHJjWw==}
-
-  '@jungvonmatt/contentful-config@4.0.3':
-    resolution: {integrity: sha512-Tx93UqD8xi6UlxJRptqg4PutgkNEGzeOIRs20NTZbmt3GzJnXDNsAkd/YEznYuCudG1Rr2zh09MbNWF88/TqfQ==}
-    engines: {node: '>=20'}
-
-  '@jungvonmatt/contentful-ssg@4.0.3':
-    resolution: {integrity: sha512-GA/rU0aI3OkWDMBagQcuCkRhJhdbMJ+Ypb3jCR692++tlE/b7utDZZVPqiLbiWiiwdNIHnbafh3oyMQMSn0nfw==}
-    engines: {node: '>=20'}
-    hasBin: true
 
   '@lerna-lite/cli@4.11.2':
     resolution: {integrity: sha512-CmnrRFc4BSPFCfgUHtMLvwIvlhPQagqGLuU9WHM0kJ+0VqFSL2dqN20CLlb3RWJQNKcsemLdaVHDDK0lI4VTzg==}
@@ -7755,29 +7740,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.19.33
 
-  '@inquirer/checkbox@4.3.2(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/ansi': 1.0.2
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/figures': 1.0.15
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-      yoctocolors-cjs: 2.1.3
-    optionalDependencies:
-      '@types/node': 22.19.11
-
   '@inquirer/confirm@5.1.21(@types/node@20.19.33)':
     dependencies:
       '@inquirer/core': 10.3.2(@types/node@20.19.33)
       '@inquirer/type': 3.0.10(@types/node@20.19.33)
     optionalDependencies:
       '@types/node': 20.19.33
-
-  '@inquirer/confirm@5.1.21(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-    optionalDependencies:
-      '@types/node': 22.19.11
 
   '@inquirer/core@10.3.2(@types/node@20.19.33)':
     dependencies:
@@ -7812,14 +7780,6 @@ snapshots:
       '@inquirer/type': 3.0.10(@types/node@20.19.33)
     optionalDependencies:
       '@types/node': 20.19.33
-
-  '@inquirer/editor@4.2.23(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/external-editor': 1.0.3(@types/node@22.19.11)
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-    optionalDependencies:
-      '@types/node': 22.19.11
 
   '@inquirer/expand@4.0.23(@types/node@20.19.33)':
     dependencies:
@@ -7874,13 +7834,6 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.19.33
 
-  '@inquirer/number@3.0.23(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-    optionalDependencies:
-      '@types/node': 22.19.11
-
   '@inquirer/password@4.0.23(@types/node@20.19.33)':
     dependencies:
       '@inquirer/ansi': 1.0.2
@@ -7888,14 +7841,6 @@ snapshots:
       '@inquirer/type': 3.0.10(@types/node@20.19.33)
     optionalDependencies:
       '@types/node': 20.19.33
-
-  '@inquirer/password@4.0.23(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/ansi': 1.0.2
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-    optionalDependencies:
-      '@types/node': 22.19.11
 
   '@inquirer/prompts@7.10.1(@types/node@20.19.33)':
     dependencies:
@@ -7912,21 +7857,6 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.19.33
 
-  '@inquirer/prompts@7.10.1(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/checkbox': 4.3.2(@types/node@22.19.11)
-      '@inquirer/confirm': 5.1.21(@types/node@22.19.11)
-      '@inquirer/editor': 4.2.23(@types/node@22.19.11)
-      '@inquirer/expand': 4.0.23(@types/node@22.19.11)
-      '@inquirer/input': 4.3.1(@types/node@22.19.11)
-      '@inquirer/number': 3.0.23(@types/node@22.19.11)
-      '@inquirer/password': 4.0.23(@types/node@22.19.11)
-      '@inquirer/rawlist': 4.1.11(@types/node@22.19.11)
-      '@inquirer/search': 3.2.2(@types/node@22.19.11)
-      '@inquirer/select': 4.4.2(@types/node@22.19.11)
-    optionalDependencies:
-      '@types/node': 22.19.11
-
   '@inquirer/rawlist@4.1.11(@types/node@20.19.33)':
     dependencies:
       '@inquirer/core': 10.3.2(@types/node@20.19.33)
@@ -7934,14 +7864,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 20.19.33
-
-  '@inquirer/rawlist@4.1.11(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-      yoctocolors-cjs: 2.1.3
-    optionalDependencies:
-      '@types/node': 22.19.11
 
   '@inquirer/search@3.2.2(@types/node@20.19.33)':
     dependencies:
@@ -7951,15 +7873,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 20.19.33
-
-  '@inquirer/search@3.2.2(@types/node@22.19.11)':
-    dependencies:
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/figures': 1.0.15
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-      yoctocolors-cjs: 2.1.3
-    optionalDependencies:
-      '@types/node': 22.19.11
 
   '@inquirer/select@4.4.2(@types/node@20.19.33)':
     dependencies:
@@ -8280,64 +8193,6 @@ snapshots:
       type-fest: 4.41.0
     transitivePeerDependencies:
       - magicast
-
-  '@jungvonmatt/contentful-config@4.0.3':
-    dependencies:
-      '@jungvonmatt/config-loader': 0.6.1
-      contentful-management: 11.69.1
-      node-homedir: 2.0.0
-      package-up: 5.0.0
-      pathe: 2.0.3
-      type-fest: 4.41.0
-    transitivePeerDependencies:
-      - debug
-      - magicast
-
-  '@jungvonmatt/contentful-ssg@4.0.3(@types/node@22.19.11)':
-    dependencies:
-      '@contentful/rich-text-html-renderer': 16.6.10
-      '@contentful/rich-text-types': 16.8.5
-      '@iarna/toml': 2.2.5
-      '@jungvonmatt/contentful-config': 4.0.3
-      '@swc/core': 1.15.11
-      chalk: 5.6.2
-      change-case: 5.4.4
-      commander: 11.1.0
-      contentful: 11.10.3
-      contentful-management: 11.69.1
-      dlv: 1.1.3
-      esbuild: 0.25.12
-      exit-hook: 4.0.0
-      express: 4.22.1
-      find-cache-dir: 5.0.0
-      find-up: 7.0.0
-      fs-extra: 11.3.3
-      get-port: 7.1.0
-      globby: 14.1.0
-      gray-matter: 4.0.3
-      inquirer: 12.11.1(@types/node@22.19.11)
-      js-yaml: 4.1.1
-      listr: 0.14.3
-      merge-options: 3.0.4
-      micromatch: 4.0.8
-      pirates: 4.0.7
-      prettier: 3.8.1
-      read-pkg-up: 11.0.0
-      rxjs: 7.8.2
-      serialize-error: 11.0.3
-      serializr: 3.0.5
-      slash: 5.1.0
-      tempy: 3.2.0
-      type-fest: 4.41.0
-      uuid: 9.0.1
-    transitivePeerDependencies:
-      - '@swc/helpers'
-      - '@types/node'
-      - debug
-      - magicast
-      - supports-color
-      - zen-observable
-      - zenObservable
 
   '@lerna-lite/cli@4.11.2(@lerna-lite/publish@4.11.2(@types/node@22.19.11)(conventional-commits-filter@5.0.0))(@lerna-lite/version@4.11.2(@lerna-lite/publish@4.11.2(@types/node@22.19.11)(conventional-commits-filter@5.0.0))(@types/node@22.19.11)(conventional-commits-filter@5.0.0))(@types/node@22.19.11)':
     dependencies:
@@ -11667,18 +11522,6 @@ snapshots:
       rxjs: 7.8.2
     optionalDependencies:
       '@types/node': 20.19.33
-
-  inquirer@12.11.1(@types/node@22.19.11):
-    dependencies:
-      '@inquirer/ansi': 1.0.2
-      '@inquirer/core': 10.3.2(@types/node@22.19.11)
-      '@inquirer/prompts': 7.10.1(@types/node@22.19.11)
-      '@inquirer/type': 3.0.10(@types/node@22.19.11)
-      mute-stream: 2.0.0
-      run-async: 4.0.6
-      rxjs: 7.8.2
-    optionalDependencies:
-      '@types/node': 22.19.11
 
   inquirer@2.0.0:
     dependencies:

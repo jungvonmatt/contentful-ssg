@@ -39,8 +39,8 @@
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
-    "@jungvonmatt/contentful-config": "^4.1.1",
-    "@jungvonmatt/contentful-ssg": "^4.1.1",
+    "@jungvonmatt/contentful-config": "workspace:*",
+    "@jungvonmatt/contentful-ssg": "workspace:*",
     "cf-content-types-generator": "catalog:",
     "change-case": "catalog:",
     "commander": "catalog:",

@@ -13,7 +13,7 @@
     "dist"
   ],
   "devDependencies": {
-    "@jungvonmatt/contentful-ssg": "^4.1.1",
+    "@jungvonmatt/contentful-ssg": "workspace:*",
     "@types/svgo": "catalog:",
     "eslint": "catalog:",
     "eslint-config-xo": "catalog:",

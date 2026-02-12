@@ -41,8 +41,8 @@
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@faker-js/faker": "^7.3.0",
-    "@jungvonmatt/contentful-config": "^4.1.1",
-    "@jungvonmatt/contentful-ssg": "^4.1.1",
+    "@jungvonmatt/contentful-config": "workspace:*",
+    "@jungvonmatt/contentful-ssg": "workspace:*",
     "casual": "catalog:",
     "chalk": "catalog:",
     "exit-hook": "catalog:",

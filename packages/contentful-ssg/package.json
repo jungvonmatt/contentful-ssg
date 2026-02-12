@@ -72,7 +72,7 @@
     "@contentful/rich-text-html-renderer": "catalog:",
     "@contentful/rich-text-types": "catalog:",
     "@iarna/toml": "catalog:",
-    "@jungvonmatt/contentful-config": "^4.1.1",
+    "@jungvonmatt/contentful-config": "workspace:*",
     "@swc/core": "catalog:",
     "chalk": "catalog:",
     "change-case": "catalog:",
