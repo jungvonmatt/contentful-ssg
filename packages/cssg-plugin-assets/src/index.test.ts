@@ -42,7 +42,6 @@ vi.mock('@ffmpeg/ffmpeg', () => {
 
 const mockedGot = got as MockedFunction<typeof got>;
 const mockedCreateFFmpeg = createFFmpeg as MockedFunction<typeof createFFmpeg>;
-const mockedFetchFile = fetchFile as MockedFunction<typeof fetchFile>;
 
 const getMockData = async (type: string) => {
   const content = await getContent();
