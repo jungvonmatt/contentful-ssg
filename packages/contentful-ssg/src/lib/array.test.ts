@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { mapAsync, reduceAsync, forEachAsync, filterAsync } from './array';
 
 const waitFor = async (ms) =>

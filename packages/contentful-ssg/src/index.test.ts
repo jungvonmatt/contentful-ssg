@@ -1,3 +1,4 @@
+import { Mock, vi } from 'vitest';
 import chalk from 'chalk';
 import { run, cleanupPrevData } from './index.js';
 import { gracefulExit } from 'exit-hook';
@@ -5,56 +6,57 @@ import { write } from './tasks/write.js';
 import { Asset, Entry, RunResult, RuntimeContext } from './types.js';
 import { getContent } from './__test__/mock.js';
 
-const mockedGracefulExit = <jest.Mock<typeof gracefulExit>>gracefulExit;
+const mockedGracefulExit = <Mock<typeof gracefulExit>>gracefulExit;
 
-jest.mock('./lib/contentful.js', () => {
-  const originalModule = jest.requireActual('./lib/contentful.js');
+vi.mock('./lib/contentful.js', async () => {
+  const originalModule =
+    await vi.importActual<typeof import('./lib/contentful.js')>('./lib/contentful.js');
   return {
     __esModule: true, // Use it when dealing with esModules
     ...originalModule,
-    getContent: jest.fn().mockImplementation(async (context) => {
+    getContent: vi.fn().mockImplementation(async (context) => {
       const mocks = await import('./__test__/mock.js');
       return mocks.getContent();
     }),
   };
 });
 
-jest.mock('./lib/file-manager.js', () => ({
+vi.mock('./lib/file-manager.js', () => ({
   FileManager: function () {
     return {
-      initialize: jest.fn(),
-      writeFile: jest.fn(),
-      deleteFile: jest.fn(),
-      cleanup: jest.fn(),
+      initialize: vi.fn(),
+      writeFile: vi.fn(),
+      deleteFile: vi.fn(),
+      cleanup: vi.fn(),
       count: 1,
     };
   },
 }));
 
-jest.mock('exit-hook', () => ({
-  gracefulExit: jest.fn(),
+vi.mock('exit-hook', () => ({
+  gracefulExit: vi.fn(),
 }));
 
 describe('Run', () => {
   test('main loop', async () => {
-    console.log = jest.fn();
+    console.log = vi.fn();
 
     let fileManager;
     const hooks = {
-      before: jest.fn().mockResolvedValue({}),
-      after: jest.fn().mockResolvedValue({}),
-      mapDirectory: jest.fn().mockImplementation((tc, rc, prev) => prev),
-      mapFilename: jest.fn().mockImplementation((tc, rc, prev) => prev),
-      mapMetaFields: jest.fn().mockImplementation((tc, rc, prev) => prev),
-      mapAssetLink: jest.fn().mockImplementation((tc, rc, prev) => prev),
-      mapEntryLink: jest.fn().mockImplementation((tc, rc, prev) => prev),
+      before: vi.fn().mockResolvedValue({}),
+      after: vi.fn().mockResolvedValue({}),
+      mapDirectory: vi.fn().mockImplementation((tc, rc, prev) => prev),
+      mapFilename: vi.fn().mockImplementation((tc, rc, prev) => prev),
+      mapMetaFields: vi.fn().mockImplementation((tc, rc, prev) => prev),
+      mapAssetLink: vi.fn().mockImplementation((tc, rc, prev) => prev),
+      mapEntryLink: vi.fn().mockImplementation((tc, rc, prev) => prev),
     };
 
     await run({
       directory: 'test',
       ...hooks,
       transform: (context) => {
-        return { ...(context?.content ?? {}), test: [...(context?.content?.test ?? []), 'config'] };
+        return { ...context?.content, test: [...(context?.content?.test ?? []), 'config'] };
       },
       resolvedPlugins: [
         {
@@ -65,7 +67,7 @@ describe('Run', () => {
         {
           transform: (context) => {
             return {
-              ...(context?.content ?? {}),
+              ...context?.content,
               test: [...(context?.content?.test ?? []), 'plugin'],
             };
           },
@@ -82,8 +84,8 @@ describe('Run', () => {
     expect(hooks.mapEntryLink).toHaveBeenCalled();
     expect(fileManager.writeFile).toHaveBeenCalledTimes(12);
 
-    const output = ((console.log as jest.Mock)?.mock?.calls ?? []).flat().join('\n');
-    const calls = (write as jest.Mock)?.mock?.calls ?? [];
+    const output = ((console.log as Mock)?.mock?.calls ?? []).flat().join('\n');
+    const calls = (write as Mock)?.mock?.calls ?? [];
     calls.forEach((call) => {
       expect(call?.[0]?.content).toMatchObject({ test: ['plugin', 'config'] });
     });
@@ -97,8 +99,8 @@ describe('Run', () => {
   });
 
   test('fails on exception before/after', async () => {
-    console.log = jest.fn();
-    const mockError = jest.fn().mockImplementation(() => {
+    console.log = vi.fn();
+    const mockError = vi.fn().mockImplementation(() => {
       throw new Error();
     });
 
@@ -118,7 +120,7 @@ describe('Run', () => {
   });
 
   test('fails on transform exception', async () => {
-    console.log = jest.fn();
+    console.log = vi.fn();
 
     mockedGracefulExit.mockImplementation((number) => {
       throw new Error('process.exit: ' + number);
@@ -138,7 +140,7 @@ describe('Run', () => {
   });
 
   test('does not fail on transform exception with ignoreErrors option', async () => {
-    console.log = jest.fn();
+    console.log = vi.fn();
 
     mockedGracefulExit.mockImplementation((number) => {
       throw new Error('process.exit: ' + number);
@@ -157,7 +159,7 @@ describe('Run', () => {
   });
 
   test('does not fail on transform exception in sync mode', async () => {
-    console.log = jest.fn();
+    console.log = vi.fn();
     mockedGracefulExit.mockImplementation((number) => {
       throw new Error('process.exit: ' + number);
     });

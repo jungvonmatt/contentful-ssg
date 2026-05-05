@@ -20,8 +20,9 @@
     "lint": "turbo run lint",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "test": "turbo run test --concurrency=1",
-    "test:ci": "turbo run lint && jest",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ci": "turbo run lint && vitest run --coverage",
     "prepare": "husky"
   },
   "dependencies": {
@@ -34,29 +35,26 @@
     "@commitlint/config-conventional": "catalog:",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
-    "@types/jest": "^29.5.14",
     "check-dependency-version-consistency": "catalog:",
     "git-cz": "catalog:",
     "husky": "catalog:",
-    "jest": "catalog:",
-    "jest-esm-transformer": "catalog:",
-    "jest-sonar": "catalog:",
-    "jest-sonar-reporter": "catalog:",
     "lint-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "supertest": "catalog:",
-    "ts-jest": "^29.3.2",
     "ts-node": "catalog:",
     "turbo": "catalog:",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "vitest-sonar-reporter": "catalog:"
   },
   "lint-staged": {
     "packages/**/*.{ts,js,cjs,mjs}": [
       "oxfmt"
     ],
-    "packages/**/{src,test}/**/*.ts": [
+    "packages/**/{src,test}/**/!(*.test|*.spec).ts": [
       "oxlint --fix"
     ]
   },
@@ -69,10 +67,5 @@
   "engines": {
     "node": ">=22"
   },
-  "packageManager": "pnpm@10.28.0",
-  "jestSonar": {
-    "reportPath": "coverage",
-    "reportFile": "test-report.xml",
-    "indent": 2
-  }
+  "packageManager": "pnpm@10.28.0"
 }

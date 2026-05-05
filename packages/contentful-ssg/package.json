@@ -62,7 +62,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "oxlint --type-aware --fix src",
-    "test": "jest",
+    "test": "vitest run",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "postcompile": "chmod +x ./dist/cli.js",
@@ -107,23 +107,20 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@swc/jest": "catalog:",
     "@types/dlv": "catalog:",
     "@types/express": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/inquirer": "catalog:",
-    "@types/jest": "^29.5.11",
     "@types/js-yaml": "catalog:",
     "@types/listr": "catalog:",
     "@types/micromatch": "catalog:",
     "@types/node": "catalog:",
-    "jest": "catalog:",
     "pkg-dir": "catalog:",
     "rimraf": "catalog:",
     "supertest": "catalog:",
-    "ts-jest": "^29.1.1",
     "ts-node": "catalog:",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=22"

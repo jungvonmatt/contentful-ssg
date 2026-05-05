@@ -1,14 +1,15 @@
+import { vi } from 'vitest';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { logInfo, logError, confirm } from './ui';
 
-jest.mock('inquirer', () => ({
-  prompt: jest.fn(async (args) => args),
+vi.mock('inquirer', () => ({
+  default: { prompt: vi.fn(async (args) => args) },
 }));
 
 describe('Utils', () => {
   test('logInfo', () => {
-    console.log = jest.fn();
+    console.log = vi.fn();
     const text = 'test';
     logInfo(text);
 
@@ -17,8 +18,8 @@ describe('Utils', () => {
   });
 
   test('logError', () => {
-    console.log = jest.fn();
-    console.error = jest.fn();
+    console.log = vi.fn();
+    console.error = vi.fn();
     const error = new Error('Test');
     error.stack = 'teststack';
     logError(error);

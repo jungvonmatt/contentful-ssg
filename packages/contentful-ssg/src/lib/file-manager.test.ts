@@ -1,25 +1,28 @@
+import { vi } from 'vitest';
 import { remove } from 'fs-extra';
 import { FileManager } from './file-manager.js';
 
-jest.mock('globby', () => ({
-  globby: jest.fn().mockResolvedValue(['/test/a.md', '/test/b.md', '/test2/a.md']),
+vi.mock('globby', () => ({
+  globby: vi.fn().mockResolvedValue(['/test/a.md', '/test/b.md', '/test2/a.md']),
 }));
-jest.mock('ignore', () => jest.fn().mockReturnValue({ add: jest.fn().mockReturnValue({}) }));
-jest.mock('find-up', () => ({ findUp: jest.fn().mockResolvedValue('.gitignore') }));
-jest.mock('fs-extra', () => ({
-  outputFile: jest.fn(),
-  remove: jest.fn(),
+vi.mock('ignore', () => ({
+  default: vi.fn().mockReturnValue({ add: vi.fn().mockReturnValue({}) }),
 }));
-jest.mock('fs/promises', () => ({
-  lstat: jest.fn().mockResolvedValue({
-    isDirectory: jest
+vi.mock('find-up', () => ({ findUp: vi.fn().mockResolvedValue('.gitignore') }));
+vi.mock('fs-extra', () => ({
+  outputFile: vi.fn(),
+  remove: vi.fn(),
+}));
+vi.mock('fs/promises', () => ({
+  lstat: vi.fn().mockResolvedValue({
+    isDirectory: vi
       .fn()
       .mockReturnValue(false)
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(true),
   }),
-  readFile: jest.fn().mockResolvedValue(''),
-  readdir: jest.fn().mockResolvedValue([]).mockResolvedValueOnce(['/test']),
+  readFile: vi.fn().mockResolvedValue(''),
+  readdir: vi.fn().mockResolvedValue([]).mockResolvedValueOnce(['/test']),
 }));
 
 describe('FileManager', () => {
@@ -38,14 +41,14 @@ describe('FileManager', () => {
     await fileManager.writeFile('/test2/a.md', '');
     expect(fileManager.files).toEqual(new Set(['/test/a.md']));
 
-    fileManager.ignore.ignores = jest.fn().mockReturnValue(true);
+    fileManager.ignore.ignores = vi.fn().mockReturnValue(true);
   });
 
   test('count', async () => {
     const fileManager = new FileManager({ directory: '/testbase' });
     await fileManager.initialize();
 
-    fileManager.ignore.ignores = jest.fn().mockReturnValueOnce(true).mockReturnValue(false);
+    fileManager.ignore.ignores = vi.fn().mockReturnValueOnce(true).mockReturnValue(false);
     expect(fileManager.count).toEqual(1);
   });
 
@@ -53,7 +56,7 @@ describe('FileManager', () => {
     const fileManager = new FileManager({ directory: '/testbase' });
     await fileManager.initialize();
 
-    fileManager.ignore.ignores = jest.fn().mockReturnValueOnce(false).mockReturnValue(true);
+    fileManager.ignore.ignores = vi.fn().mockReturnValueOnce(false).mockReturnValue(true);
     const ignored = fileManager.ignoredFiles;
     expect(ignored).toEqual(['/test/b.md', '/test2/a.md']);
   });
@@ -62,7 +65,7 @@ describe('FileManager', () => {
     const fileManager = new FileManager({ directory: '/testbase' });
     await fileManager.initialize();
 
-    fileManager.ignore.ignores = jest
+    fileManager.ignore.ignores = vi
       .fn()
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(true)

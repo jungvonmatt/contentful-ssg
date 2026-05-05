@@ -1,16 +1,17 @@
+import { vi } from 'vitest';
 import { RuntimeContext } from '../types.js';
 import { setup } from './setup.js';
 
-jest.mock('globby', () => ({ globby: jest.fn().mockResolvedValue([]) }));
-jest.mock('ignore', () => jest.fn().mockReturnValue(false));
-jest.mock('find-up', () => ({ findUp: jest.fn().mockResolvedValue(false) }));
-jest.mock('fs-extra', () => ({
-  outputFile: jest.fn(),
-  remove: jest.fn(),
+vi.mock('globby', () => ({ globby: vi.fn().mockResolvedValue([]) }));
+vi.mock('ignore', () => ({ default: vi.fn().mockReturnValue(false) }));
+vi.mock('find-up', () => ({ findUp: vi.fn().mockResolvedValue(false) }));
+vi.mock('fs-extra', () => ({
+  outputFile: vi.fn(),
+  remove: vi.fn(),
 }));
-jest.mock('fs/promises', () => ({
-  readFile: jest.fn().mockResolvedValue(''),
-  readdir: jest.fn().mockResolvedValue([]).mockResolvedValueOnce([]),
+vi.mock('fs/promises', () => ({
+  readFile: vi.fn().mockResolvedValue(''),
+  readdir: vi.fn().mockResolvedValue([]).mockResolvedValueOnce([]),
 }));
 
 describe('transform', () => {

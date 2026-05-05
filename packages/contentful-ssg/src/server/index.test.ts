@@ -1,7 +1,8 @@
+import { vi } from 'vitest';
 import request from 'supertest';
 import { getApp } from './index.js';
 
-const mockCallback = jest.fn();
+const mockCallback = vi.fn();
 const app = getApp(mockCallback);
 
 describe('Watch server', () => {

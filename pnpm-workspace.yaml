@@ -74,10 +74,6 @@ catalog:
   gray-matter: ^4.0.3
   husky: ^9.1.7
   inquirer: ^12.9.3
-  jest: ^29.7.0
-  jest-esm-transformer: ^1.0.0
-  jest-sonar: ^0.2.16
-  jest-sonar-reporter: ^2.0.0
   js-yaml: ^4.1.0
   lint-staged: ^15.5.1
   listr: ^0.14.3
@@ -105,11 +101,13 @@ catalog:
   svgo: ^2.8.2
   tar: ^7.5.11
   tempy: ^3.1.0
-  ts-jest: ^29.3.2
   ts-morph: ^23.0.0
   ts-node: ^10.9.2
   turbo: ^1.12.2
   uuid: ^14.0.0
+  vitest: ^4.1.5
+  '@vitest/coverage-v8': ^4.1.5
+  vitest-sonar-reporter: ^3.0.0
 
 onlyBuiltDependencies:
   - '@swc/core'

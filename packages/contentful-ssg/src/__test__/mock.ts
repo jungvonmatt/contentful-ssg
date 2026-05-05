@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import fs from 'fs-extra';
 import path from 'path';
 import {
@@ -116,10 +117,10 @@ export const getRuntimeContext = (fixture: Partial<RuntimeContext> = {}): Runtim
 
   const hooks = new HookManager(result as RuntimeContext, result.config);
   const fileManager = new FileManager({ directory: '/testbase' });
-  fileManager.cleanup = jest.fn();
-  fileManager.initialize = jest.fn();
-  fileManager.deleteFile = jest.fn();
-  fileManager.writeFile = jest.fn();
+  fileManager.cleanup = vi.fn();
+  fileManager.initialize = vi.fn();
+  fileManager.deleteFile = vi.fn();
+  fileManager.writeFile = vi.fn();
 
   return { ...result, hooks, fileManager } as RuntimeContext;
 };

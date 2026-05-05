@@ -1,3 +1,4 @@
+import { MockedFunction, vi } from 'vitest';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
 import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
@@ -13,8 +14,8 @@ import { basename, join } from 'path';
 import plugin from './index.js';
 import { ProcessedImage, ProcessedSvg, ProcessedVideo } from './types.js';
 
-jest.mock('got', () =>
-  jest.fn().mockImplementation(() => {
+vi.mock('got', () => ({
+  default: vi.fn().mockImplementation(() => {
     return {
       buffer: () =>
         Buffer.from(
@@ -22,16 +23,16 @@ jest.mock('got', () =>
         ),
     };
   }),
-);
+}));
 
-jest.mock('@ffmpeg/ffmpeg', () => {
-  const createFFmpeg = jest.fn().mockReturnValue({
-    FS: jest.fn().mockReturnValue('content'),
-    run: jest.fn().mockResolvedValue(true),
-    load: jest.fn().mockResolvedValue(true),
-    isLoaded: jest.fn().mockReturnValue(false),
+vi.mock('@ffmpeg/ffmpeg', () => {
+  const createFFmpeg = vi.fn().mockReturnValue({
+    FS: vi.fn().mockReturnValue('content'),
+    run: vi.fn().mockResolvedValue(true),
+    load: vi.fn().mockResolvedValue(true),
+    isLoaded: vi.fn().mockReturnValue(false),
   });
-  const fetchFile = jest.fn().mockResolvedValue(true);
+  const fetchFile = vi.fn().mockResolvedValue(true);
 
   return {
     createFFmpeg,
@@ -39,9 +40,9 @@ jest.mock('@ffmpeg/ffmpeg', () => {
   };
 });
 
-const mockedGot = got as jest.MockedFunction<typeof got>;
-const mockedCreateFFmpeg = createFFmpeg as jest.MockedFunction<typeof createFFmpeg>;
-const mockedFetchFile = fetchFile as jest.MockedFunction<typeof fetchFile>;
+const mockedGot = got as MockedFunction<typeof got>;
+const mockedCreateFFmpeg = createFFmpeg as MockedFunction<typeof createFFmpeg>;
+const mockedFetchFile = fetchFile as MockedFunction<typeof fetchFile>;
 
 const getMockData = async (type) => {
   const content = await getContent();
@@ -82,7 +83,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedImage;
+    ));
 
     // All fields from default value should be present
     expect(result).toMatchObject(defaultValue);
@@ -104,7 +105,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedImage;
+    ));
 
     const original = result?.derivatives?.original;
     const square = result?.derivatives?.square;
@@ -153,7 +154,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedImage;
+    ));
 
     const image = result?.derivatives?.original;
 
@@ -174,7 +175,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedImage;
+    ));
 
     const image = result?.derivatives?.original;
 
@@ -198,7 +199,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedImage;
+    ));
     await instance.after();
 
     const image = result?.derivatives?.original;
@@ -232,7 +233,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedVideo;
+    ));
     await instance.after();
 
     const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
@@ -264,7 +265,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedVideo;
+    ));
     await instance.after();
 
     const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
@@ -310,7 +311,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedImage;
+    ));
 
     const image = result?.derivatives?.original;
 
@@ -331,7 +332,7 @@ describe('cssg-plugin-assets', () => {
       { ...transformContext, asset: undefined },
       runtimeContext,
       defaultValue,
-    )) as ProcessedSvg;
+    ));
 
     expect(result.mimeType).toBe('image/svg+xml');
     expect(result?.source).toEqual(undefined);
@@ -344,7 +345,7 @@ describe('cssg-plugin-assets', () => {
       transformContext,
       runtimeContext,
       defaultValue,
-    )) as ProcessedSvg;
+    ));
 
     expect(result.mimeType).toBe('image/svg+xml');
     expect(result?.source ?? '').toMatch(/^<svg.*<\/svg>/gm);

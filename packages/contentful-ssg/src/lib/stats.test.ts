@@ -1,11 +1,12 @@
+import { Mock, vi } from 'vitest';
 import chalk from 'chalk';
 import { writeFile } from 'fs/promises';
 import { ErrorEntry, Locale, TransformContext } from '../types.js';
 import { ValidationError } from './error.js';
 import { Stats } from './stats.js';
 
-jest.mock('fs/promises', () => ({
-  writeFile: jest.fn().mockResolvedValue(true),
+vi.mock('fs/promises', () => ({
+  writeFile: vi.fn().mockResolvedValue(true),
 }));
 
 const getContext = (context = {}): TransformContext => {
@@ -28,7 +29,7 @@ const errorEntry: ErrorEntry = {
 
 describe('Stats', () => {
   test('non-verbose', async () => {
-    console.log = jest.fn();
+    console.log = vi.fn();
     const stats = new Stats({ directory: 'test', verbose: false });
     stats.addSuccess(getContext(), 'test-success');
     stats.addSkipped(getContext(), new ValidationError(errorEntry));
@@ -38,7 +39,7 @@ describe('Stats', () => {
 
     expect(console.log).toHaveBeenCalled();
 
-    const calls = (console.log as jest.Mock)?.mock?.calls ?? [];
+    const calls = (console.log as Mock)?.mock?.calls ?? [];
     const message = calls.flat().join('\n');
 
     expect(message).toMatch(`contentTypeId: ${chalk.cyan(1)}(de)`);
@@ -49,7 +50,7 @@ describe('Stats', () => {
     expect(message).toMatch(`Use --verbose to see actual errors`);
   });
   test('verbose', async () => {
-    console.log = jest.fn();
+    console.log = vi.fn();
     const stats = new Stats({ directory: 'test', verbose: true });
     stats.addSuccess(getContext(), 'test-success');
     stats.addSkipped(getContext(), new ValidationError(errorEntry));
@@ -60,9 +61,9 @@ describe('Stats', () => {
     expect(writeFile).toHaveBeenCalledTimes(2);
     expect(console.log).toHaveBeenCalled();
 
-    const writeCalls = (writeFile as jest.Mock)?.mock?.calls ?? [];
+    const writeCalls = (writeFile as Mock)?.mock?.calls ?? [];
 
-    const calls = (console.log as jest.Mock)?.mock?.calls ?? [];
+    const calls = (console.log as Mock)?.mock?.calls ?? [];
     const message = calls.flat().join('\n');
 
     expect(message).toMatch(`contentTypeId: ${chalk.cyan(1)}(de)`);
