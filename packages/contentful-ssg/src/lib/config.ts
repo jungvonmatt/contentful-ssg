@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { gracefulExit } from 'exit-hook';
-import { resolve, dirname } from 'path';
-import slash from 'slash';
+import { resolve, dirname, isAbsolute } from 'path';
+import { pathToFileURL } from 'url';
 import type {
   Config,
   ContentfulConfig,
@@ -45,7 +45,9 @@ const resolvePlugin = async (
 
     // If the path is absolute, resolve the directory of the internal plugin,
     // otherwise resolve the directory containing the package.json
-    const resolvedPath = slash(requireSource.resolve(pluginName));
+    const resolved = requireSource.resolve(pluginName);
+    // On Windows, absolute paths must be converted to file:// URLs for ESM imports
+    const resolvedPath = isAbsolute(resolved) ? pathToFileURL(resolved).href : resolved;
     const pluginModule = (await import(resolvedPath)) as PluginModule;
     let pluginDefaultHooks = {};
 
