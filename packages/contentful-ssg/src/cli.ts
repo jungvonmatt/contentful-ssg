@@ -10,7 +10,7 @@ import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
 import { readFile } from 'fs/promises';
 import path from 'path';
-import prettier from 'prettier';
+import { format } from 'oxfmt';
 import { run } from './index.js';
 import { initializeCache } from './lib/cf-cache.js';
 import { ALL_PROMPTS, getConfig } from './lib/config.js';
@@ -93,7 +93,6 @@ program
 
       const filePath =
         configFile || path.join(cwd, `contentful-ssg.config.${useTypescript ? 'ts' : 'js'}`);
-      const prettierOptions = await prettier.resolveConfig(filePath);
       if (config.directory?.startsWith('/')) {
         config.directory = path.relative(cwd, config.directory);
       }
@@ -140,19 +139,18 @@ program
 
       let content = '';
       if (useTypescript || filePath.endsWith('.ts')) {
-        content = await prettier.format(
+        const result = await format(
+          'contentful-ssg.config.ts',
           `import {Config} from '@jungvonmatt/contentful-ssg';
         export default <Config>${JSON.stringify(cleanedConfig)}`,
-          {
-            parser: 'typescript',
-            ...prettierOptions,
-          },
         );
+        content = result.code;
       } else if (filePath.endsWith('.js')) {
-        content = await prettier.format(`module.exports = ${JSON.stringify(cleanedConfig)}`, {
-          parser: 'babel',
-          ...prettierOptions,
-        });
+        const result = await format(
+          'contentful-ssg.config.js',
+          `module.exports = ${JSON.stringify(cleanedConfig)}`,
+        );
+        content = result.code;
       }
 
       if (filePath.endsWith('.js') || filePath.endsWith('.ts')) {

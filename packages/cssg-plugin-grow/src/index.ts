@@ -21,7 +21,7 @@ export type PluginConfig = {
  * The values of built-in fields can change things such as a tag's output in the template API or the routes served by your site.
  * See: https://grow.io/reference/documents/#built-in-fields
  */
-const buildInFields = [
+const buildInFields = new Set([
   'category',
   'date',
   'hidden',
@@ -34,7 +34,7 @@ const buildInFields = [
   'view',
   'dates',
   'titles',
-];
+]);
 
 const getContentTypeDirectory = async (
   contentTypeId: string,
@@ -99,7 +99,7 @@ const plugin = (
 
     return Object.fromEntries<KeyValueMap>(
       Object.entries<any>({ ...dates, date: dates.published, ...content }).map(([key, value]) => {
-        if (buildInFields.includes(key)) {
+        if (buildInFields.has(key)) {
           return [`$${key}`, value];
         }
 

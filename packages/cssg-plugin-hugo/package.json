@@ -2,36 +2,33 @@
   "name": "@jungvonmatt/cssg-plugin-hugo",
   "version": "4.1.2",
   "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "license": "MIT",
+  "author": "Ben Zörb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "type": "module",
   "main": "index.js",
   "typings": "./index.d.ts",
   "exports": {
     ".": "./index.js"
   },
-  "type": "module",
-  "scripts": {
-    "test": "jest",
-    "lint": "eslint --color index.js --fix"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
-  },
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [],
-  "author": "Ben Zörb",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  "scripts": {
+    "test": "jest",
+    "lint": "oxlint --fix index.js"
   },
-  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "fs-extra": "^11.1.0",
     "micromatch": "catalog:"
-  },
-  "devDependencies": {
-    "eslint": "catalog:"
   }
 }

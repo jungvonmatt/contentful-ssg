@@ -47,7 +47,7 @@ export class Stats {
     const stats = groupBy<StatsEntry>(this.success, 'contentTypeId');
 
     Object.entries(stats)
-      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+      .toSorted(([keyA], [keyB]) => keyA.localeCompare(keyB))
       .forEach(([key, entries]) => {
         const byLocale = groupBy<StatsEntry>(entries, 'locale');
         const counts = getEntries(byLocale)

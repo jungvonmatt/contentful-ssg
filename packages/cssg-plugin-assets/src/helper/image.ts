@@ -102,7 +102,7 @@ export const getImageHelper = (options: PluginConfig) => {
             ]
           : [contentfulMaxWidth, width, ...sizes]
         )
-          .sort((a, b) => b - a)
+          .toSorted((a, b) => b - a)
           .filter(
             (w) =>
               w <= width &&

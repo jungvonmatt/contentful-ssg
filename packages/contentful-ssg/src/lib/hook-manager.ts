@@ -37,16 +37,16 @@ const hookUpRuntime = (
     const value = (await reduceAsync(
       hooks || [],
       async (prev: Partial<RuntimeContext>, hook: RuntimeHook) =>
-        hook({ ...runtimeContext, ...(prev || {}) }),
+        hook({ ...runtimeContext, ...prev }),
       initialValue || {},
     )) as RuntimeContext;
 
     if (typeof configHook === 'function') {
-      const hookResult = await configHook({ ...runtimeContext, ...(value || {}) });
-      return { ...runtimeContext, ...(value || {}), ...(hookResult || {}) };
+      const hookResult = await configHook({ ...runtimeContext, ...value });
+      return { ...runtimeContext, ...value, ...hookResult };
     }
 
-    return { ...runtimeContext, ...(value || {}) };
+    return { ...runtimeContext, ...value };
   };
 };
 
@@ -118,14 +118,14 @@ export class HookManager {
     const method = hookUpRuntime('before', this.config, defauleValue);
 
     const result = await method(this.runtimeContext);
-    this.runtimeContext = { ...this.runtimeContext, ...(result || {}) };
+    this.runtimeContext = { ...this.runtimeContext, ...result };
     return this.runtimeContext;
   }
 
   async after(defauleValue?: KeyValueMap) {
     const method = hookUpRuntime('after', this.config, defauleValue);
     const result = await method(this.runtimeContext);
-    this.runtimeContext = { ...this.runtimeContext, ...(result || {}) };
+    this.runtimeContext = { ...this.runtimeContext, ...result };
     return this.runtimeContext;
   }
 

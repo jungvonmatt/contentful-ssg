@@ -1,5 +1,4 @@
-
-export type TYPECONFIG_KEY =  'page' | 'data' | 'headless';
+export type TYPECONFIG_KEY = 'page' | 'data' | 'headless';
 export type TRANSLATION_STRATEGY = 'directory' | 'filename';
 
 export interface AssetPluginConfig {
@@ -12,5 +11,5 @@ export interface AssetPluginConfig {
   fieldIdParent: string;
   typeConfig: {
     [x: TYPECONFIG_KEY]: string | string[];
-  },
+  };
 }

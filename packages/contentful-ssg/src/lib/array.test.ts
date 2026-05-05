@@ -70,7 +70,7 @@ test('async reduce (initial value)', async () => {
       const val = await Promise.resolve(`${i}!`);
       return str + val;
     },
-    '0!'
+    '0!',
   );
 
   const results2 = await reduceAsync(
@@ -79,7 +79,7 @@ test('async reduce (initial value)', async () => {
       const val = `${i}!`;
       return `${typeof str === 'string' ? str : ''}${val}`;
     },
-    '0!'
+    '0!',
   );
 
   expect(results).toEqual(expected);

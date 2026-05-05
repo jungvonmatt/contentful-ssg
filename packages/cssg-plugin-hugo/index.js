@@ -42,7 +42,7 @@ const defaultOptions = {
 const hugoLocaleCode = (locale) => locale.code.toLowerCase();
 
 export default (args) => {
-  const options = { ...defaultOptions, ...(args || {}) };
+  const options = { ...defaultOptions, ...args };
 
   const getSettingsHelper = (runtimeContext) => {
     let settings = {};
@@ -211,7 +211,7 @@ export default (args) => {
       );
 
       // Sort based on menuPos field
-      const sorted = [...filtered].sort(
+      const sorted = [...filtered].toSorted(
         (a, b) =>
           (a?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER) -
           (b?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER),

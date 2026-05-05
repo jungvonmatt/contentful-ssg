@@ -3,17 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "description": "A monorepo for all NPM packages related to contentful-ssg",
-  "author": "Jung von Matt TECH GmbH",
-  "type": "module",
   "license": "MIT",
+  "author": "Jung von Matt TECH GmbH",
   "repository": {
     "type": "git",
     "url": "https://github.com/jungvonmatt/contentful-ssg"
   },
-  "packageManager": "pnpm@10.28.0",
-  "engines": {
-    "node": ">=22"
-  },
+  "type": "module",
   "scripts": {
     "clean": "turbo run clean",
     "commit": "cz",
@@ -22,39 +18,45 @@
     "compile": "turbo run compile",
     "start": "turbo run start",
     "lint": "turbo run lint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "test": "turbo run test --concurrency=1",
     "test:ci": "turbo run lint && jest",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "packages/**/{src,test}/**/*.ts": [
-      "prettier --write"
-    ]
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "tar": "catalog:"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
+    "@lerna-lite/cli": "catalog:",
+    "@lerna-lite/publish": "catalog:",
     "@types/jest": "^29.5.14",
-    "@typescript-eslint/eslint-plugin": "^6.20.0",
     "check-dependency-version-consistency": "catalog:",
-    "eslint-config-xo-typescript": "catalog:",
-    "eslint-plugin-prettier": "^5.2.6",
     "git-cz": "catalog:",
     "husky": "catalog:",
     "jest": "catalog:",
     "jest-esm-transformer": "catalog:",
     "jest-sonar": "catalog:",
     "jest-sonar-reporter": "catalog:",
-    "@lerna-lite/cli": "catalog:",
-    "@lerna-lite/publish": "catalog:",
     "lint-staged": "catalog:",
-    "prettier": "^3.5.3",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
     "supertest": "catalog:",
     "ts-jest": "^29.3.2",
     "ts-node": "catalog:",
     "turbo": "catalog:",
     "typescript": "^5.8.3"
+  },
+  "lint-staged": {
+    "packages/**/{src,test}/**/*.ts": [
+      "oxfmt",
+      "oxlint --fix"
+    ]
   },
   "config": {
     "validate-commit-msg": {
@@ -62,13 +64,13 @@
       "helpMessage": "Use \"pnpm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
     }
   },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.28.0",
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-report.xml",
     "indent": 2
-  },
-  "dependencies": {
-    "fs-extra": "^11.3.0",
-    "tar": "catalog:"
   }
 }

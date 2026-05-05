@@ -57,7 +57,7 @@ const resolvePlugin = async (
     }
 
     // Add named exports
-    const pluginHooks: Hooks = { ...(pluginDefaultHooks || {}), ...(pluginModule || {}) };
+    const pluginHooks: Hooks = { ...pluginDefaultHooks, ...pluginModule };
 
     return pluginHooks;
   } catch (error: unknown) {

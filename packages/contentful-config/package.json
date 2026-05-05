@@ -1,9 +1,16 @@
 {
   "name": "@jungvonmatt/contentful-config",
   "version": "4.1.2",
-  "main": "./dist/index.js",
-  "type": "module",
-  "exports": "./dist/index.js",
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "license": "MIT",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
   "bin": {
     "contentful-config": "./dist/cli.js"
   },
@@ -11,30 +18,20 @@
     "src",
     "dist"
   ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": "./dist/index.js",
   "publishConfig": {
     "access": "public"
-  },
-  "engines": {
-    "node": ">=22"
   },
   "scripts": {
     "clean": "rimraf ./dist",
     "test": "jest",
-    "lint": "eslint --color src --fix --ext .ts",
+    "lint": "oxlint --type-aware --fix src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
-  },
-  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@jungvonmatt/config-loader": "catalog:",
     "contentful-cli": "^4.0.1",
@@ -46,7 +43,9 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "eslint": "catalog:",
     "rimraf": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

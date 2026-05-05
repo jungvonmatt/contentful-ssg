@@ -24,9 +24,9 @@ test('getObservableValues callback', async () => {
     { a: 7, b: 8, c: 9 },
   ];
 
-  const subject$ = new ReplaySubject<typeof values[0]>();
+  const subject$ = new ReplaySubject<(typeof values)[0]>();
 
-  const cb = (input: typeof values[0]) => {
+  const cb = (input: (typeof values)[0]) => {
     return input.a + input.b + input.c;
   };
 
@@ -34,7 +34,7 @@ test('getObservableValues callback', async () => {
 
   values.forEach((value) => subject$.next(value));
 
-  const result = await getObservableValues<typeof values[0], number>(subject$, cb);
+  const result = await getObservableValues<(typeof values)[0], number>(subject$, cb);
 
   expect(result).toEqual(expected);
 });
@@ -46,7 +46,7 @@ test('getObservableCount', async () => {
     { a: 7, b: 8, c: 9 },
   ];
 
-  const subject$ = new ReplaySubject<typeof values[0]>();
+  const subject$ = new ReplaySubject<(typeof values)[0]>();
 
   values.forEach((value) => subject$.next(value));
 
@@ -62,7 +62,7 @@ test('getObservableCount filter', async () => {
     { a: 7, b: 8, c: 9 },
   ];
 
-  const subject$ = new ReplaySubject<typeof values[0]>();
+  const subject$ = new ReplaySubject<(typeof values)[0]>();
 
   values.forEach((value) => subject$.next(value));
 

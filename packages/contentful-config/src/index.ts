@@ -51,7 +51,7 @@ export const getPrompts = (data: Partial<ContentfulOptions> = {}) => {
         if (managementToken) {
           const organizations = await getOrganizations({ managementToken, host });
           return organizations.map((organization) => ({
-            message: `${organization.name}`,
+            message: organization.name,
             name: organization.sys.id,
             value: organization.sys.id,
           }));

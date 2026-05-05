@@ -11,7 +11,13 @@ jest.mock('fs-extra', () => ({
   remove: jest.fn(),
 }));
 jest.mock('fs/promises', () => ({
-  lstat: jest.fn().mockResolvedValue({isDirectory: jest.fn().mockReturnValue(false).mockResolvedValueOnce(true).mockResolvedValueOnce(true)}),
+  lstat: jest.fn().mockResolvedValue({
+    isDirectory: jest
+      .fn()
+      .mockReturnValue(false)
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(true),
+  }),
   readFile: jest.fn().mockResolvedValue(''),
   readdir: jest.fn().mockResolvedValue([]).mockResolvedValueOnce(['/test']),
 }));

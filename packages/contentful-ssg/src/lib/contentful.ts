@@ -184,13 +184,13 @@ export const getEnvironment = async (options: ContentfulConfig) => {
 
   const { items: environments } = await space.getEnvironments();
 
-  const environmentIds = (environments || []).map((env) => env.sys.id);
+  const environmentIds = new Set((environments || []).map((env) => env.sys.id));
 
-  if (environmentId && environmentIds.includes(environmentId)) {
+  if (environmentId && environmentIds.has(environmentId)) {
     return space.getEnvironment(environmentId);
   }
 
-  if (environmentId && !environmentIds.includes(environmentId)) {
+  if (environmentId && !environmentIds.has(environmentId)) {
     throw new Error(`Environment "${environmentId}" is not available in space ${spaceId}"`);
   }
 
@@ -328,7 +328,7 @@ export const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCo
     limit: MAX_ALLOWED_LIMIT,
     order: 'sys.createdAt,sys.id',
     include: 0,
-    ...(query || {}),
+    ...query,
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
