@@ -26,8 +26,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "fs-extra": "^11.3.0",
-    "tar": "catalog:"
+    "fs-extra": "^11.3.0"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",

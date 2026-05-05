@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@jungvonmatt/config-loader": "catalog:",
-    "contentful-cli": "^4.0.1",
     "contentful-management": "catalog:",
     "node-homedir": "catalog:",
     "package-up": "catalog:",
