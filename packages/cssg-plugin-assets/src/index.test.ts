@@ -79,11 +79,7 @@ describe('cssg-plugin-assets', () => {
   it('mapAssetLink (basic)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/jpeg');
     const instance = plugin();
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
 
     // All fields from default value should be present
     expect(result).toMatchObject(defaultValue);
@@ -101,11 +97,7 @@ describe('cssg-plugin-assets', () => {
         default: { square: 1 / 1, landscape: 16 / 9, portrait: 3 / 4, rectangle: 4 / 3 },
       },
     });
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
 
     const original = result?.derivatives?.original;
     const square = result?.derivatives?.square;
@@ -150,11 +142,7 @@ describe('cssg-plugin-assets', () => {
     const instance = plugin({
       sizes: [3600, 1980, 1280, 10, () => 700],
     });
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
 
     const image = result?.derivatives?.original;
 
@@ -171,11 +159,7 @@ describe('cssg-plugin-assets', () => {
     const extraTypes = ['image/avif', 'image/webp', 'image/png'];
 
     const instance = plugin({ extraTypes });
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
 
     const image = result?.derivatives?.original;
 
@@ -195,11 +179,7 @@ describe('cssg-plugin-assets', () => {
       cacheFolder,
       download: true,
     });
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
     await instance.after();
 
     const image = result?.derivatives?.original;
@@ -229,11 +209,7 @@ describe('cssg-plugin-assets', () => {
       cacheFolder,
       generatePosterImages: true,
     });
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
     await instance.after();
 
     const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
@@ -261,11 +237,7 @@ describe('cssg-plugin-assets', () => {
       posterPosition: '00:02',
     });
 
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
     await instance.after();
 
     const fileName = basename(`${result.src.replace(/\.\w+$/, '')}-poster.jpg`);
@@ -307,11 +279,7 @@ describe('cssg-plugin-assets', () => {
       cacheFolder,
       download: true,
     });
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
 
     const image = result?.derivatives?.original;
 
@@ -328,11 +296,11 @@ describe('cssg-plugin-assets', () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
 
     const instance = plugin();
-    const result = (await instance.mapAssetLink(
+    const result = await instance.mapAssetLink(
       { ...transformContext, asset: undefined },
       runtimeContext,
       defaultValue,
-    ));
+    );
 
     expect(result.mimeType).toBe('image/svg+xml');
     expect(result?.source).toEqual(undefined);
@@ -341,11 +309,7 @@ describe('cssg-plugin-assets', () => {
   it('mapAssetLink (svg)', async () => {
     const { transformContext, runtimeContext, defaultValue } = await getMockData('image/svg+xml');
     const instance = plugin();
-    const result = (await instance.mapAssetLink(
-      transformContext,
-      runtimeContext,
-      defaultValue,
-    ));
+    const result = await instance.mapAssetLink(transformContext, runtimeContext, defaultValue);
 
     expect(result.mimeType).toBe('image/svg+xml');
     expect(result?.source ?? '').toMatch(/^<svg.*<\/svg>/gm);

@@ -49,7 +49,12 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.spec.ts", "**/__test__/**", "**/__tests__/**"],
+      "files": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/__test__/**",
+        "**/__tests__/**"
+      ],
       "rules": {
         "typescript/unbound-method": "off",
         "typescript/no-misused-promises": "off",
