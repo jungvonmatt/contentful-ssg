@@ -284,8 +284,7 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
     ];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const uuid = url ? createHash('sha1').update(url).digest('hex') : (uuidv4() as string);
+  const uuid = url ? createHash('sha1').update(url).digest('hex') : uuidv4();
 
   return addWebhook(options, uuid, {
     name: `contentful-ssg (${hostname()})`,

@@ -15,7 +15,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "clean": "rimraf ./dist",
@@ -37,7 +37,7 @@
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@jungvonmatt/config-loader": "catalog:",
-    "contentful-cli": "^3.9.0",
+    "contentful-cli": "^4.0.1",
     "contentful-management": "catalog:",
     "node-homedir": "catalog:",
     "package-up": "catalog:",
