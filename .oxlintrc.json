@@ -60,7 +60,8 @@
         "typescript/no-misused-promises": "off",
         "typescript/await-thenable": "off",
         "typescript/no-floating-promises": "off",
-        "eslint/no-unused-vars": "off"
+        "eslint/no-unused-vars": "off",
+        "eslint/no-await-in-loop": "off"
       }
     }
   ]
