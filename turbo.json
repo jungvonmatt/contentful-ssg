@@ -12,7 +12,14 @@
     },
     "lint": {
       "dependsOn": ["compile", "^compile"],
-      "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js", "../../.oxlintrc.json"],
+      "inputs": [
+        "src/*.ts",
+        "src/**/*.ts",
+        "**/*.js",
+        "test/**/*.ts",
+        "test/**/*.js",
+        "../../.oxlintrc.json"
+      ],
       "outputs": []
     },
     "watch": {
