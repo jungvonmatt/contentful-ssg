@@ -1,4 +1,4 @@
-import { MockedFunction, vi } from 'vitest';
+import { afterEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { mapAssetLink } from '@jungvonmatt/contentful-ssg/mapper/map-reference-field';
 import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
@@ -8,7 +8,7 @@ import {
   getTransformContext,
 } from '@jungvonmatt/contentful-ssg/__test__/mock';
 import { existsSync } from 'fs';
-import { remove } from 'fs-extra';
+import { rm } from 'fs/promises';
 import got from 'got';
 import { basename, join } from 'path';
 import plugin from './index.js';
@@ -44,7 +44,7 @@ const mockedGot = got as MockedFunction<typeof got>;
 const mockedCreateFFmpeg = createFFmpeg as MockedFunction<typeof createFFmpeg>;
 const mockedFetchFile = fetchFile as MockedFunction<typeof fetchFile>;
 
-const getMockData = async (type) => {
+const getMockData = async (type: string) => {
   const content = await getContent();
   const runtimeContext = getRuntimeContext();
   const entry = localizeEntry(content.entry, 'en-US', runtimeContext.data);
@@ -71,7 +71,7 @@ describe('cssg-plugin-assets', () => {
     for (const dir of tempDirs) {
       const dirpath = join(process.cwd(), dir);
       if (existsSync(dirpath)) {
-        await remove(dirpath);
+        await rm(dirpath, { recursive: true, force: true });
       }
     }
   });
@@ -151,7 +151,7 @@ describe('cssg-plugin-assets', () => {
     const [source] = image?.srcsets ?? [];
     const srcset = source?.srcset?.split(',') ?? [];
     expect(srcset.length).toBe(4);
-    srcset.forEach((src, i) => expect(src).toMatch(extectedMatcher[i]));
+    srcset.forEach((src: string, i: number) => expect(src).toMatch(extectedMatcher[i]));
   });
 
   it('mapAssetLink (formats)', async () => {
@@ -186,8 +186,8 @@ describe('cssg-plugin-assets', () => {
 
     expect(image?.src).toMatch(/^\/test-temp/);
 
-    image.srcsets.forEach((source) =>
-      source.srcset.split(',').forEach((src) => {
+    image.srcsets.forEach((source: { srcset: string }) =>
+      source.srcset.split(',').forEach((src: string) => {
         expect(src.trim()).toMatch(/^\/test-temp/);
         const [file] = src.split(' ');
         expect(existsSync(join(assetFolder, file))).toBe(true);
@@ -195,8 +195,8 @@ describe('cssg-plugin-assets', () => {
       }),
     );
 
-    await remove(cacheFolder);
-    await remove(assetFolder);
+    await rm(cacheFolder, { recursive: true, force: true });
+    await rm(assetFolder, { recursive: true, force: true });
   });
 
   it('mapAssetLink (generatePoster)', async () => {
@@ -220,8 +220,8 @@ describe('cssg-plugin-assets', () => {
     expect(existsSync(join(cacheFolder, result?.poster ?? ''))).toBe(true);
     expect(existsSync(join(assetFolder, result?.poster ?? ''))).toBe(true);
 
-    await remove(cacheFolder);
-    await remove(assetFolder);
+    await rm(cacheFolder, { recursive: true, force: true });
+    await rm(assetFolder, { recursive: true, force: true });
   });
 
   it('mapAssetLink (generatePoster with parameters)', async () => {
@@ -264,8 +264,8 @@ describe('cssg-plugin-assets', () => {
       'test-temp-1J3uqsCGfgXe8pWnEf55Iz-file_example_MP4_640_3MG-poster.jpg',
     );
 
-    await remove(cacheFolder);
-    await remove(assetFolder);
+    await rm(cacheFolder, { recursive: true, force: true });
+    await rm(assetFolder, { recursive: true, force: true });
   });
 
   it('mapAssetLink (download with HUGO_BASEURL)', async () => {
@@ -285,8 +285,8 @@ describe('cssg-plugin-assets', () => {
 
     expect(image?.src ?? '').toMatch(/^\/hugo-base\/test-temp/);
 
-    image.srcsets.forEach((source) =>
-      source.srcset.split(',').forEach((src) => {
+    image.srcsets.forEach((source: { srcset: string }) =>
+      source.srcset.split(',').forEach((src: string) => {
         expect(src.trim()).toMatch(/^\/hugo-base\/test-temp/);
       }),
     );
