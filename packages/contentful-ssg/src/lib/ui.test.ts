@@ -29,6 +29,16 @@ describe('Utils', () => {
     expect(console.log).toHaveBeenCalledWith(error.stack);
   });
 
+  test('logError without stack', () => {
+    console.log = vi.fn();
+    console.error = vi.fn();
+    const error = new Error('Test');
+    delete error.stack;
+    logError(error);
+    expect(console.error).toHaveBeenCalledWith(chalk.red('\nError:'), error.message);
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
   test('confirm (false)', async () => {
     const message = 'test';
     await confirm(message);
