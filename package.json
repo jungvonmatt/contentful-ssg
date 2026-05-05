@@ -54,7 +54,7 @@
     "packages/**/*.{ts,js,cjs,mjs}": [
       "oxfmt"
     ],
-    "packages/**/{src,test}/**/!(*.test|*.spec).ts": [
+    "packages/**/{src,test}/**/*.ts": [
       "oxlint --fix"
     ]
   },

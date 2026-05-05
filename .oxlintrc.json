@@ -4,9 +4,7 @@
     "**/dist/**",
     "**/coverage/**",
     "**/node_modules/**",
-    "**/*.cjs",
-    "**/__test__/**",
-    "**/*.test.ts"
+    "**/*.cjs"
   ],
   "categories": {
     "correctness": "error",
