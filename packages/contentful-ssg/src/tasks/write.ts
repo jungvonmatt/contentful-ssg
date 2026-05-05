@@ -2,7 +2,7 @@ import type { TransformContext, RuntimeContext, Config } from '../types.js';
 import { join, extname } from 'path';
 import mm from 'micromatch';
 import { stringify, TYPE_YAML, TYPE_JSON, TYPE_MARKDOWN, TYPE_TOML } from '../converter/index.js';
-const { contains } = mm;
+const contains = (str: string, pattern: string | string[]) => mm.contains(str, pattern);
 
 const formatMapping = {
   '.md': TYPE_MARKDOWN,

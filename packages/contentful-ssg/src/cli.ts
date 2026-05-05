@@ -77,7 +77,7 @@ program
   .option('--cwd <directory>', 'Working directory. Defaults to process.cwd()')
   .action(
     actionRunner(async (cmd: { typescript?: boolean; cwd?: string; config?: string }) => {
-      const useTypescript = Boolean(cmd?.typescript ?? false);
+      const useTypescript = cmd?.typescript ?? false;
       const cwd = cmd?.cwd ?? process.cwd();
       const configFile = cmd?.config;
       const r = await getConfig(
@@ -275,7 +275,7 @@ program
         const poll = () => {
           setTimeout(
             () => {
-              (async () => {
+              void (async () => {
                 prev = await run({ ...config, sync: true }, prev);
                 if (useCache) {
                   await cache.setSyncState(prev);

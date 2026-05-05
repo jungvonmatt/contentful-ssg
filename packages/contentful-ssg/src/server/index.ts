@@ -55,17 +55,20 @@ type ContentfulWebhookRequest = {
 export const getApp = (callback: () => Promise<void>): Express => {
   app.get('/status', (_req, res: Response) => res.status(200).send('ok'));
 
-  app.get('/', async (_req, res: Response) => {
-    await callback();
-    return res.status(200).send('ok');
+  app.get('/', (_req, res: Response, next) => {
+    Promise.resolve(callback())
+      .then(() => res.status(200).send('ok'))
+      .catch(next);
   });
-  app.post('/', async (req: ContentfulWebhookRequest, res: Response) => {
+  app.post('/', (req: ContentfulWebhookRequest, res: Response, next) => {
     if (!req.body.sys) {
-      return res.status(401).send('error');
+      res.status(401).send('error');
+      return;
     }
 
-    await callback();
-    return res.status(200).send('ok');
+    Promise.resolve(callback())
+      .then(() => res.status(200).send('ok'))
+      .catch(next);
   });
 
   return app;

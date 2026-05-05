@@ -47,6 +47,8 @@
     "eslint/no-shadow": "off",
     "eslint/no-unused-vars": "warn",
     "eslint/no-underscore-dangle": "off",
-    "eslint/no-unassigned-vars": "warn"
+    "eslint/no-unassigned-vars": "warn",
+    "typescript/no-wrapper-object-types": "off",
+    "unicorn/consistent-function-scoping": "off"
   }
 }

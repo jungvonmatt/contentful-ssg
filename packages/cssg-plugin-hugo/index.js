@@ -56,7 +56,7 @@ export default (args) => {
             );
             const settingsFields = settingsEntries
               .map((entry) => entry?.fields ?? {})
-              .reduce((result, fields) => ({ ...result, ...fields }), {});
+              .reduce((result, fields) => Object.assign(result, fields), {});
 
             return [locale, settingsFields];
           },

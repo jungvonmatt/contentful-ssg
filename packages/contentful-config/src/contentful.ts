@@ -53,8 +53,6 @@ const getClient = (options: ContentfulOptions) => {
   );
 };
 
-type AwaitedCollectionItem<T> = T extends { items: Array<infer U> } ? U : never;
-
 export const getAll = async <
   T extends (query?: QueryOptions) => Promise<Collection<any, any>>,
   TArgs extends Parameters<T> = Parameters<T>,

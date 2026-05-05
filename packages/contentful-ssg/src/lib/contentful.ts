@@ -110,7 +110,8 @@ const getClient = (options: ContentfulConfig): ClientApi => {
       accessToken: preview ? previewAccessToken : accessToken,
       environment: environmentId,
     };
-    return createClient(params).withAllLocales;
+    client = createClient(params).withAllLocales;
+    return client;
   }
 
   throw new Error('You need to login first. Run npx contentful login');
@@ -129,9 +130,10 @@ const getManagementClient = (options: ContentfulConfig): ContentfulManagementApi
   }
 
   if (managementToken) {
-    return contentfulManagement.createClient({
+    managementClient = contentfulManagement.createClient({
       accessToken: managementToken,
     });
+    return managementClient;
   }
 
   throw new Error('You need to login first. Run npx contentful login');
@@ -508,15 +510,18 @@ export const isEntry = (obj: any) => isContentfulObject(obj) && obj.sys.type ===
  * @param {Array} entity Contentful entity
  * @returns {Object} e.g. {'contenttype-id': { 'field-1-id': { required: ..., type: ..., ...}}}
  */
-export const getFieldSettings = (contentTypes: ContentType[]): FieldSettings =>
-  contentTypes.reduce((res, contentType) => {
+export const getFieldSettings = (contentTypes: ContentType[]): FieldSettings => {
+  const result: FieldSettings = {};
+  for (const contentType of contentTypes) {
     const id = getContentId(contentType);
-    const fields = contentType.fields.reduce(
-      (fields, field) => ({ ...fields, [field.id]: field }),
-      {},
-    );
-    return { ...res, [id]: fields };
-  }, {});
+    const fields: Record<string, ContentType['fields'][number]> = {};
+    for (const field of contentType.fields) {
+      fields[field.id] = field;
+    }
+    result[id] = fields;
+  }
+  return result;
+};
 
 /**
  * Convert entries/assets array to map
