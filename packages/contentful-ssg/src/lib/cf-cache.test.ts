@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ReplaySubject } from 'rxjs';
 import { Asset, Config, Entry, Locale, ObservableContext, RunResult } from '../types.js';
 import { getContent } from '../__test__/mock.js';
@@ -12,7 +13,9 @@ const config = {
 
 const cache = initializeCache(config);
 
-jest.mock('find-cache-dir', () => jest.fn().mockImplementation(({ name }) => `CACHE-TEST/${name}`));
+vi.mock('find-cache-dir', () => ({
+  default: vi.fn().mockImplementation(({ name }) => `CACHE-TEST/${name}`),
+}));
 
 afterEach(async () => {
   await remove('CACHE-TEST');

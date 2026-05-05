@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import type { EntryFieldRaw, Locale } from '../types.js';
 import { getContent } from '../__test__/mock.js';
 import { getContentId, getFieldSettings } from '../lib/contentful.js';
@@ -31,11 +30,11 @@ describe('Localize', () => {
   test('localizeField', async () => {
     const field: EntryFieldRaw = { b: { b: 'b' }, c: { c: 'c' } };
 
-    expect(localizeField(field, ...['a', 'b', 'c'])).toEqual({ b: 'b' });
-    expect(localizeField(field, ...['a', 'c'])).toEqual({ c: 'c' });
+    expect(localizeField(field, 'a', 'b', 'c')).toEqual({ b: 'b' });
+    expect(localizeField(field, 'a', 'c')).toEqual({ c: 'c' });
     expect(localizeField(field, 'b')).toEqual({ b: 'b' });
     expect(localizeField(field, 'c')).toEqual({ c: 'c' });
-    expect(localizeField(field, ...['a'])).toBeUndefined();
+    expect(localizeField(field, 'a')).toBeUndefined();
   });
 
   test('Localize entry', async () => {

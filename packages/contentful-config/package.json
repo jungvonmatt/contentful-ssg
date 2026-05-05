@@ -26,7 +26,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "test": "jest",
+    "test": "vitest run",
     "lint": "oxlint --type-aware --fix src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@jungvonmatt/config-loader": "catalog:",
-    "contentful-cli": "^4.0.1",
     "contentful-management": "catalog:",
     "node-homedir": "catalog:",
     "package-up": "catalog:",

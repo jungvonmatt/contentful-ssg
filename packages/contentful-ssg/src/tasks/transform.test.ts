@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import { transform } from './transform.js';
 import { getRuntimeContext, getTransformContext, getConfig } from '../__test__/mock.js';
 
-jest.mock('../mapper/map-entry.js', () => ({
-  mapEntry: jest.fn().mockResolvedValue({ mocked: true }),
+vi.mock('../mapper/map-entry.js', () => ({
+  mapEntry: vi.fn().mockResolvedValue({ mocked: true }),
 }));
 
 describe('transform', () => {
@@ -11,7 +12,7 @@ describe('transform', () => {
       resolvedPlugins: [
         {
           transform: (context) => ({
-            ...(context?.content ?? {}),
+            ...context?.content,
             plugin: 'mocked',
           }),
         },

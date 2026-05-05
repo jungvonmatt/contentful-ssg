@@ -8,7 +8,7 @@ import {
 } from '@jungvonmatt/contentful-ssg/__test__/mock';
 import { HookManager } from '@jungvonmatt/contentful-ssg/lib/hook-manager';
 import { Hooks, Config, RuntimeContext } from '@jungvonmatt/contentful-ssg';
-import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize.js';
+import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize';
 
 const directory = process.cwd();
 

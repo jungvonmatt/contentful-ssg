@@ -4,10 +4,7 @@
     "**/dist/**",
     "**/coverage/**",
     "**/node_modules/**",
-    "**/*.cjs",
-    "**/jest.config.js",
-    "**/__test__/**",
-    "**/*.test.ts"
+    "**/*.cjs"
   ],
   "categories": {
     "correctness": "error",
@@ -19,8 +16,7 @@
     "nursery": "off"
   },
   "env": {
-    "node": true,
-    "jest": true
+    "node": true
   },
   "rules": {
     "typescript/no-floating-promises": "warn",
@@ -50,5 +46,23 @@
     "eslint/no-unassigned-vars": "warn",
     "typescript/no-wrapper-object-types": "off",
     "unicorn/consistent-function-scoping": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/__test__/**",
+        "**/__tests__/**"
+      ],
+      "rules": {
+        "typescript/unbound-method": "off",
+        "typescript/no-misused-promises": "off",
+        "typescript/await-thenable": "off",
+        "typescript/no-floating-promises": "off",
+        "eslint/no-unused-vars": "off",
+        "eslint/no-await-in-loop": "off"
+      }
+    }
+  ]
 }

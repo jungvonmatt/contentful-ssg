@@ -1,11 +1,12 @@
+import { vi } from 'vitest';
 import { Config, RuntimeContext } from '../types';
 import { fetch } from './fetch';
 
 import { getEntriesLinkedToEntry, getEntriesLinkedToAsset } from '../lib/contentful.js';
 
-jest.mock('../lib/contentful.js', () => {
+vi.mock('../lib/contentful.js', () => {
   return {
-    getContent: jest
+    getContent: vi
       .fn()
       .mockReturnValueOnce({
         locales: [{ default: true, code: 'en' }],
@@ -21,9 +22,9 @@ jest.mock('../lib/contentful.js', () => {
         deletedEntries: [{ sys: { id: 'entry' } }],
         deletedAssets: [{ sys: { id: 'asset' } }],
       }),
-    getFieldSettings: jest.fn().mockReturnValue({ fields: 'TEST' }),
-    getEntriesLinkedToEntry: jest.fn().mockReturnValue({ fields: 'TEST' }),
-    getEntriesLinkedToAsset: jest.fn().mockReturnValue({ fields: 'TEST' }),
+    getFieldSettings: vi.fn().mockReturnValue({ fields: 'TEST' }),
+    getEntriesLinkedToEntry: vi.fn().mockReturnValue({ fields: 'TEST' }),
+    getEntriesLinkedToAsset: vi.fn().mockReturnValue({ fields: 'TEST' }),
   };
 });
 

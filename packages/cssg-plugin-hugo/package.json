@@ -23,7 +23,7 @@
     "access": "public"
   },
   "scripts": {
-    "test": "jest",
+    "test": "vitest run",
     "lint": "oxlint --fix index.js"
   },
   "dependencies": {

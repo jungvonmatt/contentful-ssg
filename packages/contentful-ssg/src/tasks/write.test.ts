@@ -1,10 +1,11 @@
+import { Mock, vi } from 'vitest';
 import { write } from './write.js';
 import { stringify } from '../converter/toml.js';
 import { getRuntimeContext, getTransformContext, getConfig } from '../__test__/mock.js';
 import { Locale } from '../types.js';
 
-jest.mock('../mapper/map-entry.js', () => ({
-  mapEntry: jest.fn().mockResolvedValue({ mocked: true }),
+vi.mock('../mapper/map-entry.js', () => ({
+  mapEntry: vi.fn().mockResolvedValue({ mocked: true }),
 }));
 
 describe('write', () => {
@@ -23,7 +24,7 @@ describe('write', () => {
     await write(transformContext, runtimeContext, config);
 
     expect(runtimeContext.fileManager.writeFile).toHaveBeenCalled();
-    const calls = (runtimeContext.fileManager.writeFile as jest.Mock)?.mock?.calls ?? [];
+    const calls = (runtimeContext.fileManager.writeFile as Mock)?.mock?.calls ?? [];
 
     expect(calls[0][0]).toEqual('test/c-test/id@de_DE.json');
     expect(calls[0][1]).toMatch(/"test"\s*:\s*"test"/);
@@ -44,7 +45,7 @@ describe('write', () => {
     await write(transformContext, runtimeContext, config);
 
     expect(runtimeContext.fileManager.writeFile).toHaveBeenCalled();
-    const calls = (runtimeContext.fileManager.writeFile as jest.Mock)?.mock?.calls ?? [];
+    const calls = (runtimeContext.fileManager.writeFile as Mock)?.mock?.calls ?? [];
 
     expect(calls[0][0]).toEqual('test/c-test/id@de_DE.json');
     expect(calls[0][1]).toMatch(/"test"\s*:\s*"test"/);
@@ -65,7 +66,7 @@ describe('write', () => {
     await write(transformContext, runtimeContext, config);
 
     expect(runtimeContext.fileManager.writeFile).toHaveBeenCalled();
-    const calls = (runtimeContext.fileManager.writeFile as jest.Mock)?.mock?.calls ?? [];
+    const calls = (runtimeContext.fileManager.writeFile as Mock)?.mock?.calls ?? [];
 
     expect(calls[0][0]).toEqual('test/c-test/id.yaml');
     expect(calls[0][1]).toMatch(/test\s*:\s*test/);
@@ -86,7 +87,7 @@ describe('write', () => {
     await write(transformContext, runtimeContext, config);
 
     expect(runtimeContext.fileManager.writeFile).toHaveBeenCalled();
-    const calls = (runtimeContext.fileManager.writeFile as jest.Mock)?.mock?.calls ?? [];
+    const calls = (runtimeContext.fileManager.writeFile as Mock)?.mock?.calls ?? [];
 
     expect(calls[0][0]).toEqual('test/c-test/id.toml');
     expect(calls[0][1]).toEqual(stringify({ test: 'test' }));

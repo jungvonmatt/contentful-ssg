@@ -35,4 +35,12 @@ describe('Converter', () => {
     const obj = parse(stringify(src, TYPE_MARKDOWN), TYPE_MARKDOWN);
     expect(obj).toMatchObject(src);
   });
+
+  test('stringify throws on unsupported format', () => {
+    expect(() => stringify(src, 'xml')).toThrowError(/not supported/);
+  });
+
+  test('parse throws on unsupported format', () => {
+    expect(() => parse('foo', 'xml')).toThrowError(/not supported/);
+  });
 });

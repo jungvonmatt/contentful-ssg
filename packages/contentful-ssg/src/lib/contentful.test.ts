@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import { vi } from 'vitest';
 import { existsSync } from 'fs';
 import { readFile, unlink } from 'fs/promises';
 import { createHash } from 'crypto';
@@ -39,18 +39,18 @@ const configMock = {
   accessToken: 'accessToken',
 };
 
-jest.mock('contentful', () => {
+vi.mock('contentful', () => {
   return {
-    createClient: jest.fn().mockReturnValue({
-      getLocales: jest.fn().mockResolvedValue({ items: Array(2) }),
-      getContentTypes: jest.fn().mockResolvedValue({ items: Array(3) }),
-      getAssets: jest.fn().mockResolvedValue({ items: Array(4) }),
-      getEntries: jest
+    createClient: vi.fn().mockReturnValue({
+      getLocales: vi.fn().mockResolvedValue({ items: Array(2) }),
+      getContentTypes: vi.fn().mockResolvedValue({ items: Array(3) }),
+      getAssets: vi.fn().mockResolvedValue({ items: Array(4) }),
+      getEntries: vi
         .fn()
         .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
         .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
         .mockResolvedValue({ items: Array(4), total: 2004 }),
-      sync: jest
+      sync: vi
         .fn()
         .mockResolvedValueOnce({
           nextSyncToken: 'sync-token',
@@ -67,15 +67,15 @@ jest.mock('contentful', () => {
           deletedAssets: [],
         }),
       withAllLocales: {
-        getLocales: jest.fn().mockResolvedValue({ items: Array(2) }),
-        getContentTypes: jest.fn().mockResolvedValue({ items: Array(3) }),
-        getAssets: jest.fn().mockResolvedValue({ items: Array(4) }),
-        getEntries: jest
+        getLocales: vi.fn().mockResolvedValue({ items: Array(2) }),
+        getContentTypes: vi.fn().mockResolvedValue({ items: Array(3) }),
+        getAssets: vi.fn().mockResolvedValue({ items: Array(4) }),
+        getEntries: vi
           .fn()
           .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
           .mockResolvedValueOnce({ items: Array(1000), total: 2004 })
           .mockResolvedValue({ items: Array(4), total: 2004 }),
-        sync: jest
+        sync: vi
           .fn()
           .mockResolvedValueOnce({
             nextSyncToken: 'sync-token',
@@ -96,7 +96,7 @@ jest.mock('contentful', () => {
   };
 });
 
-jest.mock('contentful-management', () => {
+vi.mock('contentful-management', () => {
   const mockedApiKey = { accessToken: 'accessToken' };
   const mockedPreviewApiKey = { accessToken: 'previewAccessToken' };
   const mockedEnvironment = {
@@ -129,24 +129,24 @@ jest.mock('contentful-management', () => {
       version: 1,
     },
     headers: [],
-    delete: jest.fn().mockResolvedValue('deleted'),
+    delete: vi.fn().mockResolvedValue('deleted'),
   };
 
   const mockedSpace = {
     sys: { id: 'space-id' },
-    getEnvironments: jest.fn().mockResolvedValue({ items: [mockedEnvironment] }),
-    getEnvironment: jest.fn().mockResolvedValue(mockedEnvironment),
-    getApiKeys: jest.fn().mockResolvedValue({ items: [mockedApiKey] }),
-    getPreviewApiKeys: jest.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
-    getWebhooks: jest.fn().mockResolvedValue({ items: [mockedWebhook] }),
-    getWebhook: jest.fn().mockImplementation((id) => {
+    getEnvironments: vi.fn().mockResolvedValue({ items: [mockedEnvironment] }),
+    getEnvironment: vi.fn().mockResolvedValue(mockedEnvironment),
+    getApiKeys: vi.fn().mockResolvedValue({ items: [mockedApiKey] }),
+    getPreviewApiKeys: vi.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
+    getWebhooks: vi.fn().mockResolvedValue({ items: [mockedWebhook] }),
+    getWebhook: vi.fn().mockImplementation((id) => {
       if (/new/.test(id) || id === createHash('sha1').update('http://test.url').digest('hex')) {
         throw new Error('Not Found');
       }
 
       return mockedWebhook;
     }),
-    createWebhookWithId: jest.fn().mockImplementation((id, data) => ({
+    createWebhookWithId: vi.fn().mockImplementation((id, data) => ({
       ...data,
       sys: {
         type: 'WebhookDefinition',
@@ -156,17 +156,20 @@ jest.mock('contentful-management', () => {
     })),
   };
 
+  const createClient = vi.fn().mockReturnValue({
+    getSpaces: vi.fn().mockResolvedValue({ items: [mockedSpace] }),
+    getSpace: vi.fn().mockResolvedValue(mockedSpace),
+  });
+
   return {
-    createClient: jest.fn().mockReturnValue({
-      getSpaces: jest.fn().mockResolvedValue({ items: [mockedSpace] }),
-      getSpace: jest.fn().mockResolvedValue(mockedSpace),
-    }),
+    default: { createClient },
+    createClient,
   };
 });
 
-jest.mock('find-cache-dir', () =>
-  jest.fn().mockImplementation(({ name }) => `CONTENTFUL-TEST/${name}`),
-);
+vi.mock('find-cache-dir', () => ({
+  default: vi.fn().mockImplementation(({ name }) => `CONTENTFUL-TEST/${name}`),
+}));
 
 const cache = initializeCache(configMock);
 

@@ -29,7 +29,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "oxlint --type-aware --fix src",
-    "test": "jest",
+    "test": "vitest run",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
@@ -47,11 +47,9 @@
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "@types/cli-progress": "catalog:",
     "@types/svgo": "catalog:",
-    "fs-extra": "^11.1.0",
-    "jest": "catalog:",
     "rimraf": "catalog:",
-    "ts-jest": "^29.1.1",
     "ts-node": "catalog:",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "catalog:"
   }
 }
