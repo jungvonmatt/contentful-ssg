@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/jungvonmatt/contentful-ssg/compare/v5.0.0...v5.0.1) (2026-05-05)
+
+**Note:** Version bump only for package @jungvonmatt/contentful-fakes
+
 # [5.0.0](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.2...v5.0.0) (2026-05-05)
 
 * Migrate vitest (#84) ([3e38739](https://github.com/jungvonmatt/contentful-ssg/commit/3e38739cd8419fa6e514eccaad1464d3fdebd98b)), closes [#84](https://github.com/jungvonmatt/contentful-ssg/issues/84)

@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-grow",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Contentful-ssg plugin for grow",
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "bugs": {
