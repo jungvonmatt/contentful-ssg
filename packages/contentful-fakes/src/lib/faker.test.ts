@@ -35,7 +35,7 @@ import { ContentTypeFieldValidation } from 'contentful-management/types';
 const getFieldInfo = (
   id: string,
   validations: ContentTypeFieldValidation[] = [],
-  widgetId: string = 'singleLine'
+  widgetId: string = 'singleLine',
 ): FieldInfo => ({
   settings: { id, validations },
   interface: { fieldId: 'id', widgetId },
@@ -153,7 +153,7 @@ describe('contentful-fakes', () => {
   it('getSymbolFake (interface: urlEditor)', async () => {
     const result = await getSymbolFake(getFieldInfo('-', [], 'urlEditor'));
     expect(result).toMatch(
-      new RegExp('\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-/]))?$')
+      new RegExp('\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-/]))?$'),
     );
   });
 
@@ -166,8 +166,8 @@ describe('contentful-fakes', () => {
     const result = await getSymbolFake(getFieldInfo('id'));
     expect(result).toMatch(
       new RegExp(
-        '[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}'
-      )
+        '[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}',
+      ),
     );
   });
 
@@ -251,7 +251,7 @@ describe('contentful-fakes', () => {
 
   it('getRichtextFake min', async () => {
     const result = await getRichtextFake(
-      getFieldInfo('-', [{ enabledMarks: [], enabledNodeTypes: [] }])
+      getFieldInfo('-', [{ enabledMarks: [], enabledNodeTypes: [] }]),
     );
 
     expect(Object.keys(result)).toEqual(['node_type', 'data', 'content']);
@@ -261,7 +261,7 @@ describe('contentful-fakes', () => {
     const result = await getRichtextFake(
       getFieldInfo('-', [
         { enabledMarks: ['italic'], enabledNodeTypes: ['heading-1', 'heading-2'] },
-      ])
+      ]),
     );
 
     expect(Object.keys(result)).toEqual(['node_type', 'data', 'content']);

@@ -25,7 +25,7 @@ export const collectValues =
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       getValue: (item) => dlv(item, key) as unknown,
       reverse: true,
-      ...(options || {}),
+      ...options,
     };
 
     if (!getNextId && linkField) {

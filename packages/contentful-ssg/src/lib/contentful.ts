@@ -110,7 +110,8 @@ const getClient = (options: ContentfulConfig): ClientApi => {
       accessToken: preview ? previewAccessToken : accessToken,
       environment: environmentId,
     };
-    return createClient(params).withAllLocales;
+    client = createClient(params).withAllLocales;
+    return client;
   }
 
   throw new Error('You need to login first. Run npx contentful login');
@@ -129,9 +130,10 @@ const getManagementClient = (options: ContentfulConfig): ContentfulManagementApi
   }
 
   if (managementToken) {
-    return contentfulManagement.createClient({
+    managementClient = contentfulManagement.createClient({
       accessToken: managementToken,
     });
+    return managementClient;
   }
 
   throw new Error('You need to login first. Run npx contentful login');
@@ -184,13 +186,13 @@ export const getEnvironment = async (options: ContentfulConfig) => {
 
   const { items: environments } = await space.getEnvironments();
 
-  const environmentIds = (environments || []).map((env) => env.sys.id);
+  const environmentIds = new Set((environments || []).map((env) => env.sys.id));
 
-  if (environmentId && environmentIds.includes(environmentId)) {
+  if (environmentId && environmentIds.has(environmentId)) {
     return space.getEnvironment(environmentId);
   }
 
-  if (environmentId && !environmentIds.includes(environmentId)) {
+  if (environmentId && !environmentIds.has(environmentId)) {
     throw new Error(`Environment "${environmentId}" is not available in space ${spaceId}"`);
   }
 
@@ -284,8 +286,7 @@ export const addWatchWebhook = async (options: ContentfulConfig, url: string) =>
     ];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const uuid = url ? createHash('sha1').update(url).digest('hex') : (uuidv4() as string);
+  const uuid = url ? createHash('sha1').update(url).digest('hex') : uuidv4();
 
   return addWebhook(options, uuid, {
     name: `contentful-ssg (${hostname()})`,
@@ -329,7 +330,7 @@ export const pagedGet = async <T, R extends CollectionResponse<T> = ContentfulCo
     limit: MAX_ALLOWED_LIMIT,
     order: 'sys.createdAt,sys.id',
     include: 0,
-    ...(query || {}),
+    ...query,
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -509,15 +510,18 @@ export const isEntry = (obj: any) => isContentfulObject(obj) && obj.sys.type ===
  * @param {Array} entity Contentful entity
  * @returns {Object} e.g. {'contenttype-id': { 'field-1-id': { required: ..., type: ..., ...}}}
  */
-export const getFieldSettings = (contentTypes: ContentType[]): FieldSettings =>
-  contentTypes.reduce((res, contentType) => {
+export const getFieldSettings = (contentTypes: ContentType[]): FieldSettings => {
+  const result: FieldSettings = {};
+  for (const contentType of contentTypes) {
     const id = getContentId(contentType);
-    const fields = contentType.fields.reduce(
-      (fields, field) => ({ ...fields, [field.id]: field }),
-      {},
-    );
-    return { ...res, [id]: fields };
-  }, {});
+    const fields: Record<string, ContentType['fields'][number]> = {};
+    for (const field of contentType.fields) {
+      fields[field.id] = field;
+    }
+    result[id] = fields;
+  }
+  return result;
+};
 
 /**
  * Convert entries/assets array to map

@@ -2,55 +2,38 @@
   "name": "@jungvonmatt/cssg-plugin-assets",
   "version": "4.1.2",
   "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "license": "MIT",
+  "author": "Ben Zörb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "typings": "./dist/types.d.ts",
   "exports": {
     ".": "./dist/index.js"
   },
-  "files": [
-    "src",
-    "dist"
-  ],
-  "devDependencies": {
-    "@jungvonmatt/contentful-ssg": "workspace:*",
-    "@types/cli-progress": "catalog:",
-    "@types/svgo": "catalog:",
-    "eslint": "catalog:",
-    "eslint-config-xo": "catalog:",
-    "eslint-config-xo-space": "catalog:",
-    "eslint-config-xo-typescript": "catalog:",
-    "eslint-import-resolver-typescript": "catalog:",
-    "eslint-plugin-import": "catalog:",
-    "fs-extra": "^11.1.0",
-    "jest": "catalog:",
-    "rimraf": "catalog:",
-    "ts-jest": "^29.1.1",
-    "ts-node": "catalog:",
-    "typescript": "^5.3.3"
-  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint --color src --fix --ext .ts",
+    "lint": "oxlint --type-aware --fix src",
     "test": "jest",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
-  },
-  "keywords": [],
-  "author": "Ben Zörb",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
-  },
-  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@ffmpeg/core": "catalog:",
     "@ffmpeg/ffmpeg": "catalog:",
@@ -59,5 +42,16 @@
     "got": "catalog:",
     "mkdirp": "catalog:",
     "svgo": "catalog:"
+  },
+  "devDependencies": {
+    "@jungvonmatt/contentful-ssg": "workspace:*",
+    "@types/cli-progress": "catalog:",
+    "@types/svgo": "catalog:",
+    "fs-extra": "^11.1.0",
+    "jest": "catalog:",
+    "rimraf": "catalog:",
+    "ts-jest": "^29.1.1",
+    "ts-node": "catalog:",
+    "typescript": "^5.3.3"
   }
 }

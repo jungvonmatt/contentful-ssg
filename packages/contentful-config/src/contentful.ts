@@ -53,8 +53,6 @@ const getClient = (options: ContentfulOptions) => {
   );
 };
 
-type AwaitedCollectionItem<T> = T extends { items: Array<infer U> } ? U : never;
-
 export const getAll = async <
   T extends (query?: QueryOptions) => Promise<Collection<any, any>>,
   TArgs extends Parameters<T> = Parameters<T>,
@@ -150,13 +148,13 @@ export const getEnvironment = async (
 
   const { items: environments } = await space.getEnvironments();
 
-  const environmentIds = (environments || []).map((env) => env.sys.id);
+  const environmentIds = new Set((environments || []).map((env) => env.sys.id));
 
-  if (environmentId && environmentIds.includes(environmentId)) {
+  if (environmentId && environmentIds.has(environmentId)) {
     return space.getEnvironment(environmentId);
   }
 
-  if (environmentId && !environmentIds.includes(environmentId)) {
+  if (environmentId && !environmentIds.has(environmentId)) {
     throw new Error(`Environment "${environmentId}" is not available in space ${spaceId}"`);
   }
 

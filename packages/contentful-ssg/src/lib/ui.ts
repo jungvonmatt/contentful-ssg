@@ -33,7 +33,7 @@ export const confirm = async (message: string, defaultValue?: boolean) => {
     type: 'confirm',
     name: 'value',
     message,
-    default: Boolean(defaultValue),
+    default: defaultValue ?? false,
   };
   const answers = await inquirer.prompt([question]);
 

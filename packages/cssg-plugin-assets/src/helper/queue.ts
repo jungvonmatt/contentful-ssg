@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-types
-class Queue<T extends Object> {
+class Queue<T> {
   data: Set<string>;
 
   constructor() {

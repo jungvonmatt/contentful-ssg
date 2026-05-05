@@ -1,6 +1,5 @@
 # JvM Contentful export for static site generators
 
-
 [![Build Status][ci-image]][ci-url] [![Coverage][coveralls-image]][coveralls-url] [![Sonarcloud Status][sonarcloud-image]][sonarcloud-url]
 
 Fast and highly and customizable Contentful exporter for static site generators.
@@ -9,7 +8,8 @@ Fast and highly and customizable Contentful exporter for static site generators.
 
 ## Packages
 
-#### CLI 
+#### CLI
+
 - [`contentful-ssg`](packages/contentful-ssg)
 
 #### Plugins
@@ -24,15 +24,13 @@ Fast and highly and customizable Contentful exporter for static site generators.
   Plugin to generate asset data to be used in `<picture>` / `<img srcset="...">` utilizing the [contentful image api](https://www.contentful.com/developers/docs/references/images-api/) with support for downloading assets to bypass the contentful cdn on production sites.
 
 #### Utilities
+
 - [`contentful-config`](packages/contentful-config)\
   Easily retrieve Contentful API configuration from CLI arguments, environment variables, configuration files, or interactive prompts.
-  
 - [`contentful-typings`](packages/contentful-typings)\
   Generate typescript definitions based on your content model
-  
 - [`contentful-fakes`](packages/contentful-fakes)\
   Generate fake data based on your content model
-
 
 ## Get involved
 
@@ -43,10 +41,10 @@ contribute, see our [CONTRIBUTING.md](CONTRIBUTING.md)
 document.
 
 ## Contributors
+
 <a href="https://github.com/jungvonmatt/contentful-ssg/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=jungvonmatt/contentful-ssg" />
 </a>
-
 
 ## You found a bug or want to propose a feature?
 
@@ -77,4 +75,3 @@ This repository is published under the [MIT](LICENSE) license.
 [coveralls-image]: https://img.shields.io/coveralls/github/jungvonmatt/contentful-ssg/main.svg
 [sonarcloud-url]: https://sonarcloud.io/dashboard?id=jungvonmatt_contentful-ssg
 [sonarcloud-image]: https://sonarcloud.io/api/project_badges/measure?project=jungvonmatt_contentful-ssg&metric=alert_status
-

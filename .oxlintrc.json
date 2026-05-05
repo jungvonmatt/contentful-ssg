@@ -1,0 +1,54 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/coverage/**",
+    "**/node_modules/**",
+    "**/*.cjs",
+    "**/jest.config.js",
+    "**/__test__/**",
+    "**/*.test.ts"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn",
+    "restriction": "off",
+    "style": "off",
+    "pedantic": "off",
+    "nursery": "off"
+  },
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "typescript/no-floating-promises": "warn",
+    "typescript/no-misused-promises": "warn",
+    "typescript/await-thenable": "warn",
+    "typescript/unbound-method": "warn",
+    "typescript/no-unnecessary-type-assertion": "warn",
+    "typescript/no-unnecessary-type-conversion": "warn",
+    "typescript/no-unnecessary-condition": "off",
+    "typescript/prefer-nullish-coalescing": "off",
+    "typescript/prefer-optional-chain": "warn",
+    "typescript/switch-exhaustiveness-check": "warn",
+    "typescript/no-unsafe-argument": "off",
+    "typescript/no-unsafe-assignment": "off",
+    "typescript/no-unsafe-call": "off",
+    "typescript/no-unsafe-return": "off",
+    "typescript/no-unsafe-member-access": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/no-base-to-string": "off",
+    "typescript/no-unnecessary-boolean-literal-compare": "off",
+    "typescript/no-unnecessary-type-parameters": "off",
+    "typescript/no-useless-default-assignment": "off",
+    "typescript/consistent-return": "off",
+    "eslint/no-shadow": "off",
+    "eslint/no-unused-vars": "warn",
+    "eslint/no-underscore-dangle": "off",
+    "eslint/no-unassigned-vars": "warn",
+    "typescript/no-wrapper-object-types": "off",
+    "unicorn/consistent-function-scoping": "off"
+  }
+}

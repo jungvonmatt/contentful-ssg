@@ -89,7 +89,7 @@ describe('Run', () => {
     });
 
     expect(output).toMatch(
-      `fieldTest: ${chalk.cyan(4)}(de) - ${chalk.cyan(4)}(en-US) - ${chalk.cyan(4)}(en-GB)`
+      `fieldTest: ${chalk.cyan(4)}(de) - ${chalk.cyan(4)}(en-US) - ${chalk.cyan(4)}(en-GB)`,
     );
     expect(output).toMatch(`Saved ${chalk.green(12)} entries`);
     expect(output).toMatch(`${chalk.cyan(0)} entries skipped due to validation issues`);

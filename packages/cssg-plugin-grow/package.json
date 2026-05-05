@@ -2,41 +2,40 @@
   "name": "@jungvonmatt/cssg-plugin-grow",
   "version": "4.1.2",
   "description": "Contentful-ssg plugin for grow",
-  "type": "module",
-  "main": "dist/index.js",
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "license": "MIT",
+  "author": "Ben Zörb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "directories": {
+    "test": "test"
+  },
   "files": [
     "src",
     "dist"
   ],
+  "type": "module",
+  "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint --color src --fix --ext .ts",
+    "lint": "oxlint --type-aware --fix src",
     "test": "jest",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
-  },
-  "author": "Ben Zörb",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
-  },
-  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
-  "directories": {
-    "test": "test"
-  },
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "workspace:*"
   },
   "devDependencies": {
-    "eslint": "catalog:",
     "jest": "catalog:",
     "rimraf": "catalog:",
     "ts-jest": "^29.1.1",

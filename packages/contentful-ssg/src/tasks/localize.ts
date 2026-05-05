@@ -91,7 +91,7 @@ export const localize = async (context: RuntimeContext) => {
   context.localized = new Map();
   return new Listr(
     locales.map((locale) => ({
-      title: `${locale.code}`,
+      title: locale.code,
       async task() {
         const localizedAssets = await mapAsync(assets, async (asset) =>
           localizeEntry<AssetRaw, Asset>(asset, locale.code, {

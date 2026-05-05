@@ -175,7 +175,7 @@ describe('Utils', () => {
     await expect(async () => {
       await waitFor({ ...transformContext, entry: entryMap.get('1') as Entry, observable })(
         '4',
-        50
+        50,
       );
     }).rejects.toThrowError(/Exceeded timeout of 50 ms/);
 
@@ -238,7 +238,7 @@ describe('Utils', () => {
       try {
         await waitFor({ ...transformContext, entry: entryMap.get(source) as Entry, observable })(
           dest,
-          1000
+          1000,
         );
         subject.next({
           ...transformContext,

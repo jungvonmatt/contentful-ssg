@@ -41,7 +41,7 @@ import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 // If required values are not found in configuration files or
 // environment variables, an interactive prompt will be displayed
 const { config } = await loadContentfulConfig('myapp', {
-  required: ['spaceId', 'accessToken']
+  required: ['spaceId', 'accessToken'],
 });
 
 // The configuration now contains all required values,
@@ -60,12 +60,12 @@ contentful-config [options]
 
 ### Options
 
-| Option | Description |
-| --- | --- |
-| `-n, --name <name>` | Config name (default: `contentful`) |
-| `-o, --output <file>` | Write output to a file instead of stdout |
+| Option                  | Description                                                                                                         |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `-n, --name <name>`     | Config name (default: `contentful`)                                                                                 |
+| `-o, --output <file>`   | Write output to a file instead of stdout                                                                            |
 | `-r, --required <keys>` | Required config keys, comma-separated or repeated (default: `spaceId,environmentId,accessToken,previewAccessToken`) |
-| `-h, --help` | Show help message |
+| `-h, --help`            | Show help message                                                                                                   |
 
 ### Examples
 
@@ -93,13 +93,13 @@ contentful-config -r spaceId -r accessToken -r environmentId
 - **File merging**: When using `-o`, existing file content is preserved. Matching keys are updated in place, new keys are appended. Comments and unrelated entries remain untouched.
 - **Output**: The following environment variables are generated:
 
-| Config Key | Environment Variable |
-| --- | --- |
-| `spaceId` | `CONTENTFUL_SPACE_ID` |
-| `environmentId` | `CONTENTFUL_ENVIRONMENT_ID` |
-| `accessToken` | `CONTENTFUL_DELIVERY_ACCESS_TOKEN` |
-| `previewAccessToken` | `CONTENTFUL_PREVIEW_ACCESS_TOKEN` |
-| `host` | `CONTENTFUL_HOST` |
+| Config Key           | Environment Variable               |
+| -------------------- | ---------------------------------- |
+| `spaceId`            | `CONTENTFUL_SPACE_ID`              |
+| `environmentId`      | `CONTENTFUL_ENVIRONMENT_ID`        |
+| `accessToken`        | `CONTENTFUL_DELIVERY_ACCESS_TOKEN` |
+| `previewAccessToken` | `CONTENTFUL_PREVIEW_ACCESS_TOKEN`  |
+| `host`               | `CONTENTFUL_HOST`                  |
 
 > **Note:** The management token is intentionally excluded from the output as it is read from the Contentful CLI config file.
 

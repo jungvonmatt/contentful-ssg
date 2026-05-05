@@ -165,7 +165,7 @@ jest.mock('contentful-management', () => {
 });
 
 jest.mock('find-cache-dir', () =>
-  jest.fn().mockImplementation(({ name }) => `CONTENTFUL-TEST/${name}`)
+  jest.fn().mockImplementation(({ name }) => `CONTENTFUL-TEST/${name}`),
 );
 
 const cache = initializeCache(configMock);

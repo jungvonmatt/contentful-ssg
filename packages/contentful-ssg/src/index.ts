@@ -160,7 +160,7 @@ export const run = async (
         async task(ctx) {
           const { locales = [], deletedEntries = [] } = ctx.data;
           const tasks = locales.map((locale) => ({
-            title: `${locale.code}`,
+            title: locale.code,
             async task() {
               const data = ctx.localized.get(locale.code);
 
@@ -205,7 +205,7 @@ export const run = async (
           const { locales = [] } = ctx.data;
 
           const tasks = locales.map((locale) => ({
-            title: `${locale.code}`,
+            title: locale.code,
             skip: (ctx: RuntimeContext) =>
               (ctx.localized?.get(locale.code)?.entryMap?.size ?? 0) +
                 (ctx.localized?.get(locale.code)?.assetMap?.size ?? 0) ===

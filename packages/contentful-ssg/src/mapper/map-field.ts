@@ -25,6 +25,7 @@ export const mapField = async (
   const { fieldSettings, fieldContent } = transformContext;
   const { type, items } = fieldSettings || {};
 
+  // oxlint-disable-next-line typescript/switch-exhaustiveness-check
   switch (type) {
     case FIELD_TYPE_DATE:
       return mapDateField(fieldContent as EntryFields.Date);

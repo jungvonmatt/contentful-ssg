@@ -42,7 +42,7 @@ const defaultOptions = {
 const hugoLocaleCode = (locale) => locale.code.toLowerCase();
 
 export default (args) => {
-  const options = { ...defaultOptions, ...(args || {}) };
+  const options = { ...defaultOptions, ...args };
 
   const getSettingsHelper = (runtimeContext) => {
     let settings = {};
@@ -56,7 +56,7 @@ export default (args) => {
             );
             const settingsFields = settingsEntries
               .map((entry) => entry?.fields ?? {})
-              .reduce((result, fields) => ({ ...result, ...fields }), {});
+              .reduce((result, fields) => Object.assign(result, fields), {});
 
             return [locale, settingsFields];
           },
@@ -211,7 +211,7 @@ export default (args) => {
       );
 
       // Sort based on menuPos field
-      const sorted = [...filtered].sort(
+      const sorted = [...filtered].toSorted(
         (a, b) =>
           (a?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER) -
           (b?.fields?.[options.fieldIdMenuPos] ?? Number.MAX_SAFE_INTEGER),
@@ -253,7 +253,10 @@ export default (args) => {
     config(prev) {
       const { managedDirectories } = prev || {};
 
-      return { ...prev, managedDirectories: [...(managedDirectories || []), 'data'] };
+      return {
+        ...prev,
+        managedDirectories: [...(managedDirectories || []), 'data'],
+      };
     },
 
     // Before hook
@@ -296,7 +299,10 @@ export default (args) => {
             return [
               hugoLocaleCode(locale),
               options.translationStrategy === 'directory'
-                ? { contentDir: `content/${hugoLocaleCode(locale)}`, ...localeConfig }
+                ? {
+                    contentDir: `content/${hugoLocaleCode(locale)}`,
+                    ...localeConfig,
+                  }
                 : localeConfig,
             ];
           }),

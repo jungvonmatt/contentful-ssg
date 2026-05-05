@@ -2,43 +2,43 @@
   "name": "@jungvonmatt/contentful-fakes",
   "version": "4.1.2",
   "description": "Create fake data based on contentful data models",
-  "main": "./dist/index.js",
-  "type": "module",
-  "typings": "./dist/types.d.ts",
+  "keywords": [
+    "contentful",
+    "data",
+    "fake"
+  ],
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "license": "MIT",
+  "author": "Ben Zörb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
   "bin": {
     "contentful-fakes": "./dist/cli.js"
   },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "typings": "./dist/types.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "clean": "rimraf ./dist",
     "test": "jest",
-    "lint": "eslint --color src --fix --ext .ts",
+    "lint": "oxlint --type-aware --fix src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "postcompile": "chmod +x ./dist/cli.js",
     "watch": "tsc --build --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
-  },
-  "files": [
-    "src",
-    "dist"
-  ],
-  "keywords": [
-    "fake",
-    "data",
-    "contentful"
-  ],
-  "author": "Ben Zörb",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
-  },
-  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "dependencies": {
     "@faker-js/faker": "^7.3.0",
     "@jungvonmatt/contentful-config": "workspace:*",
@@ -54,7 +54,6 @@
     "@types/chance": "^1.1.3",
     "@types/fs-extra": "catalog:",
     "contentful-management": "catalog:",
-    "eslint": "catalog:",
     "rimraf": "catalog:"
   }
 }

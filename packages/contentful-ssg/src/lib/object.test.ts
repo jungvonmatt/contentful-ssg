@@ -31,13 +31,15 @@ test('removeEmpty', () => {
   expect(value).toEqual({ a: {}, c: [1, { x: 1, z: [7] }, 3, 5] });
 });
 
-
 test('removeEmpty non-strict', () => {
-  const value = removeEmpty({
-    a: "",
-    b: 0,
-    c: 1,
-  }, false);
+  const value = removeEmpty(
+    {
+      a: '',
+      b: 0,
+      c: 1,
+    },
+    false,
+  );
   expect(value).toEqual({ c: 1 });
 });
 
@@ -49,7 +51,7 @@ test('groupBy', () => {
       { a: 'second', b: 3 },
       { a: 'first', b: 4 },
     ],
-    'a'
+    'a',
   );
   expect(value).toEqual({
     first: [

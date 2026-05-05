@@ -19,14 +19,8 @@ export async function mapAsync<T, U>(
   iterable: T[],
   callback: (value: T, index?: number, iterable?: T[]) => U | Promise<U>,
 ): Promise<U[]> {
-  const result: U[] = [];
   const promises = iterable.map(async (item, index, array) => callback(item, index, array));
-
-  for await (const mapped of promises) {
-    result.push(mapped);
-  }
-
-  return result;
+  return Promise.all(promises);
 }
 
 /**

@@ -37,7 +37,7 @@ const getTestFocusArea = async (
         fields?: Record<string, string>;
         config?: FocusAreaConfig;
       }
-    | undefined
+    | undefined,
 ) => {
   const transformContext = await getTransformContextMock(test?.fields ?? {});
   return getFocusArea(transformContext, test?.config ?? {});

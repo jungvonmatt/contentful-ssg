@@ -11,8 +11,15 @@
       "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"]
     },
     "lint": {
-      "dependsOn": ["compile","^compile"],
-      "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"],
+      "dependsOn": ["compile", "^compile"],
+      "inputs": [
+        "src/*.ts",
+        "src/**/*.ts",
+        "**/*.js",
+        "test/**/*.ts",
+        "test/**/*.js",
+        "../../.oxlintrc.json"
+      ],
       "outputs": []
     },
     "watch": {

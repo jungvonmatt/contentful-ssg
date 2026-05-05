@@ -1,0 +1,11 @@
+{
+  "singleQuote": true,
+  "printWidth": 100,
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/coverage/**",
+    "**/node_modules/**",
+    "**/*.min.js",
+    "pnpm-lock.yaml"
+  ]
+}

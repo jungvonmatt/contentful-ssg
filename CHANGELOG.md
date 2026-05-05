@@ -7,23 +7,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* expose organization id in config-cli ([497d739](https://github.com/jungvonmatt/contentful-ssg/commit/497d7397347d38a996c3ff1e0dcc8cc77684878f))
-* resolve typescript deprecation warnings ([0ad646c](https://github.com/jungvonmatt/contentful-ssg/commit/0ad646c94addc2248b7a833b8bad3824098868df))
-* updates release workflow ([8764e66](https://github.com/jungvonmatt/contentful-ssg/commit/8764e66d79098c3e42955435dd47ec9f7a7acbae))
-* updates workflow file ([d87b41b](https://github.com/jungvonmatt/contentful-ssg/commit/d87b41ba8ade89fb6878a0a23bb78d38f5b453e0))
-* use workspace versions for internal deps ([38e767b](https://github.com/jungvonmatt/contentful-ssg/commit/38e767b171c9d082a31c2455c6ca3798d2f88d45))
+- expose organization id in config-cli ([497d739](https://github.com/jungvonmatt/contentful-ssg/commit/497d7397347d38a996c3ff1e0dcc8cc77684878f))
+- resolve typescript deprecation warnings ([0ad646c](https://github.com/jungvonmatt/contentful-ssg/commit/0ad646c94addc2248b7a833b8bad3824098868df))
+- updates release workflow ([8764e66](https://github.com/jungvonmatt/contentful-ssg/commit/8764e66d79098c3e42955435dd47ec9f7a7acbae))
+- updates workflow file ([d87b41b](https://github.com/jungvonmatt/contentful-ssg/commit/d87b41ba8ade89fb6878a0a23bb78d38f5b453e0))
+- use workspace versions for internal deps ([38e767b](https://github.com/jungvonmatt/contentful-ssg/commit/38e767b171c9d082a31c2455c6ca3798d2f88d45))
 
 ## [4.1.1](https://github.com/jungvonmatt/contentful-ssg/compare/v4.1.0...v4.1.1) (2026-02-11)
 
 ### Bug Fixes
 
-* rename env name for tokens ([0af9c42](https://github.com/jungvonmatt/contentful-ssg/commit/0af9c42da7902bfcd07c7ee50f3d5c4d11205f45))
+- rename env name for tokens ([0af9c42](https://github.com/jungvonmatt/contentful-ssg/commit/0af9c42da7902bfcd07c7ee50f3d5c4d11205f45))
 
 # [4.1.0](https://github.com/jungvonmatt/contentful-ssg/compare/v4.0.3...v4.1.0) (2026-02-11)
 
 ### Features
 
-* adds contentful-config cli ([85fbaf9](https://github.com/jungvonmatt/contentful-ssg/commit/85fbaf9a96f1f078bcd14f257adcf6876f7ce0d3))
+- adds contentful-config cli ([85fbaf9](https://github.com/jungvonmatt/contentful-ssg/commit/85fbaf9a96f1f078bcd14f257adcf6876f7ce0d3))
 
 ## [4.0.3](https://github.com/jungvonmatt/contentful-ssg/compare/v4.0.2...v4.0.3) (2026-01-12)
 

@@ -57,7 +57,7 @@ const resolvePlugin = async (
     }
 
     // Add named exports
-    const pluginHooks: Hooks = { ...(pluginDefaultHooks || {}), ...(pluginModule || {}) };
+    const pluginHooks: Hooks = { ...pluginDefaultHooks, ...pluginModule };
 
     return pluginHooks;
   } catch (error: unknown) {
@@ -103,7 +103,7 @@ export const getConfig = async (
     prompt?: Array<Exclude<keyof Config, number | symbol>>;
   },
 ): Promise<ResolvedConfig<Config>> => {
-  const { configFile, cwd, ...overrides } = args;
+  const { configFile: _configFile, cwd, ...overrides } = args;
   const required = options?.required ?? [];
   const prompt = options?.prompt ?? [];
 

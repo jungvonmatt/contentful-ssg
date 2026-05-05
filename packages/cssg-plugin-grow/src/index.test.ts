@@ -13,7 +13,7 @@ import { localizeEntry } from '@jungvonmatt/contentful-ssg/tasks/localize.js';
 const directory = process.cwd();
 
 const getPluginSource = async (
-  typeConfig: Record<string, TypeConfigEntry> = {}
+  typeConfig: Record<string, TypeConfigEntry> = {},
 ): Promise<Hooks> => {
   if (typeof plugin === 'function') {
     return plugin({ typeConfig });
@@ -45,7 +45,7 @@ describe('Grow Plugin', () => {
       }),
       getHookedRuntime({
         mapDirectory: () => '',
-      })
+      }),
     );
 
     expect(value).toEqual(`!g.doc /test/${entry.sys.id}.yaml`);
@@ -64,7 +64,7 @@ describe('Grow Plugin', () => {
       }),
       getHookedRuntime({
         mapDirectory: () => '',
-      })
+      }),
     );
 
     expect(value).toEqual(`!g.yaml /test/${entry.sys.id}.yaml`);
@@ -83,7 +83,7 @@ describe('Grow Plugin', () => {
       }),
       getHookedRuntime({
         mapDirectory: () => '',
-      })
+      }),
     );
     expect(value).toBe(undefined);
   });

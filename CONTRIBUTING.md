@@ -28,8 +28,8 @@ The [`question`](https://github.com/jungvonmatt/contentful-ssg/labels/question) 
 
 You can use issue labels to discover issues you could help out with:
 
-* [`bug` issues](https://github.com/jungvonmatt/contentful-ssg/labels/bug) are known bugs we'd like to fix
-* [`enhancement` issues](https://github.com/jungvonmatt/contentful-ssg/labels/enhancement) are features we're open to including
+- [`bug` issues](https://github.com/jungvonmatt/contentful-ssg/labels/bug) are known bugs we'd like to fix
+- [`enhancement` issues](https://github.com/jungvonmatt/contentful-ssg/labels/enhancement) are features we're open to including
 
 The [`help wanted`](https://github.com/jungvonmatt/contentful-ssg/labels/help%20wanted) and [`good for beginner`](https://github.com/jungvonmatt/contentful-ssg/labels/good%20first%20issue) labels are especially useful.
 
@@ -55,7 +55,7 @@ Don't include unrelated changes in your pull request. Make sure tests pass on yo
 
 When you make a pull request please use a clear and descriptive title. Be specific about what's changed and why.
 
-Please make sure the *Allow edits from maintainers* box is checked. That way we can make certain minor changes ourselves, allowing your pull request to be merged sooner.
+Please make sure the _Allow edits from maintainers_ box is checked. That way we can make certain minor changes ourselves, allowing your pull request to be merged sooner.
 
 You might be asked to make changes to your pull request. There's never a need to open another pull request. Push more commits to your existing branch. We'll squash them when we merge the PR.
 
