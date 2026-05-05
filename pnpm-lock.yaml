@@ -100,8 +100,8 @@ catalogs:
       specifier: ^11.7.15
       version: 11.10.3
     contentful-management:
-      specifier: ^11.54.4
-      version: 11.69.1
+      specifier: ^11.76.0
+      version: 11.76.0
     dlv:
       specifier: ^1.1.3
       version: 1.1.3
@@ -318,7 +318,7 @@ importers:
         version: 0.6.1(magicast@0.5.2)
       contentful-management:
         specifier: 'catalog:'
-        version: 11.69.1
+        version: 11.76.0
       node-homedir:
         specifier: 'catalog:'
         version: 2.0.0
@@ -377,7 +377,7 @@ importers:
         version: 11.0.4
       contentful-management:
         specifier: 'catalog:'
-        version: 11.69.1
+        version: 11.76.0
       rimraf:
         specifier: 'catalog:'
         version: 5.0.10
@@ -413,7 +413,7 @@ importers:
         version: 11.10.3
       contentful-management:
         specifier: 'catalog:'
-        version: 11.69.1
+        version: 11.76.0
       dlv:
         specifier: 'catalog:'
         version: 1.1.3
@@ -543,7 +543,7 @@ importers:
         version: 11.10.3
       contentful-management:
         specifier: 'catalog:'
-        version: 11.69.1
+        version: 11.76.0
       exit-hook:
         specifier: 'catalog:'
         version: 4.0.0
@@ -1613,6 +1613,11 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@rollup/rollup-linux-x64-gnu@4.60.3':
+    resolution: {integrity: sha512-DAZDBHQfG2oQuhY7mc6I3/qB4LU2fQCjRvxbDwd/Jdvb9fypP4IJ4qmtu6lNjes6B531AI8cg1aKC2di97bUxA==}
+    cpu: [x64]
+    os: [linux]
+
   '@samverschueren/stream-to-observable@0.3.1':
     resolution: {integrity: sha512-c/qwwcHyafOQuVQJj0IlBjf5yYgBI7YPJ77k4fOJYesb41jio65eaJODRUmfYKhTOFBrIZ66kgvGPlNbjuoRdQ==}
     engines: {node: '>=6'}
@@ -2377,8 +2382,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  contentful-management@11.69.1:
-    resolution: {integrity: sha512-zucDMGwXXrWzZcOa4GmSBXUMWMkp3FEG4JK32Dv8/R1Pcr8RvTKAcNei1o0YOdwiSG2jXG3HTX+fEWpBtB0Z5Q==}
+  contentful-management@11.76.0:
+    resolution: {integrity: sha512-KsqIZ65q1A6IP55sxTfuAMhBTNJfgGxlVZBoV2ghBuR1LaZZyTqway5vj9KHRDl/Z1uOQQsYSiz+FayMxBXXEw==}
     engines: {node: '>=18'}
 
   contentful-resolve-response@1.9.5:
@@ -2391,6 +2396,10 @@ packages:
 
   contentful-sdk-core@9.4.2:
     resolution: {integrity: sha512-G/8cEs3ggeMrUtT8ywXlzoSCKNpmUo2ZXq/pBCnxcM6JP7isfk8nYDHL0xRR9qTwlNs3XCmCf20iApOQeR6Qsg==}
+    engines: {node: '>=18'}
+
+  contentful-sdk-core@9.4.5:
+    resolution: {integrity: sha512-8eGTMO11LXFAiosaiV38bjvW6cjoQFtNE38pNtVilZTXpmGFinClljihH0eriv11Ispd4q82TqtsXMJPYD/C+A==}
     engines: {node: '>=18'}
 
   contentful@10.15.1:
@@ -6518,6 +6527,9 @@ snapshots:
   '@rollup/rollup-linux-x64-gnu@4.57.1':
     optional: true
 
+  '@rollup/rollup-linux-x64-gnu@4.60.3':
+    optional: true
+
   '@samverschueren/stream-to-observable@0.3.1(rxjs@6.6.7)':
     dependencies:
       any-observable: 0.3.0(rxjs@6.6.7)
@@ -6807,7 +6819,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.11)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@22.19.11)(jiti@2.6.1)(yaml@2.8.4))
+      vitest: 4.1.5(@types/node@20.19.33)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@20.19.33)(jiti@2.6.1)(yaml@2.8.4))
 
   '@vitest/expect@4.1.5':
     dependencies:
@@ -7105,7 +7117,7 @@ snapshots:
       '@oclif/plugin-help': 6.2.37
       contentful: 10.15.1
       contentful-export: 7.22.0
-      contentful-management: 11.69.1
+      contentful-management: 11.76.0
       fs-extra: 11.3.3
       lodash: 4.18.1
       ts-morph: 23.0.0
@@ -7310,7 +7322,7 @@ snapshots:
       cli-table3: 0.6.5
       contentful: 11.10.3
       contentful-batch-libs: 9.7.0
-      contentful-management: 11.69.1
+      contentful-management: 11.76.0
       date-fns: 4.1.0
       figures: 3.2.0
       jsonwebtoken: 9.0.3
@@ -7326,11 +7338,11 @@ snapshots:
       - zen-observable
       - zenObservable
 
-  contentful-management@11.69.1:
+  contentful-management@11.76.0:
     dependencies:
       '@contentful/rich-text-types': 16.8.5
       axios: 1.16.0
-      contentful-sdk-core: 9.4.2
+      contentful-sdk-core: 9.4.5
       fast-copy: 3.0.2
       globals: 15.15.0
     transitivePeerDependencies:
@@ -7356,6 +7368,15 @@ snapshots:
       qs: 6.15.1
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.57.1
+
+  contentful-sdk-core@9.4.5:
+    dependencies:
+      fast-copy: 3.0.2
+      lodash: 4.18.1
+      process: 0.11.10
+      qs: 6.15.1
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.60.3
 
   contentful@10.15.1:
     dependencies:
