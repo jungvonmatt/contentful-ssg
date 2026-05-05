@@ -53,8 +53,10 @@
     "typescript": "^5.8.3"
   },
   "lint-staged": {
+    "packages/**/*.{ts,js,cjs,mjs}": [
+      "oxfmt"
+    ],
     "packages/**/{src,test}/**/*.ts": [
-      "oxfmt",
       "oxlint --fix"
     ]
   },

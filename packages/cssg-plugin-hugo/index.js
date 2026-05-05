@@ -253,7 +253,10 @@ export default (args) => {
     config(prev) {
       const { managedDirectories } = prev || {};
 
-      return { ...prev, managedDirectories: [...(managedDirectories || []), 'data'] };
+      return {
+        ...prev,
+        managedDirectories: [...(managedDirectories || []), 'data'],
+      };
     },
 
     // Before hook
@@ -296,7 +299,10 @@ export default (args) => {
             return [
               hugoLocaleCode(locale),
               options.translationStrategy === 'directory'
-                ? { contentDir: `content/${hugoLocaleCode(locale)}`, ...localeConfig }
+                ? {
+                    contentDir: `content/${hugoLocaleCode(locale)}`,
+                    ...localeConfig,
+                  }
                 : localeConfig,
             ];
           }),
