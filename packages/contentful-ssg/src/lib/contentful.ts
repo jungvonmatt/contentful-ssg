@@ -7,9 +7,14 @@ import type {
   SyncCollection as ContentfulSyncCollection,
 } from 'contentful';
 import { createClient } from 'contentful';
-import type { ClientAPI as ContentfulManagementApi } from 'contentful-management';
 import contentfulManagement from 'contentful-management';
-import type { ApiKey, CreateWebhooksProps, QueryOptions, Space } from 'contentful-management/types';
+import type {
+  ApiKey,
+  CreateWebhooksProps,
+  PlainClientAPI,
+  QueryOptions,
+  SpaceProps,
+} from 'contentful-management';
 import { createHash } from 'crypto';
 import { hostname } from 'os';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,7 +38,7 @@ import { initializeCache } from './cf-cache.js';
 type ClientApi = ContentfulClientApi<'WITH_ALL_LOCALES'>;
 
 let client: ClientApi;
-let managementClient: ContentfulManagementApi;
+let managementClient: PlainClientAPI;
 
 export const FIELD_TYPE_SYMBOL = 'Symbol';
 export const FIELD_TYPE_TEXT = 'Text';
@@ -122,7 +127,7 @@ const getClient = (options: ContentfulConfig): ClientApi => {
  * @param {Object} options
  * @returns {*}
  */
-const getManagementClient = (options: ContentfulConfig): ContentfulManagementApi => {
+const getManagementClient = (options: ContentfulConfig) => {
   const { managementToken } = options || {};
 
   if (managementClient) {
@@ -144,10 +149,10 @@ const getManagementClient = (options: ContentfulConfig): ContentfulManagementApi
  * @param {Options} options
  * @returns {Array<Object>}
  */
-export const getSpaces = async (options: ContentfulConfig): Promise<Space[]> => {
+export const getSpaces = async (options: ContentfulConfig) => {
   const client = getManagementClient(options);
 
-  const { items: spaces } = await client.getSpaces();
+  const { items: spaces } = await client.space.getMany({});
 
   return spaces;
 };
@@ -157,10 +162,10 @@ export const getSpaces = async (options: ContentfulConfig): Promise<Space[]> => 
  * @param {Options} options
  * @returns {Object}
  */
-export const getSpace = async (options: ContentfulConfig) => {
+export const getSpace = async (options: ContentfulConfig): Promise<SpaceProps> => {
   const { spaceId } = options || {};
   const client = getManagementClient(options);
-  return client.getSpace(spaceId);
+  return client.space.get({ spaceId });
 };
 
 /**
@@ -169,8 +174,9 @@ export const getSpace = async (options: ContentfulConfig) => {
  * @returns {Array<Object>}
  */
 export const getEnvironments = async (options: ContentfulConfig) => {
-  const space = await getSpace(options);
-  const { items: environments } = await space.getEnvironments();
+  const { spaceId } = options || {};
+  const client = getManagementClient(options);
+  const { items: environments } = await client.environment.getMany({ spaceId });
 
   return environments;
 };
@@ -182,14 +188,14 @@ export const getEnvironments = async (options: ContentfulConfig) => {
  */
 export const getEnvironment = async (options: ContentfulConfig) => {
   const { environmentId, spaceId } = options || {};
-  const space = await getSpace(options);
+  const client = getManagementClient(options);
 
-  const { items: environments } = await space.getEnvironments();
+  const { items: environments } = await client.environment.getMany({ spaceId });
 
   const environmentIds = new Set((environments || []).map((env) => env.sys.id));
 
   if (environmentId && environmentIds.has(environmentId)) {
-    return space.getEnvironment(environmentId);
+    return client.environment.get({ spaceId, environmentId });
   }
 
   if (environmentId && !environmentIds.has(environmentId)) {
@@ -205,9 +211,10 @@ export const getEnvironment = async (options: ContentfulConfig) => {
  * @returns {String} accessToken
  */
 export const getApiKey = async (options: ContentfulConfig) => {
-  const space = await getSpace(options);
+  const { spaceId } = options || {};
+  const client = getManagementClient(options);
 
-  const { items: apiKeys = [] } = (await space.getApiKeys()) || {};
+  const { items: apiKeys = [] } = (await client.apiKey.getMany({ spaceId })) || {};
   const [apiKey] = apiKeys;
   const { accessToken } = apiKey || {};
 
@@ -220,9 +227,10 @@ export const getApiKey = async (options: ContentfulConfig) => {
  * @returns {String} previewAccessToken
  */
 export const getPreviewApiKey = async (options: ContentfulConfig) => {
-  const space = await getSpace(options);
+  const { spaceId } = options || {};
+  const client = getManagementClient(options);
 
-  const { items: previewApiKeys = [] } = await space.getPreviewApiKeys();
+  const { items: previewApiKeys = [] } = await client.previewApiKey.getMany({ spaceId });
   const [previewApiKey] = previewApiKeys;
   const { accessToken: previewAccessToken } = previewApiKey as ApiKey;
 
@@ -230,8 +238,9 @@ export const getPreviewApiKey = async (options: ContentfulConfig) => {
 };
 
 export const getWebhooks = async (options: ContentfulConfig) => {
-  const space = await getSpace(options);
-  const { items: webhooks = [] } = await space.getWebhooks();
+  const { spaceId } = options || {};
+  const client = getManagementClient(options);
+  const { items: webhooks = [] } = await client.webhook.getMany({ spaceId });
 
   return webhooks;
 };
@@ -241,21 +250,21 @@ export const addWebhook = async (
   id: string,
   data: CreateWebhooksProps,
 ) => {
-  const space = await getSpace(options);
+  const { spaceId } = options || {};
+  const client = getManagementClient(options);
 
   try {
-    const webhook = await space.getWebhook(id);
+    const webhook = await client.webhook.get({ spaceId, webhookDefinitionId: id });
     return webhook;
   } catch {
-    return space.createWebhookWithId(id, data);
+    return client.webhook.create({ spaceId }, data);
   }
 };
 
 export const deleteWebhook = async (options: ContentfulConfig, id: string) => {
-  const space = await getSpace(options);
-  const webhook = await space.getWebhook(id);
-
-  return webhook.delete();
+  const { spaceId } = options || {};
+  const client = getManagementClient(options);
+  return client.webhook.delete({ spaceId, webhookDefinitionId: id });
 };
 
 export const addWatchWebhook = async (options: ContentfulConfig, url: string) => {

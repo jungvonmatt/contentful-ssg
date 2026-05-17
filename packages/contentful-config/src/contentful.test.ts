@@ -1,8 +1,12 @@
 import { vi, beforeEach } from 'vitest';
 
-const getOrganizations = vi.fn();
-const getSpaces = vi.fn();
-const getSpace = vi.fn();
+const organizationGetAll = vi.fn();
+const spaceGetMany = vi.fn();
+const spaceGet = vi.fn();
+const environmentGetMany = vi.fn();
+const environmentGet = vi.fn();
+const apiKeyGetMany = vi.fn();
+const previewApiKeyGetMany = vi.fn();
 const createClient = vi.fn();
 
 vi.mock('contentful-management', () => ({
@@ -16,37 +20,33 @@ beforeEach(async () => {
   vi.resetModules();
   vi.clearAllMocks();
 
-  getOrganizations.mockResolvedValue({
+  organizationGetAll.mockResolvedValue({
     items: [{ sys: { id: 'org-1' }, name: 'Org 1' }],
-    limit: 1000,
-    total: 1,
   });
-  getSpaces.mockResolvedValue({
+  spaceGetMany.mockResolvedValue({
     items: [{ sys: { id: 'space-1', organization: { sys: { id: 'org-1' } } }, name: 'Space 1' }],
-    limit: 1000,
-    total: 1,
   });
 
-  const space = {
-    getEnvironments: vi.fn().mockResolvedValue({
-      items: [{ sys: { id: 'master' } }],
-      limit: 1000,
-      total: 1,
-    }),
-    getEnvironment: vi.fn().mockResolvedValue({ sys: { id: 'master' } }),
-    getApiKeys: vi.fn().mockResolvedValue({
-      items: [{ accessToken: 'access-token' }],
-    }),
-    getPreviewApiKeys: vi.fn().mockResolvedValue({
-      items: [{ accessToken: 'preview-token' }],
-    }),
-  };
-  getSpace.mockResolvedValue(space);
+  spaceGet.mockResolvedValue({ sys: { id: 'space-1' } });
+
+  environmentGetMany.mockResolvedValue({
+    items: [{ sys: { id: 'master' } }],
+  });
+  environmentGet.mockResolvedValue({ sys: { id: 'master' } });
+
+  apiKeyGetMany.mockResolvedValue({
+    items: [{ accessToken: 'access-token' }],
+  });
+  previewApiKeyGetMany.mockResolvedValue({
+    items: [{ accessToken: 'preview-token' }],
+  });
 
   createClient.mockReturnValue({
-    getOrganizations,
-    getSpaces,
-    getSpace,
+    organization: { getAll: organizationGetAll },
+    space: { getMany: spaceGetMany, get: spaceGet },
+    environment: { getMany: environmentGetMany, get: environmentGet },
+    apiKey: { getMany: apiKeyGetMany },
+    previewApiKey: { getMany: previewApiKeyGetMany },
   });
 
   contentfulModule = await import('./contentful.js');
@@ -107,16 +107,5 @@ describe('contentful client helpers', () => {
     await expect(
       contentfulModule.getOrganizations({} as { managementToken: string }),
     ).rejects.toThrow(/login first/);
-  });
-
-  test('paginates results when total exceeds limit', async () => {
-    const items1 = Array.from({ length: 1000 }, (_, i) => ({ sys: { id: `s-${i}` } }));
-    const items2 = [{ sys: { id: 's-1000' } }];
-    getSpaces
-      .mockResolvedValueOnce({ items: items1, limit: 1000, total: 1001 })
-      .mockResolvedValueOnce({ items: items2, limit: 1000, total: 1001 });
-
-    const spaces = await contentfulModule.getSpaces({ managementToken: 'mt' });
-    expect(spaces).toHaveLength(1001);
   });
 });

@@ -1,5 +1,5 @@
 import { type Asset, type MapAssetLink, type TransformContext } from '@jungvonmatt/contentful-ssg';
-import { type Plugin } from 'svgo';
+import { type PluginConfig as SvgoPluginConfig } from 'svgo';
 
 export type Ratios = Record<string, number>;
 export type FocusAreaReference = `field:${string}`;
@@ -35,7 +35,7 @@ export type FocusAreaConfig = EntryConfig<FocusArea | FocusAreaReference>;
 
 export type SizesCallback = (asset: Asset, ratio: number, focusArea: string) => number;
 
-type SvgPluginCallback = (transformContext: TransformContext) => Promise<Plugin[]>;
+type SvgPluginCallback = (transformContext: TransformContext) => Promise<SvgoPluginConfig[]>;
 
 export type PluginConfig = {
   sizes?: Array<number | SizesCallback>;
@@ -53,7 +53,7 @@ export type PluginConfig = {
   generatePosterImages?: boolean;
   posterPosition?: string;
   posterScale?: string;
-  svgoPlugins?: SvgPluginCallback | Plugin[];
+  svgoPlugins?: SvgPluginCallback | SvgoPluginConfig[];
 };
 
 export type ProcessedAsset = MapAssetLink & {

@@ -46,7 +46,6 @@
     "exit-hook": "catalog:",
     "fs-extra": "^11.1.0",
     "picocolors": "catalog:",
-    "read-pkg-up": "catalog:",
     "semiver": "catalog:"
   },
   "devDependencies": {

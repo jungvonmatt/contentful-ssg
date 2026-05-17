@@ -40,7 +40,7 @@
     "watch": "tsc --build --watch"
   },
   "dependencies": {
-    "@faker-js/faker": "^7.3.0",
+    "@faker-js/faker": "^10.0.0",
     "@jungvonmatt/contentful-config": "workspace:*",
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "casual": "catalog:",

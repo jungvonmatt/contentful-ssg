@@ -49,7 +49,7 @@ describe('Mapper - mapEntry', () => {
       shortTextList: ['List 1 (gb)', 'List 2 (gb)'],
       longText: '__Long text (en-GB)__\n',
       richText:
-        '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><p></p>',
+        '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><img src="" alt="" loading="lazy" /><p></p>',
       integer: 2,
       decimal: 12,
       dateTime: new Date('2021-01-14T12:00').toISOString(),
@@ -113,7 +113,7 @@ describe('Mapper - mapEntry', () => {
       shortTextList: ['List 1 (gb)', 'List 2 (gb)'],
       longText: '__Long text (en-GB)__\n',
       richText:
-        '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><p></p>',
+        '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><img src="" alt="" loading="lazy" /><p></p>',
       integer: 2,
       decimal: 12,
       dateTime: new Date('2021-01-14T12:00').toISOString(),

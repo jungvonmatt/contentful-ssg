@@ -1,5 +1,6 @@
 import type { MapAssetLink, RuntimeContext, TransformContext } from '@jungvonmatt/contentful-ssg';
 import { resolve } from 'path';
+import type { PluginConfig as SvgoPluginConfig } from 'svgo';
 import { getAssetHelper } from './helper/asset.js';
 import { getImageHelper } from './helper/image.js';
 import { getSvgHelper } from './helper/svg.js';
@@ -36,7 +37,7 @@ const processOptions = (options: PluginConfig = {}): PluginConfig => {
             removeViewBox: false,
           },
         },
-      },
+      } as SvgoPluginConfig,
       'removeDimensions',
     ],
   };

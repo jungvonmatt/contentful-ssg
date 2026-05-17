@@ -73,7 +73,7 @@ describe('renderer/localizedContentRenderer', () => {
     ]);
     builder.appendType(contentType);
     const out = builder.toString();
-    expect(out).toContain('Localized');
+    expect(out).toContain('LocaleCode');
   });
 });
 

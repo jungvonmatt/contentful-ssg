@@ -1,6 +1,6 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
-import type { QueryOptions } from 'contentful-management/types';
+import type { QueryOptions } from 'contentful-management';
 import type { Observable, ReplaySubject } from 'rxjs';
 
 import type {

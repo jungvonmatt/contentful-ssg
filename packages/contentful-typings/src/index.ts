@@ -3,9 +3,14 @@ import path from 'node:path';
 import pico from 'picocolors';
 import { type ContentfulConfig, type ContentType } from '@jungvonmatt/contentful-ssg';
 import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
-import { getEnvironment, pagedGet } from '@jungvonmatt/contentful-ssg/lib/contentful';
-import { CFDefinitionsBuilder, type ContentTypeRenderer } from 'cf-content-types-generator';
-import { readPackageUp } from 'read-pkg-up';
+import { getEnvironment } from '@jungvonmatt/contentful-ssg/lib/contentful';
+import contentfulManagement from 'contentful-management';
+import {
+  CFDefinitionsBuilder,
+  type CFContentType,
+  type Renderer,
+} from 'cf-content-types-generator';
+import { readFile } from 'node:fs/promises';
 import semiver from 'semiver';
 
 import {
@@ -28,8 +33,11 @@ type Options = {
 
 const isLegacyVersion = async (dir?: string) => {
   try {
-    const cwd = path.join(dir || process.cwd(), 'node_modules', 'contentful');
-    const { packageJson } = await readPackageUp({ cwd });
+    const pkgPath = path.join(dir || process.cwd(), 'node_modules', 'contentful', 'package.json');
+    const packageJson = JSON.parse(await readFile(pkgPath, 'utf-8')) as {
+      name: string;
+      version: string;
+    };
     // New skeleton types were released in contentful v10.0.0-beta-v10.33
     if (
       packageJson.name === 'contentful' &&
@@ -50,20 +58,23 @@ export const generateTypings = async (options: Options = {}) => {
     required: ['managementToken', 'environmentId', 'spaceId'],
   });
 
-  const client = await getEnvironment(loaderResult.config);
+  const config = loaderResult.config;
+  const environment = await getEnvironment(config);
+  const client = contentfulManagement.createClient({ accessToken: config.managementToken });
 
   console.log(
-    `Generating typescript definitions for: ${pico.gray('spaces/')}${pico.green(loaderResult.config.spaceId)}${pico.gray('/environments/')}${pico.green(loaderResult.config.environmentId)}`,
+    `Generating typescript definitions for: ${pico.gray('spaces/')}${pico.green(config.spaceId)}${pico.gray('/environments/')}${pico.green(config.environmentId)}`,
   );
 
-  const { items: contentTypes } = await pagedGet<ContentType>(client, {
-    method: 'getContentTypes',
+  const { items: contentTypes } = await client.contentType.getMany({
+    spaceId: config.spaceId,
+    environmentId: config.environmentId ?? environment.sys.id,
   });
 
   const legacyVersion =
     typeof options.legacy === 'undefined' ? await isLegacyVersion() : options.legacy;
 
-  const renderers: ContentTypeRenderer[] = [
+  const renderers: Renderer[] = [
     legacyVersion ? new DefaultContentTypeRenderer() : new V10ContentTypeRenderer(),
   ];
   if (options.localized) {
@@ -81,7 +92,7 @@ export const generateTypings = async (options: Options = {}) => {
   const builder = new CFDefinitionsBuilder(renderers);
 
   for (const model of contentTypes) {
-    builder.appendType(model);
+    builder.appendType(model as unknown as CFContentType);
   }
 
   return builder.toString();

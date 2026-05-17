@@ -16,38 +16,46 @@ vi.mock('@jungvonmatt/contentful-ssg/lib/contentful', async (importOriginal) => 
   return {
     ...actual,
     getEnvironment: vi.fn().mockResolvedValue({
-      getContentTypes: vi.fn().mockResolvedValue({
-        items: [
-          {
-            sys: { id: 'page' },
-            fields: [
-              { id: 'title', type: 'Symbol', required: true, validations: [] },
-              { id: 'body', type: 'Text', required: false, validations: [] },
-            ],
-          },
-          {
-            sys: { id: 'author' },
-            fields: [{ id: 'name', type: 'Symbol', required: true, validations: [] }],
-          },
-        ],
-      }),
-      getEditorInterfaces: vi.fn().mockResolvedValue({
-        items: [
-          {
-            sys: { contentType: { sys: { id: 'page' } } },
-            controls: [
-              { fieldId: 'title', widgetId: 'singleLine' },
-              { fieldId: 'body', widgetId: 'multipleLine' },
-            ],
-          },
-          {
-            sys: { contentType: { sys: { id: 'author' } } },
-            controls: [{ fieldId: 'name', widgetId: 'singleLine' }],
-          },
-        ],
-      }),
+      sys: { id: 'env' },
     }),
   };
+});
+
+vi.mock('contentful-management', () => {
+  const contentTypes = [
+    {
+      sys: { id: 'page' },
+      fields: [
+        { id: 'title', type: 'Symbol', required: true, validations: [] },
+        { id: 'body', type: 'Text', required: false, validations: [] },
+      ],
+    },
+    {
+      sys: { id: 'author' },
+      fields: [{ id: 'name', type: 'Symbol', required: true, validations: [] }],
+    },
+  ];
+
+  const editorInterfaces = [
+    {
+      sys: { contentType: { sys: { id: 'page' } } },
+      controls: [
+        { fieldId: 'title', widgetId: 'singleLine' },
+        { fieldId: 'body', widgetId: 'multipleLine' },
+      ],
+    },
+    {
+      sys: { contentType: { sys: { id: 'author' } } },
+      controls: [{ fieldId: 'name', widgetId: 'singleLine' }],
+    },
+  ];
+
+  const createClient = vi.fn().mockReturnValue({
+    contentType: { getMany: vi.fn().mockResolvedValue({ items: contentTypes }) },
+    editorInterface: { getMany: vi.fn().mockResolvedValue({ items: editorInterfaces }) },
+  });
+
+  return { default: { createClient }, createClient };
 });
 
 describe('createFakes', () => {

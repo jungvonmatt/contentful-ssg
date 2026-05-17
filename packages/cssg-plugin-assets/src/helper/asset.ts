@@ -1,7 +1,7 @@
 import { Presets, SingleBar } from 'cli-progress';
 import { existsSync, promises } from 'fs';
 import got from 'got';
-import mkdirp from 'mkdirp';
+import { mkdirp } from 'mkdirp';
 import { basename, dirname, extname as pathExtname, join } from 'path';
 import { type PluginConfig } from '../types.js';
 import { getDownloadQueue } from './queue.js';
@@ -75,12 +75,11 @@ export const getAssetHelper = (options: PluginConfig) => {
     const cachedFileTimestamp = await getFileTimestamp(cacheFile);
     const fileTimestamp = await getFileTimestamp(file);
 
-    let buffer: Buffer = null;
+    let buffer: Uint8Array = null;
 
     if (!existsSync(cacheFile) || (timestamp && timestamp > cachedFileTimestamp)) {
       try {
-        const response = got(url);
-        buffer = await response.buffer();
+        buffer = await got(url).buffer();
         await promises.writeFile(cacheFile, new Uint8Array(buffer));
       } catch {
         console.log('Error downloading image:', url);

@@ -1,6 +1,5 @@
 import {
   TypeGuardRenderer as TypeGuardRendererOriginal,
-  V10TypeGuardRenderer as V10TypeGuardRendererOriginal,
   type RenderContext,
   type CFContentType,
   renderTypeGeneric,
@@ -43,7 +42,7 @@ export class TypeGuardRenderer extends TypeGuardRendererOriginal {
   };
 }
 
-export class V10TypeGuardRenderer extends V10TypeGuardRendererOriginal {
+export class V10TypeGuardRenderer extends TypeGuardRendererOriginal {
   public createContext(): RenderContext {
     return v10context;
   }

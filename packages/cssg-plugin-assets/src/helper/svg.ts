@@ -6,7 +6,7 @@ import {
 } from '@jungvonmatt/contentful-ssg';
 import type { PluginConfig, ProcessedSvg } from '../types.js';
 import { getAssetHelper } from './asset.js';
-import { optimize, type OptimizedSvg, type OptimizeOptions } from 'svgo';
+import { optimize, type Config } from 'svgo';
 
 export const getSvgHelper = (options: PluginConfig) => {
   const { fetchAsset, getLocalSrc, getAssetTimestamp } = getAssetHelper(options);
@@ -36,14 +36,14 @@ export const getSvgHelper = (options: PluginConfig) => {
 
     const source = await readAsset(asset);
 
-    const svgoOptions: OptimizeOptions = { multipass: true };
+    const svgoOptions: Config = { multipass: true };
     if (typeof options?.svgoPlugins === 'function') {
       svgoOptions.plugins = await options.svgoPlugins({ ...transformContext, content });
     } else if (Array.isArray(options?.svgoPlugins)) {
       svgoOptions.plugins = options.svgoPlugins;
     }
 
-    const { data: optimized } = optimize(source, svgoOptions) as OptimizedSvg;
+    const optimized = source ? optimize(source, svgoOptions).data : '';
 
     // Add viewBox if not present
     const result: ProcessedSvg = {

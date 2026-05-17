@@ -1,15 +1,8 @@
 import type { SetRequired } from 'type-fest';
-import type {
-  ApiKey,
-  ClientAPI,
-  ClientOptions,
-  Collection,
-  PaginationQueryOptions,
-  QueryOptions,
-} from 'contentful-management';
+import type { ApiKey, ClientOptions, PlainClientAPI, SpaceProps } from 'contentful-management';
 import contentful from 'contentful-management';
 
-let client: ClientAPI;
+let client: PlainClientAPI;
 
 export type ContentfulOptions = {
   accessToken?: ClientOptions['accessToken'];
@@ -22,8 +15,6 @@ export type ContentfulOptions = {
   spaceId?: string;
   activeSpaceId?: string;
 };
-
-const MAX_ALLOWED_LIMIT = 1000;
 
 /**
  * Get contentful management client api
@@ -53,46 +44,6 @@ const getClient = (options: ContentfulOptions) => {
   );
 };
 
-export const getAll = async <
-  T extends (query?: QueryOptions) => Promise<Collection<any, any>>,
-  TArgs extends Parameters<T> = Parameters<T>,
-  TResult extends ReturnType<T> = ReturnType<T>,
->(
-  fn: T,
-): Promise<Awaited<TResult>> => {
-  const makeRequest = async (
-    options: {
-      skip?: PaginationQueryOptions['skip'];
-      aggregatedResponse?: Awaited<TResult>;
-    } = {},
-  ) => {
-    let aggregatedResponse = options?.aggregatedResponse;
-    const skip = options?.skip || 0;
-    const query = {
-      skip,
-      limit: MAX_ALLOWED_LIMIT,
-    };
-
-    const response = await (fn(query as TArgs[0]) as Promise<TResult>);
-    const { limit = MAX_ALLOWED_LIMIT, total, items } = response;
-
-    if (aggregatedResponse) {
-      aggregatedResponse.items = aggregatedResponse.items.concat(items);
-    } else {
-      aggregatedResponse = response;
-    }
-
-    if (skip + limit <= total) {
-      return makeRequest({ skip: skip + limit, aggregatedResponse });
-    }
-
-    return aggregatedResponse;
-  };
-
-  const result = await makeRequest();
-  return result;
-};
-
 /**
  * Get Contentful organizations
  */
@@ -101,7 +52,7 @@ export const getOrganizations = async (
 ) => {
   const client = getClient(options);
 
-  const { items } = await getAll(async (query) => client.getOrganizations(query));
+  const { items } = await client.organization.getAll();
   return items;
 };
 
@@ -111,7 +62,7 @@ export const getOrganizations = async (
 export const getSpaces = async (options: SetRequired<ContentfulOptions, 'managementToken'>) => {
   const client = getClient(options);
 
-  const { items } = await getAll(async (query) => client.getSpaces(query));
+  const { items } = await client.space.getMany({});
   return items;
 };
 
@@ -120,10 +71,10 @@ export const getSpaces = async (options: SetRequired<ContentfulOptions, 'managem
  */
 export const getSpace = async (
   options: SetRequired<ContentfulOptions, 'managementToken' | 'spaceId'>,
-) => {
+): Promise<SpaceProps> => {
   const { spaceId } = options || {};
   const client = getClient(options);
-  return client.getSpace(spaceId);
+  return client.space.get({ spaceId });
 };
 
 /**
@@ -132,8 +83,9 @@ export const getSpace = async (
 export const getEnvironments = async (
   options: SetRequired<ContentfulOptions, 'managementToken' | 'spaceId'>,
 ) => {
-  const space = await getSpace(options);
-  const { items } = await getAll(async (query) => space.getEnvironments(query));
+  const { spaceId } = options || {};
+  const client = getClient(options);
+  const { items } = await client.environment.getMany({ spaceId });
   return items;
 };
 
@@ -144,14 +96,14 @@ export const getEnvironment = async (
   options: SetRequired<ContentfulOptions, 'managementToken' | 'spaceId' | 'environmentId'>,
 ) => {
   const { environmentId, spaceId } = options || {};
-  const space = await getSpace(options);
+  const client = getClient(options);
 
-  const { items: environments } = await space.getEnvironments();
+  const { items: environments } = await client.environment.getMany({ spaceId });
 
   const environmentIds = new Set((environments || []).map((env) => env.sys.id));
 
   if (environmentId && environmentIds.has(environmentId)) {
-    return space.getEnvironment(environmentId);
+    return client.environment.get({ spaceId, environmentId });
   }
 
   if (environmentId && !environmentIds.has(environmentId)) {
@@ -167,9 +119,10 @@ export const getEnvironment = async (
 export const getApiKey = async (
   options: SetRequired<ContentfulOptions, 'managementToken' | 'spaceId'>,
 ) => {
-  const space = await getSpace(options);
+  const { spaceId } = options || {};
+  const client = getClient(options);
 
-  const { items: apiKeys = [] } = (await space.getApiKeys()) || {};
+  const { items: apiKeys = [] } = (await client.apiKey.getMany({ spaceId })) || {};
   const [apiKey] = apiKeys;
   const { accessToken } = apiKey || {};
 
@@ -182,9 +135,10 @@ export const getApiKey = async (
 export const getPreviewApiKey = async (
   options: SetRequired<ContentfulOptions, 'managementToken' | 'spaceId'>,
 ) => {
-  const space = await getSpace(options);
+  const { spaceId } = options || {};
+  const client = getClient(options);
 
-  const { items: previewApiKeys = [] } = await space.getPreviewApiKeys();
+  const { items: previewApiKeys = [] } = await client.previewApiKey.getMany({ spaceId });
   const [previewApiKey] = previewApiKeys;
   const { accessToken: previewAccessToken } = previewApiKey as ApiKey;
 

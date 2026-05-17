@@ -90,7 +90,7 @@ describe('Mapper - mapField', () => {
   test('RichText', async () => {
     const content = await readFixture('richtext.json');
     const expected =
-      '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><p></p>';
+      '<p><b>Rich text (EN)</b></p><p><span>type: entry-hyperlink id: WLITBNhFp0VzHqOwKJAwR</span></p><p><span>type: asset-hyperlink id: 3t1t8PDynjpXbAzv6zOVQq</span></p><p></p><img src="" alt="" loading="lazy" /><p></p>';
     const value = await mapField(
       getTransformContext({
         fieldContent: content,

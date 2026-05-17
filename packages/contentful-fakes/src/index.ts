@@ -1,5 +1,6 @@
 import { type ContentfulConfig, type KeyValueMap } from '@jungvonmatt/contentful-ssg';
 import { getEnvironment } from '@jungvonmatt/contentful-ssg/lib/contentful';
+import contentfulManagement from 'contentful-management';
 import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 import { getMockData, type ContentTypes } from './lib/faker.js';
 
@@ -14,9 +15,18 @@ export async function createFakes(
     cwd,
   });
 
-  const environment = await getEnvironment(loaderResult.config);
-  const { items: contentTypes } = await environment.getContentTypes();
-  const { items } = await environment.getEditorInterfaces();
+  const config = loaderResult.config;
+  const environment = await getEnvironment(config);
+  const client = contentfulManagement.createClient({ accessToken: config.managementToken });
+  const { spaceId, environmentId } = config;
+  const { items: contentTypes } = await client.contentType.getMany({
+    spaceId,
+    environmentId: environmentId ?? environment.sys.id,
+  });
+  const { items } = await client.editorInterface.getMany({
+    spaceId,
+    environmentId: environmentId ?? environment.sys.id,
+  });
 
   const interfaces: ContentTypes = Object.fromEntries(
     items

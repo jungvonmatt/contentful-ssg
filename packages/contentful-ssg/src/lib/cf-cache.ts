@@ -1,4 +1,3 @@
-import findCacheDir from 'find-cache-dir';
 import { existsSync } from 'fs';
 import { outputFile, remove } from 'fs-extra';
 import { readFile } from 'fs/promises';
@@ -16,7 +15,7 @@ export const getCacheDir = (config: Partial<ContentfulConfig>) => {
 
   const name = `contentful-ssg/sync-${spaceId}-${environmentId}`;
 
-  const dir: string = findCacheDir({ name }) || path.join(process.cwd(), '.cache', name);
+  const dir: string = path.join(process.cwd(), 'node_modules', '.cache', name);
 
   return dir;
 };

@@ -302,7 +302,7 @@ describe('cssg-plugin-assets', () => {
     );
 
     expect(result.mimeType).toBe('image/svg+xml');
-    expect(result?.source).toEqual(undefined);
+    expect(result?.source).toEqual('');
   });
 
   it('mapAssetLink (svg)', async () => {

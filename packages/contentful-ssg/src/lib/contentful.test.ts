@@ -129,36 +129,46 @@ vi.mock('contentful-management', () => {
       version: 1,
     },
     headers: [],
-    delete: vi.fn().mockResolvedValue('deleted'),
   };
 
   const mockedSpace = {
     sys: { id: 'space-id' },
-    getEnvironments: vi.fn().mockResolvedValue({ items: [mockedEnvironment] }),
-    getEnvironment: vi.fn().mockResolvedValue(mockedEnvironment),
-    getApiKeys: vi.fn().mockResolvedValue({ items: [mockedApiKey] }),
-    getPreviewApiKeys: vi.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
-    getWebhooks: vi.fn().mockResolvedValue({ items: [mockedWebhook] }),
-    getWebhook: vi.fn().mockImplementation((id) => {
-      if (/new/.test(id) || id === createHash('sha1').update('http://test.url').digest('hex')) {
-        throw new Error('Not Found');
-      }
-
-      return mockedWebhook;
-    }),
-    createWebhookWithId: vi.fn().mockImplementation((id, data) => ({
-      ...data,
-      sys: {
-        type: 'WebhookDefinition',
-        id,
-        version: 1,
-      },
-    })),
   };
 
   const createClient = vi.fn().mockReturnValue({
-    getSpaces: vi.fn().mockResolvedValue({ items: [mockedSpace] }),
-    getSpace: vi.fn().mockResolvedValue(mockedSpace),
+    space: {
+      getMany: vi.fn().mockResolvedValue({ items: [mockedSpace] }),
+      get: vi.fn().mockResolvedValue(mockedSpace),
+    },
+    environment: {
+      getMany: vi.fn().mockResolvedValue({ items: [mockedEnvironment] }),
+      get: vi.fn().mockResolvedValue(mockedEnvironment),
+    },
+    apiKey: {
+      getMany: vi.fn().mockResolvedValue({ items: [mockedApiKey] }),
+    },
+    previewApiKey: {
+      getMany: vi.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
+    },
+    webhook: {
+      getMany: vi.fn().mockResolvedValue({ items: [mockedWebhook] }),
+      get: vi.fn().mockImplementation(({ webhookDefinitionId: id }) => {
+        if (/new/.test(id) || id === createHash('sha1').update('http://test.url').digest('hex')) {
+          throw new Error('Not Found');
+        }
+
+        return mockedWebhook;
+      }),
+      create: vi.fn().mockImplementation(({ spaceId }, data) => ({
+        ...data,
+        sys: {
+          type: 'WebhookDefinition',
+          id: 'generated-id',
+          version: 1,
+        },
+      })),
+      delete: vi.fn().mockResolvedValue(undefined),
+    },
   });
 
   return {
@@ -167,9 +177,7 @@ vi.mock('contentful-management', () => {
   };
 });
 
-vi.mock('find-cache-dir', () => ({
-  default: vi.fn().mockImplementation(({ name }) => `CONTENTFUL-TEST/${name}`),
-}));
+vi.spyOn(process, 'cwd').mockReturnValue('CONTENTFUL-TEST');
 
 const cache = initializeCache(configMock);
 
@@ -295,13 +303,13 @@ describe('Contentful', () => {
       headers: [],
     });
 
-    expect(webhook?.sys?.id).toBe('new-id');
+    expect(webhook?.sys?.id).toBe('generated-id');
     expect(webhook?.name).toBe('name');
   });
 
   test('deleteWebhook', async () => {
     const result = await deleteWebhook(configMock, 'id');
-    expect(result).toBe('deleted');
+    expect(result).toBeUndefined();
   });
 
   test('addWatchWebhook', async () => {

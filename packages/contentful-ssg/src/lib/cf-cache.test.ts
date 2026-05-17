@@ -13,16 +13,14 @@ const config = {
 
 const cache = initializeCache(config);
 
-vi.mock('find-cache-dir', () => ({
-  default: vi.fn().mockImplementation(({ name }) => `CACHE-TEST/${name}`),
-}));
+vi.spyOn(process, 'cwd').mockReturnValue('CACHE-TEST');
 
 afterEach(async () => {
   await remove('CACHE-TEST');
 });
 
 test('getCacheDir', async () => {
-  const expected = `CACHE-TEST/contentful-ssg/sync-${config.spaceId}-${config.environmentId}`;
+  const expected = `CACHE-TEST/node_modules/.cache/contentful-ssg/sync-${config.spaceId}-${config.environmentId}`;
   const value = await getCacheDir(config);
   expect(value).toEqual(expected);
 });
