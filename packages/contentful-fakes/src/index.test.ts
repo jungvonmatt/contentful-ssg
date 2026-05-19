@@ -21,42 +21,53 @@ vi.mock('@jungvonmatt/contentful-ssg/lib/contentful', async (importOriginal) => 
   };
 });
 
-vi.mock('contentful-management', () => {
-  const contentTypes = [
-    {
-      sys: { id: 'page' },
-      fields: [
-        { id: 'title', type: 'Symbol', required: true, validations: [] },
-        { id: 'body', type: 'Text', required: false, validations: [] },
-      ],
-    },
-    {
-      sys: { id: 'author' },
-      fields: [{ id: 'name', type: 'Symbol', required: true, validations: [] }],
-    },
-  ];
-
-  const editorInterfaces = [
-    {
-      sys: { contentType: { sys: { id: 'page' } } },
-      controls: [
-        { fieldId: 'title', widgetId: 'singleLine' },
-        { fieldId: 'body', widgetId: 'multipleLine' },
-      ],
-    },
-    {
-      sys: { contentType: { sys: { id: 'author' } } },
-      controls: [{ fieldId: 'name', widgetId: 'singleLine' }],
-    },
-  ];
-
-  const createClient = vi.fn().mockReturnValue({
-    contentType: { getMany: vi.fn().mockResolvedValue({ items: contentTypes }) },
-    editorInterface: { getMany: vi.fn().mockResolvedValue({ items: editorInterfaces }) },
-  });
-
-  return { default: { createClient }, createClient };
+vi.mock('contentful-management', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('contentful-management')>();
+  return {
+    ...actual,
+  };
 });
+
+vi.mock('@jungvonmatt/contentful-client', () => ({
+  getManagementClient: vi.fn().mockReturnValue({
+    contentType: {
+      getMany: vi.fn().mockResolvedValue({
+        items: [
+          {
+            sys: { id: 'page' },
+            fields: [
+              { id: 'title', type: 'Symbol', required: true, validations: [] },
+              { id: 'body', type: 'Text', required: false, validations: [] },
+            ],
+          },
+          {
+            sys: { id: 'author' },
+            fields: [{ id: 'name', type: 'Symbol', required: true, validations: [] }],
+          },
+        ],
+        total: 2,
+      }),
+    },
+    editorInterface: {
+      getMany: vi.fn().mockResolvedValue({
+        items: [
+          {
+            sys: { contentType: { sys: { id: 'page' } } },
+            controls: [
+              { fieldId: 'title', widgetId: 'singleLine' },
+              { fieldId: 'body', widgetId: 'multipleLine' },
+            ],
+          },
+          {
+            sys: { contentType: { sys: { id: 'author' } } },
+            controls: [{ fieldId: 'name', widgetId: 'singleLine' }],
+          },
+        ],
+        total: 2,
+      }),
+    },
+  }),
+}));
 
 describe('createFakes', () => {
   test('returns fake + minimal data for all content types when no filter', async () => {

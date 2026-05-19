@@ -19,34 +19,44 @@ vi.mock('@jungvonmatt/contentful-ssg/lib/contentful', async (importOriginal) => 
   };
 });
 
-vi.mock('contentful-management', () => {
-  const contentTypes = [
-    {
-      sys: { id: 'page', type: 'ContentType' },
-      name: 'Page',
-      displayField: 'title',
-      description: '',
-      fields: [
-        {
-          id: 'title',
-          name: 'Title',
-          type: 'Symbol',
-          required: true,
-          localized: false,
-          omitted: false,
-          disabled: false,
-          validations: [],
-        },
-      ],
-    },
-  ];
-
-  const createClient = vi.fn().mockReturnValue({
-    contentType: { getMany: vi.fn().mockResolvedValue({ items: contentTypes }) },
-  });
-
-  return { default: { createClient }, createClient };
+vi.mock('contentful-management', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('contentful-management')>();
+  return {
+    ...actual,
+  };
 });
+
+vi.mock('@jungvonmatt/contentful-client', () => ({
+  getManagementClient: vi.fn().mockReturnValue({
+    contentType: {
+      getMany: vi.fn().mockResolvedValue({
+        items: [
+          {
+            sys: { id: 'page', type: 'ContentType' },
+            name: 'Page',
+            displayField: 'title',
+            description: '',
+            fields: [
+              {
+                id: 'title',
+                name: 'Title',
+                type: 'Symbol',
+                required: true,
+                localized: false,
+                omitted: false,
+                disabled: false,
+                validations: [],
+              },
+            ],
+          },
+        ],
+        total: 1,
+        skip: 0,
+        limit: 100,
+      }),
+    },
+  }),
+}));
 
 vi.mock('node:fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs/promises')>();

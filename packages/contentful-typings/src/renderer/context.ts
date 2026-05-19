@@ -10,9 +10,3 @@ export const context: RenderContext = {
   moduleFieldsName,
   moduleSkeletonName,
 };
-export const v10context: RenderContext = {
-  ...createContext(),
-  moduleName,
-  moduleFieldsName,
-  moduleSkeletonName,
-};

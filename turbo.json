@@ -2,16 +2,34 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "compile": {
-      "dependsOn": ["^compile"],
-      "outputs": ["dist/**"],
-      "inputs": ["src/*.ts", "src/**/*.ts"]
+      "dependsOn": [
+        "^compile"
+      ],
+      "outputs": [
+        "dist/**"
+      ],
+      "inputs": [
+        "src/*.ts",
+        "src/**/*.ts"
+      ]
     },
     "test": {
-      "dependsOn": ["^compile"],
-      "inputs": ["src/*.ts", "src/**/*.ts", "**/*.js", "test/**/*.ts", "test/**/*.js"]
+      "dependsOn": [
+        "^compile"
+      ],
+      "inputs": [
+        "src/*.ts",
+        "src/**/*.ts",
+        "**/*.js",
+        "test/**/*.ts",
+        "test/**/*.js"
+      ]
     },
     "lint": {
-      "dependsOn": ["compile", "^compile"],
+      "dependsOn": [
+        "compile",
+        "^compile"
+      ],
       "inputs": [
         "src/*.ts",
         "src/**/*.ts",

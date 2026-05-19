@@ -1,6 +1,7 @@
+import { describe, test, expect } from 'vitest';
 import { CFDefinitionsBuilder, type CFContentType } from 'cf-content-types-generator';
 import { moduleName, moduleFieldsName, moduleSkeletonName } from './context.js';
-import { DefaultContentTypeRenderer, V10ContentTypeRenderer } from './contentTypeRenderer.js';
+import { DefaultContentTypeRenderer } from './contentTypeRenderer.js';
 import { JsDocRenderer } from './jsDocRenderer.js';
 import { LocalizedContentTypeRenderer } from './localizedContentRenderer.js';
 import { TypeGuardRenderer, V10TypeGuardRenderer } from './typeGuardRenderer.js';
@@ -8,8 +9,6 @@ import { TypeGuardRenderer, V10TypeGuardRenderer } from './typeGuardRenderer.js'
 const contentType: CFContentType = {
   sys: { id: 'page-block', type: 'ContentType' } as CFContentType['sys'],
   name: 'Page Block',
-  displayField: 'title',
-  description: '',
   fields: [
     {
       id: 'title',
@@ -47,8 +46,8 @@ describe('renderer/contentTypeRenderer', () => {
     expect(out).toContain('PageBlock');
   });
 
-  test('V10ContentTypeRenderer produces skeleton types', () => {
-    const builder = new CFDefinitionsBuilder([new V10ContentTypeRenderer()]);
+  test('DefaultContentTypeRenderer produces skeleton types', () => {
+    const builder = new CFDefinitionsBuilder([new DefaultContentTypeRenderer()]);
     builder.appendType(contentType);
     const out = builder.toString();
     expect(out).toContain('PageBlock');
@@ -58,7 +57,10 @@ describe('renderer/contentTypeRenderer', () => {
 
 describe('renderer/jsDocRenderer', () => {
   test('emits JSDoc comments referencing Pascal cased name', () => {
-    const builder = new CFDefinitionsBuilder([new V10ContentTypeRenderer(), new JsDocRenderer()]);
+    const builder = new CFDefinitionsBuilder([
+      new DefaultContentTypeRenderer(),
+      new JsDocRenderer(),
+    ]);
     builder.appendType(contentType);
     const out = builder.toString();
     expect(out).toMatch(/\/\*\*[\s\S]*PageBlock/);
@@ -68,7 +70,7 @@ describe('renderer/jsDocRenderer', () => {
 describe('renderer/localizedContentRenderer', () => {
   test('emits localized type when included', () => {
     const builder = new CFDefinitionsBuilder([
-      new V10ContentTypeRenderer(),
+      new DefaultContentTypeRenderer(),
       new LocalizedContentTypeRenderer(),
     ]);
     builder.appendType(contentType);
@@ -91,7 +93,7 @@ describe('renderer/typeGuardRenderer', () => {
 
   test('V10TypeGuardRenderer emits skeleton-aware guard', () => {
     const builder = new CFDefinitionsBuilder([
-      new V10ContentTypeRenderer(),
+      new DefaultContentTypeRenderer(),
       new V10TypeGuardRenderer(),
     ]);
     builder.appendType(contentType);

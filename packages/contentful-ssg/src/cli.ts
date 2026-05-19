@@ -4,7 +4,7 @@
 /* eslint-env node */
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { type QueryOptions } from 'contentful-management';
+import { type QueryOptions } from '@jungvonmatt/contentful-client';
 import { asyncExitHook, gracefulExit } from 'exit-hook';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';

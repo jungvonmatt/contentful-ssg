@@ -1,17 +1,23 @@
 import { vi, beforeEach } from 'vitest';
 
-const organizationGetAll = vi.fn();
-const spaceGetMany = vi.fn();
-const spaceGet = vi.fn();
-const environmentGetMany = vi.fn();
-const environmentGet = vi.fn();
-const apiKeyGetMany = vi.fn();
-const previewApiKeyGetMany = vi.fn();
-const createClient = vi.fn();
+const getOrganizationsBase = vi.fn();
+const getSpacesBase = vi.fn();
+const getSpaceBase = vi.fn();
+const getEnvironmentsBase = vi.fn();
+const getEnvironmentBase = vi.fn();
+const getApiKeyBase = vi.fn();
+const getPreviewApiKeyBase = vi.fn();
+const getManagementClient = vi.fn();
 
-vi.mock('contentful-management', () => ({
-  default: { createClient },
-  createClient,
+vi.mock('@jungvonmatt/contentful-client', () => ({
+  getManagementClient,
+  getOrganizations: getOrganizationsBase,
+  getSpaces: getSpacesBase,
+  getSpace: getSpaceBase,
+  getEnvironments: getEnvironmentsBase,
+  getEnvironment: getEnvironmentBase,
+  getApiKey: getApiKeyBase,
+  getPreviewApiKey: getPreviewApiKeyBase,
 }));
 
 let contentfulModule: typeof import('./contentful.js');
@@ -20,33 +26,20 @@ beforeEach(async () => {
   vi.resetModules();
   vi.clearAllMocks();
 
-  organizationGetAll.mockResolvedValue({
-    items: [{ sys: { id: 'org-1' }, name: 'Org 1' }],
-  });
-  spaceGetMany.mockResolvedValue({
-    items: [{ sys: { id: 'space-1', organization: { sys: { id: 'org-1' } } }, name: 'Space 1' }],
-  });
-
-  spaceGet.mockResolvedValue({ sys: { id: 'space-1' } });
-
-  environmentGetMany.mockResolvedValue({
-    items: [{ sys: { id: 'master' } }],
-  });
-  environmentGet.mockResolvedValue({ sys: { id: 'master' } });
-
-  apiKeyGetMany.mockResolvedValue({
-    items: [{ accessToken: 'access-token' }],
-  });
-  previewApiKeyGetMany.mockResolvedValue({
-    items: [{ accessToken: 'preview-token' }],
-  });
-
-  createClient.mockReturnValue({
-    organization: { getAll: organizationGetAll },
-    space: { getMany: spaceGetMany, get: spaceGet },
-    environment: { getMany: environmentGetMany, get: environmentGet },
-    apiKey: { getMany: apiKeyGetMany },
-    previewApiKey: { getMany: previewApiKeyGetMany },
+  getOrganizationsBase.mockResolvedValue([{ sys: { id: 'org-1' }, name: 'Org 1' }]);
+  getSpacesBase.mockResolvedValue([
+    { sys: { id: 'space-1', organization: { sys: { id: 'org-1' } } }, name: 'Space 1' },
+  ]);
+  getSpaceBase.mockResolvedValue({ sys: { id: 'space-1' } });
+  getEnvironmentsBase.mockResolvedValue([{ sys: { id: 'master' } }]);
+  getEnvironmentBase.mockResolvedValue({ sys: { id: 'master' } });
+  getApiKeyBase.mockResolvedValue('access-token');
+  getPreviewApiKeyBase.mockResolvedValue('preview-token');
+  getManagementClient.mockImplementation((options) => {
+    if (!options?.managementToken) {
+      throw new Error('You need to login first. Run npx contentful login');
+    }
+    return {};
   });
 
   contentfulModule = await import('./contentful.js');
@@ -81,6 +74,9 @@ describe('contentful client helpers', () => {
   });
 
   test('getEnvironment throws on unknown environmentId', async () => {
+    getEnvironmentBase.mockRejectedValue(
+      new Error('Environment "staging" is not available in space s"'),
+    );
     await expect(
       contentfulModule.getEnvironment({
         managementToken: 'mt',
@@ -104,6 +100,9 @@ describe('contentful client helpers', () => {
   });
 
   test('throws when no token is provided', async () => {
+    getOrganizationsBase.mockRejectedValue(
+      new Error('You need to login first. Run npx contentful login'),
+    );
     await expect(
       contentfulModule.getOrganizations({} as { managementToken: string }),
     ).rejects.toThrow(/login first/);

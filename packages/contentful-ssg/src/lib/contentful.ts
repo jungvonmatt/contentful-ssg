@@ -7,17 +7,22 @@ import type {
   SyncCollection as ContentfulSyncCollection,
 } from 'contentful';
 import { createClient } from 'contentful';
-import contentfulManagement from 'contentful-management';
-import type {
-  ApiKey,
-  CreateWebhooksProps,
-  PlainClientAPI,
-  QueryOptions,
-  SpaceProps,
-} from 'contentful-management';
+import type { QueryOptions } from '@jungvonmatt/contentful-client';
 import { createHash } from 'crypto';
 import { hostname } from 'os';
 import { v4 as uuidv4 } from 'uuid';
+import { addWebhook } from '@jungvonmatt/contentful-client';
+export {
+  getSpaces,
+  getSpace,
+  getEnvironments,
+  getEnvironment,
+  getApiKey,
+  getPreviewApiKey,
+  getWebhooks,
+  addWebhook,
+  deleteWebhook,
+} from '@jungvonmatt/contentful-client';
 import type {
   ContentfulConfig,
   ContentType,
@@ -38,7 +43,6 @@ import { initializeCache } from './cf-cache.js';
 type ClientApi = ContentfulClientApi<'WITH_ALL_LOCALES'>;
 
 let client: ClientApi;
-let managementClient: PlainClientAPI;
 
 export const FIELD_TYPE_SYMBOL = 'Symbol';
 export const FIELD_TYPE_TEXT = 'Text';
@@ -120,151 +124,6 @@ const getClient = (options: ContentfulConfig): ClientApi => {
   }
 
   throw new Error('You need to login first. Run npx contentful login');
-};
-
-/**
- * Get contentful management client api
- * @param {Object} options
- * @returns {*}
- */
-const getManagementClient = (options: ContentfulConfig) => {
-  const { managementToken } = options || {};
-
-  if (managementClient) {
-    return managementClient;
-  }
-
-  if (managementToken) {
-    managementClient = contentfulManagement.createClient({
-      accessToken: managementToken,
-    });
-    return managementClient;
-  }
-
-  throw new Error('You need to login first. Run npx contentful login');
-};
-
-/**
- * Get Contentful spaces
- * @param {Options} options
- * @returns {Array<Object>}
- */
-export const getSpaces = async (options: ContentfulConfig) => {
-  const client = getManagementClient(options);
-
-  const { items: spaces } = await client.space.getMany({});
-
-  return spaces;
-};
-
-/**
- * Get Contentful space
- * @param {Options} options
- * @returns {Object}
- */
-export const getSpace = async (options: ContentfulConfig): Promise<SpaceProps> => {
-  const { spaceId } = options || {};
-  const client = getManagementClient(options);
-  return client.space.get({ spaceId });
-};
-
-/**
- * Get Contentful environments
- * @param {Options} options
- * @returns {Array<Object>}
- */
-export const getEnvironments = async (options: ContentfulConfig) => {
-  const { spaceId } = options || {};
-  const client = getManagementClient(options);
-  const { items: environments } = await client.environment.getMany({ spaceId });
-
-  return environments;
-};
-
-/**
- * Get Contentful environment
- * @param {Options} options
- * @returns {Object}
- */
-export const getEnvironment = async (options: ContentfulConfig) => {
-  const { environmentId, spaceId } = options || {};
-  const client = getManagementClient(options);
-
-  const { items: environments } = await client.environment.getMany({ spaceId });
-
-  const environmentIds = new Set((environments || []).map((env) => env.sys.id));
-
-  if (environmentId && environmentIds.has(environmentId)) {
-    return client.environment.get({ spaceId, environmentId });
-  }
-
-  if (environmentId && !environmentIds.has(environmentId)) {
-    throw new Error(`Environment "${environmentId}" is not available in space ${spaceId}"`);
-  }
-
-  throw new Error('Missing required parameter: environmentId');
-};
-
-/**
- * Fetch api key from contentful
- * @param {Object} options
- * @returns {String} accessToken
- */
-export const getApiKey = async (options: ContentfulConfig) => {
-  const { spaceId } = options || {};
-  const client = getManagementClient(options);
-
-  const { items: apiKeys = [] } = (await client.apiKey.getMany({ spaceId })) || {};
-  const [apiKey] = apiKeys;
-  const { accessToken } = apiKey || {};
-
-  return accessToken;
-};
-
-/**
- * Fetch preview api key from contentful
- * @param {Object} options
- * @returns {String} previewAccessToken
- */
-export const getPreviewApiKey = async (options: ContentfulConfig) => {
-  const { spaceId } = options || {};
-  const client = getManagementClient(options);
-
-  const { items: previewApiKeys = [] } = await client.previewApiKey.getMany({ spaceId });
-  const [previewApiKey] = previewApiKeys;
-  const { accessToken: previewAccessToken } = previewApiKey as ApiKey;
-
-  return previewAccessToken;
-};
-
-export const getWebhooks = async (options: ContentfulConfig) => {
-  const { spaceId } = options || {};
-  const client = getManagementClient(options);
-  const { items: webhooks = [] } = await client.webhook.getMany({ spaceId });
-
-  return webhooks;
-};
-
-export const addWebhook = async (
-  options: ContentfulConfig,
-  id: string,
-  data: CreateWebhooksProps,
-) => {
-  const { spaceId } = options || {};
-  const client = getManagementClient(options);
-
-  try {
-    const webhook = await client.webhook.get({ spaceId, webhookDefinitionId: id });
-    return webhook;
-  } catch {
-    return client.webhook.create({ spaceId }, data);
-  }
-};
-
-export const deleteWebhook = async (options: ContentfulConfig, id: string) => {
-  const { spaceId } = options || {};
-  const client = getManagementClient(options);
-  return client.webhook.delete({ spaceId, webhookDefinitionId: id });
 };
 
 export const addWatchWebhook = async (options: ContentfulConfig, url: string) => {

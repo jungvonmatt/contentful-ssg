@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@jungvonmatt/config-loader": "catalog:",
-    "contentful-management": "catalog:",
+    "@jungvonmatt/contentful-client": "workspace:*",
     "node-homedir": "catalog:",
     "package-up": "catalog:",
     "pathe": "catalog:",

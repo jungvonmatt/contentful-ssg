@@ -5,7 +5,7 @@ import {
   renderTypeGeneric,
 } from 'cf-content-types-generator';
 import { type SourceFile } from 'ts-morph';
-import { context, v10context, moduleName } from './context.js';
+import { context, moduleName } from './context.js';
 
 export class TypeGuardRenderer extends TypeGuardRendererOriginal {
   public createContext(): RenderContext {
@@ -44,7 +44,7 @@ export class TypeGuardRenderer extends TypeGuardRendererOriginal {
 
 export class V10TypeGuardRenderer extends TypeGuardRendererOriginal {
   public createContext(): RenderContext {
-    return v10context;
+    return context;
   }
 
   public render = (contentType: CFContentType, file: SourceFile): void => {

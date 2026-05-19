@@ -1,6 +1,7 @@
 import { type ContentfulConfig, type KeyValueMap } from '@jungvonmatt/contentful-ssg';
 import { getEnvironment } from '@jungvonmatt/contentful-ssg/lib/contentful';
-import contentfulManagement from 'contentful-management';
+import { fetchAll } from 'contentful-management';
+import { getManagementClient } from '@jungvonmatt/contentful-client';
 import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 import { getMockData, type ContentTypes } from './lib/faker.js';
 
@@ -17,19 +18,20 @@ export async function createFakes(
 
   const config = loaderResult.config;
   const environment = await getEnvironment(config);
-  const client = contentfulManagement.createClient({ accessToken: config.managementToken });
+  const client = getManagementClient(config);
   const { spaceId, environmentId } = config;
-  const { items: contentTypes } = await client.contentType.getMany({
-    spaceId,
-    environmentId: environmentId ?? environment.sys.id,
-  });
-  const { items } = await client.editorInterface.getMany({
-    spaceId,
-    environmentId: environmentId ?? environment.sys.id,
-  });
+  const envId = environmentId ?? environment.sys.id;
+  const contentTypes = await fetchAll(
+    (params) => client.contentType.getMany({ spaceId, environmentId: envId, ...params }),
+    {},
+  );
+  const editorInterfaces = await fetchAll(
+    (params) => client.editorInterface.getMany({ spaceId, environmentId: envId, ...params }),
+    {},
+  );
 
   const interfaces: ContentTypes = Object.fromEntries(
-    items
+    editorInterfaces
       .filter(
         (item) => !contentTypeIds.length || contentTypeIds.includes(item.sys.contentType.sys.id),
       )

@@ -1,10 +1,11 @@
 /* _eslint-disable @typescript-eslint/no-unsafe-call */
 import path from 'node:path';
 import pico from 'picocolors';
-import { type ContentfulConfig, type ContentType } from '@jungvonmatt/contentful-ssg';
+import { type ContentfulConfig } from '@jungvonmatt/contentful-ssg';
 import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
 import { getEnvironment } from '@jungvonmatt/contentful-ssg/lib/contentful';
-import contentfulManagement from 'contentful-management';
+import { getManagementClient } from '@jungvonmatt/contentful-client';
+import { fetchAll } from 'contentful-management';
 import {
   CFDefinitionsBuilder,
   type CFContentType,
@@ -15,7 +16,6 @@ import semiver from 'semiver';
 
 import {
   DefaultContentTypeRenderer,
-  V10ContentTypeRenderer,
   V10TypeGuardRenderer,
   JsDocRenderer,
   LocalizedContentTypeRenderer,
@@ -60,23 +60,26 @@ export const generateTypings = async (options: Options = {}) => {
 
   const config = loaderResult.config;
   const environment = await getEnvironment(config);
-  const client = contentfulManagement.createClient({ accessToken: config.managementToken });
+  const client = getManagementClient(config);
 
   console.log(
     `Generating typescript definitions for: ${pico.gray('spaces/')}${pico.green(config.spaceId)}${pico.gray('/environments/')}${pico.green(config.environmentId)}`,
   );
 
-  const { items: contentTypes } = await client.contentType.getMany({
-    spaceId: config.spaceId,
-    environmentId: config.environmentId ?? environment.sys.id,
-  });
+  const contentTypes = await fetchAll(
+    (params) =>
+      client.contentType.getMany({
+        spaceId: config.spaceId,
+        environmentId: config.environmentId ?? environment.sys.id,
+        ...params,
+      }),
+    {},
+  );
 
   const legacyVersion =
     typeof options.legacy === 'undefined' ? await isLegacyVersion() : options.legacy;
 
-  const renderers: Renderer[] = [
-    legacyVersion ? new DefaultContentTypeRenderer() : new V10ContentTypeRenderer(),
-  ];
+  const renderers: Renderer[] = [new DefaultContentTypeRenderer()];
   if (options.localized) {
     renderers.push(new LocalizedContentTypeRenderer());
   }
@@ -92,7 +95,7 @@ export const generateTypings = async (options: Options = {}) => {
   const builder = new CFDefinitionsBuilder(renderers);
 
   for (const model of contentTypes) {
-    builder.appendType(model as unknown as CFContentType);
+    builder.appendType(model as CFContentType);
   }
 
   return builder.toString();

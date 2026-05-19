@@ -75,7 +75,7 @@ export const getAssetHelper = (options: PluginConfig) => {
     const cachedFileTimestamp = await getFileTimestamp(cacheFile);
     const fileTimestamp = await getFileTimestamp(file);
 
-    let buffer: Uint8Array = null;
+    let buffer: Uint8Array | null = null;
 
     if (!existsSync(cacheFile) || (timestamp && timestamp > cachedFileTimestamp)) {
       try {
