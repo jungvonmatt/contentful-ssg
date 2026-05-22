@@ -30,7 +30,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "test": "vitest run --root ../.. packages/contentful-client/src/index.test.ts",
+    "test": "vitest run --root ../.. packages/contentful-client/src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
