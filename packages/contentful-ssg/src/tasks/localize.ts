@@ -13,7 +13,7 @@ import type {
 
 import Listr from 'listr';
 import { mapAsync } from '../lib/array.js';
-import { convertToMap, getContentTypeId } from '../lib/contentful.js';
+import { convertToMap, getContentTypeId } from '@jungvonmatt/contentful-client';
 
 /**
  * Get an ordered list of locales to use for translation based on fallback locales

@@ -4,7 +4,7 @@
 /* eslint-env node */
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { type QueryOptions } from '@jungvonmatt/contentful-client';
+import { type DeliveryQueryOptions } from '@jungvonmatt/contentful-client';
 import { asyncExitHook, gracefulExit } from 'exit-hook';
 import { existsSync } from 'fs';
 import { outputFile } from 'fs-extra';
@@ -18,7 +18,7 @@ import { omitKeys } from './lib/object.js';
 import { confirm, logError } from './lib/ui.js';
 import { type Config, type ContentfulConfig, type RunResult } from './types.js';
 
-const parseQuery = (query: string): QueryOptions => {
+const parseQuery = (query: string): DeliveryQueryOptions => {
   if (!query) {
     return {};
   }

@@ -28,7 +28,7 @@ import {
   deleteWebhook,
   addWatchWebhook,
 } from './contentful.js';
-import { resetClient } from '@jungvonmatt/contentful-client';
+import { resetClient, resetManagementClient } from '@jungvonmatt/contentful-client';
 import { initializeCache } from './cf-cache';
 import { remove } from 'fs-extra';
 
@@ -97,7 +97,8 @@ vi.mock('contentful', () => {
   };
 });
 
-vi.mock('@jungvonmatt/contentful-client', () => {
+vi.mock('@jungvonmatt/contentful-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@jungvonmatt/contentful-client')>();
   const mockedApiKey = { accessToken: 'accessToken' };
   const mockedPreviewApiKey = { accessToken: 'previewAccessToken' };
   const mockedEnvironment = {
@@ -185,13 +186,14 @@ vi.mock('@jungvonmatt/contentful-client', () => {
     }
     return {};
   });
-  const getAllItems = vi.fn();
   const resetClient = vi.fn();
+  const resetManagementClient = vi.fn();
 
   return {
+    ...actual,
     getManagementClient,
-    getAllItems,
     resetClient,
+    resetManagementClient,
     getSpaces,
     getSpace,
     getEnvironments,
@@ -209,6 +211,7 @@ vi.spyOn(process, 'cwd').mockReturnValue('CONTENTFUL-TEST');
 const cache = initializeCache(configMock);
 
 beforeEach(() => {
+  resetManagementClient();
   resetClient();
 });
 

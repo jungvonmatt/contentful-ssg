@@ -2,7 +2,17 @@ import { vi } from 'vitest';
 import { Config, RuntimeContext } from '../types';
 import { fetch } from './fetch';
 
-import { getEntriesLinkedToEntry, getEntriesLinkedToAsset } from '../lib/contentful.js';
+import { getEntriesLinkedToEntry, getEntriesLinkedToAsset } from '@jungvonmatt/contentful-client';
+
+vi.mock('@jungvonmatt/contentful-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@jungvonmatt/contentful-client')>();
+  return {
+    ...actual,
+    getEntriesLinkedToEntry: vi.fn().mockReturnValue({ fields: 'TEST' }),
+    getEntriesLinkedToAsset: vi.fn().mockReturnValue({ fields: 'TEST' }),
+    getFieldSettings: vi.fn().mockReturnValue({ fields: 'TEST' }),
+  };
+});
 
 vi.mock('../lib/contentful.js', () => {
   return {
@@ -22,9 +32,6 @@ vi.mock('../lib/contentful.js', () => {
         deletedEntries: [{ sys: { id: 'entry' } }],
         deletedAssets: [{ sys: { id: 'asset' } }],
       }),
-    getFieldSettings: vi.fn().mockReturnValue({ fields: 'TEST' }),
-    getEntriesLinkedToEntry: vi.fn().mockReturnValue({ fields: 'TEST' }),
-    getEntriesLinkedToAsset: vi.fn().mockReturnValue({ fields: 'TEST' }),
   };
 });
 

@@ -17,7 +17,7 @@ import {
   convertToMap,
   LINK_TYPE_ENTRY,
   getContentTypeId,
-} from '../lib/contentful.js';
+} from '@jungvonmatt/contentful-client';
 import { HookManager } from '../lib/hook-manager.js';
 import { localizeEntry } from '../tasks/localize.js';
 import { Config, Field, RuntimeContext } from '../types.js';

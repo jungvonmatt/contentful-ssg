@@ -1,4 +1,4 @@
-import { convertToMap, getContentId, getContentTypeId } from '../lib/contentful.js';
+import { convertToMap, getContentId, getContentTypeId } from '@jungvonmatt/contentful-client';
 import { HookManager } from '../lib/hook-manager.js';
 import { localizeEntry } from '../tasks/localize.js';
 import { TransformContext } from '../types.js';

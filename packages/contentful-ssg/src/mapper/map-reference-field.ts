@@ -6,7 +6,7 @@ import {
   isAssetLink,
   isEntry,
   isEntryLink,
-} from '../lib/contentful.js';
+} from '@jungvonmatt/contentful-client';
 import type {
   Asset,
   Entry,

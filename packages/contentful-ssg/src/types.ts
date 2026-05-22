@@ -1,16 +1,9 @@
 import type { Options } from '@contentful/rich-text-html-renderer';
 import type { Document } from '@contentful/rich-text-types';
-import type { QueryOptions } from '@jungvonmatt/contentful-client';
 import type { Observable, ReplaySubject } from 'rxjs';
 
 import type {
   ContentTypeField,
-  Asset as ContentfulAsset,
-  ContentType as ContentfulContentType,
-  ContentfulCollection as ContentfulContentfulCollection,
-  Entry as ContentfulEntry,
-  EntryCollection as ContentfulEntryCollection,
-  Locale as ContentfulLocale,
   DeletedAsset,
   DeletedEntry,
   EntryFields,
@@ -18,6 +11,37 @@ import type {
   LocaleCode,
   ResolvedField,
 } from 'contentful';
+
+// Re-export shared types from contentful-client
+export type {
+  ContentfulConfig,
+  DeliveryQueryOptions,
+  FieldSettings,
+  KeyValueMap,
+  ContentType,
+  Locale,
+  EntryRaw,
+  AssetRaw,
+  Node,
+  NodeRaw,
+  Entry,
+  Asset,
+  ContentfulCollection,
+  EntryCollection,
+} from '@jungvonmatt/contentful-client';
+
+import type {
+  ContentfulConfig,
+  KeyValueMap,
+  FieldSettings,
+  Locale,
+  ContentType,
+  EntryRaw,
+  AssetRaw,
+  Node,
+  Entry,
+  Asset,
+} from '@jungvonmatt/contentful-client';
 
 import type { ListrTaskObject } from 'listr';
 import type { FileManager } from './lib/file-manager.js';
@@ -27,41 +51,6 @@ import type { Stats } from './lib/stats.js';
 export type Field = ContentTypeField;
 
 export type { Ignore } from 'ignore';
-
-export type KeyValueMap<T = any> = Record<string, T>;
-
-// Export interface Asset {
-//   sys: EntrySys;
-//   fields: {
-//     title: string;
-//     description: string;
-//     file: {
-//       url: string;
-//       details: {
-//         size: number;
-//         image?: {
-//           width: number;
-//           height: number;
-//         };
-//       };
-//       fileName: string;
-//       contentType: string;
-//     };
-//   };
-//   metadata: Metadata;
-// }
-
-export type Locale = ContentfulLocale;
-export type ContentType = ContentfulContentType;
-
-export type EntryRaw = ContentfulEntry<EntrySkeletonType, 'WITH_ALL_LOCALES'>;
-export type AssetRaw = ContentfulAsset<'WITH_ALL_LOCALES'>;
-export type NodeRaw = EntryRaw | AssetRaw;
-
-export type Asset = ContentfulAsset<undefined>;
-export type Entry = ContentfulEntry<EntrySkeletonType, undefined>;
-
-export type Node = Entry | Asset;
 
 export type EntryFieldRaw = {
   [FieldName in keyof EntrySkeletonType['fields']]: {
@@ -79,15 +68,6 @@ export type EntryField = {
   >;
 };
 
-export type EntryCollection = {
-  includes?: {
-    Entry?: EntryRaw[];
-    Asset?: AssetRaw[];
-  };
-} & ContentfulEntryCollection<EntrySkeletonType, 'WITH_ALL_LOCALES'>;
-
-export type ContentfulCollection<T> = ContentfulContentfulCollection<T>;
-
 export type ContentfulRichtextOptions = Options;
 export type FormatObject = KeyValueMap<string[]>;
 export type RichTextConfig =
@@ -99,16 +79,8 @@ export type RichTextConfig =
       runtimeContext: RuntimeContext,
     ) => unknown);
 
-export type ContentfulConfig = {
-  spaceId: string;
-  environmentId: string;
-  managementToken: string;
-  previewAccessToken: string;
-  accessToken: string;
-  host?: string;
-  preview?: boolean;
+export type SsgContentfulConfig = ContentfulConfig & {
   sync?: boolean;
-  query?: QueryOptions;
 };
 
 export type ContentfulRcConfig = {
@@ -145,7 +117,7 @@ export type Hooks = {
   mapEntryLink?: TransformHook<KeyValueMap>;
 };
 
-export type Config = Partial<ContentfulConfig> &
+export type Config = Partial<ContentfulConfig & { sync?: boolean }> &
   Hooks & {
     rootDir?: string;
     directory: string;
@@ -170,8 +142,6 @@ export type PluginModule = {
 } & Partial<Hooks>;
 
 export type PluginSource = Hooks | ((options?: KeyValueMap) => Promise<Hooks> | Hooks);
-
-export type FieldSettings = KeyValueMap<KeyValueMap<Field>>;
 
 export type ContentfulData = {
   fieldSettings: FieldSettings;
@@ -333,22 +303,6 @@ export type CollectOptions = {
   getId?: (entry: Entry) => string;
   getNextId?: (entry: Entry) => string;
   getValue?: (entry: Entry) => any;
-};
-
-export type CollectionResponse<T> = EntryCollection | ContentfulCollection<T>;
-
-export type PagedGetOptions<T> = {
-  method: string;
-  skip?: number;
-  aggregatedResponse?: CollectionResponse<T>;
-  query?: QueryOptions;
-  include?: number;
-};
-
-export type SyncOptions = {
-  initial?: true;
-  nextSyncToken?: string;
-  resolveLinks?: boolean;
 };
 
 export type ErrorEntry = {

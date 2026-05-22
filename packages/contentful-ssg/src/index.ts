@@ -3,7 +3,7 @@ import Listr from 'listr';
 import { gracefulExit } from 'exit-hook';
 import { ReplaySubject } from 'rxjs';
 import { initializeCache } from './lib/cf-cache.js';
-import { getContentId, getContentTypeId } from './lib/contentful.js';
+import { getContentId, getContentTypeId } from '@jungvonmatt/contentful-client';
 import { ValidationError } from './lib/error.js';
 import { collectParentValues, collectValues, waitFor } from './lib/utils.js';
 import { fetch } from './tasks/fetch.js';
