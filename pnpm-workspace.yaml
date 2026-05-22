@@ -36,7 +36,6 @@ catalog:
   contentful: ^11.12.2
   contentful-management: ^12.5.0
   dlv: ^1.1.3
-  esbuild: ^0.25.3
   exit-hook: ^5.1.0
   express: ^5.1.0
   find-up: ^8.0.0

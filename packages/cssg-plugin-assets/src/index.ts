@@ -32,7 +32,6 @@ const processOptions = (options: PluginConfig = {}): PluginConfig => {
       {
         name: 'preset-default',
       },
-      'removeViewBox',
       'removeDimensions',
     ],
   };

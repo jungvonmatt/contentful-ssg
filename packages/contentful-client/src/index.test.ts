@@ -107,6 +107,22 @@ describe('contentful-client', () => {
     expect(createClient).toHaveBeenCalledTimes(1);
   });
 
+  test('getManagementClient recreates client when token changes', () => {
+    clientModule.getManagementClient({ managementToken: 'token-a' });
+    clientModule.getManagementClient({ managementToken: 'token-b' });
+    expect(createClient).toHaveBeenCalledTimes(2);
+    expect(createClient).toHaveBeenNthCalledWith(1, { accessToken: 'token-a' });
+    expect(createClient).toHaveBeenNthCalledWith(2, { accessToken: 'token-b' });
+  });
+
+  test('getManagementClient recreates client when host changes', () => {
+    clientModule.getManagementClient({ managementToken: 'mt', host: 'host-a' });
+    clientModule.getManagementClient({ managementToken: 'mt', host: 'host-b' });
+    expect(createClient).toHaveBeenCalledTimes(2);
+    expect(createClient).toHaveBeenNthCalledWith(1, { accessToken: 'mt', host: 'host-a' });
+    expect(createClient).toHaveBeenNthCalledWith(2, { accessToken: 'mt', host: 'host-b' });
+  });
+
   test('getSpaces returns flattened items', async () => {
     const spaces = await clientModule.getSpaces({ managementToken: 'mt' });
     expect(spaces[0].sys.id).toBe('space-1');
@@ -124,9 +140,11 @@ describe('contentful-client', () => {
       environmentId: 'master',
     });
     expect(env.sys.id).toBe('master');
+    expect(environmentGet).toHaveBeenCalledWith({ spaceId: 's', environmentId: 'master' });
   });
 
   test('getEnvironment throws on unknown environmentId', async () => {
+    environmentGet.mockRejectedValueOnce(new Error('Not Found'));
     await expect(
       clientModule.getEnvironment({
         managementToken: 'mt',
@@ -134,6 +152,15 @@ describe('contentful-client', () => {
         environmentId: 'staging',
       }),
     ).rejects.toThrow(/not available/);
+  });
+
+  test('getEnvironment throws when environmentId is missing', async () => {
+    await expect(
+      clientModule.getEnvironment({
+        managementToken: 'mt',
+        spaceId: 's',
+      }),
+    ).rejects.toThrow(/Missing required parameter/);
   });
 
   test('getApiKey returns first api access token', async () => {

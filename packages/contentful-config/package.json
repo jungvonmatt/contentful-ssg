@@ -37,8 +37,7 @@
     "@jungvonmatt/contentful-client": "workspace:*",
     "node-homedir": "catalog:",
     "package-up": "catalog:",
-    "pathe": "catalog:",
-    "type-fest": "^4.41.0"
+    "pathe": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

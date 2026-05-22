@@ -312,6 +312,7 @@ describe('cssg-plugin-assets', () => {
 
     expect(result.mimeType).toBe('image/svg+xml');
     expect(result?.source ?? '').toMatch(/^<svg.*<\/svg>/gm);
+    expect(result?.source ?? '').toContain('viewBox=');
   });
 
   it('mapAssetLink (cached svg)', async () => {

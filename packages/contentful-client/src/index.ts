@@ -7,6 +7,7 @@ import type {
   WebhookProps,
 } from 'contentful-management';
 import { createClient, fetchAll } from 'contentful-management';
+import { createHash } from 'crypto';
 
 export type { CreateWebhooksProps, QueryOptions, WebhookProps } from 'contentful-management';
 
@@ -23,14 +24,21 @@ export type ContentfulClientOptions = {
 };
 
 let client: PlainClientAPI;
+let clientKey: string;
 
 /**
  * Get or create the Contentful Management PlainClient.
+ * Recreates the client if options (token/host) change.
  */
 export const getManagementClient = (options: ContentfulClientOptions): PlainClientAPI => {
   const { managementToken, host } = options || {};
 
-  if (client) {
+  const tokenStr =
+    typeof managementToken === 'string' ? managementToken : (managementToken?.toString() ?? '');
+  const hostStr = host ?? '';
+  const key = createHash('sha256').update(`${tokenStr}::${hostStr}`).digest('hex');
+
+  if (client && clientKey === key) {
     return client;
   }
 
@@ -44,6 +52,7 @@ export const getManagementClient = (options: ContentfulClientOptions): PlainClie
 
   if (params.accessToken) {
     client = createClient(params);
+    clientKey = key;
     return client;
   }
 
@@ -57,6 +66,7 @@ export const getManagementClient = (options: ContentfulClientOptions): PlainClie
  */
 export const resetClient = () => {
   client = undefined as unknown as PlainClientAPI;
+  clientKey = '';
 };
 
 /**
@@ -92,21 +102,15 @@ export const getEnvironment = async (options: ContentfulClientOptions) => {
   const { environmentId, spaceId } = options || {};
   const client = getManagementClient(options);
 
-  const environments = await fetchAll(
-    (params) => client.environment.getMany({ spaceId, ...params }),
-    {},
-  );
-  const environmentIds = new Set((environments || []).map((env) => env.sys.id));
-
-  if (environmentId && environmentIds.has(environmentId)) {
-    return client.environment.get({ spaceId, environmentId });
+  if (!environmentId) {
+    throw new Error('Missing required parameter: environmentId');
   }
 
-  if (environmentId && !environmentIds.has(environmentId)) {
-    throw new Error(`Environment "${environmentId}" is not available in space ${spaceId}"`);
+  try {
+    return await client.environment.get({ spaceId, environmentId });
+  } catch {
+    throw new Error(`Environment "${environmentId}" is not available in space "${spaceId}"`);
   }
-
-  throw new Error('Missing required parameter: environmentId');
 };
 
 /**
