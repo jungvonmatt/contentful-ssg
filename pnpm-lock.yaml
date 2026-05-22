@@ -303,6 +303,9 @@ importers:
 
   packages/contentful-client:
     dependencies:
+      contentful:
+        specifier: 'catalog:'
+        version: 11.12.2
       contentful-management:
         specifier: 'catalog:'
         version: 12.5.0

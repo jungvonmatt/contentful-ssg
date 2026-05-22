@@ -23,7 +23,7 @@ vi.mock('contentful-management', async (importOriginal) => {
   };
 });
 
-let clientModule: typeof import('./index.js');
+let clientModule: typeof import('./management.js');
 
 beforeEach(async () => {
   vi.resetModules();
@@ -91,8 +91,8 @@ beforeEach(async () => {
     raw: { put: rawPut },
   });
 
-  clientModule = await import('./index.js');
-  clientModule.resetClient();
+  clientModule = await import('./management.js');
+  clientModule.resetManagementClient();
 });
 
 describe('contentful-client', () => {
