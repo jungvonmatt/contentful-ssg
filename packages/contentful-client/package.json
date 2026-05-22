@@ -36,6 +36,7 @@
     "watch": "tsc --build --watch"
   },
   "dependencies": {
+    "contentful": "catalog:",
     "contentful-management": "catalog:"
   },
   "devDependencies": {
