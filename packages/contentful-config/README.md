@@ -103,5 +103,16 @@ contentful-config -r spaceId -r accessToken -r environmentId
 
 > **Note:** The management token is intentionally excluded from the output as it is read from the Contentful CLI config file.
 
+## Related packages
+
+This package generates the configuration (`.contentfulrc.json` / `.env`) that
+`@jungvonmatt/contentful-client` uses for Management and Delivery API access.
+
+| Package | Role |
+| --- | --- |
+| `@jungvonmatt/contentful-config` | Generates credentials + space/environment config |
+| `@jungvonmatt/contentful-client` | Consumes config for API access (Management + Delivery + Helpers) |
+| `@jungvonmatt/contentful-ssg` | Orchestrates SSG builds with content from contentful-client |
+
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-config
 [npm-image]: https://img.shields.io/npm/v/@jungvonmatt/contentful-config.svg
