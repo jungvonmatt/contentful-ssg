@@ -60,11 +60,11 @@ const errorHandler = (error: CommandError, silence: boolean) => {
 
 const actionRunner =
   (fn, log = true) =>
-  (...args) =>
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    fn(...args).catch((error) => {
-      errorHandler(error, !log);
-    });
+    (...args) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      fn(...args).catch((error) => {
+        errorHandler(error, !log);
+      });
 const program = new Command();
 program
   .command('init')

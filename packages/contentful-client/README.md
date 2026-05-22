@@ -26,7 +26,7 @@ import {
   getManagementClient,
   getSpaces,
   getEnvironment,
-} from '@jungvonmatt/contentful-client';
+} from "@jungvonmatt/contentful-client";
 ```
 
 - `getManagementClient(options)` — create or reuse a Management API plain client
@@ -50,7 +50,7 @@ import {
   getContent,
   getLocales,
   getContentTypes,
-} from '@jungvonmatt/contentful-client';
+} from "@jungvonmatt/contentful-client";
 ```
 
 - `getClient(options)` — create or reuse a Delivery/Preview API client
@@ -71,7 +71,7 @@ import {
   isLink,
   getContentTypeId,
   convertToMap,
-} from '@jungvonmatt/contentful-client';
+} from "@jungvonmatt/contentful-client";
 ```
 
 - Type guards: `isEntry`, `isAsset`, `isLink`, `isAssetLink`, `isEntryLink`, `isContentfulObject`
@@ -81,11 +81,11 @@ import {
 
 ## Related packages
 
-| Package | Role |
-| --- | --- |
+| Package                          | Role                                                             |
+| -------------------------------- | ---------------------------------------------------------------- |
 | `@jungvonmatt/contentful-config` | Generates `.contentfulrc.json` (credentials + space/environment) |
-| `@jungvonmatt/contentful-client` | Uses config for API access (Management + Delivery) |
-| `@jungvonmatt/contentful-ssg` | Orchestrates SSG builds with content from contentful-client |
+| `@jungvonmatt/contentful-client` | Uses config for API access (Management + Delivery)               |
+| `@jungvonmatt/contentful-ssg`    | Orchestrates SSG builds with content from contentful-client      |
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-client
 [npm-image]: https://img.shields.io/npm/v/@jungvonmatt/contentful-client.svg

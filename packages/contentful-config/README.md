@@ -18,13 +18,13 @@ npm install @jungvonmatt/contentful-config
 ### Basic Example
 
 ```js
-import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
+import { loadContentfulConfig } from "@jungvonmatt/contentful-config";
 
 // Load configuration from multiple sources:
 // - contentful-cli configuration file (~/.contentfulrc.json)
 // - environment variables (CONTENTFUL_SPACE_ID, etc.)
 // - project configuration files (myapp.config.js, .myapprc, etc.)
-const { config } = await loadContentfulConfig('myapp');
+const { config } = await loadContentfulConfig("myapp");
 
 console.log(config.spaceId); // Contentful Space ID
 console.log(config.environmentId); // Contentful Environment ID (defaults to 'master')
@@ -36,12 +36,12 @@ console.log(config.managementToken); // Content Management API Token
 ### With Required Values
 
 ```js
-import { loadContentfulConfig } from '@jungvonmatt/contentful-config';
+import { loadContentfulConfig } from "@jungvonmatt/contentful-config";
 
 // If required values are not found in configuration files or
 // environment variables, an interactive prompt will be displayed
-const { config } = await loadContentfulConfig('myapp', {
-  required: ['spaceId', 'accessToken'],
+const { config } = await loadContentfulConfig("myapp", {
+  required: ["spaceId", "accessToken"],
 });
 
 // The configuration now contains all required values,
@@ -108,11 +108,11 @@ contentful-config -r spaceId -r accessToken -r environmentId
 This package generates the configuration (`.contentfulrc.json` / `.env`) that
 `@jungvonmatt/contentful-client` uses for Management and Delivery API access.
 
-| Package | Role |
-| --- | --- |
-| `@jungvonmatt/contentful-config` | Generates credentials + space/environment config |
+| Package                          | Role                                                             |
+| -------------------------------- | ---------------------------------------------------------------- |
+| `@jungvonmatt/contentful-config` | Generates credentials + space/environment config                 |
 | `@jungvonmatt/contentful-client` | Consumes config for API access (Management + Delivery + Helpers) |
-| `@jungvonmatt/contentful-ssg` | Orchestrates SSG builds with content from contentful-client |
+| `@jungvonmatt/contentful-ssg`    | Orchestrates SSG builds with content from contentful-client      |
 
 [npm-url]: https://www.npmjs.com/package/@jungvonmatt/contentful-config
 [npm-image]: https://img.shields.io/npm/v/@jungvonmatt/contentful-config.svg

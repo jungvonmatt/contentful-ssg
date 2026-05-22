@@ -49,3 +49,7 @@ content/
 
 # turborepo
 .turbo
+
+# AI
+docs/plans
+docs/adr

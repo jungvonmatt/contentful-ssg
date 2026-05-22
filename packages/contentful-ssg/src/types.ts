@@ -74,10 +74,10 @@ export type RichTextConfig =
   | boolean
   | ContentfulRichtextOptions
   | ((
-      document: Document,
-      transformContext: TransformContext,
-      runtimeContext: RuntimeContext,
-    ) => unknown);
+    document: Document,
+    transformContext: TransformContext,
+    runtimeContext: RuntimeContext,
+  ) => unknown);
 
 export type SsgContentfulConfig = ContentfulConfig & {
   sync?: boolean;

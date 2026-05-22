@@ -208,7 +208,7 @@ export const run = async (
             title: locale.code,
             skip: (ctx: RuntimeContext) =>
               (ctx.localized?.get(locale.code)?.entryMap?.size ?? 0) +
-                (ctx.localized?.get(locale.code)?.assetMap?.size ?? 0) ===
+              (ctx.localized?.get(locale.code)?.assetMap?.size ?? 0) ===
               0,
             async task() {
               const data = ctx.localized.get(locale.code);
