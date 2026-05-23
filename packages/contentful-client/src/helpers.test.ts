@@ -41,7 +41,7 @@ describe('helpers', () => {
 
   describe('isLink', () => {
     it('returns true for link object', () => {
-      expect(isLink({ sys: { type: 'Link', linkType: 'Entry', id: '123' } })).toBe(true);
+      expect(isLink({ sys: { type: FIELD_TYPE_LINK, linkType: LINK_TYPE_ENTRY, id: '123' } })).toBe(true);
     });
 
     it('returns false for entry object', () => {
@@ -55,11 +55,11 @@ describe('helpers', () => {
 
   describe('isAssetLink', () => {
     it('returns true for asset link', () => {
-      expect(isAssetLink({ sys: { type: 'Link', linkType: 'Asset', id: '123' } })).toBe(true);
+      expect(isAssetLink({ sys: { type: FIELD_TYPE_LINK, linkType: LINK_TYPE_ASSET, id: '123' } })).toBe(true);
     });
 
     it('returns false for entry link', () => {
-      expect(isAssetLink({ sys: { type: 'Link', linkType: 'Entry', id: '123' } })).toBe(false);
+      expect(isAssetLink({ sys: { type: FIELD_TYPE_LINK, linkType: LINK_TYPE_ENTRY, id: '123' } })).toBe(false);
     });
 
     it('returns false for non-link object', () => {
