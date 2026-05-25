@@ -11,11 +11,15 @@ const config = {
   environmentId: 'test-environment',
 } as Config;
 
-const cache = initializeCache(config);
+let cache: ReturnType<typeof initializeCache>;
 
-vi.spyOn(process, 'cwd').mockReturnValue('CACHE-TEST');
+beforeEach(() => {
+  vi.spyOn(process, 'cwd').mockReturnValue('CACHE-TEST');
+  cache = initializeCache(config);
+});
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await remove('CACHE-TEST');
 });
 

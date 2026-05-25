@@ -100,7 +100,7 @@ const pagedGet = async <T>(
     aggregatedResponse = response;
   }
 
-  if (skip + MAX_ALLOWED_LIMIT <= response.total) {
+  if (skip + MAX_ALLOWED_LIMIT < response.total) {
     return pagedGet(apiClient, {
       method,
       skip: skip + MAX_ALLOWED_LIMIT,

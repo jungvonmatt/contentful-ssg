@@ -206,13 +206,17 @@ vi.mock('@jungvonmatt/contentful-client', async (importOriginal) => {
   };
 });
 
-vi.spyOn(process, 'cwd').mockReturnValue('CONTENTFUL-TEST');
-
-const cache = initializeCache(configMock);
+let cache: ReturnType<typeof initializeCache>;
 
 beforeEach(() => {
+  vi.spyOn(process, 'cwd').mockReturnValue('CONTENTFUL-TEST');
+  cache = initializeCache(configMock);
   resetManagementClient();
   resetClient();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe('Contentful', () => {
