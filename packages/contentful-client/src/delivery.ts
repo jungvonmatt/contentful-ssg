@@ -48,7 +48,10 @@ export const getClient = (options: ContentfulConfig): ClientApi => {
   }
 
   if (!token) {
-    throw new Error('You need to login first. Run npx contentful login');
+    const tokenName = preview ? 'previewAccessToken' : 'accessToken';
+    throw new Error(
+      `Missing "${tokenName}". Provide it via config file, CONTENTFUL_${preview ? 'PREVIEW_TOKEN' : 'DELIVERY_TOKEN'} env variable, or run npx contentful-ssg init`,
+    );
   }
 
   const params: CreateClientParams = {

@@ -55,7 +55,7 @@ export const getManagementClient = (options: ContentfulClientOptions): PlainClie
   }
 
   throw new Error(
-    'You need to login first. Run npx contentful login or pass the contentful management token',
+    'You need to login first. Run npx contentful-cli login or pass the contentful management token',
   );
 };
 

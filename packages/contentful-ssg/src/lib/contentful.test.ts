@@ -141,7 +141,7 @@ vi.mock('@jungvonmatt/contentful-client', async (importOriginal) => {
     if (!options?.managementToken) {
       return Promise.reject(
         new Error(
-          'You need to login first. Run npx contentful login or pass the contentful management token',
+          'You need to login first. Run npx contentful-cli login or pass the contentful management token',
         ),
       );
     }
@@ -181,7 +181,7 @@ vi.mock('@jungvonmatt/contentful-client', async (importOriginal) => {
   const getManagementClient = vi.fn().mockImplementation((options) => {
     if (!options?.managementToken) {
       throw new Error(
-        'You need to login first. Run npx contentful login or pass the contentful management token',
+        'You need to login first. Run npx contentful-cli login or pass the contentful management token',
       );
     }
     return {};
@@ -238,7 +238,7 @@ describe('Contentful', () => {
         environmentId: 'environmentId',
         managementToken: 'managementToken',
       } as ContentfulConfig);
-    }).rejects.toThrowError(/You need to login first/);
+    }).rejects.toThrowError(/Missing "accessToken"/);
   });
 
   test('getSpaces', async () => {

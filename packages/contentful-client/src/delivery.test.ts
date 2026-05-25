@@ -67,9 +67,7 @@ describe('delivery', () => {
     });
 
     it('throws when no token provided', () => {
-      expect(() => getClient({ ...baseOptions, accessToken: '' })).toThrow(
-        'You need to login first. Run npx contentful login',
-      );
+      expect(() => getClient({ ...baseOptions, accessToken: '' })).toThrow('Missing "accessToken"');
     });
 
     it('uses preview host when preview is true', () => {
