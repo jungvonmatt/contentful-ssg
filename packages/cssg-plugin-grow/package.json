@@ -27,7 +27,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "oxlint --type-aware --fix src",
-    "test": "vitest run",
+    "test": "vitest run --root ../.. packages/cssg-plugin-grow/src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"

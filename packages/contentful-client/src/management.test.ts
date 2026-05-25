@@ -144,7 +144,8 @@ describe('contentful-client', () => {
   });
 
   test('getEnvironment throws on unknown environmentId', async () => {
-    environmentGet.mockRejectedValueOnce(new Error('Not Found'));
+    const notFoundError = Object.assign(new Error('Not Found'), { status: 404 });
+    environmentGet.mockRejectedValueOnce(notFoundError);
     await expect(
       clientModule.getEnvironment({
         managementToken: 'mt',

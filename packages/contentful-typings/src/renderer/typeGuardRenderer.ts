@@ -52,7 +52,7 @@ export class V10TypeGuardRenderer extends TypeGuardRendererOriginal {
 
     file.addImportDeclaration({
       moduleSpecifier: `contentful`,
-      namedImports: ['ChainModifiers', 'Entry', 'LocaleCode'],
+      namedImports: ['ChainModifiers', 'Entry', 'EntrySkeletonType', 'LocaleCode'],
       isTypeOnly: true,
     });
 

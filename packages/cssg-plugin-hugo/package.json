@@ -23,7 +23,7 @@
     "access": "public"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --root ../.. packages/cssg-plugin-hugo",
     "lint": "oxlint --fix index.js"
   },
   "dependencies": {

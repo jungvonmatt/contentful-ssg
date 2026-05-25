@@ -106,8 +106,18 @@ export const getEnvironment = async (options: ContentfulClientOptions) => {
 
   try {
     return await client.environment.get({ spaceId, environmentId });
-  } catch {
-    throw new Error(`Environment "${environmentId}" is not available in space "${spaceId}"`);
+  } catch (error: unknown) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'status' in error &&
+      (error as { status: number }).status === 404
+    ) {
+      throw new Error(`Environment "${environmentId}" is not available in space "${spaceId}"`, {
+        cause: error,
+      });
+    }
+    throw error;
   }
 };
 

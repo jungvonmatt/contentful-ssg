@@ -12,7 +12,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "lib": ["dom", "dom.iterable", "es2020", "esnext"],
-    "types": ["vitest/globals"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "paths": {

@@ -27,7 +27,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "test": "vitest run",
+    "test": "vitest run --root ../.. packages/contentful-typings/src",
     "lint": "oxlint --type-aware --fix src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",

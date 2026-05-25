@@ -22,7 +22,7 @@ export const getSvgHelper = (options: PluginConfig) => {
     }
 
     const buffer = await fetchAsset(src, timestamp);
-    return buffer.toString('utf8');
+    return new TextDecoder().decode(buffer);
   };
 
   const mapAssetLink = async (
