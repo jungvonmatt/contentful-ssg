@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-client",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "description": "Shared Contentful Management API client helpers",
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "bugs": {
