@@ -27,7 +27,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "test": "vitest run",
+    "test": "vitest run --root ../.. packages/contentful-typings/src",
     "lint": "oxlint --type-aware --fix src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
+    "@jungvonmatt/contentful-client": "workspace:*",
     "@jungvonmatt/contentful-config": "workspace:*",
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "cf-content-types-generator": "catalog:",
@@ -46,7 +47,6 @@
     "exit-hook": "catalog:",
     "fs-extra": "^11.1.0",
     "picocolors": "catalog:",
-    "read-pkg-up": "catalog:",
     "semiver": "catalog:"
   },
   "devDependencies": {

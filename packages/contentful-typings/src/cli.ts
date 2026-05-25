@@ -13,7 +13,6 @@ type CommandArgs = {
   typeguard?: boolean;
   jsdoc?: boolean;
   localized?: boolean;
-  legacy?: boolean;
   cwd?: string;
   config?: string;
 };
@@ -55,7 +54,6 @@ program
   .option('-l, --localized', 'Add localized types')
   .option('-d, --jsdoc', 'Add JSDoc comments')
   .option('-g, --typeguard', 'Add type guards')
-  .option('-l, --legacy', 'Use legacy types (before contentful@10)')
   .action(
     actionRunner(async (cmd: CommandArgs) => {
       const output: string = cmd?.output ?? '';
@@ -63,7 +61,6 @@ program
         typeguard: cmd.typeguard,
         jsdoc: cmd.jsdoc,
         localized: cmd.localized,
-        legacy: cmd.legacy,
         cwd: cmd?.cwd || process.cwd(),
         configFile: cmd?.config || undefined,
       });

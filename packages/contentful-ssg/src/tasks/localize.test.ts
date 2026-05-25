@@ -1,6 +1,6 @@
 import type { EntryFieldRaw, Locale } from '../types.js';
 import { getContent } from '../__test__/mock.js';
-import { getContentId, getFieldSettings } from '../lib/contentful.js';
+import { getContentId, getFieldSettings } from '@jungvonmatt/contentful-client';
 
 import { localizeEntry, localizeField, getLocaleList } from './localize.js';
 

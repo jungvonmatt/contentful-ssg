@@ -31,11 +31,6 @@ const processOptions = (options: PluginConfig = {}): PluginConfig => {
     svgoPlugins: [
       {
         name: 'preset-default',
-        params: {
-          overrides: {
-            removeViewBox: false,
-          },
-        },
       },
       'removeDimensions',
     ],

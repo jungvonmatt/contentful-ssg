@@ -21,8 +21,6 @@ export default defineConfig({
         '**/__test__/**',
         '**/*.test.{ts,js}',
         '**/*.spec.{ts,js}',
-        'packages/contentful-ssg/src/cli.ts',
-        'packages/contentful-fakes/src/cli.ts',
         'packages/contentful-ssg/src/lib/config.ts',
         'packages/contentful-ssg/src/lib/create-require.ts',
         'packages/cssg-plugin-hugo/**/*',

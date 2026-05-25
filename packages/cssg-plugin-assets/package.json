@@ -29,7 +29,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "oxlint --type-aware --fix src",
-    "test": "vitest run",
+    "test": "vitest run --root ../.. packages/cssg-plugin-assets/src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
@@ -46,7 +46,6 @@
   "devDependencies": {
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "@types/cli-progress": "catalog:",
-    "@types/svgo": "catalog:",
     "rimraf": "catalog:",
     "ts-node": "catalog:",
     "typescript": "^5.3.3",

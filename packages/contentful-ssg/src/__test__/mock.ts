@@ -6,7 +6,7 @@ import {
   getFieldSettings,
   LINK_TYPE_ASSET,
   LINK_TYPE_ENTRY,
-} from '../lib/contentful.js';
+} from '@jungvonmatt/contentful-client';
 import { FileManager } from '../lib/file-manager.js';
 import { HookManager } from '../lib/hook-manager.js';
 import type {

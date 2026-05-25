@@ -1,0 +1,49 @@
+{
+  "name": "@jungvonmatt/contentful-client",
+  "version": "5.0.1",
+  "description": "Shared Contentful Management API client helpers",
+  "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
+  "bugs": {
+    "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
+  },
+  "license": "MIT",
+  "author": "Jung von Matt TECH GmbH",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungvonmatt/contentful-ssg.git"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "test": "vitest run --root ../.. packages/contentful-client/src",
+    "precompile": "pnpm run clean",
+    "compile": "tsc --build",
+    "watch": "tsc --build --watch"
+  },
+  "dependencies": {
+    "contentful": "catalog:",
+    "contentful-management": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "rimraf": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
