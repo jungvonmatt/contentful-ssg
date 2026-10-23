@@ -24,11 +24,11 @@
   },
   "scripts": {
     "test": "vitest run --root ../.. packages/cssg-plugin-hugo",
-    "lint": "oxlint --fix index.js"
+    "lint": "oxlint index.js"
   },
   "dependencies": {
     "@jungvonmatt/contentful-ssg": "workspace:*",
-    "fs-extra": "^11.1.0",
+    "fs-extra": "^11.4.1",
     "micromatch": "catalog:"
   }
 }
