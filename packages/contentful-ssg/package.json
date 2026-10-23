@@ -61,7 +61,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "oxlint --type-aware --fix src",
+    "lint": "oxlint --type-aware src",
     "test": "vitest run --root ../.. packages/contentful-ssg/src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
@@ -83,7 +83,7 @@
     "exit-hook": "catalog:",
     "express": "catalog:",
     "find-up": "catalog:",
-    "fs-extra": "^11.1.0",
+    "fs-extra": "^11.4.1",
     "globby": "catalog:",
     "gray-matter": "catalog:",
     "ignore": "^5.3.2",
@@ -96,7 +96,7 @@
     "rxjs": "catalog:",
     "serialize-error": "catalog:",
     "slash": "catalog:",
-    "type-fest": "^4.9.0",
+    "type-fest": "^4.41.0",
     "uuid": "catalog:"
   },
   "devDependencies": {
@@ -111,7 +111,7 @@
     "rimraf": "catalog:",
     "supertest": "catalog:",
     "ts-node": "catalog:",
-    "typescript": "^5.3.3",
+    "typescript": "^5.9.3",
     "vitest": "catalog:"
   },
   "engines": {

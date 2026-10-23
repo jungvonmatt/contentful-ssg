@@ -26,7 +26,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "fs-extra": "^11.3.0"
+    "fs-extra": "^11.4.1"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
@@ -45,7 +45,8 @@
     "supertest": "catalog:",
     "ts-node": "catalog:",
     "turbo": "catalog:",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
+    "vite": "catalog:",
     "vitest": "catalog:",
     "vitest-sonar-reporter": "catalog:"
   },
@@ -63,14 +64,14 @@
       "helpMessage": "Use \"pnpm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
     }
   },
-  "engines": {
-    "node": ">=22"
-  },
-  "packageManager": "pnpm@11.3.0",
   "devEngines": {
     "runtime": {
       "name": "node",
       "version": ">=22.0.0"
     }
-  }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.3.0"
 }

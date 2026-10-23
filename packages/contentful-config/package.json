@@ -27,7 +27,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "test": "vitest run --root ../.. packages/contentful-config/src",
-    "lint": "oxlint --type-aware --fix src",
+    "lint": "oxlint --type-aware src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"

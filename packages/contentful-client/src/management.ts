@@ -72,7 +72,10 @@ export const resetManagementClient = () => {
  */
 export const getSpaces = async (options: ContentfulClientOptions) => {
   const client = getManagementClient(options);
-  return fetchAll((params) => client.space.getMany(params), {});
+  return fetchAll(
+    (params: Parameters<PlainClientAPI['space']['getMany']>[0]) => client.space.getMany(params),
+    {},
+  );
 };
 
 /**
