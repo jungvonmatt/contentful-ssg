@@ -2,14 +2,16 @@ import { homedir } from 'node-homedir';
 import { packageUp } from 'package-up';
 import { dirname } from 'pathe';
 import type { LoadConfigOptions, ResolvedConfig } from '@jungvonmatt/config-loader';
+import type { ContentfulClientOptions } from '@jungvonmatt/contentful-client';
 import {
-  type ContentfulOptions,
   getApiKey,
   getEnvironments,
   getOrganizations,
   getPreviewApiKey,
   getSpaces,
-} from './contentful.js';
+} from '@jungvonmatt/contentful-client';
+
+export type ContentfulOptions = ContentfulClientOptions;
 
 type EnquirerContext<T extends Record<string, any> = ContentfulOptions> = {
   enquirer: {

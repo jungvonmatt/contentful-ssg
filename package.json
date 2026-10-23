@@ -26,7 +26,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "fs-extra": "^11.3.0"
+    "fs-extra": "^11.4.1"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
@@ -34,6 +34,7 @@
     "@commitlint/config-conventional": "catalog:",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "check-dependency-version-consistency": "catalog:",
     "git-cz": "catalog:",
     "husky": "catalog:",
@@ -44,9 +45,9 @@
     "supertest": "catalog:",
     "ts-node": "catalog:",
     "turbo": "catalog:",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
+    "vite": "catalog:",
     "vitest": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "vitest-sonar-reporter": "catalog:"
   },
   "lint-staged": {
@@ -63,8 +64,14 @@
       "helpMessage": "Use \"pnpm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
     }
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=22.0.0"
+    }
+  },
   "engines": {
     "node": ">=22"
   },
-  "packageManager": "pnpm@10.28.0"
+  "packageManager": "pnpm@11.3.0"
 }

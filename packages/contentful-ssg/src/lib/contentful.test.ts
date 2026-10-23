@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, beforeEach } from 'vitest';
 import { existsSync } from 'fs';
 import { readFile, unlink } from 'fs/promises';
 import { createHash } from 'crypto';
@@ -28,6 +28,7 @@ import {
   deleteWebhook,
   addWatchWebhook,
 } from './contentful.js';
+import { resetClient, resetManagementClient } from '@jungvonmatt/contentful-client';
 import { initializeCache } from './cf-cache';
 import { remove } from 'fs-extra';
 
@@ -96,7 +97,8 @@ vi.mock('contentful', () => {
   };
 });
 
-vi.mock('contentful-management', () => {
+vi.mock('@jungvonmatt/contentful-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@jungvonmatt/contentful-client')>();
   const mockedApiKey = { accessToken: 'accessToken' };
   const mockedPreviewApiKey = { accessToken: 'previewAccessToken' };
   const mockedEnvironment = {
@@ -129,49 +131,93 @@ vi.mock('contentful-management', () => {
       version: 1,
     },
     headers: [],
-    delete: vi.fn().mockResolvedValue('deleted'),
   };
 
   const mockedSpace = {
     sys: { id: 'space-id' },
-    getEnvironments: vi.fn().mockResolvedValue({ items: [mockedEnvironment] }),
-    getEnvironment: vi.fn().mockResolvedValue(mockedEnvironment),
-    getApiKeys: vi.fn().mockResolvedValue({ items: [mockedApiKey] }),
-    getPreviewApiKeys: vi.fn().mockResolvedValue({ items: [mockedPreviewApiKey] }),
-    getWebhooks: vi.fn().mockResolvedValue({ items: [mockedWebhook] }),
-    getWebhook: vi.fn().mockImplementation((id) => {
-      if (/new/.test(id) || id === createHash('sha1').update('http://test.url').digest('hex')) {
-        throw new Error('Not Found');
-      }
-
-      return mockedWebhook;
-    }),
-    createWebhookWithId: vi.fn().mockImplementation((id, data) => ({
-      ...data,
-      sys: {
-        type: 'WebhookDefinition',
-        id,
-        version: 1,
-      },
-    })),
   };
 
-  const createClient = vi.fn().mockReturnValue({
-    getSpaces: vi.fn().mockResolvedValue({ items: [mockedSpace] }),
-    getSpace: vi.fn().mockResolvedValue(mockedSpace),
+  const getSpaces = vi.fn().mockImplementation((options) => {
+    if (!options?.managementToken) {
+      return Promise.reject(
+        new Error(
+          'You need to login first. Run npx contentful-cli login or pass the contentful management token',
+        ),
+      );
+    }
+    return Promise.resolve([mockedSpace]);
   });
+  const getSpace = vi.fn().mockResolvedValue(mockedSpace);
+  const getEnvironments = vi.fn().mockResolvedValue([mockedEnvironment]);
+  const getEnvironment = vi.fn().mockImplementation((options) => {
+    const { environmentId } = options || {};
+    if (environmentId && environmentId === 'environment-id') {
+      return Promise.resolve(mockedEnvironment);
+    }
+    if (environmentId) {
+      return Promise.reject(
+        new Error(`Environment "${environmentId}" is not available in space ${options.spaceId}"`),
+      );
+    }
+    return Promise.reject(new Error('Missing required parameter: environmentId'));
+  });
+  const getApiKey = vi.fn().mockResolvedValue(mockedApiKey.accessToken);
+  const getPreviewApiKey = vi.fn().mockResolvedValue(mockedPreviewApiKey.accessToken);
+  const getWebhooks = vi.fn().mockResolvedValue([mockedWebhook]);
+  const addWebhook = vi.fn().mockImplementation((options, id, data) => {
+    if (/new/.test(id) || id === 'd5e668e12d10454db12e283107add9782ad006ee') {
+      return Promise.resolve({
+        ...data,
+        sys: {
+          type: 'WebhookDefinition',
+          id: 'generated-id',
+          version: 1,
+        },
+      });
+    }
+    return Promise.resolve(mockedWebhook);
+  });
+  const deleteWebhook = vi.fn().mockResolvedValue(undefined);
+  const getManagementClient = vi.fn().mockImplementation((options) => {
+    if (!options?.managementToken) {
+      throw new Error(
+        'You need to login first. Run npx contentful-cli login or pass the contentful management token',
+      );
+    }
+    return {};
+  });
+  const resetClient = vi.fn();
+  const resetManagementClient = vi.fn();
 
   return {
-    default: { createClient },
-    createClient,
+    ...actual,
+    getManagementClient,
+    resetClient,
+    resetManagementClient,
+    getSpaces,
+    getSpace,
+    getEnvironments,
+    getEnvironment,
+    getApiKey,
+    getPreviewApiKey,
+    getWebhooks,
+    addWebhook,
+    deleteWebhook,
   };
 });
 
-vi.mock('find-cache-dir', () => ({
-  default: vi.fn().mockImplementation(({ name }) => `CONTENTFUL-TEST/${name}`),
-}));
+let cache: ReturnType<typeof initializeCache>;
 
-const cache = initializeCache(configMock);
+beforeEach(() => {
+  vi.spyOn(process, 'cwd').mockReturnValue('CONTENTFUL-TEST');
+  cache = initializeCache(configMock);
+  resetManagementClient();
+  resetClient();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('Contentful', () => {
   test('throws on missing managementToken (managament client)', async () => {
@@ -192,7 +238,7 @@ describe('Contentful', () => {
         environmentId: 'environmentId',
         managementToken: 'managementToken',
       } as ContentfulConfig);
-    }).rejects.toThrowError(/You need to login first/);
+    }).rejects.toThrowError(/Missing "accessToken"/);
   });
 
   test('getSpaces', async () => {
@@ -295,13 +341,13 @@ describe('Contentful', () => {
       headers: [],
     });
 
-    expect(webhook?.sys?.id).toBe('new-id');
+    expect(webhook?.sys?.id).toBe('generated-id');
     expect(webhook?.name).toBe('name');
   });
 
   test('deleteWebhook', async () => {
     const result = await deleteWebhook(configMock, 'id');
-    expect(result).toBe('deleted');
+    expect(result).toBeUndefined();
   });
 
   test('addWatchWebhook', async () => {

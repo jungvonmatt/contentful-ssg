@@ -1,13 +1,26 @@
-import type { RuntimeContext, Config, ContentfulConfig } from '../types.js';
+import type { DeletedEntry, DeletedAsset } from 'contentful';
+import type { EntryRaw, AssetRaw, ContentType, Locale } from '@jungvonmatt/contentful-client';
 import {
-  getContent,
   getFieldSettings,
   getEntriesLinkedToEntry,
   getEntriesLinkedToAsset,
-} from '../lib/contentful.js';
+} from '@jungvonmatt/contentful-client';
+import { getContent } from '../lib/contentful.js';
+import type { RuntimeContext, Config, ContentfulConfig } from '../types.js';
+
+type ContentResult = {
+  entries: EntryRaw[];
+  assets: AssetRaw[];
+  contentTypes: ContentType[];
+  locales: Locale[];
+  deletedEntries?: DeletedEntry[];
+  deletedAssets?: DeletedAsset[];
+};
 
 export const fetch = async (context: RuntimeContext, config: Config) => {
-  const content = await getContent(config as ContentfulConfig);
+  const content = (await getContent(
+    config as ContentfulConfig & { sync?: boolean },
+  )) as ContentResult;
   const { locales, contentTypes } = content;
 
   // Add entries linked to deleted assets & entries to the list of changed entries

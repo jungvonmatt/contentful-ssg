@@ -5,7 +5,7 @@ import {
   FIELD_TYPE_DATE,
   FIELD_TYPE_LINK,
   FIELD_TYPE_RICHTEXT,
-} from '../lib/contentful.js';
+} from '@jungvonmatt/contentful-client';
 import type { Asset, Config, Entry, RuntimeContext, TransformContext } from '../types.js';
 import { mapDateField } from './map-date-field.js';
 import { mapReferenceField } from './map-reference-field.js';

@@ -16,7 +16,22 @@ vi.mock('@jungvonmatt/contentful-ssg/lib/contentful', async (importOriginal) => 
   return {
     ...actual,
     getEnvironment: vi.fn().mockResolvedValue({
-      getContentTypes: vi.fn().mockResolvedValue({
+      sys: { id: 'env' },
+    }),
+  };
+});
+
+vi.mock('contentful-management', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('contentful-management')>();
+  return {
+    ...actual,
+  };
+});
+
+vi.mock('@jungvonmatt/contentful-client', () => ({
+  getManagementClient: vi.fn().mockReturnValue({
+    contentType: {
+      getMany: vi.fn().mockResolvedValue({
         items: [
           {
             sys: { id: 'page' },
@@ -30,8 +45,11 @@ vi.mock('@jungvonmatt/contentful-ssg/lib/contentful', async (importOriginal) => 
             fields: [{ id: 'name', type: 'Symbol', required: true, validations: [] }],
           },
         ],
+        total: 2,
       }),
-      getEditorInterfaces: vi.fn().mockResolvedValue({
+    },
+    editorInterface: {
+      getMany: vi.fn().mockResolvedValue({
         items: [
           {
             sys: { contentType: { sys: { id: 'page' } } },
@@ -45,10 +63,11 @@ vi.mock('@jungvonmatt/contentful-ssg/lib/contentful', async (importOriginal) => 
             controls: [{ fieldId: 'name', widgetId: 'singleLine' }],
           },
         ],
+        total: 2,
       }),
-    }),
-  };
-});
+    },
+  }),
+}));
 
 describe('createFakes', () => {
   test('returns fake + minimal data for all content types when no filter', async () => {

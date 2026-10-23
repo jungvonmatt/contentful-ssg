@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-typings",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "bugs": {
     "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
@@ -27,15 +27,15 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "test": "vitest run",
-    "lint": "oxlint --type-aware --fix src",
+    "test": "vitest run --root ../.. packages/contentful-typings/src",
+    "lint": "oxlint --type-aware src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "postcompile": "chmod +x ./dist/cli.js",
     "watch": "tsc --build --watch"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.3.1",
+    "@jungvonmatt/contentful-client": "workspace:*",
     "@jungvonmatt/contentful-config": "workspace:*",
     "@jungvonmatt/contentful-ssg": "workspace:*",
     "cf-content-types-generator": "catalog:",
@@ -44,13 +44,12 @@
     "contentful": "catalog:",
     "contentful-management": "catalog:",
     "exit-hook": "catalog:",
-    "fs-extra": "^11.1.0",
+    "fs-extra": "^11.4.1",
     "picocolors": "catalog:",
-    "read-pkg-up": "catalog:",
     "semiver": "catalog:"
   },
   "devDependencies": {
-    "@types/chance": "^1.1.6",
+    "@types/chance": "^1.1.8",
     "@types/fs-extra": "catalog:",
     "rimraf": "catalog:",
     "ts-morph": "catalog:"

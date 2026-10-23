@@ -72,8 +72,8 @@ export const createData = async (fields: FieldInfo[]): Promise<KeyValueMap> => {
           return [
             id,
             {
-              lat: faker.address.latitude(),
-              lng: faker.address.longitude(),
+              lat: faker.location.latitude(),
+              lng: faker.location.longitude(),
             },
           ];
         default:
@@ -128,12 +128,13 @@ export const getRegexValue = (regex: RegexType) => {
 
   // US Phone number
   if (pattern === '^\\d[ -.]?\\(?\\d\\d\\d\\)?[ -.]?\\d\\d\\d[ -.]?\\d\\d\\d\\d$') {
-    return faker.phone.number('#-(###)-###-####');
+    const d = () => faker.string.numeric(1);
+    return `${d()}-(${d()}${d()}${d()})-${d()}${d()}${d()}-${d()}${d()}${d()}${d()}`;
   }
 
   // US Zip code
   if (pattern === '^\\d{5}$|^\\d{5}-\\d{4}$') {
-    return faker.address.zipCode();
+    return faker.location.zipCode();
   }
 
   return new RandExp(pattern, flags).gen();
@@ -202,19 +203,19 @@ export const getNumberFake = async (field: FieldInfo, precision = 0.005): Promis
   if (range) {
     const { min, max } = range;
     if (typeof min !== 'undefined' && typeof max !== 'undefined') {
-      return faker.datatype.number({ min, max, precision });
+      return faker.number.float({ min, max, multipleOf: precision });
     }
 
     if (typeof min !== 'undefined') {
-      return faker.datatype.number({ min, precision });
+      return faker.number.float({ min, max: min + 1000, multipleOf: precision });
     }
 
     if (typeof max !== 'undefined') {
-      return faker.datatype.number({ max, precision });
+      return faker.number.float({ min: 0, max, multipleOf: precision });
     }
   }
 
-  return faker.datatype.number({ precision });
+  return faker.number.float({ multipleOf: precision });
 };
 
 export const getSymbolFake = async (field: FieldInfo): Promise<string> => {
@@ -312,12 +313,12 @@ export const getAssetFake = async (): Promise<KeyValueMap> => {
 
   return {
     mime_type: 'image/jpeg',
-    url: faker.image.image(width, height),
+    url: faker.image.url({ width, height }),
     title: faker.lorem.words(),
     description: faker.lorem.lines(),
     width,
     height,
-    file_size: faker.datatype.number({ min: 1000, max: 200000 }),
+    file_size: faker.number.int({ min: 1000, max: 200000 }),
   };
 };
 

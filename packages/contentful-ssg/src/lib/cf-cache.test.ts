@@ -11,18 +11,20 @@ const config = {
   environmentId: 'test-environment',
 } as Config;
 
-const cache = initializeCache(config);
+let cache: ReturnType<typeof initializeCache>;
 
-vi.mock('find-cache-dir', () => ({
-  default: vi.fn().mockImplementation(({ name }) => `CACHE-TEST/${name}`),
-}));
+beforeEach(() => {
+  vi.spyOn(process, 'cwd').mockReturnValue('CACHE-TEST');
+  cache = initializeCache(config);
+});
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await remove('CACHE-TEST');
 });
 
 test('getCacheDir', async () => {
-  const expected = `CACHE-TEST/contentful-ssg/sync-${config.spaceId}-${config.environmentId}`;
+  const expected = `CACHE-TEST/node_modules/.cache/contentful-ssg/sync-${config.spaceId}-${config.environmentId}`;
   const value = await getCacheDir(config);
   expect(value).toEqual(expected);
 });

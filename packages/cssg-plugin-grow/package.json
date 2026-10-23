@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/cssg-plugin-grow",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "description": "Contentful-ssg plugin for grow",
   "homepage": "https://github.com/jungvonmatt/contentful-ssg#readme",
   "bugs": {
@@ -26,8 +26,8 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "oxlint --type-aware --fix src",
-    "test": "vitest run",
+    "lint": "oxlint --type-aware src",
+    "test": "vitest run --root ../.. packages/cssg-plugin-grow/src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "watch": "tsc --build --watch"
@@ -38,7 +38,7 @@
   "devDependencies": {
     "rimraf": "catalog:",
     "ts-node": "catalog:",
-    "typescript": "^5.3.3",
+    "typescript": "^5.9.3",
     "vitest": "catalog:"
   },
   "ts-node": {

@@ -1,12 +1,11 @@
 import {
   TypeGuardRenderer as TypeGuardRendererOriginal,
-  V10TypeGuardRenderer as V10TypeGuardRendererOriginal,
   type RenderContext,
   type CFContentType,
   renderTypeGeneric,
 } from 'cf-content-types-generator';
 import { type SourceFile } from 'ts-morph';
-import { context, v10context, moduleName } from './context.js';
+import { context, moduleName } from './context.js';
 
 export class TypeGuardRenderer extends TypeGuardRendererOriginal {
   public createContext(): RenderContext {
@@ -43,9 +42,9 @@ export class TypeGuardRenderer extends TypeGuardRendererOriginal {
   };
 }
 
-export class V10TypeGuardRenderer extends V10TypeGuardRendererOriginal {
+export class V10TypeGuardRenderer extends TypeGuardRendererOriginal {
   public createContext(): RenderContext {
-    return v10context;
+    return context;
   }
 
   public render = (contentType: CFContentType, file: SourceFile): void => {
@@ -53,7 +52,7 @@ export class V10TypeGuardRenderer extends V10TypeGuardRendererOriginal {
 
     file.addImportDeclaration({
       moduleSpecifier: `contentful`,
-      namedImports: ['ChainModifiers', 'Entry', 'LocaleCode'],
+      namedImports: ['ChainModifiers', 'Entry', 'EntrySkeletonType', 'LocaleCode'],
       isTypeOnly: true,
     });
 

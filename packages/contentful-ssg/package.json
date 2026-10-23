@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/contentful-ssg",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "description": "",
   "bugs": {
     "url": "https://github.com/jungvonmatt/contentful-ssg/issues"
@@ -61,8 +61,8 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "oxlint --type-aware --fix src",
-    "test": "vitest run",
+    "lint": "oxlint --type-aware src",
+    "test": "vitest run --root ../.. packages/contentful-ssg/src",
     "precompile": "pnpm run clean",
     "compile": "tsc --build",
     "postcompile": "chmod +x ./dist/cli.js",
@@ -72,19 +72,18 @@
     "@contentful/rich-text-html-renderer": "catalog:",
     "@contentful/rich-text-types": "catalog:",
     "@iarna/toml": "catalog:",
+    "@jungvonmatt/contentful-client": "workspace:*",
     "@jungvonmatt/contentful-config": "workspace:*",
     "@swc/core": "catalog:",
     "chalk": "catalog:",
     "change-case": "catalog:",
     "commander": "catalog:",
     "contentful": "catalog:",
-    "contentful-management": "catalog:",
     "dlv": "catalog:",
     "exit-hook": "catalog:",
     "express": "catalog:",
-    "find-cache-dir": "catalog:",
     "find-up": "catalog:",
-    "fs-extra": "^11.1.0",
+    "fs-extra": "^11.4.1",
     "globby": "catalog:",
     "gray-matter": "catalog:",
     "ignore": "^5.3.2",
@@ -94,11 +93,10 @@
     "micromatch": "catalog:",
     "oxfmt": "catalog:",
     "pirates": "catalog:",
-    "read-pkg-up": "catalog:",
     "rxjs": "catalog:",
     "serialize-error": "catalog:",
     "slash": "catalog:",
-    "type-fest": "^4.9.0",
+    "type-fest": "^4.41.0",
     "uuid": "catalog:"
   },
   "devDependencies": {
@@ -113,7 +111,7 @@
     "rimraf": "catalog:",
     "supertest": "catalog:",
     "ts-node": "catalog:",
-    "typescript": "^5.3.3",
+    "typescript": "^5.9.3",
     "vitest": "catalog:"
   },
   "engines": {

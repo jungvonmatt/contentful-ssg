@@ -162,12 +162,12 @@ describe('Utils', () => {
     const observable = subject.asObservable();
 
     // Throw error when waiting for the current entry
-    expect(async () => {
+    await expect(async () => {
       await waitFor({ ...transformContext, entry: entryMap.get('2') as Entry, observable })('2');
     }).rejects.toThrowError(/2.*waiting.*2/);
 
     // Throw error when waiting for non existing entry
-    expect(async () => {
+    await expect(async () => {
       await waitFor({ ...transformContext, entry: entryMap.get('3') as Entry, observable })('10');
     }).rejects.toThrowError('No entry with id "10" available');
 
